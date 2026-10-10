@@ -1539,6 +1539,20 @@ try:
                     if (injury_team == "All teams" or row["Team"] == injury_team)
                     and (include_active or row["Status"].lower() != "active")
                 ]
+                status_options = sorted(
+                    {"Probable", "Questionable", "Doubtful", "Out", "Injured Reserve"}
+                    | {row["Status"] for row in injury_rows}
+                )
+                status_filter = st.multiselect(
+                    "Filter injury status",
+                    status_options,
+                    key="injury_status_selection",
+                    help="Leave empty to show all available statuses. Probable appears only when explicitly reported by ESPN; no status is inferred.",
+                )
+                if status_filter:
+                    injury_rows = [
+                        row for row in injury_rows if row["Status"] in status_filter
+                    ]
                 positions = sorted({row["Position"] for row in injury_rows})
                 position_filter = st.selectbox(
                     "Injury report position", ["All positions"] + positions,
