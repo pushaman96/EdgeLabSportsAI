@@ -674,7 +674,7 @@ try:
     )
 
     if summary:
-        col1, col2, col3, co14 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4)
 
         col1.metric(
             "Test games",
