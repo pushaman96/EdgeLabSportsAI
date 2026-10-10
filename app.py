@@ -4,6 +4,7 @@ import requests
 import csv
 import io
 import math
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta, datetime
 
 st.set_page_config(
@@ -543,6 +544,117 @@ def test_probability_adjustment(predictions):
     }
 
 
+TEAM_STAT_METRICS = [
+    ("Offense: points per game", "stats", "scoring", "totalPointsPerGame", True),
+    ("Offense: net passing yards per game", "stats", "passing", "netPassingYardsPerGame", True),
+    ("Offense: rushing yards per game", "stats", "rushing", "rushingYardsPerGame", True),
+    ("Offense: yards per rush", "stats", "rushing", "yardsPerRushAttempt", True),
+    ("Offense: third-down conversion %", "stats", "miscellaneous", "thirdDownConvPct", True),
+    ("Defense: points allowed per game", "opponent", "scoring", "totalPointsPerGame", False),
+    ("Defense: net passing yards allowed per game", "opponent", "passing", "netPassingYardsPerGame", False),
+    ("Defense: rushing yards allowed per game", "opponent", "rushing", "rushingYardsPerGame", False),
+    ("Defense: sacks per game", "stats", "defensive", "sacks", True),
+    ("Defense: takeaways per game", "stats", "miscellaneous", "totalTakeaways", True),
+]
+
+
+def parse_team_statistics(data, season):
+    returned_season = data.get("season", {})
+    if returned_season.get("year") != season or returned_season.get("type") != 2:
+        raise ValueError("ESPN returned a different season or season type.")
+    results = data.get("results", {})
+
+    def values(section):
+        node = results.get(section, {})
+        categories = node if isinstance(node, list) else node.get("categories", [])
+        parsed = {}
+        for category in categories:
+            for stat in category.get("stats", []):
+                value = stat.get("value")
+                if isinstance(value, (int, float)) and math.isfinite(value):
+                    parsed[(category.get("name"), stat.get("name"))] = float(value)
+        return parsed
+
+    own, opponent = values("stats"), values("opponent")
+    games = own.get(("general", "gamesPlayed"),
+                    own.get(("passing", "teamGamesPlayed"), 0))
+    if games <= 0:
+        raise ValueError("No completed games with team statistics.")
+    team = data.get("team", {})
+    row = {
+        "Team": team.get("displayName", team.get("abbreviation", "Unknown")),
+        "Code": team.get("abbreviation", ""),
+        "Games": int(games),
+    }
+    for label, section, category, name, higher_better in TEAM_STAT_METRICS:
+        value = (own if section == "stats" else opponent).get((category, name))
+        if value is not None and name in ("sacks", "totalTakeaways"):
+            value /= games
+        row[label] = value
+    return row
+
+
+@st.cache_data(ttl=3600)
+def load_all_nfl_team_statistics(season):
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/football/nfl/teams",
+        params={"limit": 100}, headers=HEADERS, timeout=20,
+    )
+    response.raise_for_status()
+    entries = response.json()["sports"][0]["leagues"][0]["teams"]
+
+    def fetch(entry):
+        team = entry["team"]
+        try:
+            response = requests.get(
+                f"{BASE_URL}/site/v2/sports/football/nfl/teams/{team['id']}/statistics",
+                params={"season": season, "seasontype": 2},
+                headers=HEADERS, timeout=20,
+            )
+            response.raise_for_status()
+            return parse_team_statistics(response.json(), season), None
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+            return None, f"{team.get('displayName', 'Team')}: {exc}"
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        fetched = list(pool.map(fetch, entries))
+    rows = sorted([row for row, error in fetched if row], key=lambda row: row["Team"])
+    errors = [error for row, error in fetched if error]
+    return {
+        "rows": rows,
+        "errors": errors,
+        "expected": len(entries),
+        "fetched_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+    }
+
+
+def get_team_comparison_rows(selected, league_rows):
+    comparisons = []
+    for label, section, category, name, higher_better in TEAM_STAT_METRICS:
+        value = selected.get(label)
+        available = [row[label] for row in league_rows if row.get(label) is not None]
+        if value is None or not available:
+            comparisons.append({"Statistic": label, "Team value": None,
+                                "League average": None, "Rank": None,
+                                "Teams compared": len(available), "Assessment": "Unavailable"})
+            continue
+        rank = 1 + sum(
+            other > value if higher_better else other < value
+            for other in available
+        )
+        average = sum(available) / len(available)
+        assessment = (
+            "Above league average" if (value > average if higher_better else value < average)
+            else "Below league average" if value != average else "At league average"
+        )
+        comparisons.append({
+            "Statistic": label, "Team value": round(value, 2),
+            "League average": round(average, 2), "Rank": rank,
+            "Teams compared": len(available), "Assessment": assessment,
+        })
+    return comparisons
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -560,6 +672,7 @@ if st.sidebar.button("Refresh live data"):
     get_scoreboard.clear()
     get_standings.clear()
     load_nfl_history.clear()
+    load_all_nfl_team_statistics.clear()
 
 
 # -------------------------
@@ -1051,6 +1164,82 @@ try:
             "Probabilities include a fixed home-field advantage. "
             "They are model estimates, not live odds or guarantees."
         )
+
+    st.divider()
+    st.subheader("NFL Team Strengths & Weaknesses")
+    st.caption(
+        "Season-to-date regular-season statistics for all 32 NFL teams. "
+        "These provide matchup context and do not change Elo probabilities. "
+        "Season totals are current, not historical snapshots for the sidebar date."
+    )
+    available_seasons = sorted({game["season"] for game in history}, reverse=True)
+    stats_season = st.selectbox(
+        "Team statistics season", available_seasons[:5], key="team_stats_season",
+    )
+    with st.expander("View offense, defense, and league comparisons"):
+        if st.button("Load team statistics", key="load_team_stats"):
+            st.session_state["team_stats_loaded_season"] = stats_season
+        if st.session_state.get("team_stats_loaded_season") == stats_season:
+            try:
+                with st.spinner("Loading all NFL teams..."):
+                    team_stats = load_all_nfl_team_statistics(stats_season)
+                league_rows = team_stats["rows"]
+                st.caption(
+                    f"Source: ESPN. Retrieved {team_stats['fetched_at']}. "
+                    f"Available teams: {len(league_rows)}/{team_stats['expected']}. "
+                    "Cached for up to one hour; Refresh live data clears the cache."
+                )
+                if len(league_rows) < 32:
+                    st.warning(
+                        "Some team data is unavailable. Averages and ranks "
+                        "compare only available teams."
+                    )
+                if league_rows:
+                    names = [row["Team"] for row in league_rows]
+                    selected_name = st.selectbox(
+                        "Choose any NFL team", names, key="team_strength_selection",
+                    )
+                    selected_stats = next(
+                        row for row in league_rows if row["Team"] == selected_name
+                    )
+                    st.write(
+                        f"**{selected_name}: {selected_stats['Games']} games**"
+                    )
+                    comparisons = get_team_comparison_rows(selected_stats, league_rows)
+                    st.dataframe(comparisons, hide_index=True, use_container_width=True)
+                    strengths = [
+                        row["Statistic"] for row in comparisons
+                        if row["Assessment"] == "Above league average"
+                    ]
+                    weaknesses = [
+                        row["Statistic"] for row in comparisons
+                        if row["Assessment"] == "Below league average"
+                    ]
+                    st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
+                    st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
+                    st.caption(
+                        "Rank 1 is best for the listed metric. Lower yards and "
+                        "points allowed are better on defense. League averages "
+                        "are unweighted averages of available team values. "
+                        "These comparisons do not adjust for opponent strength "
+                        "or game situation; yards alone do not establish quality. "
+                        "Points include all team scoring, including defense and "
+                        "special teams. Early-season samples may be small."
+                    )
+                    if st.checkbox("Compare all NFL teams", key="show_all_team_stats"):
+                        st.dataframe(
+                            league_rows, hide_index=True, use_container_width=True,
+                        )
+                else:
+                    st.info("No team statistics are available for this season.")
+                if team_stats["errors"]:
+                    if st.checkbox("Show unavailable team data", key="show_team_stats_errors"):
+                        for error in team_stats["errors"]:
+                            st.write(error)
+            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                st.warning(f"Team statistics could not be loaded: {exc}")
+        else:
+            st.info("Click Load team statistics to retrieve the selected season.")
 
     st.subheader("Current Model Team Ratings")
 
