@@ -490,6 +490,59 @@ def get_calibration_rows(test_games):
     return rows
 
 
+def shrink_probability(probability, strength):
+    return 0.5 + strength * (probability - 0.5)
+
+
+def test_probability_adjustment(predictions):
+    ordered = sorted(predictions, key=lambda game: game["Date"])
+    if len(ordered) < 100:
+        return None
+    calibration_start = ordered[int(len(ordered) * 0.60)]["Date"]
+    evaluation_start = ordered[int(len(ordered) * 0.80)]["Date"]
+    calibration = [
+        game for game in ordered
+        if calibration_start <= game["Date"] < evaluation_start
+    ]
+    evaluation = [
+        game for game in ordered if game["Date"] >= evaluation_start
+    ]
+    if not calibration or not evaluation:
+        return None
+
+    def actual_result(game):
+        return (
+            1.0 if game["Actual Result"] == "Home win"
+            else 0.0 if game["Actual Result"] == "Away win"
+            else 0.5
+        )
+
+    def score(games, strength):
+        return sum(
+            (shrink_probability(game["Home Win Probability"], strength)
+             - actual_result(game)) ** 2
+            for game in games
+        ) / len(games)
+
+    # Prefer the unchanged model if calibration scores are equal.
+    strengths = [step / 100 for step in range(100, 4, -1)]
+    strength = min(strengths, key=lambda value: score(calibration, value))
+    original_brier = score(evaluation, 1.0)
+    adjusted_brier = score(evaluation, strength)
+    return {
+        "strength": strength,
+        "calibration_games": len(calibration),
+        "calibration_first": calibration[0]["Date"],
+        "calibration_last": calibration[-1]["Date"],
+        "evaluation_games": len(evaluation),
+        "evaluation_first": evaluation[0]["Date"],
+        "evaluation_last": evaluation[-1]["Date"],
+        "original_brier": original_brier,
+        "adjusted_brier": adjusted_brier,
+        "improvement": original_brier - adjusted_brier,
+    }
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -827,6 +880,67 @@ try:
             )
         else:
             st.info("No non-tied test games are available for calibration.")
+
+        st.subheader("Probability Adjustment Test")
+        st.write(
+            "This experiment moves probabilities toward 50% to test "
+            "whether softer confidence improves forecasts."
+        )
+        adjustment = test_probability_adjustment(historical_predictions)
+        if adjustment:
+            st.caption(
+                f"Adjustment learned from {adjustment['calibration_games']:,} "
+                f"games dated {adjustment['calibration_first']} to "
+                f"{adjustment['calibration_last']}. Compared on "
+                f"{adjustment['evaluation_games']:,} later games dated "
+                f"{adjustment['evaluation_first']} to "
+                f"{adjustment['evaluation_last']}. Whole dates stay together, "
+                "so the comparison may include slightly more games than "
+                "the summary above. Elo still updates after each completed "
+                "date; the adjustment is fixed before evaluation begins."
+            )
+            original_col, adjusted_col, improvement_col = st.columns(3)
+            original_col.metric(
+                "Original Brier (comparison games)",
+                f"{adjustment['original_brier']:.4f}",
+            )
+            adjusted_col.metric(
+                "Adjusted Brier (same games)",
+                f"{adjustment['adjusted_brier']:.4f}",
+            )
+            improvement_col.metric(
+                "Brier improvement",
+                f"{adjustment['improvement']:+.4f}",
+                help="Positive means the adjustment improved the Brier score.",
+            )
+            example = shrink_probability(0.80, adjustment["strength"])
+            st.write(
+                f"**Adjustment strength:** {adjustment['strength']:.2f} "
+                f"(1.00 keeps the original probability). "
+                f"An 80% prediction becomes **{example * 100:.1f}%**."
+            )
+            if adjustment["improvement"] > 0:
+                st.success(
+                    "The adjusted probabilities scored better on these "
+                    "later comparison games."
+                )
+            elif adjustment["improvement"] < 0:
+                st.warning(
+                    "The adjustment did not improve these later games. "
+                    "The original model scored better."
+                )
+            else:
+                st.info("The original and adjusted scores are equal.")
+            st.caption(
+                "Ties count as 0.5 for Brier scoring. This adjustment keeps "
+                "the same favorite, so winner accuracy does not change. "
+                "This is an exploratory comparison: we already inspected "
+                "this test period's results. Future unseen games are needed "
+                "for independent confirmation. Matchup predictions below "
+                "continue to use the original Elo probabilities."
+            )
+        else:
+            st.info("Not enough historical games for an adjustment test.")
 
         with st.expander("View recent historical test predictions"):
             st.dataframe(
