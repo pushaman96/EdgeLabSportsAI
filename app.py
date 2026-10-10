@@ -1010,6 +1010,39 @@ try:
             f"{away_probability * 100:.1f}%",
         )
 
+        matchup_adjustment = test_probability_adjustment(
+            historical_predictions
+        )
+        if matchup_adjustment:
+            strength = matchup_adjustment["strength"]
+            adjusted_home = shrink_probability(home_probability, strength)
+            adjusted_away = 1 - adjusted_home
+            st.write("**Original and adjusted matchup probabilities**")
+            st.dataframe(
+                [
+                    {
+                        "Team": home_team,
+                        "Original Elo win %": round(home_probability * 100, 1),
+                        "Adjusted win %": round(adjusted_home * 100, 1),
+                    },
+                    {
+                        "Team": away_team,
+                        "Original Elo win %": round(away_probability * 100, 1),
+                        "Adjusted win %": round(adjusted_away * 100, 1),
+                    },
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+            st.caption(
+                f"Adjusted probabilities use strength {strength:.2f}, "
+                "learned from the earlier calibration period shown above. "
+                "Both teams' adjusted probabilities add to 100%; the "
+                "favorite stays the same. These are experimental estimates. "
+                "The adjustment is recalculated when historical data updates "
+                "and does not account for injuries or weather."
+            )
+
         col1, col2 = st.columns(2)
         col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
         col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
