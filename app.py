@@ -655,6 +655,135 @@ def get_team_comparison_rows(selected, league_rows):
     return comparisons
 
 
+PLAYER_STAT_FIELDS = {
+    "QB": [
+        ("Pass attempts", "passing", "passingAttempts"),
+        ("Completions", "passing", "completions"),
+        ("Completion %", "passing", "completionPct"),
+        ("Passing yards", "passing", "passingYards"),
+        ("Yards per attempt", "passing", "yardsPerPassAttempt"),
+        ("Pass TD", "passing", "passingTouchdowns"),
+        ("Interceptions", "passing", "interceptions"),
+        ("Sacks taken", "passing", "sacks"),
+        ("Passer rating", "passing", "QBRating"),
+        ("Rushing yards", "rushing", "rushingYards"),
+        ("Rush TD", "rushing", "rushingTouchdowns"),
+    ],
+    "RB": [
+        ("Carries", "rushing", "rushingAttempts"),
+        ("Rushing yards", "rushing", "rushingYards"),
+        ("Yards per carry", "rushing", "yardsPerRushAttempt"),
+        ("Rush TD", "rushing", "rushingTouchdowns"),
+        ("Targets", "receiving", "receivingTargets"),
+        ("Receptions", "receiving", "receptions"),
+        ("Receiving yards", "receiving", "receivingYards"),
+        ("Receiving TD", "receiving", "receivingTouchdowns"),
+    ],
+    "WR": [
+        ("Targets", "receiving", "receivingTargets"),
+        ("Receptions", "receiving", "receptions"),
+        ("Receiving yards", "receiving", "receivingYards"),
+        ("Yards per catch", "receiving", "yardsPerReception"),
+        ("Receiving TD", "receiving", "receivingTouchdowns"),
+    ],
+}
+
+
+@st.cache_data(ttl=3600)
+def load_nfl_player_team_directory():
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/football/nfl/teams",
+        params={"limit": 100}, headers=HEADERS, timeout=20,
+    )
+    response.raise_for_status()
+    entries = response.json()["sports"][0]["leagues"][0]["teams"]
+    return sorted(
+        [{"id": entry["team"]["id"], "name": entry["team"]["displayName"]}
+         for entry in entries],
+        key=lambda team: team["name"],
+    )
+
+
+def parse_player_roster(data, season):
+    if data.get("season", {}).get("year") != season:
+        raise ValueError("Roster season does not match the requested season.")
+    players, seen = [], set()
+    for group in data.get("athletes", []):
+        for athlete in group.get("items", []):
+            position = athlete.get("position", {}).get("abbreviation")
+            athlete_id = athlete.get("id")
+            if position not in PLAYER_STAT_FIELDS or not athlete_id or athlete_id in seen:
+                continue
+            seen.add(athlete_id)
+            players.append({
+                "id": athlete_id,
+                "name": athlete.get("displayName", "Unknown player"),
+                "position": position,
+            })
+    return players
+
+
+def parse_player_statistics(data, player, season):
+    season_ref = data.get("season", {}).get("$ref", "")
+    type_ref = data.get("seasonType", {}).get("$ref", "")
+    athlete_ref = data.get("athlete", {}).get("$ref", "")
+    if (
+        f"/seasons/{season}" not in season_ref
+        or f"/types/2" not in type_ref
+        or f"/athletes/{player['id']}" not in athlete_ref
+    ):
+        raise ValueError("Player or season metadata does not match the request.")
+    values = {}
+    for category in data.get("splits", {}).get("categories", []):
+        for stat in category.get("stats", []):
+            value = stat.get("value")
+            if isinstance(value, (int, float)) and math.isfinite(value):
+                values[(category.get("name"), stat.get("name"))] = value
+    if not values:
+        raise ValueError("No player statistics returned.")
+    row = {
+        "Player": player["name"],
+        "Position": player["position"],
+        "Games": values.get(("general", "gamesPlayed")),
+    }
+    for label, category, name in PLAYER_STAT_FIELDS[player["position"]]:
+        value = values.get((category, name))
+        row[label] = round(value, 2) if value is not None else None
+    return row
+
+
+@st.cache_data(ttl=3600)
+def load_nfl_team_player_statistics(team_id, season):
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/football/nfl/teams/{team_id}/roster",
+        params={"season": season}, headers=HEADERS, timeout=20,
+    )
+    response.raise_for_status()
+    players = parse_player_roster(response.json(), season)
+
+    def fetch(player):
+        try:
+            response = requests.get(
+                "https://sports.core.api.espn.com/v2/sports/football/"
+                f"leagues/nfl/seasons/{season}/types/2/"
+                f"athletes/{player['id']}/statistics/0",
+                headers=HEADERS, timeout=20,
+            )
+            response.raise_for_status()
+            return parse_player_statistics(response.json(), player, season), None
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+            return None, f"{player['name']}: {exc}"
+
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(fetch, players))
+    return {
+        "rows": [row for row, error in results if row],
+        "errors": [error for row, error in results if error],
+        "roster_count": len(players),
+        "fetched_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+    }
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -673,6 +802,8 @@ if st.sidebar.button("Refresh live data"):
     get_standings.clear()
     load_nfl_history.clear()
     load_all_nfl_team_statistics.clear()
+    load_nfl_player_team_directory.clear()
+    load_nfl_team_player_statistics.clear()
 
 
 # -------------------------
@@ -1240,6 +1371,85 @@ try:
                 st.warning(f"Team statistics could not be loaded: {exc}")
         else:
             st.info("Click Load team statistics to retrieve the selected season.")
+
+    st.divider()
+    st.subheader("NFL Player Statistics: QB, RB & WR")
+    st.caption(
+        "Browse any NFL team. Regular-season player totals provide context "
+        "and do not change matchup probabilities."
+    )
+    with st.expander("View quarterback, running back, and wide receiver stats"):
+        if st.checkbox("Open player statistics", key="open_player_stats"):
+            try:
+                player_teams = load_nfl_player_team_directory()
+                team_names = [team["name"] for team in player_teams]
+                player_team_name = st.selectbox(
+                    "Player statistics team", team_names, key="player_stats_team",
+                )
+                player_team_id = next(
+                    team["id"] for team in player_teams
+                    if team["name"] == player_team_name
+                )
+                player_season = st.selectbox(
+                    "Player statistics season", available_seasons[:5],
+                    key="player_stats_season",
+                )
+                selection = (player_team_id, player_season)
+                if st.button("Load QB, RB & WR stats", key="load_player_stats"):
+                    st.session_state["loaded_player_stats_selection"] = selection
+                if st.session_state.get("loaded_player_stats_selection") == selection:
+                    with st.spinner("Loading roster and player season statistics..."):
+                        player_data = load_nfl_team_player_statistics(
+                            player_team_id, player_season,
+                        )
+                    st.caption(
+                        f"Source: ESPN. {player_season} regular season. "
+                        f"Retrieved {player_data['fetched_at']}. "
+                        f"Statistics available for {len(player_data['rows'])}/"
+                        f"{player_data['roster_count']} roster players at these "
+                        "positions. Cached up to one hour."
+                    )
+                    qb_tab, rb_tab, wr_tab = st.tabs(
+                        ["Quarterbacks", "Running backs", "Wide receivers"]
+                    )
+                    for position, tab in zip(("QB", "RB", "WR"), (qb_tab, rb_tab, wr_tab)):
+                        with tab:
+                            position_rows = [
+                                row for row in player_data["rows"]
+                                if row["Position"] == position
+                            ]
+                            sort_field = {
+                                "QB": "Pass attempts", "RB": "Carries", "WR": "Targets"
+                            }[position]
+                            position_rows.sort(
+                                key=lambda row: row.get(sort_field) or 0, reverse=True,
+                            )
+                            if position_rows:
+                                st.dataframe(
+                                    position_rows, hide_index=True,
+                                    use_container_width=True,
+                                )
+                            else:
+                                st.info("No statistics available for this position.")
+                    st.caption(
+                        "Players come from ESPN's roster for the selected season, "
+                        "including reserves when returned. This is not a confirmed "
+                        "starting lineup. Player totals can include games for other "
+                        "teams after a trade; they are not necessarily totals for "
+                        "the selected team alone. Blank values mean unavailable, "
+                        "not zero. Passer rating is not ESPN Total QBR. "
+                        "Stats are season totals, not snapshots as of the sidebar "
+                        "date. Injuries and recent-game splits will be added separately."
+                    )
+                    if player_data["errors"] and st.checkbox(
+                        "Show players with unavailable stats", key="player_stat_errors",
+                    ):
+                        for error in player_data["errors"]:
+                            st.write(error)
+                else:
+                    st.info("Click Load QB, RB & WR stats for the selected team and season.")
+            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                st.warning(f"Player statistics could not be loaded: {exc}")
 
     st.subheader("Current Model Team Ratings")
 
