@@ -674,7 +674,7 @@ try:
     )
 
     if summary:
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, co14 = st.columns(4)
 
         col1.metric(
             "Test games",
@@ -688,6 +688,10 @@ try:
             "Brier score",
             f"{summary['brier']:.3f}",
             help="Lower is better. A perfect probability forecast scores 0.",
+        )
+        col4.metric(
+            "Baseline Brier Score",
+            f'{summary["baseline_brier"]:.4f}',
         )
 
         st.caption(
