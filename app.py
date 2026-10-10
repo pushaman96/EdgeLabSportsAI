@@ -249,6 +249,7 @@ def load_nfl_history():
 
 
 # -------------------------
+
 # ELO MODEL AND BACKTEST
 # -------------------------
 
@@ -261,57 +262,108 @@ def build_elo_model(games, k_factor=20, home_advantage=55):
     ratings = {}
     predictions = []
 
-    for game in games:
-        home = game["home_team"]
-        away = game["away_team"]
+    # Sort games chronologically, then process each date as a group.
+    sorted_games = sorted(games, key=lambda game: game["date"])
+    games_by_date = {}
 
-        home_rating = ratings.get(home, 1500.0)
-        away_rating = ratings.get(away, 1500.0)
+    for game in sorted_games:
+        game_date = game["date"]
+        games_by_date.setdefault(game_date, []).append(game)
 
-        # Predict BEFORE updating ratings with this game's result.
-        probability = expected_home_win(
-            home_rating,
-            away_rating,
-            home_advantage,
+    # Historical home-result average for the baseline.
+    # A home win = 1, away win = 0, tie = 0.5.
+    prior_result_total = 0.0
+    prior_game_count = 0
+
+    for game_date in sorted(games_by_date):
+        daily_updates = {}
+        daily_results = []
+        daily_predictions = []
+
+        # All games on this date use ratings from BEFORE this date.
+        baseline_probability = (
+            prior_result_total / prior_game_count
+            if prior_game_count > 0
+            else 0.5
         )
 
-        if game["home_score"] > game["away_score"]:
-            actual = 1.0
-        elif game["home_score"] < game["away_score"]:
-            actual = 0.0
-        else:
-            actual = 0.5
+        for game in games_by_date[game_date]:
+            home = game["home_team"]
+            away = game["away_team"]
 
-        predictions.append({
-            "Date": game["date"].isoformat(),
-            "Season": game["season"],
-            "Home Team": home,
-            "Away Team": away,
-            "Predicted Home Win %": round(probability * 100, 1),
-            "Actual Result": (
-                "Home win" if actual == 1.0
-                else "Away win" if actual == 0.0
-                else "Tie"
-            ),
-            "Correct": (
-                (probability >= 0.5 and actual == 1.0)
-                or (probability < 0.5 and actual == 0.0)
+            home_rating = ratings.get(home, 1500.0)
+            away_rating = ratings.get(away, 1500.0)
+
+            probability = expected_home_win(
+                home_rating,
+                away_rating,
+                home_advantage,
+            )
+
+            if game["home_score"] > game["away_score"]:
+                actual = 1.0
+            elif game["home_score"] < game["away_score"]:
+                actual = 0.0
+            else:
+                actual = 0.5
+
+            baseline_correct = (
+                (baseline_probability >= 0.5 and actual == 1.0)
+                or (baseline_probability < 0.5 and actual == 0.0)
                 or actual == 0.5
-            ),
-            "Brier Score": (probability - actual) ** 2,
-        })
+            )
 
-        # Update ratings only AFTER the result is known.
-        change = k_factor * (actual - probability)
-        ratings[home] = home_rating + change
-        ratings[away] = away_rating - change
+            daily_predictions.append({
+                "Date": game_date.isoformat(),
+                "Season": game["season"],
+                "Home Team": home,
+                "Away Team": away,
+                "Predicted Home Win %": round(probability * 100, 1),
+                "Baseline Home Probability": round(
+                    baseline_probability * 100, 1
+                ),
+                "Actual Result": (
+                    "Home win" if actual == 1.0
+                    else "Away win" if actual == 0.0
+                    else "Tie"
+                ),
+                "Correct": (
+                    (probability >= 0.5 and actual == 1.0)
+                    or (probability < 0.5 and actual == 0.0)
+                    or actual == 0.5
+                ),
+                "Baseline Correct": baseline_correct,
+                "Brier Score": (probability - actual) ** 2,
+                "Baseline Brier Score": (
+                    baseline_probability - actual
+                ) ** 2,
+            })
+
+            # Calculate rating changes, but do not apply them yet.
+            change = k_factor * (actual - probability)
+            daily_updates[home] = (
+                daily_updates.get(home, 0.0) + change
+            )
+            daily_updates[away] = (
+                daily_updates.get(away, 0.0) - change
+            )
+
+            daily_results.append(actual)
+
+        # Only after every game on this date has been predicted
+        # do we apply Elo changes and update the baseline history.
+        for team, change in daily_updates.items():
+            ratings[team] = ratings.get(team, 1500.0) + change
+
+        predictions.extend(daily_predictions)
+        prior_result_total += sum(daily_results)
+        prior_game_count += len(daily_results)
 
     return ratings, predictions
 
 
 def get_backtest_summary(predictions):
-    # Use the final 20% of games as a chronological test period.
-    # No test game is used to predict itself.
+    # Use the final 20% of predictions as the test period.
     split_index = int(len(predictions) * 0.80)
     test_games = predictions[split_index:]
 
@@ -323,25 +375,37 @@ def get_backtest_summary(predictions):
         if game["Actual Result"] != "Tie"
     ]
 
-    if not non_tie_games:
-        accuracy = 0.0
-    else:
+    if non_tie_games:
         accuracy = (
             sum(game["Correct"] for game in non_tie_games)
             / len(non_tie_games)
         )
+        baseline_accuracy = (
+            sum(game["Baseline Correct"] for game in non_tie_games)
+            / len(non_tie_games)
+        )
+    else:
+        accuracy = 0.0
+        baseline_accuracy = 0.0
 
     brier = sum(
         game["Brier Score"] for game in test_games
+    ) / len(test_games)
+
+    baseline_brier = sum(
+        game["Baseline Brier Score"] for game in test_games
     ) / len(test_games)
 
     return {
         "test_games": len(test_games),
         "accuracy": accuracy,
         "brier": brier,
+        "baseline_accuracy": baseline_accuracy,
+        "baseline_brier": baseline_brier,
         "first_date": test_games[0]["Date"],
         "last_date": test_games[-1]["Date"],
     }, test_games
+
 
 
 # -------------------------
