@@ -674,7 +674,7 @@ try:
     )
 
     if summary:
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5 = st.columns(5)
 
         col1.metric(
             "Test games",
@@ -692,6 +692,12 @@ try:
         col4.metric(
             "Baseline Brier Score",
             f'{summary["baseline_brier"]:.4f}',
+        )
+
+        col5.metric(
+            "Baseline winner accuracy",
+            f"{summary['baseline_accuracy'] * 100:.1f}%",
+            help="Predicts the side favored by the historical home-result average, using only earlier dates. Tied games are excluded from accuracy.",
         )
 
         st.caption(
