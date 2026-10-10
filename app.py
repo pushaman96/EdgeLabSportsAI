@@ -1,6 +1,7 @@
 
 import streamlit as st
 import requests
+from nba_tools import render_nba_tools, clear_nba_caches
 import csv
 import io
 import math
@@ -15,7 +16,7 @@ st.set_page_config(
 )
 
 st.title("🏈 EdgeLab Sports AI")
-st.write("Scores, standings, betting value, and NFL predictions")
+st.write("Scores, standings, betting value, and NFL/NBA research predictions")
 
 SPORTS = {
     "NFL": "football/nfl",
@@ -971,6 +972,7 @@ selected_date = st.sidebar.date_input(
 )
 
 if st.sidebar.button("Refresh live data"):
+    clear_nba_caches()
     get_scoreboard.clear()
     get_standings.clear()
     load_nfl_history.clear()
@@ -1194,559 +1196,577 @@ if submitted:
 # NFL HISTORICAL PREDICTION MODEL
 # -------------------------
 
-st.divider()
-st.header("🏈 NFL Historical Prediction Model")
-
-st.write(
-    "This model uses historical regular-season results to maintain "
-    "Elo ratings for each team. Ratings are updated after games, "
-    "then used to estimate future matchup probabilities."
-)
-
-st.info(
-    "This is a basic research model, not a guaranteed betting edge. "
-    "It does not currently account for injuries, starting quarterbacks, "
-    "weather, or current sportsbook prices."
-)
-
-try:
-    with st.spinner("Loading historical NFL games and building Elo ratings..."):
-        history = load_nfl_history()
-        elo_ratings, historical_predictions = build_elo_model(history)
-        summary, test_games = get_backtest_summary(
-            historical_predictions
-        )
-
-    st.success(
-        f"Loaded {len(history):,} completed NFL regular-season games."
-    )
-
-    st.subheader("Historical Backtest")
+if sport == "NFL":
+    st.divider()
+    st.header("🏈 NFL Historical Prediction Model")
 
     st.write(
-        "The model predicts each game before updating its ratings "
-        "with that game's result. The final 20% of games are used "
-        "for a chronological test."
+        "This model uses historical regular-season results to maintain "
+        "Elo ratings for each team. Ratings are updated after games, "
+        "then used to estimate future matchup probabilities."
     )
 
-    if summary:
-        col1, col2, col3, col4, col5 = st.columns(5)
+    st.info(
+        "This is a basic research model, not a guaranteed betting edge. "
+        "It does not currently account for injuries, starting quarterbacks, "
+        "weather, or current sportsbook prices."
+    )
 
-        col1.metric(
-            "Test games",
-            f"{summary['test_games']:,}",
-        )
-        col2.metric(
-            "Winner accuracy",
-            f"{summary['accuracy'] * 100:.1f}%",
-        )
-        col3.metric(
-            "Brier score",
-            f"{summary['brier']:.3f}",
-            help="Lower is better. A perfect probability forecast scores 0.",
-        )
-        col4.metric(
-            "Baseline Brier Score",
-            f'{summary["baseline_brier"]:.4f}',
+    try:
+        with st.spinner("Loading historical NFL games and building Elo ratings..."):
+            history = load_nfl_history()
+            elo_ratings, historical_predictions = build_elo_model(history)
+            summary, test_games = get_backtest_summary(
+                historical_predictions
+            )
+
+        st.success(
+            f"Loaded {len(history):,} completed NFL regular-season games."
         )
 
-        col5.metric(
-            "Baseline winner accuracy",
-            f"{summary['baseline_accuracy'] * 100:.1f}%",
-            help="Predicts the side favored by the historical home-result average, using only earlier dates. Tied games are excluded from accuracy.",
+        st.subheader("Historical Backtest")
+
+        st.write(
+            "The model predicts each game before updating its ratings "
+            "with that game's result. The final 20% of games are used "
+            "for a chronological test."
         )
 
+        if summary:
+            col1, col2, col3, col4, col5 = st.columns(5)
+
+            col1.metric(
+                "Test games",
+                f"{summary['test_games']:,}",
+            )
+            col2.metric(
+                "Winner accuracy",
+                f"{summary['accuracy'] * 100:.1f}%",
+            )
+            col3.metric(
+                "Brier score",
+                f"{summary['brier']:.3f}",
+                help="Lower is better. A perfect probability forecast scores 0.",
+            )
+            col4.metric(
+                "Baseline Brier Score",
+                f'{summary["baseline_brier"]:.4f}',
+            )
+
+            col5.metric(
+                "Baseline winner accuracy",
+                f"{summary['baseline_accuracy'] * 100:.1f}%",
+                help="Predicts the side favored by the historical home-result average, using only earlier dates. Tied games are excluded from accuracy.",
+            )
+
+            st.caption(
+                f"Test period: {summary['first_date']} to "
+                f"{summary['last_date']}. Accuracy is based on "
+                "non-tied games. Historical performance does not "
+                "guarantee future performance."
+            )
+
+            st.subheader("Backtest Results by Season")
+            st.caption(
+                "Uses only games in the same final-20% test period shown above. "
+                "The first and current seasons may be partial. Accuracy excludes "
+                "ties; Brier scores include them. Positive accuracy gain and "
+                "positive Brier improvement mean Elo beat the baseline. "
+                "pp means percentage points."
+            )
+            st.dataframe(
+                get_season_backtest_rows(test_games),
+                hide_index=True,
+                use_container_width=True,
+            )
+
+            st.subheader("Probability Calibration")
+            st.write(
+                "When the model assigns the home team around a 60% chance, "
+                "does the home team win around 60% of the time?"
+            )
+            st.caption(
+                "Uses the same test period, with ties excluded. Each row groups "
+                "home-team predictions into a 10-percentage-point range; upper "
+                "bounds are excluded except 100%. Compare the average prediction "
+                "with the actual home win rate. A gap near zero is better. "
+                "A positive gap means home teams won more often than predicted; "
+                "a negative gap means they won less often. Small samples can "
+                "produce large gaps by chance. This is a diagnostic, not an "
+                "adjustment to the model's probabilities."
+            )
+            calibration_rows = get_calibration_rows(test_games)
+            if calibration_rows:
+                st.dataframe(
+                    calibration_rows,
+                    hide_index=True,
+                    use_container_width=True,
+                )
+            else:
+                st.info("No non-tied test games are available for calibration.")
+
+            st.subheader("Probability Adjustment Test")
+            st.write(
+                "This experiment moves probabilities toward 50% to test "
+                "whether softer confidence improves forecasts."
+            )
+            adjustment = test_probability_adjustment(historical_predictions)
+            if adjustment:
+                st.caption(
+                    f"Adjustment learned from {adjustment['calibration_games']:,} "
+                    f"games dated {adjustment['calibration_first']} to "
+                    f"{adjustment['calibration_last']}. Compared on "
+                    f"{adjustment['evaluation_games']:,} later games dated "
+                    f"{adjustment['evaluation_first']} to "
+                    f"{adjustment['evaluation_last']}. Whole dates stay together, "
+                    "so the comparison may include slightly more games than "
+                    "the summary above. Elo still updates after each completed "
+                    "date; the adjustment is fixed before evaluation begins."
+                )
+                original_col, adjusted_col, improvement_col = st.columns(3)
+                original_col.metric(
+                    "Original Brier (comparison games)",
+                    f"{adjustment['original_brier']:.4f}",
+                )
+                adjusted_col.metric(
+                    "Adjusted Brier (same games)",
+                    f"{adjustment['adjusted_brier']:.4f}",
+                )
+                improvement_col.metric(
+                    "Brier improvement",
+                    f"{adjustment['improvement']:+.4f}",
+                    help="Positive means the adjustment improved the Brier score.",
+                )
+                example = shrink_probability(0.80, adjustment["strength"])
+                st.write(
+                    f"**Adjustment strength:** {adjustment['strength']:.2f} "
+                    f"(1.00 keeps the original probability). "
+                    f"An 80% prediction becomes **{example * 100:.1f}%**."
+                )
+                if adjustment["improvement"] > 0:
+                    st.success(
+                        "The adjusted probabilities scored better on these "
+                        "later comparison games."
+                    )
+                elif adjustment["improvement"] < 0:
+                    st.warning(
+                        "The adjustment did not improve these later games. "
+                        "The original model scored better."
+                    )
+                else:
+                    st.info("The original and adjusted scores are equal.")
+                st.caption(
+                    "Ties count as 0.5 for Brier scoring. This adjustment keeps "
+                    "the same favorite, so winner accuracy does not change. "
+                    "This is an exploratory comparison: we already inspected "
+                    "this test period's results. Future unseen games are needed "
+                    "for independent confirmation. Matchup predictions below "
+                    "continue to use the original Elo probabilities."
+                )
+            else:
+                st.info("Not enough historical games for an adjustment test.")
+
+            with st.expander("View recent historical test predictions"):
+                st.dataframe(
+                    [
+                        {
+                            "Date": game["Date"],
+                            "Season": game["Season"],
+                            "Home Team": game["Home Team"],
+                            "Away Team": game["Away Team"],
+                            "Predicted Home Win %": (
+                                game["Predicted Home Win %"]
+                            ),
+                            "Actual Result": game["Actual Result"],
+                        }
+                        for game in test_games[-50:]
+                    ],
+                    hide_index=True,
+                    use_container_width=True,
+        )
+
+        st.subheader("Predict an NFL Matchup")
+
+        team_codes = sorted(elo_ratings.keys())
+
+        if len(team_codes) >= 2:
+            home_team = st.selectbox(
+                "Select the home team",
+                team_codes,
+                index=team_codes.index("KC") if "KC" in team_codes else 0,
+                key="elo_home",
+            )
+
+            away_options = [
+                team for team in team_codes if team != home_team
+            ]
+
+            default_away_index = (
+                away_options.index("BUF")
+                if "BUF" in away_options
+                else 0
+            )
+
+            away_team = st.selectbox(
+                "Select the away team",
+                away_options,
+                index=default_away_index,
+                key="elo_away",
+            )
+
+            home_rating = elo_ratings[home_team]
+            away_rating = elo_ratings[away_team]
+
+            home_probability = expected_home_win(
+                home_rating,
+                away_rating,
+            )
+            away_probability = 1 - home_probability
+
+            col1, col2 = st.columns(2)
+
+            col1.metric(
+                f"{home_team} estimated win probability",
+                f"{home_probability * 100:.1f}%",
+            )
+            col2.metric(
+                f"{away_team} estimated win probability",
+                f"{away_probability * 100:.1f}%",
+            )
+
+            matchup_adjustment = test_probability_adjustment(
+                historical_predictions
+            )
+            if matchup_adjustment:
+                strength = matchup_adjustment["strength"]
+                adjusted_home = shrink_probability(home_probability, strength)
+                adjusted_away = 1 - adjusted_home
+                st.write("**Original and adjusted matchup probabilities**")
+                st.dataframe(
+                    [
+                        {
+                            "Team": home_team,
+                            "Original Elo win %": round(home_probability * 100, 1),
+                            "Adjusted win %": round(adjusted_home * 100, 1),
+                        },
+                        {
+                            "Team": away_team,
+                            "Original Elo win %": round(away_probability * 100, 1),
+                            "Adjusted win %": round(adjusted_away * 100, 1),
+                        },
+                    ],
+                    hide_index=True,
+                    use_container_width=True,
+                )
+                st.caption(
+                    f"Adjusted probabilities use strength {strength:.2f}, "
+                    "learned from the earlier calibration period shown above. "
+                    "Both teams' adjusted probabilities add to 100%; the "
+                    "favorite stays the same. These are experimental estimates. "
+                    "The adjustment is recalculated when historical data updates "
+                    "and does not account for injuries or weather."
+                )
+
+            col1, col2 = st.columns(2)
+            col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
+            col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
+
+            st.caption(
+                "Probabilities include a fixed home-field advantage. "
+                "They are model estimates, not live odds or guarantees."
+            )
+
+        st.divider()
+        st.subheader("NFL Team Strengths & Weaknesses")
         st.caption(
-            f"Test period: {summary['first_date']} to "
-            f"{summary['last_date']}. Accuracy is based on "
-            "non-tied games. Historical performance does not "
-            "guarantee future performance."
+            "Season-to-date regular-season statistics for all 32 NFL teams. "
+            "These provide matchup context and do not change Elo probabilities. "
+            "Season totals are current, not historical snapshots for the sidebar date."
         )
+        available_seasons = sorted({game["season"] for game in history}, reverse=True)
+        stats_season = st.selectbox(
+            "Team statistics season", available_seasons[:5], key="team_stats_season",
+        )
+        with st.expander("View offense, defense, and league comparisons"):
+            if st.button("Load team statistics", key="load_team_stats"):
+                st.session_state["team_stats_loaded_season"] = stats_season
+            if st.session_state.get("team_stats_loaded_season") == stats_season:
+                try:
+                    with st.spinner("Loading all NFL teams..."):
+                        team_stats = load_all_nfl_team_statistics(stats_season)
+                    league_rows = team_stats["rows"]
+                    st.caption(
+                        f"Source: ESPN. Retrieved {team_stats['fetched_at']}. "
+                        f"Available teams: {len(league_rows)}/{team_stats['expected']}. "
+                        "Cached for up to one hour; Refresh live data clears the cache."
+                    )
+                    if len(league_rows) < 32:
+                        st.warning(
+                            "Some team data is unavailable. Averages and ranks "
+                            "compare only available teams."
+                        )
+                    if league_rows:
+                        names = [row["Team"] for row in league_rows]
+                        selected_name = st.selectbox(
+                            "Choose any NFL team", names, key="team_strength_selection",
+                        )
+                        selected_stats = next(
+                            row for row in league_rows if row["Team"] == selected_name
+                        )
+                        st.write(
+                            f"**{selected_name}: {selected_stats['Games']} games**"
+                        )
+                        comparisons = get_team_comparison_rows(selected_stats, league_rows)
+                        st.dataframe(comparisons, hide_index=True, use_container_width=True)
+                        strengths = [
+                            row["Statistic"] for row in comparisons
+                            if row["Assessment"] == "Above league average"
+                        ]
+                        weaknesses = [
+                            row["Statistic"] for row in comparisons
+                            if row["Assessment"] == "Below league average"
+                        ]
+                        st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
+                        st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
+                        st.caption(
+                            "Rank 1 is best for the listed metric. Lower yards and "
+                            "points allowed are better on defense. League averages "
+                            "are unweighted averages of available team values. "
+                            "These comparisons do not adjust for opponent strength "
+                            "or game situation; yards alone do not establish quality. "
+                            "Points include all team scoring, including defense and "
+                            "special teams. Early-season samples may be small."
+                        )
+                        if st.checkbox("Compare all NFL teams", key="show_all_team_stats"):
+                            st.dataframe(
+                                league_rows, hide_index=True, use_container_width=True,
+                            )
+                    else:
+                        st.info("No team statistics are available for this season.")
+                    if team_stats["errors"]:
+                        if st.checkbox("Show unavailable team data", key="show_team_stats_errors"):
+                            for error in team_stats["errors"]:
+                                st.write(error)
+                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                    st.warning(f"Team statistics could not be loaded: {exc}")
+            else:
+                st.info("Click Load team statistics to retrieve the selected season.")
 
-        st.subheader("Backtest Results by Season")
+        st.divider()
+        st.subheader("NFL Player Statistics: QB, RB & WR")
         st.caption(
-            "Uses only games in the same final-20% test period shown above. "
-            "The first and current seasons may be partial. Accuracy excludes "
-            "ties; Brier scores include them. Positive accuracy gain and "
-            "positive Brier improvement mean Elo beat the baseline. "
-            "pp means percentage points."
+            "Browse any NFL team. Regular-season player totals provide context "
+            "and do not change matchup probabilities."
         )
+        with st.expander("View quarterback, running back, and wide receiver stats"):
+            if st.checkbox("Open player statistics", key="open_player_stats"):
+                try:
+                    player_teams = load_nfl_player_team_directory()
+                    team_names = [team["name"] for team in player_teams]
+                    player_team_name = st.selectbox(
+                        "Player statistics team", team_names, key="player_stats_team",
+                    )
+                    player_team_id = next(
+                        team["id"] for team in player_teams
+                        if team["name"] == player_team_name
+                    )
+                    player_season = st.selectbox(
+                        "Player statistics season", available_seasons[:5],
+                        key="player_stats_season",
+                    )
+                    selection = (player_team_id, player_season)
+                    if st.button("Load QB, RB & WR stats", key="load_player_stats"):
+                        st.session_state["loaded_player_stats_selection"] = selection
+                    if st.session_state.get("loaded_player_stats_selection") == selection:
+                        with st.spinner("Loading roster and player season statistics..."):
+                            player_data = load_nfl_team_player_statistics(
+                                player_team_id, player_season,
+                            )
+                        st.caption(
+                            f"Source: ESPN. {player_season} regular season. "
+                            f"Retrieved {player_data['fetched_at']}. "
+                            f"Statistics available for {len(player_data['rows'])}/"
+                            f"{player_data['roster_count']} roster players at these "
+                            "positions. Cached up to one hour."
+                        )
+                        qb_tab, rb_tab, wr_tab = st.tabs(
+                            ["Quarterbacks", "Running backs", "Wide receivers"]
+                        )
+                        for position, tab in zip(("QB", "RB", "WR"), (qb_tab, rb_tab, wr_tab)):
+                            with tab:
+                                position_rows = [
+                                    row for row in player_data["rows"]
+                                    if row["Position"] == position
+                                ]
+                                sort_field = {
+                                    "QB": "Pass attempts", "RB": "Carries", "WR": "Targets"
+                                }[position]
+                                position_rows.sort(
+                                    key=lambda row: row.get(sort_field) or 0, reverse=True,
+                                )
+                                if position_rows:
+                                    st.dataframe(
+                                        position_rows, hide_index=True,
+                                        use_container_width=True,
+                                    )
+                                else:
+                                    st.info("No statistics available for this position.")
+                        st.caption(
+                            "Players come from ESPN's roster for the selected season, "
+                            "including reserves when returned. This is not a confirmed "
+                            "starting lineup. Player totals can include games for other "
+                            "teams after a trade; they are not necessarily totals for "
+                            "the selected team alone. Blank values mean unavailable, "
+                            "not zero. Passer rating is not ESPN Total QBR. "
+                            "Stats are season totals, not snapshots as of the sidebar "
+                            "date. Injuries and recent-game splits will be added separately."
+                        )
+                        if player_data["errors"] and st.checkbox(
+                            "Show players with unavailable stats", key="player_stat_errors",
+                        ):
+                            for error in player_data["errors"]:
+                                st.write(error)
+                    else:
+                        st.info("Click Load QB, RB & WR stats for the selected team and season.")
+                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                    st.warning(f"Player statistics could not be loaded: {exc}")
+
+        st.divider()
+        st.subheader("NFL Injury & Availability Updates")
+        st.caption(
+            "Latest ESPN player statuses for all NFL teams. These are current "
+            "updates, not reports as of the sidebar date or selected statistics "
+            "season. They do not change model probabilities."
+        )
+        with st.expander("View current injury and availability reports"):
+            if st.button("Load / refresh injury updates", key="refresh_injury_updates"):
+                load_nfl_injury_updates.clear()
+                st.session_state["show_injury_updates"] = True
+            if st.session_state.get("show_injury_updates"):
+                try:
+                    with st.spinner("Loading NFL injury updates..."):
+                        injury_report = load_nfl_injury_updates()
+                        injury_teams = load_nfl_player_team_directory()
+                    st.caption(
+                        f"Source: ESPN. Retrieved {injury_report['fetched_at']}. "
+                        f"Source timestamp: {injury_report['source_timestamp']}. "
+                        f"Source season: {injury_report['season']}. "
+                        "Data is cached for up to five minutes."
+                    )
+                    injury_team_options = sorted(
+                        {team["name"] for team in injury_teams}
+                        | set(injury_report["teams"])
+                    )
+                    injury_team = st.selectbox(
+                        "Injury report team", ["All teams"] + injury_team_options,
+                        key="injury_team_selection",
+                    )
+                    include_active = st.checkbox(
+                        "Include Active status updates", key="include_active_injury_updates",
+                        help="The source can list cleared players and other availability news with Active status.",
+                    )
+                    injury_rows = [
+                        row for row in injury_report["rows"]
+                        if (injury_team == "All teams" or row["Team"] == injury_team)
+                        and (include_active or row["Status"].lower() != "active")
+                    ]
+                    status_options = sorted(
+                        {"Probable", "Questionable", "Doubtful", "Out", "Injured Reserve"}
+                        | {row["Status"] for row in injury_rows}
+                    )
+                    status_filter = st.multiselect(
+                        "Filter injury status",
+                        status_options,
+                        key="injury_status_selection",
+                        help="Leave empty to show all available statuses. Probable appears only when explicitly reported by ESPN; no status is inferred.",
+                    )
+                    if status_filter:
+                        injury_rows = [
+                            row for row in injury_rows if row["Status"] in status_filter
+                        ]
+                    positions = sorted({row["Position"] for row in injury_rows})
+                    position_filter = st.selectbox(
+                        "Injury report position", ["All positions"] + positions,
+                        key="injury_position_selection",
+                    )
+                    if position_filter != "All positions":
+                        injury_rows = [
+                            row for row in injury_rows if row["Position"] == position_filter
+                        ]
+                    st.write(f"**{len(injury_rows)} listed updates match your filters.**")
+                    if injury_rows:
+                        st.dataframe(
+                            injury_rows, hide_index=True, use_container_width=True,
+                            column_config={
+                                "Player page": st.column_config.LinkColumn(
+                                    "ESPN player page", display_text="View player",
+                                ),
+                            },
+                        )
+                    else:
+                        st.info(
+                            "No reports match these filters. This does not confirm "
+                            "that every player is healthy or available."
+                        )
+                    st.caption(
+                        "Questionable does not mean ruled out. Out and Injured "
+                        "Reserve are different statuses. Active updates are hidden "
+                        "unless selected. Report times are shown as supplied by "
+                        "ESPN in UTC. This feed may include older reports and "
+                        "availability news; it is not a confirmed game-day inactive "
+                        "list. Use the player links to review the latest details."
+                    )
+                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                    st.warning(f"Injury updates could not be loaded: {exc}")
+            else:
+                st.info("Click Load / refresh injury updates to view the latest reports.")
+
+        st.subheader("Current Model Team Ratings")
+
+        rating_table = [
+            {"Team": team, "Elo Rating": round(rating, 1)}
+            for team, rating in sorted(
+                elo_ratings.items(),
+                key=lambda item: item[1],
+                reverse=True,
+            )
+        ]
+
         st.dataframe(
-            get_season_backtest_rows(test_games),
+            rating_table,
             hide_index=True,
             use_container_width=True,
         )
 
-        st.subheader("Probability Calibration")
-        st.write(
-            "When the model assigns the home team around a 60% chance, "
-            "does the home team win around 60% of the time?"
+    except requests.exceptions.Timeout:
+        st.error(
+            "The historical NFL dataset took too long to download. "
+            "Refresh the app and try again."
         )
-        st.caption(
-            "Uses the same test period, with ties excluded. Each row groups "
-            "home-team predictions into a 10-percentage-point range; upper "
-            "bounds are excluded except 100%. Compare the average prediction "
-            "with the actual home win rate. A gap near zero is better. "
-            "A positive gap means home teams won more often than predicted; "
-            "a negative gap means they won less often. Small samples can "
-            "produce large gaps by chance. This is a diagnostic, not an "
-            "adjustment to the model's probabilities."
+    except requests.exceptions.RequestException as exc:
+        st.error(
+            f"Could not download the historical NFL dataset: {exc}"
         )
-        calibration_rows = get_calibration_rows(test_games)
-        if calibration_rows:
-            st.dataframe(
-                calibration_rows,
-                hide_index=True,
-                use_container_width=True,
-            )
-        else:
-            st.info("No non-tied test games are available for calibration.")
-
-        st.subheader("Probability Adjustment Test")
-        st.write(
-            "This experiment moves probabilities toward 50% to test "
-            "whether softer confidence improves forecasts."
-        )
-        adjustment = test_probability_adjustment(historical_predictions)
-        if adjustment:
-            st.caption(
-                f"Adjustment learned from {adjustment['calibration_games']:,} "
-                f"games dated {adjustment['calibration_first']} to "
-                f"{adjustment['calibration_last']}. Compared on "
-                f"{adjustment['evaluation_games']:,} later games dated "
-                f"{adjustment['evaluation_first']} to "
-                f"{adjustment['evaluation_last']}. Whole dates stay together, "
-                "so the comparison may include slightly more games than "
-                "the summary above. Elo still updates after each completed "
-                "date; the adjustment is fixed before evaluation begins."
-            )
-            original_col, adjusted_col, improvement_col = st.columns(3)
-            original_col.metric(
-                "Original Brier (comparison games)",
-                f"{adjustment['original_brier']:.4f}",
-            )
-            adjusted_col.metric(
-                "Adjusted Brier (same games)",
-                f"{adjustment['adjusted_brier']:.4f}",
-            )
-            improvement_col.metric(
-                "Brier improvement",
-                f"{adjustment['improvement']:+.4f}",
-                help="Positive means the adjustment improved the Brier score.",
-            )
-            example = shrink_probability(0.80, adjustment["strength"])
-            st.write(
-                f"**Adjustment strength:** {adjustment['strength']:.2f} "
-                f"(1.00 keeps the original probability). "
-                f"An 80% prediction becomes **{example * 100:.1f}%**."
-            )
-            if adjustment["improvement"] > 0:
-                st.success(
-                    "The adjusted probabilities scored better on these "
-                    "later comparison games."
-                )
-            elif adjustment["improvement"] < 0:
-                st.warning(
-                    "The adjustment did not improve these later games. "
-                    "The original model scored better."
-                )
-            else:
-                st.info("The original and adjusted scores are equal.")
-            st.caption(
-                "Ties count as 0.5 for Brier scoring. This adjustment keeps "
-                "the same favorite, so winner accuracy does not change. "
-                "This is an exploratory comparison: we already inspected "
-                "this test period's results. Future unseen games are needed "
-                "for independent confirmation. Matchup predictions below "
-                "continue to use the original Elo probabilities."
-            )
-        else:
-            st.info("Not enough historical games for an adjustment test.")
-
-        with st.expander("View recent historical test predictions"):
-            st.dataframe(
-                [
-                    {
-                        "Date": game["Date"],
-                        "Season": game["Season"],
-                        "Home Team": game["Home Team"],
-                        "Away Team": game["Away Team"],
-                        "Predicted Home Win %": (
-                            game["Predicted Home Win %"]
-                        ),
-                        "Actual Result": game["Actual Result"],
-                    }
-                    for game in test_games[-50:]
-                ],
-                hide_index=True,
-                use_container_width=True,
-    )
-
-    st.subheader("Predict an NFL Matchup")
-
-    team_codes = sorted(elo_ratings.keys())
-
-    if len(team_codes) >= 2:
-        home_team = st.selectbox(
-            "Select the home team",
-            team_codes,
-            index=team_codes.index("KC") if "KC" in team_codes else 0,
-            key="elo_home",
+    except (ValueError, TypeError, KeyError, csv.Error) as exc:
+        st.error(
+            f"Could not process the historical NFL data: {exc}"
         )
 
-        away_options = [
-            team for team in team_codes if team != home_team
-        ]
-
-        default_away_index = (
-            away_options.index("BUF")
-            if "BUF" in away_options
-            else 0
-        )
-
-        away_team = st.selectbox(
-            "Select the away team",
-            away_options,
-            index=default_away_index,
-            key="elo_away",
-        )
-
-        home_rating = elo_ratings[home_team]
-        away_rating = elo_ratings[away_team]
-
-        home_probability = expected_home_win(
-            home_rating,
-            away_rating,
-        )
-        away_probability = 1 - home_probability
-
-        col1, col2 = st.columns(2)
-
-        col1.metric(
-            f"{home_team} estimated win probability",
-            f"{home_probability * 100:.1f}%",
-        )
-        col2.metric(
-            f"{away_team} estimated win probability",
-            f"{away_probability * 100:.1f}%",
-        )
-
-        matchup_adjustment = test_probability_adjustment(
-            historical_predictions
-        )
-        if matchup_adjustment:
-            strength = matchup_adjustment["strength"]
-            adjusted_home = shrink_probability(home_probability, strength)
-            adjusted_away = 1 - adjusted_home
-            st.write("**Original and adjusted matchup probabilities**")
-            st.dataframe(
-                [
-                    {
-                        "Team": home_team,
-                        "Original Elo win %": round(home_probability * 100, 1),
-                        "Adjusted win %": round(adjusted_home * 100, 1),
-                    },
-                    {
-                        "Team": away_team,
-                        "Original Elo win %": round(away_probability * 100, 1),
-                        "Adjusted win %": round(adjusted_away * 100, 1),
-                    },
-                ],
-                hide_index=True,
-                use_container_width=True,
-            )
-            st.caption(
-                f"Adjusted probabilities use strength {strength:.2f}, "
-                "learned from the earlier calibration period shown above. "
-                "Both teams' adjusted probabilities add to 100%; the "
-                "favorite stays the same. These are experimental estimates. "
-                "The adjustment is recalculated when historical data updates "
-                "and does not account for injuries or weather."
-            )
-
-        col1, col2 = st.columns(2)
-        col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
-        col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
-
-        st.caption(
-            "Probabilities include a fixed home-field advantage. "
-            "They are model estimates, not live odds or guarantees."
-        )
-
-    st.divider()
-    st.subheader("NFL Team Strengths & Weaknesses")
-    st.caption(
-        "Season-to-date regular-season statistics for all 32 NFL teams. "
-        "These provide matchup context and do not change Elo probabilities. "
-        "Season totals are current, not historical snapshots for the sidebar date."
-    )
-    available_seasons = sorted({game["season"] for game in history}, reverse=True)
-    stats_season = st.selectbox(
-        "Team statistics season", available_seasons[:5], key="team_stats_season",
-    )
-    with st.expander("View offense, defense, and league comparisons"):
-        if st.button("Load team statistics", key="load_team_stats"):
-            st.session_state["team_stats_loaded_season"] = stats_season
-        if st.session_state.get("team_stats_loaded_season") == stats_season:
-            try:
-                with st.spinner("Loading all NFL teams..."):
-                    team_stats = load_all_nfl_team_statistics(stats_season)
-                league_rows = team_stats["rows"]
-                st.caption(
-                    f"Source: ESPN. Retrieved {team_stats['fetched_at']}. "
-                    f"Available teams: {len(league_rows)}/{team_stats['expected']}. "
-                    "Cached for up to one hour; Refresh live data clears the cache."
-                )
-                if len(league_rows) < 32:
-                    st.warning(
-                        "Some team data is unavailable. Averages and ranks "
-                        "compare only available teams."
-                    )
-                if league_rows:
-                    names = [row["Team"] for row in league_rows]
-                    selected_name = st.selectbox(
-                        "Choose any NFL team", names, key="team_strength_selection",
-                    )
-                    selected_stats = next(
-                        row for row in league_rows if row["Team"] == selected_name
-                    )
-                    st.write(
-                        f"**{selected_name}: {selected_stats['Games']} games**"
-                    )
-                    comparisons = get_team_comparison_rows(selected_stats, league_rows)
-                    st.dataframe(comparisons, hide_index=True, use_container_width=True)
-                    strengths = [
-                        row["Statistic"] for row in comparisons
-                        if row["Assessment"] == "Above league average"
-                    ]
-                    weaknesses = [
-                        row["Statistic"] for row in comparisons
-                        if row["Assessment"] == "Below league average"
-                    ]
-                    st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
-                    st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
-                    st.caption(
-                        "Rank 1 is best for the listed metric. Lower yards and "
-                        "points allowed are better on defense. League averages "
-                        "are unweighted averages of available team values. "
-                        "These comparisons do not adjust for opponent strength "
-                        "or game situation; yards alone do not establish quality. "
-                        "Points include all team scoring, including defense and "
-                        "special teams. Early-season samples may be small."
-                    )
-                    if st.checkbox("Compare all NFL teams", key="show_all_team_stats"):
-                        st.dataframe(
-                            league_rows, hide_index=True, use_container_width=True,
-                        )
-                else:
-                    st.info("No team statistics are available for this season.")
-                if team_stats["errors"]:
-                    if st.checkbox("Show unavailable team data", key="show_team_stats_errors"):
-                        for error in team_stats["errors"]:
-                            st.write(error)
-            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
-                st.warning(f"Team statistics could not be loaded: {exc}")
-        else:
-            st.info("Click Load team statistics to retrieve the selected season.")
-
-    st.divider()
-    st.subheader("NFL Player Statistics: QB, RB & WR")
-    st.caption(
-        "Browse any NFL team. Regular-season player totals provide context "
-        "and do not change matchup probabilities."
-    )
-    with st.expander("View quarterback, running back, and wide receiver stats"):
-        if st.checkbox("Open player statistics", key="open_player_stats"):
-            try:
-                player_teams = load_nfl_player_team_directory()
-                team_names = [team["name"] for team in player_teams]
-                player_team_name = st.selectbox(
-                    "Player statistics team", team_names, key="player_stats_team",
-                )
-                player_team_id = next(
-                    team["id"] for team in player_teams
-                    if team["name"] == player_team_name
-                )
-                player_season = st.selectbox(
-                    "Player statistics season", available_seasons[:5],
-                    key="player_stats_season",
-                )
-                selection = (player_team_id, player_season)
-                if st.button("Load QB, RB & WR stats", key="load_player_stats"):
-                    st.session_state["loaded_player_stats_selection"] = selection
-                if st.session_state.get("loaded_player_stats_selection") == selection:
-                    with st.spinner("Loading roster and player season statistics..."):
-                        player_data = load_nfl_team_player_statistics(
-                            player_team_id, player_season,
-                        )
-                    st.caption(
-                        f"Source: ESPN. {player_season} regular season. "
-                        f"Retrieved {player_data['fetched_at']}. "
-                        f"Statistics available for {len(player_data['rows'])}/"
-                        f"{player_data['roster_count']} roster players at these "
-                        "positions. Cached up to one hour."
-                    )
-                    qb_tab, rb_tab, wr_tab = st.tabs(
-                        ["Quarterbacks", "Running backs", "Wide receivers"]
-                    )
-                    for position, tab in zip(("QB", "RB", "WR"), (qb_tab, rb_tab, wr_tab)):
-                        with tab:
-                            position_rows = [
-                                row for row in player_data["rows"]
-                                if row["Position"] == position
-                            ]
-                            sort_field = {
-                                "QB": "Pass attempts", "RB": "Carries", "WR": "Targets"
-                            }[position]
-                            position_rows.sort(
-                                key=lambda row: row.get(sort_field) or 0, reverse=True,
-                            )
-                            if position_rows:
-                                st.dataframe(
-                                    position_rows, hide_index=True,
-                                    use_container_width=True,
-                                )
-                            else:
-                                st.info("No statistics available for this position.")
-                    st.caption(
-                        "Players come from ESPN's roster for the selected season, "
-                        "including reserves when returned. This is not a confirmed "
-                        "starting lineup. Player totals can include games for other "
-                        "teams after a trade; they are not necessarily totals for "
-                        "the selected team alone. Blank values mean unavailable, "
-                        "not zero. Passer rating is not ESPN Total QBR. "
-                        "Stats are season totals, not snapshots as of the sidebar "
-                        "date. Injuries and recent-game splits will be added separately."
-                    )
-                    if player_data["errors"] and st.checkbox(
-                        "Show players with unavailable stats", key="player_stat_errors",
-                    ):
-                        for error in player_data["errors"]:
-                            st.write(error)
-                else:
-                    st.info("Click Load QB, RB & WR stats for the selected team and season.")
-            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
-                st.warning(f"Player statistics could not be loaded: {exc}")
-
-    st.divider()
-    st.subheader("NFL Injury & Availability Updates")
-    st.caption(
-        "Latest ESPN player statuses for all NFL teams. These are current "
-        "updates, not reports as of the sidebar date or selected statistics "
-        "season. They do not change model probabilities."
-    )
-    with st.expander("View current injury and availability reports"):
-        if st.button("Load / refresh injury updates", key="refresh_injury_updates"):
-            load_nfl_injury_updates.clear()
-            st.session_state["show_injury_updates"] = True
-        if st.session_state.get("show_injury_updates"):
-            try:
-                with st.spinner("Loading NFL injury updates..."):
-                    injury_report = load_nfl_injury_updates()
-                    injury_teams = load_nfl_player_team_directory()
-                st.caption(
-                    f"Source: ESPN. Retrieved {injury_report['fetched_at']}. "
-                    f"Source timestamp: {injury_report['source_timestamp']}. "
-                    f"Source season: {injury_report['season']}. "
-                    "Data is cached for up to five minutes."
-                )
-                injury_team_options = sorted(
-                    {team["name"] for team in injury_teams}
-                    | set(injury_report["teams"])
-                )
-                injury_team = st.selectbox(
-                    "Injury report team", ["All teams"] + injury_team_options,
-                    key="injury_team_selection",
-                )
-                include_active = st.checkbox(
-                    "Include Active status updates", key="include_active_injury_updates",
-                    help="The source can list cleared players and other availability news with Active status.",
-                )
-                injury_rows = [
-                    row for row in injury_report["rows"]
-                    if (injury_team == "All teams" or row["Team"] == injury_team)
-                    and (include_active or row["Status"].lower() != "active")
-                ]
-                status_options = sorted(
-                    {"Probable", "Questionable", "Doubtful", "Out", "Injured Reserve"}
-                    | {row["Status"] for row in injury_rows}
-                )
-                status_filter = st.multiselect(
-                    "Filter injury status",
-                    status_options,
-                    key="injury_status_selection",
-                    help="Leave empty to show all available statuses. Probable appears only when explicitly reported by ESPN; no status is inferred.",
-                )
-                if status_filter:
-                    injury_rows = [
-                        row for row in injury_rows if row["Status"] in status_filter
-                    ]
-                positions = sorted({row["Position"] for row in injury_rows})
-                position_filter = st.selectbox(
-                    "Injury report position", ["All positions"] + positions,
-                    key="injury_position_selection",
-                )
-                if position_filter != "All positions":
-                    injury_rows = [
-                        row for row in injury_rows if row["Position"] == position_filter
-                    ]
-                st.write(f"**{len(injury_rows)} listed updates match your filters.**")
-                if injury_rows:
-                    st.dataframe(
-                        injury_rows, hide_index=True, use_container_width=True,
-                        column_config={
-                            "Player page": st.column_config.LinkColumn(
-                                "ESPN player page", display_text="View player",
-                            ),
-                        },
-                    )
-                else:
-                    st.info(
-                        "No reports match these filters. This does not confirm "
-                        "that every player is healthy or available."
-                    )
-                st.caption(
-                    "Questionable does not mean ruled out. Out and Injured "
-                    "Reserve are different statuses. Active updates are hidden "
-                    "unless selected. Report times are shown as supplied by "
-                    "ESPN in UTC. This feed may include older reports and "
-                    "availability news; it is not a confirmed game-day inactive "
-                    "list. Use the player links to review the latest details."
-                )
-            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
-                st.warning(f"Injury updates could not be loaded: {exc}")
-        else:
-            st.info("Click Load / refresh injury updates to view the latest reports.")
-
-    st.subheader("Current Model Team Ratings")
-
-    rating_table = [
-        {"Team": team, "Elo Rating": round(rating, 1)}
-        for team, rating in sorted(
-            elo_ratings.items(),
-            key=lambda item: item[1],
-            reverse=True,
-        )
-    ]
-
-    st.dataframe(
-        rating_table,
-        hide_index=True,
-        use_container_width=True,
-    )
-
-except requests.exceptions.Timeout:
-    st.error(
-        "The historical NFL dataset took too long to download. "
-        "Refresh the app and try again."
-    )
-except requests.exceptions.RequestException as exc:
-    st.error(
-        f"Could not download the historical NFL dataset: {exc}"
-    )
-except (ValueError, TypeError, KeyError, csv.Error) as exc:
-    st.error(
-        f"Could not process the historical NFL data: {exc}"
+else:
+    render_nba_tools(
+        selected_date,
+        locals().get("scoreboard", {}),
+        {
+            "build_elo_model": build_elo_model,
+            "get_backtest_summary": get_backtest_summary,
+            "get_season_backtest_rows": get_season_backtest_rows,
+            "get_calibration_rows": get_calibration_rows,
+            "test_probability_adjustment": test_probability_adjustment,
+            "expected_home_win": expected_home_win,
+            "shrink_probability": shrink_probability,
+            "format_game_time": format_game_time,
+            "get_espn_weather_rows": get_espn_weather_rows,
+        },
     )
 
 st.divider()
