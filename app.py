@@ -408,6 +408,52 @@ def get_backtest_summary(predictions):
 
 
 
+def get_season_backtest_rows(test_games):
+    games_by_season = {}
+    for game in test_games:
+        games_by_season.setdefault(game["Season"], []).append(game)
+
+    rows = []
+    for season, games in sorted(games_by_season.items()):
+        non_ties = [
+            game for game in games if game["Actual Result"] != "Tie"
+        ]
+        accuracy = (
+            sum(game["Correct"] for game in non_ties) / len(non_ties)
+            if non_ties else None
+        )
+        baseline_accuracy = (
+            sum(game["Baseline Correct"] for game in non_ties) / len(non_ties)
+            if non_ties else None
+        )
+        brier = sum(game["Brier Score"] for game in games) / len(games)
+        baseline_brier = (
+            sum(game["Baseline Brier Score"] for game in games) / len(games)
+        )
+        rows.append({
+            "Season": season,
+            "Test games": len(games),
+            "Non-tied games": len(non_ties),
+            "Winner accuracy": (
+                f"{accuracy * 100:.1f}%" if accuracy is not None else "N/A"
+            ),
+            "Baseline accuracy": (
+                f"{baseline_accuracy * 100:.1f}%"
+                if baseline_accuracy is not None else "N/A"
+            ),
+            "Accuracy gain (pp)": (
+                round((accuracy - baseline_accuracy) * 100, 1)
+                if accuracy is not None else None
+            ),
+            "Brier score": round(brier, 4),
+            "Baseline Brier": round(baseline_brier, 4),
+            "Brier improvement": round(baseline_brier - brier, 4),
+            "First test date": min(game["Date"] for game in games),
+            "Last test date": max(game["Date"] for game in games),
+        })
+    return rows
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -705,6 +751,20 @@ try:
             f"{summary['last_date']}. Accuracy is based on "
             "non-tied games. Historical performance does not "
             "guarantee future performance."
+        )
+
+        st.subheader("Backtest Results by Season")
+        st.caption(
+            "Uses only games in the same final-20% test period shown above. "
+            "The first and current seasons may be partial. Accuracy excludes "
+            "ties; Brier scores include them. Positive accuracy gain and "
+            "positive Brier improvement mean Elo beat the baseline. "
+            "pp means percentage points."
+        )
+        st.dataframe(
+            get_season_backtest_rows(test_games),
+            hide_index=True,
+            use_container_width=True,
         )
 
         with st.expander("View recent historical test predictions"):
