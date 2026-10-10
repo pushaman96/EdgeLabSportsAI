@@ -318,6 +318,7 @@ def build_elo_model(games, k_factor=20, home_advantage=55):
                 "Season": game["season"],
                 "Home Team": home,
                 "Away Team": away,
+                "Home Win Probability": probability,
                 "Predicted Home Win %": round(probability * 100, 1),
                 "Baseline Home Probability": round(
                     baseline_probability * 100, 1
@@ -450,6 +451,41 @@ def get_season_backtest_rows(test_games):
             "Brier improvement": round(baseline_brier - brier, 4),
             "First test date": min(game["Date"] for game in games),
             "Last test date": max(game["Date"] for game in games),
+        })
+    return rows
+
+
+def get_calibration_rows(test_games):
+    buckets = {}
+    for game in test_games:
+        # Exclude ties so observed frequencies are actual home win rates.
+        if game["Actual Result"] == "Tie":
+            continue
+        probability = game["Home Win Probability"]
+        bucket = min(int(probability * 10), 9)
+        buckets.setdefault(bucket, []).append(game)
+
+    rows = []
+    for bucket, games in sorted(buckets.items()):
+        mean_probability = (
+            sum(game["Home Win Probability"] for game in games) / len(games)
+        )
+        actual_rate = (
+            sum(game["Actual Result"] == "Home win" for game in games)
+            / len(games)
+        )
+        rows.append({
+            "Predicted home win range": (
+                f"{bucket * 10}–{(bucket + 1) * 10}%"
+                + (" (includes 100%)" if bucket == 9 else "")
+            ),
+            "Games": len(games),
+            "Average predicted home win %": round(mean_probability * 100, 1),
+            "Actual home win %": round(actual_rate * 100, 1),
+            "Actual minus predicted (pp)": round(
+                (actual_rate - mean_probability) * 100, 1
+            ),
+            "Sample size": "Small sample" if len(games) < 50 else "50+ games",
         })
     return rows
 
@@ -766,6 +802,31 @@ try:
             hide_index=True,
             use_container_width=True,
         )
+
+        st.subheader("Probability Calibration")
+        st.write(
+            "When the model assigns the home team around a 60% chance, "
+            "does the home team win around 60% of the time?"
+        )
+        st.caption(
+            "Uses the same test period, with ties excluded. Each row groups "
+            "home-team predictions into a 10-percentage-point range; upper "
+            "bounds are excluded except 100%. Compare the average prediction "
+            "with the actual home win rate. A gap near zero is better. "
+            "A positive gap means home teams won more often than predicted; "
+            "a negative gap means they won less often. Small samples can "
+            "produce large gaps by chance. This is a diagnostic, not an "
+            "adjustment to the model's probabilities."
+        )
+        calibration_rows = get_calibration_rows(test_games)
+        if calibration_rows:
+            st.dataframe(
+                calibration_rows,
+                hide_index=True,
+                use_container_width=True,
+            )
+        else:
+            st.info("No non-tied test games are available for calibration.")
 
         with st.expander("View recent historical test predictions"):
             st.dataframe(
