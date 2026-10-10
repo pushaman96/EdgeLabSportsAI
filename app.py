@@ -714,7 +714,7 @@ try:
                 ],
                 hide_index=True,
                 use_container_width=True,
-        )
+    )
 
     st.subheader("Predict an NFL Matchup")
 
