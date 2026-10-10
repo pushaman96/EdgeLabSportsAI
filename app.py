@@ -1,7 +1,10 @@
 
 import streamlit as st
 import requests
-from datetime import date, timedelta
+import csv
+import io
+import math
+from datetime import date, timedelta, datetime
 
 st.set_page_config(
     page_title="EdgeLab Sports AI",
@@ -10,7 +13,7 @@ st.set_page_config(
 )
 
 st.title("🏈 EdgeLab Sports AI")
-st.write("Live scores, standings, and betting value analysis")
+st.write("Scores, standings, betting value, and NFL predictions")
 
 SPORTS = {
     "NFL": "football/nfl",
@@ -20,9 +23,14 @@ SPORTS = {
 BASE_URL = "https://site.api.espn.com/apis"
 HEADERS = {"User-Agent": "EdgeLabSportsAI/1.0"}
 
+NFL_HISTORY_URL = (
+    "https://raw.githubusercontent.com/nflverse/"
+    "nfldata/master/data/games.csv"
+)
+
 
 # -------------------------
-# ESPN DATA
+# ESPN SCORES AND STANDINGS
 # -------------------------
 
 @st.cache_data(ttl=300)
@@ -54,10 +62,7 @@ def show_games(data):
     events = data.get("events", [])
 
     if not events:
-        st.info(
-            "No games were listed for this date. "
-            "Try another date."
-        )
+        st.info("No games were listed for this date. Try another date.")
         return
 
     for event in events:
@@ -75,12 +80,8 @@ def show_games(data):
             {},
         )
 
-        home_team = home.get("team", {}).get(
-            "displayName", "Home"
-        )
-        away_team = away.get("team", {}).get(
-            "displayName", "Away"
-        )
+        home_team = home.get("team", {}).get("displayName", "Home")
+        away_team = away.get("team", {}).get("displayName", "Away")
         home_score = home.get("score", "—")
         away_score = away.get("score", "—")
 
@@ -92,15 +93,12 @@ def show_games(data):
 
         start_time = event.get("date", "")
         if start_time:
-            start_time = (
-                start_time.replace("T", " ")[:16] + " UTC"
-            )
+            start_time = start_time.replace("T", " ")[:16] + " UTC"
 
         with st.container(border=True):
             st.subheader(f"{away_team} at {home_team}")
             col1, col2, col3 = st.columns(3)
-
-            col1.metric(away_team, home_score)
+            col1.metric(away_team, away_score)
             col2.metric(home_team, home_score)
             col3.write("**Status**")
             col3.write(status)
@@ -112,10 +110,7 @@ def show_games(data):
 def stat_value(stats, possible_names):
     for stat in stats:
         if stat.get("name") in possible_names:
-            return stat.get(
-                "displayValue",
-                stat.get("value", "—"),
-            )
+            return stat.get("displayValue", stat.get("value", "—"))
     return "—"
 
 
@@ -128,12 +123,10 @@ def parse_standings(data):
             return
 
         current_group = node.get("name", group_name)
-        standings = node.get("standings", {})
-        entries = standings.get("entries", [])
+        entries = node.get("standings", {}).get("entries", [])
 
         for entry in entries:
-            team = entry.get("team", {})
-            team_name = team.get(
+            team_name = entry.get("team", {}).get(
                 "displayName", "Unknown team"
             )
 
@@ -150,8 +143,7 @@ def parse_standings(data):
                 "Losses": stat_value(stats, ["losses"]),
                 "Win %": stat_value(
                     stats,
-                    ["winPercent", "winPct",
-                     "winningPercentage"],
+                    ["winPercent", "winPct", "winningPercentage"],
                 ),
                 "Points For": stat_value(
                     stats, ["pointsFor", "pointsScored"]
@@ -169,7 +161,7 @@ def parse_standings(data):
 
 
 # -------------------------
-# BETTING CALCULATOR
+# BETTING ODDS CALCULATOR
 # -------------------------
 
 def american_to_decimal(odds):
@@ -189,13 +181,174 @@ def format_money(amount):
 
 
 # -------------------------
+# HISTORICAL NFL DATA
+# -------------------------
+
+@st.cache_data(ttl=3600)
+def load_nfl_history():
+    response = requests.get(
+        NFL_HISTORY_URL,
+        timeout=45,
+        headers=HEADERS,
+    )
+    response.raise_for_status()
+
+    reader = csv.DictReader(io.StringIO(response.text))
+    games = []
+
+    for row in reader:
+        try:
+            if row.get("game_type", "").upper() != "REG":
+                continue
+
+            home_score = float(row["home_score"])
+            away_score = float(row["away_score"])
+            season = int(row["season"])
+            home_team = row["home_team"].strip()
+            away_team = row["away_team"].strip()
+            game_day = row["gameday"]
+
+            if not home_team or not away_team:
+                continue
+
+            if not math.isfinite(home_score) or not math.isfinite(away_score):
+                continue
+
+            if home_score < 0 or away_score < 0:
+                continue
+
+            if not game_day:
+                continue
+
+            parsed_date = datetime.strptime(game_day, "%Y-%m-%d").date()
+
+            # Ignore games dated in the future.
+            if parsed_date > date.today():
+                continue
+
+            games.append({
+                "date": parsed_date,
+                "season": season,
+                "home_team": home_team,
+                "away_team": away_team,
+                "home_score": home_score,
+                "away_score": away_score,
+            })
+
+        except (ValueError, TypeError, KeyError):
+            continue
+
+    games.sort(key=lambda game: game["date"])
+
+    if len(games) < 100:
+        raise ValueError(
+            "Too few completed historical NFL games were found."
+        )
+
+    return games
+
+
+# -------------------------
+# ELO MODEL AND BACKTEST
+# -------------------------
+
+def expected_home_win(home_rating, away_rating, home_advantage=55):
+    rating_difference = home_rating + home_advantage - away_rating
+    return 1 / (1 + 10 ** (-rating_difference / 400))
+
+
+def build_elo_model(games, k_factor=20, home_advantage=55):
+    ratings = {}
+    predictions = []
+
+    for game in games:
+        home = game["home_team"]
+        away = game["away_team"]
+
+        home_rating = ratings.get(home, 1500.0)
+        away_rating = ratings.get(away, 1500.0)
+
+        # Predict BEFORE updating ratings with this game's result.
+        probability = expected_home_win(
+            home_rating,
+            away_rating,
+            home_advantage,
+        )
+
+        if game["home_score"] > game["away_score"]:
+            actual = 1.0
+        elif game["home_score"] < game["away_score"]:
+            actual = 0.0
+        else:
+            actual = 0.5
+
+        predictions.append({
+            "Date": game["date"].isoformat(),
+            "Season": game["season"],
+            "Home Team": home,
+            "Away Team": away,
+            "Predicted Home Win %": round(probability * 100, 1),
+            "Actual Result": (
+                "Home win" if actual == 1.0
+                else "Away win" if actual == 0.0
+                else "Tie"
+            ),
+            "Correct": (
+                (probability >= 0.5 and actual == 1.0)
+                or (probability < 0.5 and actual == 0.0)
+                or actual == 0.5
+            ),
+            "Brier Score": (probability - actual) ** 2,
+        })
+
+        # Update ratings only AFTER the result is known.
+        change = k_factor * (actual - probability)
+        ratings[home] = home_rating + change
+        ratings[away] = away_rating - change
+
+    return ratings, predictions
+
+
+def get_backtest_summary(predictions):
+    # Use the final 20% of games as a chronological test period.
+    # No test game is used to predict itself.
+    split_index = int(len(predictions) * 0.80)
+    test_games = predictions[split_index:]
+
+    if not test_games:
+        return None, []
+
+    non_tie_games = [
+        game for game in test_games
+        if game["Actual Result"] != "Tie"
+    ]
+
+    if not non_tie_games:
+        accuracy = 0.0
+    else:
+        accuracy = (
+            sum(game["Correct"] for game in non_tie_games)
+            / len(non_tie_games)
+        )
+
+    brier = sum(
+        game["Brier Score"] for game in test_games
+    ) / len(test_games)
+
+    return {
+        "test_games": len(test_games),
+        "accuracy": accuracy,
+        "brier": brier,
+        "first_date": test_games[0]["Date"],
+        "last_date": test_games[-1]["Date"],
+    }, test_games
+
+
+# -------------------------
 # SIDEBAR
 # -------------------------
 
-sport = st.sidebar.selectbox(
-    "Choose a sport",
-    list(SPORTS),
-)
+sport = st.sidebar.selectbox("Choose a sport", list(SPORTS))
 
 selected_date = st.sidebar.date_input(
     "Choose game date",
@@ -207,6 +360,7 @@ selected_date = st.sidebar.date_input(
 if st.sidebar.button("Refresh live data"):
     get_scoreboard.clear()
     get_standings.clear()
+    load_nfl_history.clear()
 
 
 # -------------------------
@@ -217,10 +371,7 @@ st.subheader(f"{sport} Schedule & Scores")
 
 try:
     with st.spinner(f"Loading {sport} games..."):
-        scoreboard = get_scoreboard(
-            SPORTS[sport],
-            selected_date,
-        )
+        scoreboard = get_scoreboard(SPORTS[sport], selected_date)
     show_games(scoreboard)
 
 except requests.exceptions.Timeout:
@@ -249,26 +400,21 @@ try:
 
     if not teams:
         st.warning(
-            "ESPN did not return recognizable standings. "
-            "Try refreshing later."
+            "ESPN did not return recognizable standings. Try refreshing."
         )
     else:
         team_names = ["All teams"] + sorted(
             row["Team"] for row in teams
         )
-
         selected_team = st.selectbox(
             "Find a team's record",
             team_names,
         )
 
-        if selected_team == "All teams":
-            filtered_teams = teams
-        else:
-            filtered_teams = [
-                row for row in teams
-                if row["Team"] == selected_team
-            ]
+        filtered_teams = (
+            teams if selected_team == "All teams"
+            else [row for row in teams if row["Team"] == selected_team]
+        )
 
         st.dataframe(
             filtered_teams,
@@ -299,36 +445,30 @@ st.divider()
 st.header("🎯 Betting Odds & Value Calculator")
 
 st.write(
-    "Enter the sportsbook's American odds and your estimated "
-    "probability of winning to evaluate a hypothetical bet."
+    "Enter sportsbook odds and your estimated chance of winning "
+    "to evaluate a hypothetical bet."
 )
 
 st.info(
-    "This tool does not create predictions or retrieve sportsbook "
-    "odds. Your probability estimate is an input, not a verified forecast."
+    "This calculator uses the probability you enter. It does not "
+    "retrieve live sportsbook odds or independently predict outcomes."
 )
 
 with st.form("bet_calculator"):
     col1, col2 = st.columns(2)
 
     with col1:
-        bet_sport = st.selectbox(
-            "Sport",
-            ["NFL", "NBA"],
-        )
-
+        bet_sport = st.selectbox("Bet sport", ["NFL", "NBA"])
         team_name = st.text_input(
             "Team or bet selection",
             placeholder="Example: Kansas City Chiefs",
         )
-
         odds = st.number_input(
             "American odds",
             min_value=-100000,
             max_value=100000,
             value=-110,
             step=5,
-            help="Examples: -110, +150, -200",
         )
 
     with col2:
@@ -337,9 +477,7 @@ with st.form("bet_calculator"):
             min_value=1,
             max_value=99,
             value=60,
-            step=1,
         )
-
         stake = st.number_input(
             "Amount risked ($)",
             min_value=1.0,
@@ -356,102 +494,256 @@ with st.form("bet_calculator"):
 
 if submitted:
     if odds == 0:
-        st.error(
-            "American odds cannot be zero. Use odds such as -110 or +150."
-        )
+        st.error("American odds cannot be zero. Use -110 or +150.")
     else:
         market_probability = implied_probability(odds)
         decimal_odds = american_to_decimal(odds)
-        estimated_probability_decimal = (
-            estimated_probability / 100
-        )
-
+        estimated = estimated_probability / 100
         potential_profit = stake * (decimal_odds - 1)
         potential_payout = stake + potential_profit
-
         expected_profit = (
-            estimated_probability_decimal * potential_profit
-            - (1 - estimated_probability_decimal) * stake
+            estimated * potential_profit
+            - (1 - estimated) * stake
         )
-
-        probability_difference = (
-            estimated_probability_decimal - market_probability
-        ) * 100
+        difference = (estimated - market_probability) * 100
 
         st.subheader(
             f"Results: {team_name.strip() or 'Your selected bet'}"
         )
 
         col1, col2, col3 = st.columns(3)
-
         col1.metric(
             "Sportsbook implied probability",
             f"{market_probability * 100:.2f}%",
         )
-
         col2.metric(
             "Your estimated probability",
             f"{estimated_probability:.1f}%",
         )
-
         col3.metric(
             "Probability difference",
-            f"{probability_difference:+.2f} percentage points",
+            f"{difference:+.2f} percentage points",
         )
 
         col1, col2, col3 = st.columns(3)
-
         col1.metric(
             "Potential profit if you win",
             format_money(potential_profit),
         )
-
         col2.metric(
             "Total payout if you win",
             format_money(potential_payout),
         )
-
         col3.metric(
             "Estimated expected profit",
             format_money(expected_profit),
         )
 
-        st.caption(
-            "Expected profit is a mathematical estimate based on "
-            "your input probability and the entered odds. It is not "
-            "a guarantee and excludes any additional fees."
-        )
-
-        if probability_difference > 0:
-            st.success(
-                "Your estimated probability is above the sportsbook's "
-                "implied probability. The bet has positive estimated "
-                "value under your assumptions."
-            )
-        elif probability_difference < 0:
-            st.warning(
-                "Your estimated probability is below the sportsbook's "
-                "implied probability. The bet has negative estimated "
-                "value under your assumptions."
-            )
-        else:
-            st.info(
-                "Your estimated probability matches the sportsbook's "
-                "implied probability before considering other factors."
-            )
-
         st.write(
             f"**Break-even win rate:** "
             f"{market_probability * 100:.2f}%"
         )
+        st.write(f"**Decimal odds:** {decimal_odds:.3f}")
 
-        st.write(
-            f"**Decimal odds:** {decimal_odds:.3f}"
+        if difference > 0:
+            st.success(
+                "Your estimate is above the sportsbook's implied "
+                "probability. Estimated value is positive under "
+                "your assumptions."
+            )
+        elif difference < 0:
+            st.warning(
+                "Your estimate is below the sportsbook's implied "
+                "probability. Estimated value is negative under "
+                "your assumptions."
+            )
+        else:
+            st.info(
+                "Your estimate matches the sportsbook's implied "
+                "probability before other factors."
+            )
+
+        st.caption(
+            "Expected profit is a mathematical estimate, not a "
+            "guarantee. It depends on your probability estimate "
+            "being realistic."
         )
+
+
+# -------------------------
+# NFL HISTORICAL PREDICTION MODEL
+# -------------------------
+
+st.divider()
+st.header("🏈 NFL Historical Prediction Model")
+
+st.write(
+    "This model uses historical regular-season results to maintain "
+    "Elo ratings for each team. Ratings are updated after games, "
+    "then used to estimate future matchup probabilities."
+)
+
+st.info(
+    "This is a basic research model, not a guaranteed betting edge. "
+    "It does not currently account for injuries, starting quarterbacks, "
+    "weather, or current sportsbook prices."
+)
+
+try:
+    with st.spinner("Loading historical NFL games and building Elo ratings..."):
+        history = load_nfl_history()
+        elo_ratings, historical_predictions = build_elo_model(history)
+        summary, test_games = get_backtest_summary(
+            historical_predictions
+        )
+
+    st.success(
+        f"Loaded {len(history):,} completed NFL regular-season games."
+    )
+
+    st.subheader("Historical Backtest")
+
+    st.write(
+        "The model predicts each game before updating its ratings "
+        "with that game's result. The final 20% of games are used "
+        "for a chronological test."
+    )
+
+    if summary:
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Test games",
+            f"{summary['test_games']:,}",
+        )
+        col2.metric(
+            "Winner accuracy",
+            f"{summary['accuracy'] * 100:.1f}%",
+        )
+        col3.metric(
+            "Brier score",
+            f"{summary['brier']:.3f}",
+            help="Lower is better. A perfect probability forecast scores 0.",
+        )
+
+        st.caption(
+            f"Test period: {summary['first_date']} to "
+            f"{summary['last_date']}. Accuracy is based on "
+            "non-tied games. Historical performance does not "
+            "guarantee future performance."
+        )
+
+        with st.expander("View recent historical test predictions"):
+            st.dataframe(
+                [
+                    {
+                        "Date": game["Date"],
+                        "Season": game["Season"],
+                        "Home Team": game["Home Team"],
+                        "Away Team": game["Away Team"],
+                        "Predicted Home Win %": (
+                            game["Predicted Home Win %"]
+                        ),
+                        "Actual Result": game["Actual Result"],
+                    }
+                    for game in test_games[-50:]
+                ],
+                hide_index=True,
+                use_container_width=True,
+            )
+
+    st.subheader("Predict an NFL Matchup")
+
+    team_codes = sorted(elo_ratings.keys())
+
+    if len(team_codes) >= 2:
+        home_team = st.selectbox(
+            "Select the home team",
+            team_codes,
+            index=team_codes.index("KC") if "KC" in team_codes else 0,
+            key="elo_home",
+        )
+
+        away_options = [
+            team for team in team_codes if team != home_team
+        ]
+
+        default_away_index = (
+            away_options.index("BUF")
+            if "BUF" in away_options
+            else 0
+        )
+
+        away_team = st.selectbox(
+            "Select the away team",
+            away_options,
+            index=default_away_index,
+            key="elo_away",
+        )
+
+        home_rating = elo_ratings[home_team]
+        away_rating = elo_ratings[away_team]
+
+        home_probability = expected_home_win(
+            home_rating,
+            away_rating,
+        )
+        away_probability = 1 - home_probability
+
+        col1, col2 = st.columns(2)
+
+        col1.metric(
+            f"{home_team} estimated win probability",
+            f"{home_probability * 100:.1f}%",
+        )
+        col2.metric(
+            f"{away_team} estimated win probability",
+            f"{away_probability * 100:.1f}%",
+        )
+
+        col1, col2 = st.columns(2)
+        col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
+        col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
+
+        st.caption(
+            "Probabilities include a fixed home-field advantage. "
+            "They are model estimates, not live odds or guarantees."
+        )
+
+    st.subheader("Current Model Team Ratings")
+
+    rating_table = [
+        {"Team": team, "Elo Rating": round(rating, 1)}
+        for team, rating in sorted(
+            elo_ratings.items(),
+            key=lambda item: item[1],
+            reverse=True,
+        )
+    ]
+
+    st.dataframe(
+        rating_table,
+        hide_index=True,
+        use_container_width=True,
+    )
+
+except requests.exceptions.Timeout:
+    st.error(
+        "The historical NFL dataset took too long to download. "
+        "Refresh the app and try again."
+    )
+except requests.exceptions.RequestException as exc:
+    st.error(
+        f"Could not download the historical NFL dataset: {exc}"
+    )
+except (ValueError, TypeError, KeyError, csv.Error) as exc:
+    st.error(
+        f"Could not process the historical NFL data: {exc}"
+    )
 
 st.divider()
 st.caption(
-    "EdgeLab Sports AI — schedules, scores, standings, and a "
-    "user-input betting calculator. Estimates are not guarantees "
-    "of outcomes or profit."
+    "EdgeLab Sports AI — historical Elo estimates and betting "
+    "calculations are for research and educational purposes. "
+    "No prediction guarantees a result or profit."
 )
