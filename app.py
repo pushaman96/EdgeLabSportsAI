@@ -5,7 +5,8 @@ import csv
 import io
 import math
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, timezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 st.set_page_config(
     page_title="EdgeLab Sports AI",
@@ -94,7 +95,10 @@ def show_games(data):
 
         start_time = event.get("date", "")
         if start_time:
-            start_time = start_time.replace("T", " ")[:16] + " UTC"
+            try:
+                start_time = format_game_time(start_time)
+            except (ValueError, TypeError, ZoneInfoNotFoundError):
+                start_time = event.get("date", "") + " (source time)"
 
         with st.container(border=True):
             st.subheader(f"{away_team} at {home_team}")
@@ -832,6 +836,127 @@ def load_nfl_injury_updates():
     return report
 
 
+def format_game_time(game_time):
+    if not game_time:
+        return "Not provided"
+    kickoff = datetime.fromisoformat(game_time.replace("Z", "+00:00"))
+    if kickoff.tzinfo is None:
+        raise ValueError("Game time has no timezone.")
+    return kickoff.astimezone(
+        ZoneInfo("America/Los_Angeles")
+    ).strftime("%a, %b %d, %Y at %I:%M %p %Z")
+
+
+@st.cache_data(ttl=300)
+def load_espn_game_weather(event_id):
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/football/nfl/summary",
+        params={"event": event_id}, headers=HEADERS, timeout=20,
+    )
+    response.raise_for_status()
+    data = response.json()
+    if str(data.get("header", {}).get("id", "")) != str(event_id):
+        raise ValueError("ESPN returned a different game.")
+    return {
+        "weather": data.get("gameInfo", {}).get("weather") or {},
+        "venue": data.get("gameInfo", {}).get("venue") or {},
+        "retrieved_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+    }
+
+
+def get_espn_weather_rows(event_weather, summary_weather):
+    weather = dict(event_weather or {})
+    weather.update({
+        key: value for key, value in (summary_weather or {}).items()
+        if value is not None
+    })
+    fields = [
+        ("Conditions", "displayValue"),
+        ("Temperature", "temperature"),
+        ("High temperature", "highTemperature"),
+        ("Low temperature", "lowTemperature"),
+        ("Wind speed", "windSpeed"),
+        ("Wind gust", "gust"),
+        ("Precipitation", "precipitation"),
+    ]
+    return [
+        {"Weather field": label,
+         "ESPN reported value": str(weather[key]) if weather.get(key) is not None else "Not provided"}
+        for label, key in fields
+    ]
+
+
+def show_espn_nfl_weather(scoreboard_data, game_date):
+    st.subheader("NFL Game Weather — ESPN")
+    st.caption(
+        "ESPN's game weather report and kickoff time. "
+        "Weather information does not change model probabilities."
+    )
+    with st.expander("View ESPN weather and game time"):
+        events = [
+            event for event in scoreboard_data.get("events", [])
+            if event.get("id")
+        ]
+        if not events:
+            st.info("No NFL games are listed for the selected date.")
+            return
+        labels = {
+            event["id"]: event.get("name", "NFL game") for event in events
+        }
+        event_id = st.selectbox(
+            "Select a game for weather", list(labels),
+            format_func=lambda value: labels[value], key="espn_weather_event",
+        )
+        event = next(game for game in events if game["id"] == event_id)
+        competition = event.get("competitions", [{}])[0]
+        venue = competition.get("venue") or {}
+        try:
+            st.write("**Game time (Pacific):** " + format_game_time(event.get("date")))
+            st.write(f"**Venue:** {venue.get('fullName', 'Not provided')}")
+            indoor = venue.get("indoor")
+            st.write(
+                "**ESPN indoor flag:** "
+                + ("Yes" if indoor is True else "No" if indoor is False else "Not provided")
+            )
+            st.caption(
+                "The indoor flag does not confirm roof type or whether a "
+                "retractable roof will be open for this game."
+            )
+            if st.button("Load / refresh ESPN weather", key="load_espn_weather"):
+                load_espn_game_weather.clear()
+                st.session_state["espn_weather_loaded_event"] = (str(game_date), event_id)
+            if st.session_state.get("espn_weather_loaded_event") != (str(game_date), event_id):
+                st.info("Click Load / refresh ESPN weather to view the game report.")
+                return
+            with st.spinner("Loading ESPN game weather..."):
+                report = load_espn_game_weather(event_id)
+            event_weather = event.get("weather") or competition.get("weather") or {}
+            rows = get_espn_weather_rows(event_weather, report["weather"])
+            if any(row["ESPN reported value"] != "Not provided" for row in rows):
+                st.dataframe(rows, hide_index=True, use_container_width=True)
+            else:
+                st.info("ESPN has not supplied weather for this game.")
+            st.caption(
+                f"Source: ESPN. Retrieved {report['retrieved_at']}. "
+                "Cached for up to five minutes. This is retrieval time; ESPN "
+                "does not supply a forecast issuance time in this feed. "
+                "Values are shown as ESPN reports them. The feed does not "
+                "explicitly label temperature, wind, or precipitation units; "
+                "precipitation is not assumed to be a percentage or an amount. "
+                "Missing values mean unavailable, not zero."
+            )
+            if indoor is True:
+                st.info(
+                    "This venue is marked indoor. The reported outdoor weather "
+                    "should not be treated as conditions on the field."
+                )
+            st.markdown(
+                f"[View this game on ESPN](https://www.espn.com/nfl/game/_/gameId/{event_id})"
+            )
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, ZoneInfoNotFoundError) as exc:
+            st.warning(f"ESPN weather could not be loaded: {exc}")
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -853,6 +978,7 @@ if st.sidebar.button("Refresh live data"):
     load_nfl_player_team_directory.clear()
     load_nfl_team_player_statistics.clear()
     load_nfl_injury_updates.clear()
+    load_espn_game_weather.clear()
 
 
 # -------------------------
@@ -865,6 +991,8 @@ try:
     with st.spinner(f"Loading {sport} games..."):
         scoreboard = get_scoreboard(SPORTS[sport], selected_date)
     show_games(scoreboard)
+    if sport == "NFL":
+        show_espn_nfl_weather(scoreboard, selected_date)
 
 except requests.exceptions.Timeout:
     st.error("The scoreboard took too long to respond. Try again.")
