@@ -784,6 +784,54 @@ def load_nfl_team_player_statistics(team_id, season):
     }
 
 
+def parse_nfl_injuries(data):
+    groups = data.get("injuries")
+    if not isinstance(groups, list):
+        raise ValueError("ESPN did not return a recognizable injury report.")
+    rows = []
+    team_names = []
+    for group in groups:
+        team_name = group.get("displayName", "Unknown team")
+        team_names.append(team_name)
+        for injury in group.get("injuries", []):
+            athlete = injury.get("athlete", {})
+            details = injury.get("details") or {}
+            player_url = next(
+                (link.get("href") for link in athlete.get("links", [])
+                 if "playercard" in link.get("rel", [])
+                 and str(link.get("href", "")).startswith("https://www.espn.com/")),
+                None,
+            )
+            rows.append({
+                "Team": team_name,
+                "Player": athlete.get("displayName", "Unknown player"),
+                "Position": athlete.get("position", {}).get("abbreviation", "Unknown"),
+                "Status": injury.get("status") or "Unknown",
+                "Injury": details.get("type") or "Not provided",
+                "Report updated (UTC)": injury.get("date") or "Not provided",
+                "Player page": player_url,
+            })
+    rows.sort(key=lambda row: (row["Team"], row["Player"]))
+    return {
+        "rows": rows,
+        "teams": sorted(set(team_names)),
+        "source_timestamp": data.get("timestamp") or "Not provided",
+        "season": data.get("season", {}).get("displayName", "Not provided"),
+    }
+
+
+@st.cache_data(ttl=300)
+def load_nfl_injury_updates():
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/football/nfl/injuries",
+        headers=HEADERS, timeout=20,
+    )
+    response.raise_for_status()
+    report = parse_nfl_injuries(response.json())
+    report["fetched_at"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    return report
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -804,6 +852,7 @@ if st.sidebar.button("Refresh live data"):
     load_all_nfl_team_statistics.clear()
     load_nfl_player_team_directory.clear()
     load_nfl_team_player_statistics.clear()
+    load_nfl_injury_updates.clear()
 
 
 # -------------------------
@@ -1450,6 +1499,82 @@ try:
                     st.info("Click Load QB, RB & WR stats for the selected team and season.")
             except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
                 st.warning(f"Player statistics could not be loaded: {exc}")
+
+    st.divider()
+    st.subheader("NFL Injury & Availability Updates")
+    st.caption(
+        "Latest ESPN player statuses for all NFL teams. These are current "
+        "updates, not reports as of the sidebar date or selected statistics "
+        "season. They do not change model probabilities."
+    )
+    with st.expander("View current injury and availability reports"):
+        if st.button("Load / refresh injury updates", key="refresh_injury_updates"):
+            load_nfl_injury_updates.clear()
+            st.session_state["show_injury_updates"] = True
+        if st.session_state.get("show_injury_updates"):
+            try:
+                with st.spinner("Loading NFL injury updates..."):
+                    injury_report = load_nfl_injury_updates()
+                    injury_teams = load_nfl_player_team_directory()
+                st.caption(
+                    f"Source: ESPN. Retrieved {injury_report['fetched_at']}. "
+                    f"Source timestamp: {injury_report['source_timestamp']}. "
+                    f"Source season: {injury_report['season']}. "
+                    "Data is cached for up to five minutes."
+                )
+                injury_team_options = sorted(
+                    {team["name"] for team in injury_teams}
+                    | set(injury_report["teams"])
+                )
+                injury_team = st.selectbox(
+                    "Injury report team", ["All teams"] + injury_team_options,
+                    key="injury_team_selection",
+                )
+                include_active = st.checkbox(
+                    "Include Active status updates", key="include_active_injury_updates",
+                    help="The source can list cleared players and other availability news with Active status.",
+                )
+                injury_rows = [
+                    row for row in injury_report["rows"]
+                    if (injury_team == "All teams" or row["Team"] == injury_team)
+                    and (include_active or row["Status"].lower() != "active")
+                ]
+                positions = sorted({row["Position"] for row in injury_rows})
+                position_filter = st.selectbox(
+                    "Injury report position", ["All positions"] + positions,
+                    key="injury_position_selection",
+                )
+                if position_filter != "All positions":
+                    injury_rows = [
+                        row for row in injury_rows if row["Position"] == position_filter
+                    ]
+                st.write(f"**{len(injury_rows)} listed updates match your filters.**")
+                if injury_rows:
+                    st.dataframe(
+                        injury_rows, hide_index=True, use_container_width=True,
+                        column_config={
+                            "Player page": st.column_config.LinkColumn(
+                                "ESPN player page", display_text="View player",
+                            ),
+                        },
+                    )
+                else:
+                    st.info(
+                        "No reports match these filters. This does not confirm "
+                        "that every player is healthy or available."
+                    )
+                st.caption(
+                    "Questionable does not mean ruled out. Out and Injured "
+                    "Reserve are different statuses. Active updates are hidden "
+                    "unless selected. Report times are shown as supplied by "
+                    "ESPN in UTC. This feed may include older reports and "
+                    "availability news; it is not a confirmed game-day inactive "
+                    "list. Use the player links to review the latest details."
+                )
+            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                st.warning(f"Injury updates could not be loaded: {exc}")
+        else:
+            st.info("Click Load / refresh injury updates to view the latest reports.")
 
     st.subheader("Current Model Team Ratings")
 
