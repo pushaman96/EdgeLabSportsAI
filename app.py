@@ -1,83 +1,105 @@
-import streamlit as st
+mport streamlit as st
 
+# Page configuration
 st.set_page_config(
-page_title="EdgeLab Sports AI",
-page_icon="🏈",
-layout="centered"
+    page_title="My First Streamlit App",
+    page_icon="🚀",
+    layout="wide"
 )
 
-st.title("🏈 EdgeLab Sports AI")
-st.write("Your personal NFL and NBA game analysis dashboard.")
+# App title and introduction
+st.title("🚀 My First Streamlit App")
 
-sport = st.sidebar.selectbox(
-"Choose a sport",
-["NFL", "NBA"]
+st.write("Welcome! This is my first interactive Python application.")
+st.write("Use the fields below to interact with the app.")
+
+# Sidebar
+st.sidebar.title("Navigation")
+st.sidebar.write("Welcome to my app!")
+
+page = st.sidebar.selectbox(
+    "Choose a page:",
+    ["Home", "About", "Contact"]
 )
 
-st.header(f"{sport} Game Analyzer")
+# Home page
+if page == "Home":
 
-team = st.text_input("Enter the team you want to analyze", "Home Team")
+    st.header("Home Page")
 
-win_probability = st.slider(
-"Your estimated chance of winning (%)",
-min_value=1,
-max_value=99,
-value=55
-)
+    st.write("This is the home page of my application.")
 
-odds = st.number_input(
-"Sportsbook American odds",
-value=-110,
-step=5
-)
+    # User input
+    st.subheader("Enter Your Information")
 
-if st.button("Analyze Game"):
-if odds == 0:
-st.error("American odds cannot be zero. Enter odds such as -110 or +150.")
-else:
-probability = win_probability / 100
+    name = st.text_input("What is your name?")
 
-if odds < 0:
-implied_probability = abs(odds) / (abs(odds) + 100)
-potential_profit = 10000 / abs(odds)
-else:
-implied_probability = 100 / (odds + 100)
-potential_profit = odds
+    age = st.slider(
+        "Select your age:",
+        min_value=1,
+        max_value=100,
+        value=25
+    )
 
-expected_value = (
-probability * potential_profit
-- (1 - probability) * 100
-)
+    favorite_color = st.selectbox(
+        "Choose your favorite color:",
+        ["Red", "Blue", "Green", "Yellow", "Purple"]
+    )
 
-st.subheader(f"Results for {team}")
+    # Display results
+    if name:
+        st.success(f"Welcome, {name}!")
 
-st.metric(
-"Your estimated win probability",
-f"{win_probability}%"
-)
+        st.write("Your age is:", age)
 
-st.metric(
-"Sportsbook implied probability",
-f"{implied_probability * 100:.1f}%"
-)
+        st.write(
+            "Your favorite color is:",
+            favorite_color
+        )
 
-st.metric(
-"Estimated value per $100 risked",
-f"${expected_value:.2f}"
-)
+    # Button
+    if st.button("Click Me"):
+        st.balloons()
+        st.write("Congratulations! Your button works!")
 
-if probability > implied_probability:
-st.success(
-"Your estimate is above the sportsbook's implied probability."
-)
-else:
-st.warning(
-"Your estimate is not above the sportsbook's implied probability."
-)
+    # Checkbox
+    if st.checkbox("Show additional information"):
+        st.info("You are using a Streamlit application.")
 
-st.caption(
-"This is a basic calculator, not a predictive AI model. "
-"Probabilities are entered manually, and betting involves risk."
-)
+# About page
+elif page == "About":
 
+    st.header("About This App")
 
+    st.write(
+        "This application was created using Python and Streamlit."
+    )
+
+    st.write(
+        "Streamlit makes it easy to build interactive web applications."
+    )
+
+# Contact page
+elif page == "Contact":
+
+    st.header("Contact Page")
+
+    st.write("Enter your information below.")
+
+    email = st.text_input("Your email address")
+
+    message = st.text_area("Your message")
+
+    if st.button("Submit Message"):
+
+        if email and message:
+            st.success("Your message has been submitted!")
+        else:
+            st.warning(
+                "Please enter your email and message."
+            )
+
+# Footer
+st.divider()
+
+st.caption("My First Streamlit App | Powered by Python")
