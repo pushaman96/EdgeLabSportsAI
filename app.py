@@ -1097,11 +1097,10 @@ except (ValueError, TypeError, KeyError, AttributeError) as exc:
 # BETTING ODDS AND VALUE
 # -------------------------
 
-render_paper_parlay(sport)
-
-
 if sport == "NFL":
     render_sportsbooks(sport, selected_date, locals().get("scoreboard", {}), sportsbook_model_context)
+
+render_paper_parlay(sport, selected_date)
 
 # -------------------------
 # NFL HISTORICAL PREDICTION MODEL
