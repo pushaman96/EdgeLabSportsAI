@@ -3,6 +3,7 @@ import streamlit as st
 import requests
 from nba_tools import render_nba_tools, clear_nba_caches, load_nba_saved_history, NBA_ALIASES
 from sportsbook_tools import render_sportsbooks
+from paper_parlay import render_paper_parlay
 import csv
 import io
 import math
@@ -1096,133 +1097,7 @@ except (ValueError, TypeError, KeyError, AttributeError) as exc:
 # BETTING ODDS AND VALUE
 # -------------------------
 
-st.divider()
-st.header("🎯 Betting Odds & Value Calculator")
-
-st.write(
-    "Enter sportsbook odds and your estimated chance of winning "
-    "to evaluate a hypothetical bet."
-)
-
-st.info(
-    "This calculator uses the probability you enter. It does not "
-    "retrieve live sportsbook odds or independently predict outcomes."
-)
-
-with st.form("bet_calculator"):
-    col1, col2 = st.columns(2)
-
-    with col1:
-        bet_sport = st.selectbox("Bet sport", ["NFL", "NBA"])
-        team_name = st.text_input(
-            "Team or bet selection",
-            placeholder="Example: Kansas City Chiefs",
-        )
-        odds = st.number_input(
-            "American odds",
-            min_value=-100000,
-            max_value=100000,
-            value=-110,
-            step=5,
-        )
-
-    with col2:
-        estimated_probability = st.slider(
-            "Your estimated chance of winning (%)",
-            min_value=1,
-            max_value=99,
-            value=60,
-        )
-        stake = st.number_input(
-            "Amount risked ($)",
-            min_value=1.0,
-            max_value=100000.0,
-            value=100.0,
-            step=10.0,
-        )
-
-    submitted = st.form_submit_button(
-        "Calculate Betting Value",
-        type="primary",
-        use_container_width=True,
-    )
-
-if submitted:
-    if odds == 0:
-        st.error("American odds cannot be zero. Use -110 or +150.")
-    else:
-        market_probability = implied_probability(odds)
-        decimal_odds = american_to_decimal(odds)
-        estimated = estimated_probability / 100
-        potential_profit = stake * (decimal_odds - 1)
-        potential_payout = stake + potential_profit
-        expected_profit = (
-            estimated * potential_profit
-            - (1 - estimated) * stake
-        )
-        difference = (estimated - market_probability) * 100
-
-        st.subheader(
-            f"Results: {team_name.strip() or 'Your selected bet'}"
-        )
-
-        col1, col2, col3 = st.columns(3)
-        col1.metric(
-            "Sportsbook implied probability",
-            f"{market_probability * 100:.2f}%",
-        )
-        col2.metric(
-            "Your estimated probability",
-            f"{estimated_probability:.1f}%",
-        )
-        col3.metric(
-            "Probability difference",
-            f"{difference:+.2f} percentage points",
-        )
-
-        col1, col2, col3 = st.columns(3)
-        col1.metric(
-            "Potential profit if you win",
-            format_money(potential_profit),
-        )
-        col2.metric(
-            "Total payout if you win",
-            format_money(potential_payout),
-        )
-        col3.metric(
-            "Estimated expected profit",
-            format_money(expected_profit),
-        )
-
-        st.write(
-            f"**Break-even win rate:** "
-            f"{market_probability * 100:.2f}%"
-        )
-        st.write(f"**Decimal odds:** {decimal_odds:.3f}")
-
-        if difference > 0:
-            st.success(
-                "Your estimate is above the sportsbook's implied "
-                "probability. Estimated value is positive under "
-                "your assumptions."
-            )
-        elif difference < 0:
-            st.warning(
-                "Your estimate is below the sportsbook's implied "
-                "probability. Estimated value is negative under "
-                "your assumptions."
-            )
-        else:
-            st.info(
-                "Your estimate matches the sportsbook's implied "
-                "probability before other factors."
-            )
-
-        st.caption(
-            "Expected profit is a mathematical estimate, not a "
-            "guarantee. It depends on your probability estimate "
-            "being realistic."
-        )
+render_paper_parlay(sport)
 
 
 if sport == "NFL":
