@@ -53,11 +53,35 @@ def odds_request(api_key,sport,event_id='',markets='h2h,spreads,totals'):
         raise OddsSourceError('The odds source did not respond. Try again later.') from None
     if response.status_code != 200:
         messages={401:'API key not accepted. Check your key.',403:'This request is not available for this API key.',429:'Rate or usage limit reached. Check your provider account.'}
-        raise OddsSourceError(messages.get(response.status_code,f'Odds source returned HTTP {response.status_code}. Check market coverage and your account.'))
+        error = OddsSourceError(messages.get(response.status_code,f'Odds source returned HTTP {response.status_code}. Check market coverage and your account.'))
+        error.status_code = response.status_code
+        raise error
     try:data=response.json()
     except ValueError:raise OddsSourceError('Odds source returned unreadable data.') from None
     if not isinstance(data,(dict,list)):raise OddsSourceError('Unexpected odds source data.')
     return {'data':data,'retrieved':datetime.now(timezone.utc).isoformat(),'remaining':response.headers.get('x-requests-remaining','Not supplied'),'cost':response.headers.get('x-requests-last','Not supplied')}
+
+def load_all_prop_lines(api_key, sport, events, markets, now=None):
+    now = now or datetime.now(timezone.utc)
+    fetched, failures = [], []
+    for event in events:
+        if datetime.fromisoformat(event['commence_time'].replace('Z','+00:00')) <= now:
+            continue
+        game = event['away_team']+' at '+event['home_team']
+        try:
+            result = odds_request(api_key,sport,event['id'],markets)
+            data = result['data']
+            if not isinstance(data,dict) or data.get('id') != event['id'] or (data.get('home_team'),data.get('away_team')) != (event['home_team'],event['away_team']):
+                failures.append(game+': no matching prop data returned.')
+                continue
+            fetched.append(result)
+        except OddsSourceError as exc:
+            failures.append(game+': '+str(exc))
+            if getattr(exc,'status_code',None) in (401,403,429):
+                failures.append('Stopped remaining requests because the key, account access, or usage limit needs attention.')
+                break
+    latest = max(fetched,key=lambda r:r['retrieved']) if fetched else None
+    return {'results':fetched,'failures':failures,'remaining':latest['remaining'] if latest else 'Not supplied','loaded':datetime.now(timezone.utc).isoformat()}
 
 def bookmaker_rows(events,books=(),props=False):
     rows=[]
@@ -131,20 +155,43 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
         st.subheader('Player props — common categories')
         st.caption('This feed does not report bet counts or betting volume. Common categories are not a ranking of popular bets. Load yardage props, then use Analyze loaded player props for a watch/pass shortlist. Spreads and totals are not modeled yet.')
-        event_id=st.selectbox('Player props game',[e['id'] for e in events],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game')
+        all_option = '__all_nfl_games__'
+        event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],format_func=lambda value:'All NFL games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game')
         labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=list(PROP_MARKETS[sport])[:2],key='sportsbook_props_categories')
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
-        if st.button('Load selected player prop lines',key='sportsbook_props_load') and markets:
-            prop_result=odds_request(key,sport,event_id,markets)
-            st.session_state['sportsbook_props_result']=(sport,key,event_id,markets,prop_result)
-        prop_saved=st.session_state.get('sportsbook_props_result')
-        if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
-            props=bookmaker_rows([prop_saved[4]['data']],selected_books,True)
-            if props:st.dataframe(props,hide_index=True,use_container_width=True)
-            else:st.info('No selected player props returned.')
-            st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
-            if props:
-                render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'])
+        if event_id == all_option:
+            targets = [e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00')) > datetime.now(timezone.utc)]
+            st.caption(f'All games: {len(targets)} upcoming NFL games × {len(labels)} categories = up to {len(targets)*len(labels)} credits for a fresh load. Cached responses may cost no new credits. Started games are skipped. Analysis adds no sportsbook credits.')
+            batch_key = (sport,key,str(selected_date),markets,tuple(e['id'] for e in targets))
+            loaded_all = st.button('Load all games and analyze player props',key='sportsbook_props_all_load',disabled=not markets or not targets)
+            if loaded_all and markets and targets:
+                st.session_state.pop('sportsbook_props_all_result',None)
+                with st.spinner('Loading selected prop categories for all upcoming NFL games...'):
+                    batch = load_all_prop_lines(key,sport,targets,markets)
+                st.session_state['sportsbook_props_all_result'] = (batch_key,batch)
+            all_saved = st.session_state.get('sportsbook_props_all_result')
+            if all_saved and all_saved[0] == batch_key:
+                batch = all_saved[1]
+                for failure in batch['failures']:st.warning(failure)
+                loaded_events = [r['data'] for r in batch['results']]
+                st.caption(f"Loaded {len(loaded_events)} of {len(targets)} games. Most recent provider-reported credits remaining: {batch['remaining']}.")
+                if loaded_events:
+                    if st.checkbox('Show all loaded player prop prices',key='sportsbook_show_all_prices'):
+                        st.dataframe(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True)
+                    render_prop_research(loaded_events,scoreboard,selected_books,batch['loaded'],auto_analyze=loaded_all)
+                else:st.info('No prop data loaded. Check coverage and the warnings above.')
+        else:
+            if st.button('Load selected player prop lines',key='sportsbook_props_load') and markets:
+                prop_result=odds_request(key,sport,event_id,markets)
+                st.session_state['sportsbook_props_result']=(sport,key,event_id,markets,prop_result)
+            prop_saved=st.session_state.get('sportsbook_props_result')
+            if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
+                props=bookmaker_rows([prop_saved[4]['data']],selected_books,True)
+                if props:st.dataframe(props,hide_index=True,use_container_width=True)
+                else:st.info('No selected player props returned.')
+                st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
+                if props:
+                    render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'])
         st.subheader('NFL game shortlist — experimental moneylines')
         st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. These are research candidates, not validated betting recommendations. Injuries and lineups are not included.')
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
