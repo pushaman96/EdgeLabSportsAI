@@ -110,6 +110,21 @@ def show_games(data, sport_path):
 
             if start_time:
                 st.caption(f"Scheduled time: {start_time}")
+            latest = latest_game_play(competition)
+            st.write("**Latest reported play**")
+            if latest['text']:
+                st.write(latest['text'])
+                if latest['details']:
+                    st.caption(latest['details'])
+            else:
+                st.caption("ESPN has not reported a play for this game yet.")
+            situation = competition.get('situation', {})
+            if event.get('status', {}).get('type', {}).get('state') == 'in':
+                possession = next((c.get('team', {}).get('displayName', '') for c in competitors
+                                   if str(c.get('team', {}).get('id')) == str(situation.get('possession'))), '')
+                current = ' · '.join(x for x in (possession, situation.get('downDistanceText', '')) if x)
+                if current:
+                    st.caption("Current situation: " + current)
             leader_key = "show_game_leaders_" + str(event.get("id", away_team + home_team))
             visible = st.session_state.get(leader_key, False)
             if st.button("Hide game leaders" if visible else "Game leaders", key=leader_key + "_button"):
@@ -140,6 +155,26 @@ def show_games(data, sport_path):
                         st.info("Defensive player stats have not been reported for this game yet.")
                 except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
                     st.warning("ESPN defensive stats are temporarily unavailable. Try refreshing scores and live stats.")
+
+
+def latest_game_play(competition):
+    play = competition.get('situation', {}).get('lastPlay') or {}
+    text = play.get('text') or play.get('type', {}).get('text') or ''
+    details = []
+    period = play.get('period', {})
+    if isinstance(period, dict):
+        period = period.get('displayValue') or period.get('number')
+    if period:
+        details.append("Period " + str(period))
+    clock = play.get('clock', {})
+    if isinstance(clock, dict):
+        clock = clock.get('displayValue')
+    if clock:
+        details.append(str(clock))
+    drive = play.get('drive', {}).get('description')
+    if drive:
+        details.append("Drive: " + drive)
+    return {'text': text.strip(), 'details': ' · '.join(details)}
 
 
 def defensive_game_rows(box, sport_path):
