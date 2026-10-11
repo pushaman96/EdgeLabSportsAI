@@ -509,7 +509,8 @@ def load_nba_saved_history(end_year):
     if len(games) < 100:
         raise ValueError("Too few saved NBA games for a backtest.")
     return {"games": sorted(games, key=lambda game: (game["date"], game["home_team"])),
-            "retrieved_at": snapshot["retrieved_at"]}
+            "retrieved_at": snapshot["retrieved_at"],
+            "extra_schedule_dates": snapshot.get("extra_schedule_dates", [])}
 
 def clear_nba_caches():
     for function in (
@@ -728,6 +729,133 @@ def show_nba_recent_form_validation(predictions, end_year):
         "These historical checks are not an untouched future test."
     )
 
+
+def nba_rest_features(predictions, extra_schedule_dates=()):
+    last_played, days, extra_days = {}, defaultdict(list), defaultdict(list)
+    for row in sorted(predictions, key=lambda row: row["Date"]):
+        days[row["Date"]].append(row)
+    for item in extra_schedule_dates:
+        day = date.fromisoformat(item["date"]).isoformat()
+        teams = item["teams"]
+        if len(teams) != 2 or teams[0] == teams[1]:
+            raise ValueError("Invalid extra NBA schedule teams.")
+        for team in teams:
+            extra_days[day].append((item["season"], team))
+    output = []
+    for day in sorted(set(days) | set(extra_days)):
+        current_date = date.fromisoformat(day)
+        updates = list(extra_days[day])
+        for row in days[day]:
+            item = dict(row)
+            gaps = []
+            for team in (row["Home Team"], row["Away Team"]):
+                previous = last_played.get((row["Season"], team))
+                gap = (current_date - previous).days if previous else None
+                if gap is not None and gap <= 0:
+                    raise ValueError("Invalid NBA rest-date order.")
+                gaps.append(gap)
+                updates.append((row["Season"], team))
+            home, away = gaps
+            available = home is not None and away is not None
+            item.update({
+                "Rest available": available,
+                "Home rest days": home - 1 if home is not None else None,
+                "Away rest days": away - 1 if away is not None else None,
+                "Rest advantage": min(home - 1, 3) - min(away - 1, 3) if available else 0,
+                "Back-to-back advantage": int(away == 1) - int(home == 1) if available else 0,
+            })
+            output.append(item)
+        # Every game dated today sees only earlier dates, including neutral games.
+        for season, team in updates:
+            last_played[(season, team)] = current_date
+    return output
+
+
+def nba_rest_probability(row, back_weight, rest_weight):
+    feature = back_weight * row["Back-to-back advantage"] + rest_weight * row["Rest advantage"]
+    return nba_form_probability(row["Home Win Probability"], feature, 1.0)
+
+
+def nba_rest_validation(predictions, current_end_year, extra_schedule_dates=()):
+    grouped = defaultdict(list)
+    for row in nba_rest_features(predictions, extra_schedule_dates):
+        grouped[row["Season"]].append(row)
+    # Fixed modest coefficients in log odds. Zero/zero retains original Elo.
+    candidates = [(back, rest) for back in (0.0, 0.1, 0.2, 0.3, 0.4)
+                  for rest in (0.0, 0.05, 0.1)]
+    def actual(row):
+        return 1.0 if row["Actual Result"] == "Home win" else 0.0 if row["Actual Result"] == "Away win" else 0.5
+    def score(rows, back, rest):
+        return sum((nba_rest_probability(row, back, rest) - actual(row)) ** 2 for row in rows) / len(rows)
+    results = []
+    for season in sorted(grouped):
+        if season >= current_end_year or season - 1 not in grouped:
+            continue
+        training, evaluation = grouped[season - 1], grouped[season]
+        if len(training) < 100 or len(evaluation) < 100:
+            continue
+        if training[-1]["Date"] >= evaluation[0]["Date"]:
+            raise ValueError("NBA rest training overlaps evaluation dates.")
+        back, rest = min(candidates, key=lambda candidate: score(training, *candidate))
+        non_ties = [row for row in evaluation if row["Actual Result"] != "Tie"]
+        if not non_ties:
+            continue
+        original, adjusted = score(evaluation, 0.0, 0.0), score(evaluation, back, rest)
+        accuracy = sum((nba_rest_probability(row, back, rest) >= 0.5) == (actual(row) == 1.0) for row in non_ties) / len(non_ties)
+        results.append({
+            "season": season, "games": len(evaluation), "back_weight": back, "rest_weight": rest,
+            "original_accuracy": sum(row["Correct"] for row in non_ties) / len(non_ties),
+            "rest_accuracy": accuracy, "original_brier": original, "rest_brier": adjusted,
+            "gain": original - adjusted,
+            "rest_games": sum(row["Rest available"] for row in evaluation),
+            "back_advantage_games": sum(row["Back-to-back advantage"] != 0 for row in evaluation),
+            "training_last": training[-1]["Date"], "evaluation_first": evaluation[0]["Date"],
+        })
+    return results
+
+
+def show_nba_rest_validation(predictions, end_year, extra_schedule_dates=()):
+    st.subheader("NBA Rest Days & Back-to-Back Experiment")
+    st.caption(
+        "A game the next calendar day is a back-to-back (zero full rest days). "
+        "Tests a back-to-back advantage and a difference in full rest days, "
+        "capped at three per team. Each season's weights are selected using "
+        "only the preceding season. Zero weights keep original Elo. First "
+        "games with unknown rest use unchanged Elo; history resets each season. "
+        "This test does not combine rest with recent form or confidence adjustment."
+    )
+    results = nba_rest_validation(predictions, end_year, extra_schedule_dates)
+    if not results:
+        st.info("At least two completed seasons are needed for the rest-days test.")
+        return
+    st.dataframe([{
+        "Season": season_name(row["season"]), "Test games": row["games"],
+        "Original accuracy": f"{row['original_accuracy'] * 100:.1f}%",
+        "With rest accuracy": f"{row['rest_accuracy'] * 100:.1f}%",
+        "Original Brier": round(row["original_brier"], 4),
+        "With rest Brier": round(row["rest_brier"], 4),
+        "Brier improvement": f"{row['gain']:+.6f}",
+        "Back-to-back weight": row["back_weight"], "Rest-days weight": row["rest_weight"],
+        "Known rest games": row["rest_games"],
+        "One team on back-to-back": row["back_advantage_games"],
+        "Training season": season_name(row["season"] - 1),
+    } for row in results], hide_index=True, use_container_width=True)
+    helped = sum(row["gain"] > 1e-12 for row in results)
+    hurt = sum(row["gain"] < -1e-12 for row in results)
+    total = sum(row["games"] for row in results)
+    gain = sum(row["gain"] * row["games"] for row in results) / total
+    st.write(f"**Rest test improved Brier in {helped}/{len(results)} seasons; worsened in {hurt}. Weighted improvement: {gain:+.6f}.**")
+    st.info("Rest remains an experiment. The matchup calculator does not yet use rest-day adjustments.")
+    st.caption(
+        "Rest is inferred from recorded regular-season dates, including "
+        "saved neutral games excluded from Elo. Games outside this feed, "
+        "such as NBA Cup finals, may be missing, so this is a schedule-based "
+        "proxy. It does not measure travel, time zones, tip-off intervals, "
+        "or individual player rest. Positive Brier improvement is better. "
+        "Saved history ends at the displayed last-game date and cannot "
+        "establish current rest for a future matchup."
+    )
+
 def show_nba_model(shared, end_year):
     st.header("🏀 NBA Historical Prediction Model")
     st.caption(
@@ -811,6 +939,8 @@ def show_nba_model(shared, end_year):
             )
         show_nba_season_validation(predictions, end_year)
         show_nba_recent_form_validation(predictions, end_year)
+        extra_dates = saved_history.get("extra_schedule_dates", []) if history_source == "Saved NBA.com history" else []
+        show_nba_rest_validation(predictions, end_year, extra_dates)
         st.subheader("Predict an NBA Matchup")
         teams = sorted(ratings)
         home = st.selectbox("NBA home team", teams, key="nba_home")
