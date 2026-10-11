@@ -299,25 +299,40 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent allowed {feature['ratio']*100:.0f}% of league yardage average. Availability: {status}. Confirm lineup/weather."
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
 
-def render_prop_research(event, scoreboard, books, quote_retrieved):
+def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze=False):
+    events = event if isinstance(event,list) else [event]
+    starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — watch or pass')
     st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Experimental probabilities use 2024 forecast errors; 2025 is the held-out test. This test does not establish profit at sportsbook prices.')
-    cache_key = (event['id'], quote_retrieved, tuple(sorted(books)))
-    if st.button('Analyze loaded player props',key='nfl_analyze_props'):
+    cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)))
+    analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
+    if auto_analyze or analyze:
         try:
-            context = event_context(event,scoreboard)
-            if not context or not context['regular']:
-                st.info('Pass: no matching upcoming NFL regular-season game.');return
+            contexts = [event_context(e,scoreboard) for e in events]
+            usable = [c for c in contexts if c and c['regular']]
+            if not usable:
+                st.info('Pass: no matching upcoming NFL regular-season games.');return
+            if len({c['season'] for c in usable}) != 1:
+                st.info('Pass: loaded games must belong to the same NFL season.');return
             with st.spinner('Testing historical forecasts and checking current player availability...'):
-                research = load_prop_research(context['season'])
+                research = load_prop_research(usable[0]['season'])
                 injury_context.clear()
                 injuries = injury_context()
-                with ThreadPoolExecutor(max_workers=2) as pool:
-                    tasks = {context[s]['displayName']:pool.submit(current_roster,context[s]['id']) for s in ('home','away')}
-                    rosters = {team:task.result() for team,task in tasks.items()}
-                filtered = dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in books])
-                rows = prop_reviews(filtered,scoreboard,research,injuries,rosters)
-                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat()}
+                team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
+                rosters = {}
+                issues = []
+                with ThreadPoolExecutor(max_workers=4) as pool:
+                    tasks = {team:pool.submit(current_roster,tid) for team,tid in team_ids.items()}
+                    for team,task in tasks.items():
+                        try:rosters[team] = task.result()
+                        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
+                            issues.append(team+': roster unavailable; affected props stay on Pass.')
+                rows = []
+                for loaded in events:
+                    filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
+                    rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
+                rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
+                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError):
             st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
     saved = st.session_state.get('nfl_prop_analysis')
@@ -331,12 +346,14 @@ def render_prop_research(event, scoreboard, books, quote_retrieved):
         try:
             quote_age = (now-datetime.fromisoformat(row['Quote updated UTC'].replace('Z','+00:00'))).total_seconds()
             analysis_age = (now-datetime.fromisoformat(saved['analyzed'])).total_seconds()
-            start = datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
+            start = datetime.fromisoformat(starts[row['Game']].replace('Z','+00:00'))
             if quote_age > 900 or quote_age < 0 or analysis_age > 900 or start <= now:
                 row.update(Decision='Pass',Reason='Quote/availability analysis expired or game started. Refresh and analyze again.')
         except (ValueError,TypeError,AttributeError):
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
+    for issue in saved.get('issues',[]):st.warning(issue)
+    st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
     watch = [r for r in display if r['Decision'] != 'Pass']
     st.write(f'**{len(watch)} experimental watch entries; {len(display)-len(watch)} pass entries.**')
     if watch:
@@ -356,6 +373,6 @@ def render_prop_research(event, scoreboard, books, quote_retrieved):
         writer = csv.DictWriter(buffer,fieldnames=['Recorded UTC','Game starts UTC']+list(display[0]))
         writer.writeheader()
         for row in display:
-            writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':event['commence_time'],**row})
+            writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         st.download_button('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
