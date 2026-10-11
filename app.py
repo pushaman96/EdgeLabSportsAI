@@ -110,6 +110,35 @@ def show_games(data):
 
             if start_time:
                 st.caption(f"Scheduled time: {start_time}")
+            leader_key = "show_game_leaders_" + str(event.get("id", away_team + home_team))
+            visible = st.session_state.get(leader_key, False)
+            if st.button("Hide game leaders" if visible else "Game leaders", key=leader_key + "_button"):
+                visible = not visible
+                st.session_state[leader_key] = visible
+            if visible:
+                leaders = game_leader_rows(competition)
+                if leaders:
+                    st.dataframe(leaders, hide_index=True, use_container_width=True)
+                    st.caption("ESPN game leaders for this game. Use Refresh scores and live stats below to update.")
+                else:
+                    st.info("ESPN has not reported game leaders yet. Check again after play starts.")
+
+
+def game_leader_rows(competition):
+    teams = {str(c.get('team', {}).get('id')): c.get('team', {}).get('displayName', '—')
+             for c in competition.get('competitors', [])}
+    rows = []
+    for category in competition.get('leaders', []):
+        for leader in category.get('leaders', []):
+            athlete = leader.get('athlete', {})
+            team_id = leader.get('team', {}).get('id') or athlete.get('team', {}).get('id')
+            rows.append({
+                'Category': category.get('displayName') or category.get('name', 'Leader'),
+                'Player': athlete.get('displayName') or athlete.get('fullName', 'Unknown'),
+                'Team': teams.get(str(team_id), '—'),
+                'Game stats': leader.get('displayValue', '—'),
+            })
+    return rows
 
 
 def game_status_text(event):
