@@ -64,7 +64,7 @@ def get_standings(sport_path):
     return response.json()
 
 
-def show_games(data):
+def show_games(data, sport_path):
     events = data.get("events", [])
 
     if not events:
@@ -122,6 +122,54 @@ def show_games(data):
                     st.caption("ESPN game leaders for this game. Use Refresh scores and live stats below to update.")
                 else:
                     st.info("ESPN has not reported game leaders yet. Check again after play starts.")
+            defense_key = leader_key + "_defense"
+            defense_visible = st.session_state.get(defense_key, False)
+            if st.button("Hide defensive stats" if defense_visible else "Defensive stats", key=defense_key + "_button"):
+                defense_visible = not defense_visible
+                st.session_state[defense_key] = defense_visible
+            if defense_visible:
+                try:
+                    result = get_game_boxscore(sport_path, str(event['id']))
+                    rows = defensive_game_rows(result['data'].get('boxscore', {}), sport_path)
+                    if rows:
+                        st.dataframe(rows, hide_index=True, use_container_width=True)
+                        st.caption("ESPN defensive player totals • fetched at " + result['retrieved'])
+                        if sport_path == 'football/nfl':
+                            st.caption("Fumble recoveries are listed separately in the full live box score because ESPN does not identify them here as offensive or defensive recoveries.")
+                    else:
+                        st.info("Defensive player stats have not been reported for this game yet.")
+                except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
+                    st.warning("ESPN defensive stats are temporarily unavailable. Try refreshing scores and live stats.")
+
+
+def defensive_game_rows(box, sport_path):
+    labels = {'TOT': 'Total tackles', 'SOLO': 'Solo tackles', 'SACKS': 'Sacks',
+              'TFL': 'Tackles for loss', 'PD': 'Passes defended', 'QB HTS': 'QB hits',
+              'TD': 'Defensive TDs', 'INT': 'Interceptions', 'YDS': 'Interception return yards'}
+    nba_labels = {'STL': 'Steals', 'BLK': 'Blocks', 'DREB': 'Defensive rebounds', 'DR': 'Defensive rebounds'}
+    rows = {}
+    for team in box.get('players', []):
+        team_name = team.get('team', {}).get('displayName', 'Team')
+        for group in team.get('statistics', []):
+            if sport_path == 'football/nfl' and group.get('name') not in ('defensive', 'interceptions'):
+                continue
+            for entry in group.get('athletes', []):
+                athlete = entry.get('athlete', {})
+                name = athlete.get('displayName', 'Unknown')
+                key = (team_name, athlete.get('id') or name)
+                for index, label in enumerate(group.get('labels', [])):
+                    values = entry.get('stats', [])
+                    if sport_path == 'basketball/nba' and label not in nba_labels:
+                        continue
+                    if index >= len(values):
+                        continue
+                    row = rows.setdefault(key, {'Player': name, 'Team': team_name})
+                    column = nba_labels.get(label, label) if sport_path == 'basketball/nba' else labels.get(label, label)
+                    value = values[index]
+                    if sport_path == 'football/nfl' and group.get('name') == 'interceptions' and label == 'TD':
+                        column = 'Interception return TDs'
+                    row[column] = value
+    return list(rows.values())
 
 
 def game_leader_rows(competition):
@@ -1129,7 +1177,7 @@ st.subheader(f"{sport} Schedule & Scores")
 try:
     with st.spinner(f"Loading {sport} games..."):
         scoreboard = get_scoreboard(SPORTS[sport], selected_date)
-    show_games(scoreboard)
+    show_games(scoreboard, SPORTS[sport])
     show_live_game_stats(scoreboard, SPORTS[sport])
     if sport == "NFL":
         show_espn_nfl_weather(scoreboard, selected_date)
