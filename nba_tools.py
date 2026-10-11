@@ -1,5 +1,7 @@
 """NBA statistics and research tools for EdgeLab Sports AI."""
 import math
+import json
+from pathlib import Path
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timezone
@@ -47,6 +49,39 @@ def nba_request(endpoint, params):
             raise ValueError(f"NBA.com returned a different {key}.")
     return data
 
+
+
+@st.cache_data(ttl=3600)
+def nba_saved_snapshot():
+    path = Path(__file__).with_name("nba_stats_snapshot.json")
+    if not path.exists():
+        raise ValueError("Saved NBA.com data has not been installed yet.")
+    snapshot = json.loads(path.read_text(encoding="utf-8"))
+    if snapshot.get("schema_version") != 1 or snapshot.get("source") != "NBA.com":
+        raise ValueError("Unrecognized saved NBA statistics format.")
+    datetime.fromisoformat(snapshot["retrieved_at"])
+    return snapshot
+
+
+def nba_stats_response(endpoint, params, saved=False):
+    if not saved:
+        return nba_request(endpoint, params)
+    snapshot = nba_saved_snapshot()
+    matches = [entry for entry in snapshot["entries"]
+               if entry["endpoint"] == endpoint
+               and entry["season"] == params["Season"]
+               and entry["season_type"] == params["SeasonType"]
+               and entry["measure"] == params["MeasureType"]
+               and entry["per_mode"] == params["PerMode"]
+               and entry.get("distance_range") == params.get("DistanceRange")]
+    if len(matches) != 1:
+        raise ValueError("No saved NBA.com data for this season/type. Try 2025–26 regular season or 2026–27 preseason, or use ESPN.")
+    data = matches[0]["data"]
+    for key in ("Season", "SeasonType"):
+        returned = data.get("parameters", {})
+        if key in returned and returned[key] != params[key]:
+            raise ValueError("Saved NBA.com statistics season/type mismatch.")
+    return data
 
 def result_set(data):
     results = data.get("resultSets")
@@ -114,12 +149,12 @@ def parse_shooting_zones(data):
 
 
 @st.cache_data(ttl=3600)
-def load_nba_team_stats(end_year, season_type):
+def load_nba_team_stats(end_year, season_type, saved=False):
     params = stats_params(end_year, season_type)
 
     def fetch(measure):
         query = dict(params, MeasureType=measure)
-        return flat_rows(nba_request("leaguedashteamstats", query))
+        return flat_rows(nba_stats_response("leaguedashteamstats", query, saved))
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         own, opponent = list(pool.map(fetch, ("Base", "Opponent")))
@@ -131,19 +166,19 @@ def load_nba_team_stats(end_year, season_type):
         })
     return {
         "rows": own,
-        "retrieved": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "retrieved": nba_saved_snapshot()["retrieved_at"] if saved else datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
     }
 
 
 @st.cache_data(ttl=3600)
-def load_nba_player_stats(end_year, season_type):
-    return flat_rows(nba_request(
-        "leaguedashplayerstats", stats_params(end_year, season_type),
+def load_nba_player_stats(end_year, season_type, saved=False):
+    return flat_rows(nba_stats_response(
+        "leaguedashplayerstats", stats_params(end_year, season_type), saved,
     ))
 
 
 @st.cache_data(ttl=3600)
-def load_nba_shooting(end_year, season_type, scope):
+def load_nba_shooting(end_year, season_type, scope, saved=False):
     params = dict(
         stats_params(end_year, season_type),
         DistanceRange="By Zone", PerMode="Totals",
@@ -152,7 +187,7 @@ def load_nba_shooting(end_year, season_type, scope):
         "leaguedashteamshotlocations" if scope == "teams"
         else "leaguedashplayershotlocations"
     )
-    return parse_shooting_zones(nba_request(endpoint, params))
+    return parse_shooting_zones(nba_stats_response(endpoint, params, saved))
 
 
 
@@ -442,7 +477,7 @@ def load_nba_history(end_year):
 
 def clear_nba_caches():
     for function in (
-        load_espn_nba_teams, load_espn_nba_players,
+        nba_saved_snapshot, load_espn_nba_teams, load_espn_nba_players,
         load_nba_team_stats, load_nba_player_stats, load_nba_shooting,
         load_nba_injuries, load_nba_game_details, load_nba_history,
     ):
@@ -570,11 +605,19 @@ def show_nba_statistics(end_year):
         "aggregates, not snapshots for the sidebar date."
     )
     source = st.selectbox(
-        "NBA statistics source", ["ESPN", "NBA.com (includes mid-range shooting)"],
+        "NBA statistics source", ["ESPN", "NBA.com (saved data)", "NBA.com (live connection)"],
         key="nba_stats_source",
     )
     use_espn = source == "ESPN"
-    st.caption("ESPN provides an alternative when NBA.com does not respond. Mid-range shooting and opponent shooting metrics require NBA.com.")
+    use_saved = source == "NBA.com (saved data)"
+    st.caption("ESPN supplies basic stats. NBA.com saved data includes mid-range and opponent shooting stats without a live connection; it reflects the displayed update time.")
+    if use_saved:
+        try:
+            snapshot = nba_saved_snapshot()
+            st.info(f"Saved NBA.com data retrieved {snapshot['retrieved_at']}. This snapshot does not update automatically. Refresh live data clears app caches but does not download a new snapshot.")
+        except (ValueError, KeyError, OSError) as exc:
+            st.warning(str(exc))
+            return
     selection = (season, type_name, source)
     if st.button("Load NBA team & player browser", key="nba_load_stats"):
         st.session_state["nba_stats_loaded"] = selection
@@ -583,7 +626,7 @@ def show_nba_statistics(end_year):
         return
     try:
         with st.spinner("Loading NBA league team statistics..."):
-            data = load_espn_nba_teams(season, type_name) if use_espn else load_nba_team_stats(season, type_name)
+            data = load_espn_nba_teams(season, type_name) if use_espn else load_nba_team_stats(season, type_name, use_saved)
         teams = [row for row in data["rows"] if (row.get("GP") or 0) > 0]
         if not teams:
             st.info("The selected source has no available team statistics for this season/type. For ESPN, try the previous regular season; preseason aggregates may be unavailable.")
@@ -620,7 +663,7 @@ def show_nba_statistics(end_year):
         )
         if not use_espn and st.checkbox("Show NBA team mid-range shooting", key="nba_team_midrange"):
             try:
-                zones = load_nba_shooting(season, type_name, "teams")
+                zones = load_nba_shooting(season, type_name, "teams", use_saved)
                 zone = shooting_lookup(zones, "TEAM_ID").get(selected_id)
                 if zone:
                     st.dataframe([{key: zone[key] for key in (
@@ -647,11 +690,11 @@ def show_nba_statistics(end_year):
                     players, player_zones = player_data["rows"], []
                     st.caption(f"ESPN statistics available for {len(players)}/{player_data['roster_count']} roster players. Players without statistics are omitted; roster association does not guarantee team-only season totals.")
                 else:
-                    players = load_nba_player_stats(season, type_name)
+                    players = load_nba_player_stats(season, type_name, use_saved)
                     player_zones = []
                     if st.checkbox("Load NBA player mid-range shooting", key="nba_player_midrange"):
                         try:
-                            player_zones = load_nba_shooting(season, type_name, "players")
+                            player_zones = load_nba_shooting(season, type_name, "players", use_saved)
                         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError):
                             st.info("Mid-range data unavailable; other player stats remain available.")
             display = player_display_rows(players, selected_id, player_zones)
@@ -670,8 +713,10 @@ def show_nba_statistics(end_year):
                 "This is not a confirmed starting lineup."
             )
         st.markdown("[Official NBA statistics](https://www.nba.com/stats/) · [NBA shooting zones](https://www.nba.com/stats/players/shooting)")
-    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
         st.warning(f"NBA statistics could not be loaded: {exc}")
+        if source == "NBA.com (live connection)":
+            st.info("Try NBA.com (saved data) to load the installed snapshot without contacting NBA.com, or ESPN for basic stats.")
 
 
 def show_nba_injuries():
