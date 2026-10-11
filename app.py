@@ -39,7 +39,7 @@ NFL_HISTORY_URL = (
 # ESPN SCORES AND STANDINGS
 # -------------------------
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=30)
 def get_scoreboard(sport_path, game_date):
     url = f"{BASE_URL}/site/v2/sports/{sport_path}/scoreboard"
     response = requests.get(
@@ -91,11 +91,7 @@ def show_games(data):
         home_score = home.get("score", "—")
         away_score = away.get("score", "—")
 
-        status = (
-            event.get("status", {})
-            .get("type", {})
-            .get("description", "Status unavailable")
-        )
+        status = game_status_text(event)
 
         start_time = event.get("date", "")
         if start_time:
@@ -114,6 +110,83 @@ def show_games(data):
 
             if start_time:
                 st.caption(f"Scheduled time: {start_time}")
+
+
+def game_status_text(event):
+    status = event.get("status", {})
+    kind = status.get("type", {})
+    detail = kind.get("detail") or kind.get("shortDetail")
+    if detail:
+        return detail
+    if kind.get("state") == "in":
+        return f"Period {status.get('period', '—')} · {status.get('displayClock', 'Clock unavailable')}"
+    return kind.get("description", "Status unavailable")
+
+
+@st.cache_data(ttl=30)
+def get_game_boxscore(sport_path, event_id):
+    response = requests.get(
+        f"{BASE_URL}/site/v2/sports/{sport_path}/summary",
+        params={"event": event_id}, headers=HEADERS, timeout=15,
+    )
+    response.raise_for_status()
+    return {"data": response.json(), "retrieved": datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%I:%M:%S %p %Z")}
+
+
+def show_live_game_stats(data, sport_path):
+    with st.expander("Live game stats — team and player box scores"):
+        events = {str(e['id']): e for e in data.get('events', []) if e.get('id')}
+        if not events:
+            st.info("No games available for this date.")
+            return
+        event_id = st.selectbox(
+            "Choose a game", list(events), key="live_boxscore_game",
+            format_func=lambda eid: events[eid].get('name', eid) + " · " + game_status_text(events[eid]),
+        )
+        st.caption("ESPN game totals update as the source reports them. Click below to refresh scores and stats; sportsbook credits are not used.")
+        if st.button("Refresh scores and live stats", key="refresh_boxscore"):
+            get_scoreboard.clear()
+            get_game_boxscore.clear()
+            st.rerun()
+        try:
+            result = get_game_boxscore(sport_path, event_id)
+            summary = result['data']
+            competitions = summary.get('header', {}).get('competitions', [])
+            if competitions:
+                st.write("**" + game_status_text(competitions[0]) + "**")
+            st.caption("ESPN data fetched at " + result['retrieved'])
+            box = summary.get('boxscore', {})
+            teams = box.get('teams', [])
+            if teams:
+                table = {}
+                for team in teams:
+                    name = team.get('team', {}).get('displayName', 'Team')
+                    for stat in team.get('statistics', []):
+                        label = stat.get('label') or stat.get('name', 'Stat')
+                        table.setdefault(label, {'Statistic': label})[name] = stat.get('displayValue', '—')
+                if table:
+                    st.write("**Team stats**")
+                    st.dataframe(list(table.values()), hide_index=True, use_container_width=True)
+            found_players = False
+            for team in box.get('players', []):
+                name = team.get('team', {}).get('displayName', 'Team')
+                for group in team.get('statistics', []):
+                    rows = []
+                    labels = group.get('labels', [])
+                    for entry in group.get('athletes', []):
+                        row = {'Player': entry.get('athlete', {}).get('displayName', 'Unknown')}
+                        values = entry.get('stats', [])
+                        for index, label in enumerate(labels):
+                            row[label] = values[index] if index < len(values) else '—'
+                        rows.append(row)
+                    if rows:
+                        found_players = True
+                        st.write(f"**{name} — {group.get('name', 'Player stats').replace('_', ' ').title()}**")
+                        st.dataframe(rows, hide_index=True, use_container_width=True)
+            if not found_players:
+                st.info("Player stats have not been reported for this game yet. They usually become available after play starts.")
+        except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
+            st.warning("ESPN game stats are temporarily unavailable. Try refreshing again shortly.")
 
 
 def stat_value(stats, possible_names):
@@ -1028,6 +1101,7 @@ try:
     with st.spinner(f"Loading {sport} games..."):
         scoreboard = get_scoreboard(SPORTS[sport], selected_date)
     show_games(scoreboard)
+    show_live_game_stats(scoreboard, SPORTS[sport])
     if sport == "NFL":
         show_espn_nfl_weather(scoreboard, selected_date)
 
@@ -1687,3 +1761,4 @@ st.caption(
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
+
