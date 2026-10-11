@@ -154,27 +154,7 @@ def render_paper_parlay(sport, selected_date=None):
                     else:legs.append(copy.deepcopy(options[index]))
             else:st.info('Load player props or game spreads/totals to see these selections.')
         st.caption('Only upcoming quotes updated within 15 minutes are offered. Load sportsbook lines/props below, then interact here to see them. This does not request more API credits. Listed selections are not automatically Watch picks.')
-    else:st.info('Load sportsbook game lines or props below to use their prices here, or enter your own legs.')
-    with st.expander('Enter a leg manually'):
-        with st.form('paper_manual_leg_'+sport):
-            game=st.text_input('Game',placeholder='Example: Eagles at Jaguars')
-            selection=st.text_input('Selection',placeholder='Example: Trevor Lawrence under 226.5 passing yards')
-            book=st.text_input('Sportsbook',value=legs[0]['book'] if legs else 'Paper estimate')
-            odds=st.number_input('Leg American odds',min_value=-100000,max_value=100000,value=-110,step=1)
-            now_pacific=datetime.now(ZoneInfo('America/Los_Angeles'))
-            tomorrow=now_pacific.replace(hour=10,minute=0,second=0,microsecond=0)
-            if tomorrow<=now_pacific:tomorrow+=timedelta(days=1)
-            game_date=st.date_input('Game date (Pacific)',value=tomorrow.date())
-            game_time=st.time_input('Game start time (Pacific)',value=tomorrow.replace(hour=10,minute=0,second=0,microsecond=0).time())
-            add=st.form_submit_button('Add manual leg')
-        if add:
-            try:
-                decimal_odds(odds)
-                leg={'game':game.strip(),'selection':selection.strip(),'book':book.strip(),'odds':odds,'starts':datetime.combine(game_date,game_time,tzinfo=ZoneInfo('America/Los_Angeles')).astimezone(timezone.utc).isoformat(),'updated':None,'source':'Manual entry','result':'Pending'}
-                if not all((game.strip(),selection.strip(),book.strip())) or len(legs)>=12 or not quote_is_fresh(leg):raise ValueError('Enter a game, selection and sportsbook, a future start time, and no more than 12 legs.')
-                if any(l['game'].casefold()==leg['game'].casefold() and l['selection'].casefold()==leg['selection'].casefold() for l in legs):raise ValueError('That selection is already included.')
-                legs.append(leg)
-            except ValueError as exc:st.warning(str(exc))
+    else:st.info('Load / refresh sportsbook game lines in the section above. Then choose your sportsbook and select teams here.')
     if legs:
         st.dataframe([{'Leg':i+1,'Game':l['game'],'Selection':l['selection'],'Sportsbook':l['book'],'American odds':l['odds'],'Game starts UTC':l['starts']} for i,l in enumerate(legs)],hide_index=True,use_container_width=True)
         remove=st.selectbox('Leg to remove',list(range(len(legs))),format_func=lambda i:f"Leg {i+1}: {legs[i]['selection']}",key='paper_remove_leg_'+sport)
