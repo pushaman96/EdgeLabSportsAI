@@ -176,9 +176,10 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 loaded_events = [r['data'] for r in batch['results']]
                 st.caption(f"Loaded {len(loaded_events)} of {len(targets)} games. Most recent provider-reported credits remaining: {batch['remaining']}.")
                 if loaded_events:
-                    if st.checkbox('Show all loaded player prop prices',key='sportsbook_show_all_prices'):
-                        st.dataframe(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True)
                     render_prop_research(loaded_events,scoreboard,selected_books,batch['loaded'],auto_analyze=loaded_all)
+                    with st.expander('View all sportsbook prices — not recommendations'):
+                        st.caption('Raw market quotes include both Over and Under. Use the analyzed shortlist above for an experimental paper direction or Pass.')
+                        st.dataframe(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True)
                 else:st.info('No prop data loaded. Check coverage and the warnings above.')
         else:
             if st.button('Load selected player prop lines',key='sportsbook_props_load') and markets:
@@ -187,11 +188,13 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             prop_saved=st.session_state.get('sportsbook_props_result')
             if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
                 props=bookmaker_rows([prop_saved[4]['data']],selected_books,True)
-                if props:st.dataframe(props,hide_index=True,use_container_width=True)
-                else:st.info('No selected player props returned.')
+                if not props:st.info('No selected player props returned.')
                 st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
                 if props:
                     render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'])
+                    with st.expander('View all sportsbook prices — not recommendations'):
+                        st.caption('Both sides are shown here as available bets, not picks. The analyzed shortlist is above.')
+                        st.dataframe(props,hide_index=True,use_container_width=True)
         st.subheader('NFL game shortlist — experimental moneylines')
         st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. These are research candidates, not validated betting recommendations. Injuries and lineups are not included.')
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
