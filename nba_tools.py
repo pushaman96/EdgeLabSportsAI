@@ -1,6 +1,9 @@
 """NBA statistics and research tools for EdgeLab Sports AI."""
 import math
 import json
+import csv
+import io
+import hashlib
 from pathlib import Path
 from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
@@ -1202,12 +1205,189 @@ def show_nba_game_details(scoreboard, game_date, shared):
         st.warning(f"NBA game details unavailable: {exc}")
 
 
+
+TRACK_FIELDS = ["Schema", "Game ID", "Recorded UTC", "Tip-off UTC", "Season type", "Home ID", "Away ID", "Home", "Away", "Original probability", "Adjusted probability", "Baseline probability", "Adjustment strength", "Model history through", "Model"]
+NBA_ALIASES = {"GS": "GSW", "NY": "NYK", "NO": "NOP", "SA": "SAS", "UTAH": "UTA", "WSH": "WAS"}
+
+
+def tracker_time(value):
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("Tracker timestamps must include a time zone.")
+    return parsed.astimezone(timezone.utc)
+
+
+def nba_tracking_rows(scoreboard, games, shared, now=None):
+    now = now or datetime.now(timezone.utc)
+    ratings, predictions = shared["build_elo_model"](games)
+    adjustment = shared["test_probability_adjustment"](predictions)
+    strength = adjustment["strength"] if adjustment else 1.0
+    cutoff = max(game["date"] for game in games)
+    baseline = sum(game["home_score"] > game["away_score"] for game in games) / len(games)
+    output = []
+    for event in scoreboard.get("events", []):
+        try:
+            competition = event["competitions"][0]
+            tip = tracker_time(event["date"])
+            status = competition.get("status", event.get("status", {})).get("type", {})
+            if tip <= now or status.get("state") != "pre" or cutoff >= tip.date():
+                continue
+            home = next(team for team in competition["competitors"] if team["homeAway"] == "home")
+            away = next(team for team in competition["competitors"] if team["homeAway"] == "away")
+            home_code = home["team"]["abbreviation"]
+            away_code = away["team"]["abbreviation"]
+            home_code, away_code = NBA_ALIASES.get(home_code, home_code), NBA_ALIASES.get(away_code, away_code)
+            if home_code not in ratings or away_code not in ratings:
+                continue
+            probability = shared["expected_home_win"](ratings[home_code], ratings[away_code])
+            season_type = event.get("season", scoreboard.get("season", {})).get("type")
+            type_name = {1:"Preseason (experimental)", 2:"Regular season", 3:"Playoffs (experimental)"}.get(season_type)
+            if not type_name:
+                continue
+            output.append(dict(zip(TRACK_FIELDS, [
+                "1", str(event["id"]), now.isoformat(), tip.isoformat(), type_name,
+                str(home["team"]["id"]), str(away["team"]["id"]), home["team"]["displayName"], away["team"]["displayName"],
+                repr(probability), repr(shared["shrink_probability"](probability, strength)), repr(baseline), repr(strength),
+                cutoff.isoformat(), "Elo K20 home55; frozen confidence adjustment; no form/rest",
+            ])))
+        except (KeyError, ValueError, TypeError, StopIteration):
+            continue
+    return output
+
+
+def nba_tracker_csv(rows):
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=TRACK_FIELDS)
+    writer.writeheader();writer.writerows(rows)
+    return output.getvalue()
+
+
+def read_nba_tracker_csv(content):
+    reader = csv.DictReader(io.StringIO(content))
+    if reader.fieldnames != TRACK_FIELDS:
+        raise ValueError("Upload a prediction CSV downloaded from this tracker.")
+    rows, seen = [], set()
+    for row in reader:
+        if len(rows) >= 100:
+            raise ValueError("Use files containing at most 100 predictions.")
+        if row["Schema"] != "1" or not row["Game ID"].isdigit() or row["Game ID"] in seen:
+            raise ValueError("Invalid or duplicate prediction game ID.")
+        if row["Season type"] not in ("Regular season", "Preseason (experimental)", "Playoffs (experimental)"):
+            raise ValueError("Invalid prediction season type.")
+        if not row["Home ID"].isdigit() or not row["Away ID"].isdigit() or row["Home ID"] == row["Away ID"]:
+            raise ValueError("Invalid prediction teams.")
+        if tracker_time(row["Recorded UTC"]) > datetime.now(timezone.utc):
+            raise ValueError("Prediction recording time is in the future.")
+        if tracker_time(row["Recorded UTC"]) >= tracker_time(row["Tip-off UTC"]):
+            raise ValueError("Prediction was recorded after its scheduled start.")
+        if date.fromisoformat(row["Model history through"]) >= tracker_time(row["Tip-off UTC"]).date():
+            raise ValueError("Prediction history cutoff is too late.")
+        for key in ("Original probability", "Adjusted probability", "Baseline probability", "Adjustment strength"):
+            value = float(row[key])
+            if not math.isfinite(value) or not 0 <= value <= 1:
+                raise ValueError("Invalid saved probability or strength.")
+        expected = 0.5 + float(row["Adjustment strength"]) * (float(row["Original probability"]) - 0.5)
+        if abs(expected - float(row["Adjusted probability"])) > 1e-9:
+            raise ValueError("Saved adjustment does not match its strength.")
+        seen.add(row["Game ID"]);rows.append(row)
+    return rows
+
+
+def grade_nba_prediction(row, data):
+    header = data.get("header", {})
+    if str(header.get("id")) != row["Game ID"]:
+        raise ValueError("ESPN returned a different game.")
+    competition = header["competitions"][0]
+    status = competition.get("status", {}).get("type", {})
+    if status.get("state") != "post" or status.get("completed") is not True:
+        return None
+    if tracker_time(row["Recorded UTC"]) >= tracker_time(competition.get("date", header.get("date", row["Tip-off UTC"]))):
+        raise ValueError("Saved prediction is not before the reported game start.")
+    expected_type = {"Regular season":2, "Preseason (experimental)":1, "Playoffs (experimental)":3}[row["Season type"]]
+    if header.get("season", {}).get("type") != expected_type:
+        raise ValueError("ESPN game season type differs from the saved prediction.")
+    teams = {team["homeAway"]:team for team in competition["competitors"]}
+    for side, key in (("home", "Home ID"), ("away", "Away ID")):
+        if str(teams[side]["team"]["id"]) != row[key]:
+            raise ValueError("ESPN game teams differ from the saved prediction.")
+    home, away = float(teams["home"]["score"]), float(teams["away"]["score"])
+    if not all(math.isfinite(x) and x >= 0 for x in (home,away)) or home == away:
+        raise ValueError("Invalid final NBA score.")
+    actual = float(home > away)
+    return {"Game ID":row["Game ID"], "Season type":row["Season type"], "Game":row["Away"]+" at "+row["Home"],
+            "Final score":f"{away:g}–{home:g}", "Correct":(float(row["Original probability"]) >= .5) == bool(actual),
+            "Original Brier":(float(row["Original probability"])-actual)**2,
+            "Adjusted Brier":(float(row["Adjusted probability"])-actual)**2,
+            "Baseline correct":(float(row["Baseline probability"]) >= .5) == bool(actual),
+            "Baseline Brier":(float(row["Baseline probability"])-actual)**2}
+
+
+def show_nba_prediction_tracker(scoreboard, end_year, shared):
+    st.header("NBA Future Prediction Tracker")
+    st.caption("Save predictions before tip-off, download the CSV, then upload it after games finish to check accuracy. The original probabilities stay frozen. Keep your downloaded file: this app session is temporary, and files are not saved automatically between visits.")
+    st.info("Preseason and playoff predictions are experimental and scored separately. Saved model history may be old; the history cutoff is recorded for every prediction. This CSV tracker is editable and is not a tamper-proof independent audit.")
+    upload = st.file_uploader("Upload your saved NBA predictions", type=["csv"], key="nba_tracker_upload")
+    rows = st.session_state.setdefault("nba_tracked_predictions", [])
+    try:
+        if upload is not None:
+            content = upload.getvalue().decode("utf-8-sig")
+            digest = hashlib.sha256(content.encode()).hexdigest()
+            if st.session_state.get("nba_tracker_imported") != digest:
+                imported = read_nba_tracker_csv(content)
+                existing = {row["Game ID"]: row for row in rows}
+                for row in imported:
+                    if row["Game ID"] in existing and existing[row["Game ID"]] != row:
+                        raise ValueError("A game already has a different frozen prediction. Reload the app session to review a different file.")
+                    existing[row["Game ID"]] = row
+                if len(existing) > 100:
+                    raise ValueError("Keep each tracker file to 100 predictions or fewer.")
+                rows[:] = list(existing.values())
+                st.session_state["nba_tracker_imported"] = digest
+        if st.button("Save upcoming predictions for selected date", key="nba_tracker_save"):
+            history = load_nba_saved_history(end_year)["games"]
+            new = nba_tracking_rows(scoreboard, history, shared)
+            seen = {row["Game ID"] for row in rows}
+            additions = [row for row in new if row["Game ID"] not in seen]
+            if len(rows) + len(additions) > 100:
+                raise ValueError("Tracker limit is 100 predictions; start another file in a new session.")
+            rows.extend(additions)
+            st.success(f"Saved {len(additions)} new pre-game predictions. Download the CSV below to keep them.")
+            if not new:
+                st.info("No eligible upcoming games on the selected sidebar date. Started games cannot be saved; unknown teams or season types are skipped.")
+        if rows:
+            st.dataframe([{ "Game":row["Away"]+" at "+row["Home"], "Season type":row["Season type"], "Tip-off UTC":row["Tip-off UTC"], "Recorded UTC":row["Recorded UTC"], "Home win %":round(float(row["Original probability"])*100,1), "Adjusted home win %":round(float(row["Adjusted probability"])*100,1), "Model history through":row["Model history through"]} for row in rows], hide_index=True, use_container_width=True)
+            st.download_button("Download saved NBA predictions", nba_tracker_csv(rows), file_name="edgelab_nba_predictions.csv", mime="text/csv", key="nba_tracker_download")
+            if st.button("Check final scores & tracker accuracy", key="nba_tracker_grade"):
+                def check(row):
+                    try:
+                        result = grade_nba_prediction(row, load_nba_game_details(row["Game ID"]))
+                        return result, None
+                    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, StopIteration) as exc:
+                        return None, f"Game {row['Game ID']}: {exc}"
+                with st.spinner("Checking ESPN final scores..."):
+                    with ThreadPoolExecutor(max_workers=6) as pool:
+                        checked = list(pool.map(check, rows))
+                graded = [r for r,e in checked if r is not None]
+                for typ in sorted({r["Season type"] for r in graded}):
+                    group = [r for r in graded if r["Season type"] == typ]
+                    st.write(f"**{typ}: {len(group)} completed games**")
+                    st.dataframe([{"Winner accuracy":f"{sum(r['Correct'] for r in group)/len(group)*100:.1f}%", "Original Brier":round(sum(r['Original Brier'] for r in group)/len(group),4), "Adjusted Brier":round(sum(r['Adjusted Brier'] for r in group)/len(group),4), "Baseline accuracy":f"{sum(r['Baseline correct'] for r in group)/len(group)*100:.1f}%", "Baseline Brier":round(sum(r['Baseline Brier'] for r in group)/len(group),4)}], hide_index=True, use_container_width=True)
+                st.caption(f"{len(graded)}/{len(rows)} games graded. Pending or unavailable games are excluded from accuracy. Small samples are inconclusive.")
+                if graded:st.dataframe(graded, hide_index=True, use_container_width=True)
+                errors = [e for r,e in checked if e]
+                if errors:
+                    with st.expander("Unavailable final scores"):st.write(errors)
+    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, OSError, UnicodeError) as exc:
+        st.warning(f"NBA tracker could not complete this action: {exc}")
+
 def render_nba_tools(game_date, scoreboard, shared):
     end_year = current_season_end()
     st.divider()
     show_nba_game_details(scoreboard, game_date, shared)
     st.divider()
     show_nba_model(shared, end_year)
+    st.divider()
+    show_nba_prediction_tracker(scoreboard, end_year, shared)
     st.divider()
     show_nba_statistics(end_year)
     st.divider()
