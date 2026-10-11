@@ -155,6 +155,97 @@ def load_nba_shooting(end_year, season_type, scope):
     return parse_shooting_zones(nba_request(endpoint, params))
 
 
+
+# ESPN uses the season ending year. Keep season/type refs explicit so a
+# historical request can never silently return the current season.
+ESPN_CORE = "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba"
+ESPN_TYPES = {"Pre Season": 1, "Regular Season": 2, "Playoffs": 3}
+
+
+def espn_json(url, params=None):
+    response = requests.get(url, params=params, headers=HEADERS, timeout=15)
+    response.raise_for_status()
+    return response.json()
+
+
+def espn_stats_row(data, end_year, type_name):
+    type_id = ESPN_TYPES[type_name]
+    expected = f"/seasons/{end_year}/types/{type_id}/"
+    if expected not in data.get("$ref", ""):
+        raise ValueError("ESPN returned statistics for a different season/type.")
+    values = {
+        stat["name"]: stat.get("value")
+        for category in data.get("splits", {}).get("categories", [])
+        for stat in category.get("stats", [])
+    }
+    games = values.get("gamesPlayed")
+    if not isinstance(games, (int, float)) or games <= 0:
+        raise ValueError("No played games in this ESPN statistics response.")
+    row = {"GP": games}
+    for key, total in {
+        "PTS": "points", "MIN": "minutes", "REB": "rebounds",
+        "AST": "assists", "STL": "steals", "BLK": "blocks",
+        "TOV": "turnovers", "FGM": "fieldGoalsMade", "FGA": "fieldGoalsAttempted",
+        "FG3M": "threePointFieldGoalsMade", "FG3A": "threePointFieldGoalsAttempted",
+        "FTM": "freeThrowsMade", "FTA": "freeThrowsAttempted",
+    }.items():
+        value = values.get(total)
+        row[key] = value / games if isinstance(value, (int, float)) else None
+    for key, made, attempts in (("FG_PCT", "FGM", "FGA"),
+                                ("FG3_PCT", "FG3M", "FG3A"),
+                                ("FT_PCT", "FTM", "FTA")):
+        row[key] = (row[made] / row[attempts]
+                    if row.get(attempts) and row.get(made) is not None else None)
+    return row
+
+
+@st.cache_data(ttl=3600)
+def load_espn_nba_teams(end_year, type_name):
+    directory = espn_json(f"{ESPN}/teams", {"limit": 100})
+    teams = [entry["team"] for sport in directory.get("sports", [])
+             for league in sport.get("leagues", []) for entry in league.get("teams", [])
+             if not entry["team"].get("isAllStar")]
+    def fetch(team):
+        try:
+            url = f"{ESPN_CORE}/seasons/{end_year}/types/{ESPN_TYPES[type_name]}/teams/{team['id']}/statistics"
+            row = espn_stats_row(espn_json(url), end_year, type_name)
+            row.update(TEAM_ID=int(team["id"]), TEAM_NAME=team["displayName"])
+            return row, None
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError) as exc:
+            return None, f"{team['displayName']}: {exc}"
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(fetch, teams))
+    return {"rows": [row for row, error in results if row],
+            "errors": [error for row, error in results if error],
+            "source": "ESPN", "retrieved": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
+
+
+@st.cache_data(ttl=3600)
+def load_espn_nba_players(end_year, type_name, team_id):
+    url = f"{ESPN_CORE}/seasons/{end_year}/teams/{team_id}/athletes"
+    directory = espn_json(url, {"limit": 100})
+    if directory.get("pageCount", 1) > 1:
+        raise ValueError("ESPN roster is incomplete; more than one page returned.")
+    def fetch(item):
+        try:
+            ref = item["$ref"].replace("http://", "https://", 1)
+            if f"/seasons/{end_year}/athletes/" not in ref:
+                raise ValueError("ESPN roster season mismatch.")
+            athlete = espn_json(ref)
+            athlete_id = str(athlete["id"])
+            stats = espn_json(f"{ESPN_CORE}/seasons/{end_year}/types/{ESPN_TYPES[type_name]}/athletes/{athlete_id}/statistics")
+            row = espn_stats_row(stats, end_year, type_name)
+            row.update(PLAYER_ID=int(athlete_id), PLAYER_NAME=athlete["displayName"], TEAM_ID=team_id)
+            return row, None
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError) as exc:
+            return None, str(exc)
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(fetch, directory.get("items", [])))
+    return {"rows": [row for row, error in results if row],
+            "unavailable": sum(bool(error) for row, error in results),
+            "roster_count": len(results)}
+
+
 TEAM_METRICS = [
     ("Offense: points per game", "PTS", True, False),
     ("Offense: field goal %", "FG_PCT", True, True),
@@ -351,6 +442,7 @@ def load_nba_history(end_year):
 
 def clear_nba_caches():
     for function in (
+        load_espn_nba_teams, load_espn_nba_players,
         load_nba_team_stats, load_nba_player_stats, load_nba_shooting,
         load_nba_injuries, load_nba_game_details, load_nba_history,
     ):
@@ -477,7 +569,13 @@ def show_nba_statistics(end_year):
         "Current preseason samples are small. Statistics are current season "
         "aggregates, not snapshots for the sidebar date."
     )
-    selection = (season, type_name)
+    source = st.selectbox(
+        "NBA statistics source", ["ESPN", "NBA.com (includes mid-range shooting)"],
+        key="nba_stats_source",
+    )
+    use_espn = source == "ESPN"
+    st.caption("ESPN provides an alternative when NBA.com does not respond. Mid-range shooting and opponent shooting metrics require NBA.com.")
+    selection = (season, type_name, source)
     if st.button("Load NBA team & player browser", key="nba_load_stats"):
         st.session_state["nba_stats_loaded"] = selection
     if st.session_state.get("nba_stats_loaded") != selection:
@@ -485,10 +583,10 @@ def show_nba_statistics(end_year):
         return
     try:
         with st.spinner("Loading NBA league team statistics..."):
-            data = load_nba_team_stats(season, type_name)
+            data = load_espn_nba_teams(season, type_name) if use_espn else load_nba_team_stats(season, type_name)
         teams = [row for row in data["rows"] if (row.get("GP") or 0) > 0]
         if not teams:
-            st.info("No completed team statistics for this season/type yet. Try the previous regular season.")
+            st.info("The selected source has no available team statistics for this season/type. For ESPN, try the previous regular season; preseason aggregates may be unavailable.")
             return
         teams.sort(key=lambda team: team["TEAM_NAME"])
         selected_id = st.selectbox(
@@ -498,9 +596,14 @@ def show_nba_statistics(end_year):
         )
         selected = next(team for team in teams if team["TEAM_ID"] == selected_id)
         st.caption(
-            f"Source: NBA.com. Retrieved {data['retrieved']}. "
+            f"Source: {source}. Retrieved {data['retrieved']}. "
             f"Teams with played games: {len(teams)}/30. Cached up to one hour."
         )
+        if use_espn:
+            st.info("ESPN does not supply opponent points/shooting or true mid-range zones in this feed. Those values remain unavailable. Comparisons use only teams with available data.")
+            if data.get("errors"):
+                with st.expander("Teams with unavailable statistics"):
+                    st.write(data["errors"])
         st.write(f"**{selected['TEAM_NAME']}: {selected['GP']} games — {season_name(season)} {type_label}**")
         st.subheader("NBA Team Strengths & Weaknesses")
         comparisons = team_comparison(selected, teams)
@@ -515,7 +618,7 @@ def show_nba_statistics(end_year):
             "comparisons do not adjust for pace, opponent strength, or lineups. "
             "Above average may reflect only a small difference."
         )
-        if st.checkbox("Show NBA team mid-range shooting", key="nba_team_midrange"):
+        if not use_espn and st.checkbox("Show NBA team mid-range shooting", key="nba_team_midrange"):
             try:
                 zones = load_nba_shooting(season, type_name, "teams")
                 zone = shooting_lookup(zones, "TEAM_ID").get(selected_id)
@@ -539,12 +642,18 @@ def show_nba_statistics(end_year):
         st.subheader("NBA Player Statistics & Shooting")
         if st.checkbox("Load players for selected NBA team", key="nba_players_open"):
             with st.spinner("Loading player production and shooting zones..."):
-                players = load_nba_player_stats(season, type_name)
-                try:
-                    player_zones = load_nba_shooting(season, type_name, "players")
-                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError) as exc:
+                if use_espn:
+                    player_data = load_espn_nba_players(season, type_name, selected_id)
+                    players, player_zones = player_data["rows"], []
+                    st.caption(f"ESPN statistics available for {len(players)}/{player_data['roster_count']} roster players. Players without statistics are omitted; roster association does not guarantee team-only season totals.")
+                else:
+                    players = load_nba_player_stats(season, type_name)
                     player_zones = []
-                    st.info(f"Mid-range data unavailable; other player stats remain available: {exc}")
+                    if st.checkbox("Load NBA player mid-range shooting", key="nba_player_midrange"):
+                        try:
+                            player_zones = load_nba_shooting(season, type_name, "players")
+                        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError):
+                            st.info("Mid-range data unavailable; other player stats remain available.")
             display = player_display_rows(players, selected_id, player_zones)
             if display:
                 st.dataframe(display, hide_index=True, use_container_width=True)
@@ -557,7 +666,7 @@ def show_nba_statistics(end_year):
                 "include all two-point shots. A blank percentage means no "
                 "attempts or missing data. Players with no played games may "
                 "be absent. Multi-team season totals are identified by the "
-                "source's current team and may include previous-team games. "
+                "source's roster association and may include previous-team games. "
                 "This is not a confirmed starting lineup."
             )
         st.markdown("[Official NBA statistics](https://www.nba.com/stats/) · [NBA shooting zones](https://www.nba.com/stats/players/shooting)")
