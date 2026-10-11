@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 import requests
 import streamlit as st
+from nfl_prop_model import render_prop_research
 
 class OddsSourceError(ValueError):
     pass
@@ -129,7 +130,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
         st.subheader('Player props — common categories')
-        st.caption('This feed does not report bet counts or betting volume. Common categories are not a ranking of popular bets. The current winner model cannot price player props, spreads or totals.')
+        st.caption('This feed does not report bet counts or betting volume. Common categories are not a ranking of popular bets. Load yardage props, then use Analyze loaded player props for a watch/pass shortlist. Spreads and totals are not modeled yet.')
         event_id=st.selectbox('Player props game',[e['id'] for e in events],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game')
         labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=list(PROP_MARKETS[sport])[:2],key='sportsbook_props_categories')
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
@@ -140,15 +141,21 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
             props=bookmaker_rows([prop_saved[4]['data']],selected_books,True)
             if props:st.dataframe(props,hide_index=True,use_container_width=True)
-            else:st.info('No selected player props returned. Coverage can be limited during preseason.')
+            else:st.info('No selected player props returned.')
             st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
-        st.subheader('Games to research — experimental moneyline comparison')
+            if props:
+                render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'])
+        st.subheader('NFL game shortlist — experimental moneylines')
         st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. These are research candidates, not validated betting recommendations. Injuries and lineups are not included.')
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
             models=model_loader(sport,scoreboard)
             reviews=moneyline_reviews(filtered,models)
-            if reviews:st.dataframe(reviews,hide_index=True,use_container_width=True)
-            else:st.info('No eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
+            if reviews:
+                for row in reviews:
+                    row['Decision'] = 'Watch — experimental'
+                    row['Reason'] = 'Adjusted win probability exceeds the quoted break-even price by at least five percentage points. Check quarterback, injuries and weather.'
+                st.dataframe(reviews,hide_index=True,use_container_width=True)
+            else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
     except OddsSourceError as exc:
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
