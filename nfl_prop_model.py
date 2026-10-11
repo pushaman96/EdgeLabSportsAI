@@ -304,10 +304,37 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent allowed {feature['ratio']*100:.0f}% of league yardage average. Availability: {status}. Confirm lineup/weather."
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
 
+def clear_prop_shortlist(rows):
+    grouped=defaultdict(list)
+    for row in rows:
+        grouped[(row['Game'],name_key(row.get('Player','')),row.get('Category',''))].append(row)
+    def score(row):
+        probability=num(row.get('Estimated win %'))
+        odds=num(row.get('Odds'))
+        if probability is None or odds is None or abs(odds)<100:return -999
+        decimal=1+odds/100 if odds>0 else 1+100/abs(odds)
+        return probability/100*decimal-1
+    result=[]
+    for group in grouped.values():
+        candidates=[r for r in group if r['Decision']!='Pass']
+        directions={r.get('Selection') for r in candidates}
+        if len(directions)==1 and directions.issubset({'Over','Under'}):
+            row=dict(max(candidates,key=score))
+            row['Paper pick']=f"{row['Player']} {row['Selection'].upper()} {row['Line']} {row['Category'].lower()}"
+            if len(candidates)>1:row['Reason'] += ' One loaded quote retained by estimated return; other sportsbook entries consolidated.'
+        else:
+            row=dict(max(group,key=lambda r:num(r.get('Model edge (pp)')) or -999))
+            row['Decision']='Pass'
+            if candidates:row['Reason']='Qualifying Over and Under quotes conflict or no supported direction exists. No single paper pick.'
+            row.update({'Paper pick':'PASS — no pick','Selection':'—','Line':'—','Sportsbook':'—','Odds':'—','Estimated win %':None,'Break-even %':None,'Model edge (pp)':None})
+        # Put the explicit direction first in the displayed/exported table.
+        result.append({'Paper pick':row.pop('Paper pick'),**row})
+    return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
+
 def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze=False):
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
-    st.subheader('NFL prop shortlist — watch or pass')
+    st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Experimental probabilities use 2024 forecast errors; 2025 is the held-out test. This test does not establish profit at sportsbook prices.')
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)))
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
@@ -357,25 +384,25 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         except (ValueError,TypeError,AttributeError):
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
+    display=clear_prop_shortlist(display)
     for issue in saved.get('issues',[]):st.warning(issue)
     st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
     watch = [r for r in display if r['Decision'] != 'Pass']
-    st.write(f'**{len(watch)} experimental watch entries; {len(display)-len(watch)} pass entries.**')
+    st.write(f'**{len(watch)} unique experimental paper picks; {len(display)-len(watch)} player/category passes.**')
+    picks_only=st.checkbox('Show only qualifying paper picks',key='nfl_only_clear_picks')
+    table=watch if picks_only else display
+    if table:st.dataframe(table,hide_index=True,use_container_width=True)
     if watch:
-        st.dataframe(watch,hide_index=True,use_container_width=True)
-        st.caption('Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Several books may quote the same bet. These are not independent picks. Confirm player participation and game conditions; probability estimates have not been tested for profit on historical prop prices.')
+        st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
-        st.info('No supported player props meet the current research filters. Passing on a game is a valid result.')
-    if st.checkbox('Show props marked Pass',key='nfl_show_prop_pass'):
-        passed = [r for r in display if r['Decision'] == 'Pass']
-        if passed:st.dataframe(passed,hide_index=True,use_container_width=True)
+        st.info('PASS: no supported player props meet the current research filters. No bet is suggested.')
     with st.expander('Check the yardage model test results'):
         st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
         st.caption('2024 chooses forecast parameters and supplies errors; 2025 tests them without refitting. Forecasts use only earlier weeks, current-season workload and opponent yardage allowed. Baseline is the preceding four-game yardage average. Benchmark thresholds are that pregame average rounded down plus 0.5 yards, not actual sportsbook lines. Missing player game rows are not invented as zero-yard outcomes. Injuries, weather and lineup changes were not backtested. Rushing/receiving models that fail the forecast baseline stay on Pass.')
         st.markdown('[Statistics source: nflverse](https://nflreadr.nflverse.com/reference/load_player_stats.html)')
     if display:
         buffer = io.StringIO()
-        writer = csv.DictWriter(buffer,fieldnames=['Recorded UTC','Game starts UTC']+list(display[0]))
+        writer = csv.DictWriter(buffer,fieldnames=['Recorded UTC','Game starts UTC']+list(dict.fromkeys(key for row in display for key in row)))
         writer.writeheader()
         for row in display:
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
