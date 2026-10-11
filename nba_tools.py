@@ -520,6 +520,98 @@ def clear_nba_caches():
         function.clear()
 
 
+
+def nba_season_validation(predictions, current_end_year):
+    """Evaluate each completed season after the first warm-up season.
+
+    Elo and baseline predictions already use only earlier game dates. Freeze
+    each season's shrinkage strength using the preceding season, then score
+    the entire next season without retuning on its outcomes.
+    """
+    by_season = defaultdict(list)
+    for prediction in sorted(predictions, key=lambda row: row["Date"]):
+        by_season[prediction["Season"]].append(prediction)
+    results = []
+    for season in sorted(by_season):
+        if season >= current_end_year or season - 1 not in by_season:
+            continue
+        calibration = by_season[season - 1]
+        evaluation = by_season[season]
+        if len(calibration) < 100 or len(evaluation) < 100:
+            continue
+        if calibration[-1]["Date"] >= evaluation[0]["Date"]:
+            raise ValueError("Season calibration overlaps its evaluation dates.")
+        def result(row):
+            return 1.0 if row["Actual Result"] == "Home win" else 0.0 if row["Actual Result"] == "Away win" else 0.5
+        def score(rows, strength):
+            return sum((0.5 + strength * (row["Home Win Probability"] - 0.5) - result(row)) ** 2 for row in rows) / len(rows)
+        strength = min((step / 100 for step in range(100, 4, -1)),
+                       key=lambda candidate: score(calibration, candidate))
+        non_ties = [row for row in evaluation if row["Actual Result"] != "Tie"]
+        if not non_ties:
+            continue
+        original = score(evaluation, 1.0)
+        adjusted = score(evaluation, strength)
+        results.append({
+            "season": season, "games": len(evaluation),
+            "accuracy": sum(row["Correct"] for row in non_ties) / len(non_ties),
+            "baseline_accuracy": sum(row["Baseline Correct"] for row in non_ties) / len(non_ties),
+            "brier": original,
+            "baseline_brier": sum(row["Baseline Brier Score"] for row in evaluation) / len(evaluation),
+            "adjusted_brier": adjusted, "adjustment_gain": original - adjusted,
+            "strength": strength, "calibration_games": len(calibration),
+            "calibration_first": calibration[0]["Date"], "calibration_last": calibration[-1]["Date"],
+            "first_date": evaluation[0]["Date"], "last_date": evaluation[-1]["Date"],
+        })
+    return results
+
+
+def show_nba_season_validation(predictions, end_year):
+    st.subheader("NBA Validation Across Completed Seasons")
+    st.caption(
+        "The first available season is warm-up history. Each later completed "
+        "season is evaluated in full. Predictions update only after earlier "
+        "game dates; each season's adjustment strength is fixed using the "
+        "preceding season. K=20 and home advantage=55 stay unchanged. "
+        "This comparison uses a different test period from the final-20% backtest above."
+    )
+    results = nba_season_validation(predictions, end_year)
+    if not results:
+        st.info("At least two completed seasons are needed for this comparison.")
+        return
+    st.dataframe([{
+        "Season": season_name(row["season"]), "Test games": row["games"],
+        "Winner accuracy": f"{row['accuracy'] * 100:.1f}%",
+        "Baseline accuracy": f"{row['baseline_accuracy'] * 100:.1f}%",
+        "Original Brier": round(row["brier"], 4),
+        "Baseline Brier": round(row["baseline_brier"], 4),
+        "Adjusted Brier": round(row["adjusted_brier"], 4),
+        "Adjustment improvement": f"{row['adjustment_gain']:+.6f}",
+        "Adjustment strength": row["strength"],
+        "Calibration season": season_name(row["season"] - 1),
+    } for row in results], hide_index=True, use_container_width=True)
+    beats_baseline = sum(row["brier"] < row["baseline_brier"] for row in results)
+    helped = sum(row["adjustment_gain"] > 1e-12 for row in results)
+    hurt = sum(row["adjustment_gain"] < -1e-12 for row in results)
+    total = sum(row["games"] for row in results)
+    gain = sum(row["adjustment_gain"] * row["games"] for row in results) / total
+    st.write(f"**Original model beat baseline Brier in {beats_baseline}/{len(results)} seasons. Adjustment helped in {helped}, worsened in {hurt}.**")
+    st.caption(
+        f"Across {total:,} evaluation games, weighted adjustment improvement "
+        f"was {gain:+.6f}. Positive means lower Brier; negative means worse. "
+        "Adjustment keeps the same favorites and winner accuracy. Later "
+        "seasons reuse earlier seasons as calibration, so these are chronological "
+        "checks, not independent trials. Historical consistency does not "
+        "establish future accuracy or betting profit."
+    )
+    with st.expander("View season calibration and evaluation dates"):
+        st.dataframe([{
+            "Season": season_name(row["season"]),
+            "Calibration games": row["calibration_games"],
+            "Calibration start": row["calibration_first"], "Calibration end": row["calibration_last"],
+            "Evaluation start": row["first_date"], "Evaluation end": row["last_date"],
+        } for row in results], hide_index=True, use_container_width=True)
+
 def show_nba_model(shared, end_year):
     st.header("🏀 NBA Historical Prediction Model")
     st.caption(
@@ -601,6 +693,7 @@ def show_nba_model(shared, end_year):
                 "The adjustment is experimental and may not improve later games; "
                 "it preserves the favorite and winner accuracy."
             )
+        show_nba_season_validation(predictions, end_year)
         st.subheader("Predict an NBA Matchup")
         teams = sorted(ratings)
         home = st.selectbox("NBA home team", teams, key="nba_home")
