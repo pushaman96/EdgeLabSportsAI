@@ -11,12 +11,12 @@ from datetime import date, timedelta, datetime, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 st.set_page_config(
-    page_title="EdgeLab Sports AI",
+    page_title="Kamikaze Picks",
     page_icon="🏈",
     layout="wide",
 )
 
-st.title("🏈 EdgeLab Sports AI")
+st.title("🏈 Kamikaze Picks")
 st.write("Scores, standings, betting value, and NFL/NBA research predictions")
 
 SPORTS = {
@@ -1807,7 +1807,7 @@ else:
 
 st.divider()
 st.caption(
-    "EdgeLab Sports AI — historical Elo estimates and betting "
+    "Kamikaze Picks — historical Elo estimates and betting "
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
