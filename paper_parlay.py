@@ -81,10 +81,20 @@ def available_quotes(state,sport):
                     except (ValueError,TypeError):continue
                     selection=' '.join(str(v) for v in [market['key'],outcome.get('description',''),outcome.get('name',''),outcome.get('point','')] if v!='')
                     leg={'game':event['away_team']+' at '+event['home_team'],'selection':selection,'book':book['title'],'odds':outcome['price'],'starts':event['commence_time'],'updated':market.get('last_update') or book.get('last_update'),'source':'Loaded sportsbook quote','result':'Pending'}
+                    leg['market']=market['key']
+                    leg['team']=outcome.get('name') if market['key']=='h2h' and len(market.get('outcomes',[]))==2 and outcome.get('name') in (event['home_team'],event['away_team']) else None
                     identity=(leg['game'],selection,leg['book'])
                     previous=quotes.get(identity)
                     if previous is None or str(leg['updated'] or '')>str(previous['updated'] or ''):quotes[identity]=leg
     return [leg for leg in quotes.values() if quote_is_fresh(leg)]
+
+def build_team_parlay(choices, selected):
+    if not 2 <= len(selected) <= 12:raise ValueError('Select between 2 and 12 teams.')
+    legs=[copy.deepcopy(choices[value]) for value in selected]
+    if len({leg['game'] for leg in legs}) != len(legs):raise ValueError('Choose only one team to win each game.')
+    if not all(quote_is_fresh(leg) for leg in legs):raise ValueError('Refresh sportsbook lines; a selected price is stale or its game has started.')
+    validate_legs(legs)
+    return legs
 
 def parse_history(raw):
     if len(raw)>250000:raise ValueError('Paper history file is too large.')
@@ -108,23 +118,41 @@ def parse_history(raw):
         ticket['stake']=stake;ticket['decimal']=price
     return tickets
 
-def render_paper_parlay(sport):
+def render_paper_parlay(sport, selected_date=None):
     st.divider();st.header('🎯 Paper Parlay Builder')
     st.caption('Practice with hypothetical stakes. Select at least two legs; every leg must win. This builder calculates payouts, not the chance of winning or the strongest picks. No bets are placed.')
     state_key='paper_parlay_draft_'+sport
     legs=st.session_state.setdefault(state_key,[])
     quotes=available_quotes(st.session_state,sport)
+    if selected_date is not None:
+        quotes=[q for q in quotes if datetime.fromisoformat(q['starts'].replace('Z','+00:00')).astimezone(ZoneInfo('America/Los_Angeles')).date()==selected_date]
     if quotes:
         books=sorted({q['book'] for q in quotes})
         book=st.selectbox('Parlay sportsbook',books,key='paper_parlay_book_'+sport)
-        game_options=sorted({q['game'] for q in quotes if q['book']==book})
-        selected_game=st.selectbox('Parlay game',game_options,key='paper_parlay_game_'+sport)
-        options=[q for q in quotes if q['book']==book and q['game']==selected_game]
-        index=st.selectbox('Choose a loaded game line or player prop',list(range(len(options))),format_func=lambda i:f"{options[i]['game']} | {options[i]['selection']} | {options[i]['odds']:+g}",key='paper_parlay_quote_'+sport)
-        if st.button('Add loaded selection to parlay',key='paper_add_quote_'+sport):
-            if len(legs)>=12:st.warning('Maximum 12 legs.')
-            elif any(l['game']==options[index]['game'] and l['selection']==options[index]['selection'] for l in legs):st.warning('That selection is already in your parlay.')
-            else:legs.append(copy.deepcopy(options[index]))
+        team_quotes=[q for q in quotes if q['book']==book and q.get('team')]
+        choices={q['game']+' | '+q['team']:q for q in team_quotes}
+        if choices:
+            selected=st.multiselect('Choose teams to win',list(choices),format_func=lambda value:f"{choices[value]['team']} ({choices[value]['odds']:+g}) — {choices[value]['game']}",key='paper_team_choices_'+sport,max_selections=12)
+            if st.button('Build parlay from selected teams',key='paper_build_teams_'+sport,disabled=len(selected)<2):
+                try:
+                    legs=build_team_parlay(choices,selected)
+                    st.session_state[state_key]=legs
+                    st.success('Your team parlay is ready. Enter your paper stake below.')
+                except ValueError as exc:st.warning(str(exc))
+            st.caption('Pick one winner per game. Build replaces the current draft with your selected teams and fills in this sportsbook’s moneyline odds automatically.')
+        else:st.info('No fresh team moneylines are loaded for this sportsbook. Load or refresh game lines in the sportsbook section.')
+        with st.expander('Add a player prop, spread or total instead'):
+            extra=[q for q in quotes if q['book']==book and not q.get('team')]
+            if extra:
+                games=sorted({q['game'] for q in extra})
+                selected_game=st.selectbox('Prop/spread/total game',games,key='paper_parlay_game_'+sport)
+                options=[q for q in extra if q['game']==selected_game]
+                index=st.selectbox('Loaded selection',list(range(len(options))),format_func=lambda i:f"{options[i]['selection']} | {options[i]['odds']:+g}",key='paper_parlay_quote_'+sport)
+                if st.button('Add loaded selection to parlay',key='paper_add_quote_'+sport):
+                    if len(legs)>=12:st.warning('Maximum 12 legs.')
+                    elif any(l['game']==options[index]['game'] and l['selection']==options[index]['selection'] for l in legs):st.warning('That selection is already in your parlay.')
+                    else:legs.append(copy.deepcopy(options[index]))
+            else:st.info('Load player props or game spreads/totals to see these selections.')
         st.caption('Only upcoming quotes updated within 15 minutes are offered. Load sportsbook lines/props below, then interact here to see them. This does not request more API credits. Listed selections are not automatically Watch picks.')
     else:st.info('Load sportsbook game lines or props below to use their prices here, or enter your own legs.')
     with st.expander('Enter a leg manually'):
