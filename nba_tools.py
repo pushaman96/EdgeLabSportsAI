@@ -2,7 +2,7 @@
 import math
 import json
 from pathlib import Path
-from collections import defaultdict
+from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timezone
 import requests
@@ -612,6 +612,122 @@ def show_nba_season_validation(predictions, end_year):
             "Evaluation start": row["first_date"], "Evaluation end": row["last_date"],
         } for row in results], hide_index=True, use_container_width=True)
 
+
+def nba_recent_form_features(predictions):
+    """Recent surprises versus Elo, reset each season and delayed by date."""
+    history = defaultdict(lambda: deque(maxlen=10))
+    days = defaultdict(list)
+    for row in sorted(predictions, key=lambda row: row["Date"]):
+        days[row["Date"]].append(row)
+    output = []
+    for day in sorted(days):
+        updates = []
+        for row in days[day]:
+            item = dict(row)
+            home = list(history[(row["Season"], row["Home Team"])])
+            away = list(history[(row["Season"], row["Away Team"])])
+            for window in (5, 10):
+                # Use unchanged Elo until both teams have enough current-season games.
+                item[f"Form {window}"] = (sum(home[-window:]) / window - sum(away[-window:]) / window
+                                          if len(home) >= window and len(away) >= window else 0.0)
+                item[f"Form available {window}"] = len(home) >= window and len(away) >= window
+            output.append(item)
+            actual = 1.0 if row["Actual Result"] == "Home win" else 0.0 if row["Actual Result"] == "Away win" else 0.5
+            surprise = actual - row["Home Win Probability"]
+            updates.extend(((row["Season"], row["Home Team"], surprise),
+                            (row["Season"], row["Away Team"], -surprise)))
+        for season, team, surprise in updates:
+            history[(season, team)].append(surprise)
+    return output
+
+
+def nba_form_probability(probability, feature, weight):
+    if weight == 0 or feature == 0:
+        return probability
+    probability = max(1e-9, min(1 - 1e-9, probability))
+    log_odds = math.log(probability / (1 - probability)) + weight * feature
+    return 1 / (1 + math.exp(-log_odds))
+
+
+def nba_recent_form_validation(predictions, current_end_year):
+    by_season = defaultdict(list)
+    for row in nba_recent_form_features(predictions):
+        by_season[row["Season"]].append(row)
+    # Small fixed candidate set. Zero weight preserves Elo exactly.
+    candidates = [(window, weight) for weight in (0.0, 0.25, 0.5, 1.0, 2.0) for window in (5, 10)]
+    def actual(row):
+        return 1.0 if row["Actual Result"] == "Home win" else 0.0 if row["Actual Result"] == "Away win" else 0.5
+    def score(rows, window, weight):
+        return sum((nba_form_probability(row["Home Win Probability"], row[f"Form {window}"], weight) - actual(row)) ** 2 for row in rows) / len(rows)
+    results = []
+    for season in sorted(by_season):
+        if season >= current_end_year or season - 1 not in by_season:
+            continue
+        training, evaluation = by_season[season - 1], by_season[season]
+        if len(training) < 100 or len(evaluation) < 100:
+            continue
+        if training[-1]["Date"] >= evaluation[0]["Date"]:
+            raise ValueError("Recent-form training overlaps evaluation dates.")
+        window, weight = min(candidates, key=lambda candidate: score(training, *candidate))
+        non_ties = [row for row in evaluation if row["Actual Result"] != "Tie"]
+        if not non_ties:
+            continue
+        original = score(evaluation, window, 0.0)
+        form_brier = score(evaluation, window, weight)
+        correct = sum((nba_form_probability(row["Home Win Probability"], row[f"Form {window}"], weight) >= 0.5) == (actual(row) == 1.0) for row in non_ties)
+        results.append({
+            "season": season, "games": len(evaluation), "window": window, "weight": weight,
+            "original_accuracy": sum(row["Correct"] for row in non_ties) / len(non_ties),
+            "form_accuracy": correct / len(non_ties), "original_brier": original,
+            "form_brier": form_brier, "gain": original - form_brier,
+            "games_with_form": sum(row[f"Form available {window}"] for row in evaluation),
+            "training_first": training[0]["Date"], "training_last": training[-1]["Date"],
+            "evaluation_first": evaluation[0]["Date"], "evaluation_last": evaluation[-1]["Date"],
+        })
+    return results
+
+
+def show_nba_recent_form_validation(predictions, end_year):
+    st.subheader("NBA Recent Form Experiment")
+    st.caption(
+        "Tests the last 5 or 10 games: did each team win more often than Elo "
+        "expected? Each season's window and weight are chosen using only the "
+        "preceding season, including the option to keep Elo unchanged. Recent "
+        "form resets each season, uses only earlier dates, and starts after "
+        "both teams have enough games. This is compared with original Elo, "
+        "without the separate confidence adjustment."
+    )
+    results = nba_recent_form_validation(predictions, end_year)
+    if not results:
+        st.info("At least two completed seasons are needed for the recent-form experiment.")
+        return
+    st.dataframe([{
+        "Season": season_name(row["season"]), "Test games": row["games"],
+        "Original accuracy": f"{row['original_accuracy'] * 100:.1f}%",
+        "With form accuracy": f"{row['form_accuracy'] * 100:.1f}%",
+        "Original Brier": round(row["original_brier"], 4),
+        "With form Brier": round(row["form_brier"], 4),
+        "Brier improvement": f"{row['gain']:+.6f}",
+        "Recent games": row["window"] if row["weight"] else "Unchanged Elo",
+        "Form weight": row["weight"],
+        "Games with enough history": row["games_with_form"],
+        "Training season": season_name(row["season"] - 1),
+    } for row in results], hide_index=True, use_container_width=True)
+    helped = sum(row["gain"] > 1e-12 for row in results)
+    hurt = sum(row["gain"] < -1e-12 for row in results)
+    games = sum(row["games"] for row in results)
+    gain = sum(row["gain"] * row["games"] for row in results) / games
+    st.write(f"**Recent-form test: improved Brier in {helped}/{len(results)} seasons; worsened in {hurt}. Weighted improvement: {gain:+.6f}.**")
+    st.info("Recent form remains an experiment. The matchup calculator continues to use the existing Elo probabilities and confidence adjustment.")
+    st.caption(
+        "Positive Brier improvement is better. A zero form weight means "
+        "the preceding-season test selected unchanged Elo. Within a test "
+        "season, earlier results update team form before later predictions, "
+        "while the chosen window/weight stay fixed. This does not account "
+        "for injuries, player statistics, rest, trades, or shooting margins. "
+        "These historical checks are not an untouched future test."
+    )
+
 def show_nba_model(shared, end_year):
     st.header("🏀 NBA Historical Prediction Model")
     st.caption(
@@ -694,6 +810,7 @@ def show_nba_model(shared, end_year):
                 "it preserves the favorite and winner accuracy."
             )
         show_nba_season_validation(predictions, end_year)
+        show_nba_recent_form_validation(predictions, end_year)
         st.subheader("Predict an NBA Matchup")
         teams = sorted(ratings)
         home = st.selectbox("NBA home team", teams, key="nba_home")
