@@ -234,7 +234,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
             for outcome in market.get('outcomes',[]):
                 if market['key'] not in MARKETS:
                     continue
-                row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':MARKETS[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
+                row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':MARKETS[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Historical error range low':None,'Historical error range high':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
                 rows.append(row)
                 if starts <= now or not context or not context['regular'] or not schedule:
                     row['Reason'] = 'Game started or regular-season schedule match unavailable.';continue
@@ -287,6 +287,11 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row['Reason'] = 'Player history too old for this game.';continue
                 model = research['models'][market['key']]
                 projected = projection(feature,model['blend'],model['defense_weight'])
+                residuals=model['residuals']
+                lower=projected+residuals[int(.1*(len(residuals)-1))]*error_scale(projected)
+                upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
+                row['Historical error range low']=round(max(0,lower),1)
+                row['Historical error range high']=round(max(0,upper),1)
                 p = over_probability(projected,line,model['residuals'])
                 if row['Selection'] == 'Under':p = 1-p
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
@@ -358,7 +363,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     st.write(f'**{len(watch)} experimental watch entries; {len(display)-len(watch)} pass entries.**')
     if watch:
         st.dataframe(watch,hide_index=True,use_container_width=True)
-        st.caption('Several books may quote the same bet. These are not independent picks. Confirm player participation and game conditions; probability estimates have not been tested for profit on historical prop prices.')
+        st.caption('Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Several books may quote the same bet. These are not independent picks. Confirm player participation and game conditions; probability estimates have not been tested for profit on historical prop prices.')
     else:
         st.info('No supported player props meet the current research filters. Passing on a game is a valid result.')
     if st.checkbox('Show props marked Pass',key='nfl_show_prop_pass'):
