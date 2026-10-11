@@ -1,7 +1,8 @@
 
 import streamlit as st
 import requests
-from nba_tools import render_nba_tools, clear_nba_caches
+from nba_tools import render_nba_tools, clear_nba_caches, load_nba_saved_history, NBA_ALIASES
+from sportsbook_tools import render_sportsbooks
 import csv
 import io
 import math
@@ -958,6 +959,38 @@ def show_espn_nfl_weather(scoreboard_data, game_date):
             st.warning(f"ESPN weather could not be loaded: {exc}")
 
 
+def sportsbook_model_context(sport_name, scoreboard_data):
+    games = load_nfl_history() if sport_name == "NFL" else load_nba_saved_history(current_nba_season_end())["games"]
+    ratings, predictions = build_elo_model(games)
+    adjustment = test_probability_adjustment(predictions)
+    strength = adjustment["strength"] if adjustment else 1.0
+    cutoff = max(game["date"] for game in games)
+    age = (datetime.now(timezone.utc).date() - cutoff).days
+    output = {}
+    for event in scoreboard_data.get("events", []):
+        competition = event.get("competitions", [{}])[0]
+        competitors = competition.get("competitors", [])
+        home = next((row for row in competitors if row.get("homeAway") == "home"), {}).get("team", {})
+        away = next((row for row in competitors if row.get("homeAway") == "away"), {}).get("team", {})
+        home_code, away_code = home.get("abbreviation"), away.get("abbreviation")
+        aliases = {"LAR":"LA", "WSH":"WAS"} if sport_name == "NFL" else NBA_ALIASES
+        home_code, away_code = aliases.get(home_code, home_code), aliases.get(away_code, away_code)
+        if home_code not in ratings or away_code not in ratings:
+            continue
+        probability = shrink_probability(expected_home_win(ratings[home_code], ratings[away_code]), strength)
+        type_id = event.get("season", scoreboard_data.get("season", {})).get("type")
+        output[(home.get("displayName"), away.get("displayName"))] = {
+            "probability":probability, "cutoff":cutoff.isoformat(),
+            "eligible":type_id == 2 and 0 <= age <= 30,
+        }
+    return output
+
+
+def current_nba_season_end():
+    today = datetime.now(timezone.utc).date()
+    return today.year + 1 if today.month >= 7 else today.year
+
+
 # -------------------------
 # SIDEBAR
 # -------------------------
@@ -1191,6 +1224,9 @@ if submitted:
             "being realistic."
         )
 
+
+if sport == "NFL":
+    render_sportsbooks(sport, selected_date, locals().get("scoreboard", {}), sportsbook_model_context)
 
 # -------------------------
 # NFL HISTORICAL PREDICTION MODEL
