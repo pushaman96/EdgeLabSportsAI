@@ -475,11 +475,47 @@ def load_nba_history(end_year):
     return games
 
 
+
+@st.cache_data(ttl=3600)
+def load_nba_saved_history(end_year):
+    snapshot = json.loads(Path(__file__).with_name("nba_history_snapshot.json").read_text(encoding="utf-8"))
+    if (snapshot.get("schema_version") != 1
+            or snapshot.get("source") != "NBA.com leaguegamelog"
+            or snapshot.get("season_type") != "Regular Season"):
+        raise ValueError("Invalid saved NBA history metadata.")
+    datetime.fromisoformat(snapshot["retrieved_at"])
+    years = set(range(end_year - 4, end_year + 1))
+    if not years.issubset(set(snapshot["seasons_requested"])):
+        raise ValueError("Saved NBA history does not cover the requested seasons.")
+    games, seen = [], set()
+    for row in snapshot["games"]:
+        game = dict(row)
+        game["date"] = date.fromisoformat(game["date"])
+        if game["season"] not in years:
+            continue
+        if game["date"] > datetime.now(timezone.utc).date():
+            continue
+        if not game["home_team"] or not game["away_team"] or game["home_team"] == game["away_team"]:
+            raise ValueError("Invalid saved NBA teams.")
+        if not all(isinstance(game[key], (int, float)) and math.isfinite(game[key]) and game[key] >= 0 for key in ("home_score", "away_score")):
+            raise ValueError("Invalid saved NBA score.")
+        if game["home_score"] == game["away_score"]:
+            raise ValueError("Completed NBA games cannot be tied.")
+        identity = (game["date"], game["home_team"], game["away_team"])
+        if identity in seen:
+            raise ValueError("Duplicate saved NBA game.")
+        seen.add(identity)
+        games.append(game)
+    if len(games) < 100:
+        raise ValueError("Too few saved NBA games for a backtest.")
+    return {"games": sorted(games, key=lambda game: (game["date"], game["home_team"])),
+            "retrieved_at": snapshot["retrieved_at"]}
+
 def clear_nba_caches():
     for function in (
         nba_saved_snapshot, load_espn_nba_teams, load_espn_nba_players,
         load_nba_team_stats, load_nba_player_stats, load_nba_shooting,
-        load_nba_injuries, load_nba_game_details, load_nba_history,
+        load_nba_injuries, load_nba_game_details, load_nba_history, load_nba_saved_history,
     ):
         function.clear()
 
@@ -492,6 +528,12 @@ def show_nba_model(shared, end_year):
         "or sportsbook prices. K=20 and home advantage=55 are starting "
         "settings, not tuned NBA parameters."
     )
+    history_source = st.selectbox(
+        "NBA model history source", ["Saved NBA.com history", "Live NBA.com connection"],
+        key="nba_history_source",
+    )
+    if history_source == "Saved NBA.com history":
+        st.caption("Uses installed NBA.com game results without a live download. The retrieval time and last game date appear after loading. Saved history does not update automatically.")
     if st.button("Load NBA model & backtest", key="nba_load_model"):
         st.session_state["nba_model_loaded"] = True
     if not st.session_state.get("nba_model_loaded"):
@@ -499,7 +541,12 @@ def show_nba_model(shared, end_year):
         return
     try:
         with st.spinner("Loading completed NBA games and building ratings..."):
-            games = load_nba_history(end_year)
+            if history_source == "Saved NBA.com history":
+                saved_history = load_nba_saved_history(end_year)
+                games = saved_history["games"]
+                st.caption(f"Source: saved NBA.com results. Retrieved {saved_history['retrieved_at']}. Last included game: {games[-1]['date'].isoformat()}.")
+            else:
+                games = load_nba_history(end_year)
             ratings, predictions = shared["build_elo_model"](games)
             summary, test_games = shared["get_backtest_summary"](predictions)
         st.success(f"Loaded {len(games):,} completed NBA regular-season games.")
@@ -583,8 +630,10 @@ def show_nba_model(shared, end_year):
         )
         with st.expander("View recent NBA historical test predictions"):
             st.dataframe(test_games[-50:], hide_index=True, use_container_width=True)
-    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
         st.warning(f"NBA historical model could not be loaded: {exc}")
+        if history_source == "Live NBA.com connection":
+            st.info("Choose Saved NBA.com history to run the backtest without the live connection.")
 
 
 def show_nba_statistics(end_year):
