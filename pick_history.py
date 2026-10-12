@@ -71,11 +71,37 @@ def render_history():
     st.divider();st.header('Published pick history and results')
     try:records=json.loads(Path(LEDGER).read_text())['records']
     except (OSError,ValueError,KeyError):st.info('No published picks yet.');return
+    st.subheader('Personal paper-pick tracking')
+    st.caption('Use Save picks for testing beneath the analyzed shortlist. Personal records stay in this browser session. Download the JSON before closing or restarting, and restore it here next time. This is not automatic permanent storage.')
+    uploaded=st.file_uploader('Restore saved paper-pick JSON',type=['json'],key='personal_history_restore')
+    if uploaded is not None and st.button('Restore paper-pick records',key='personal_history_restore_button'):
+        try:
+            imported=json.loads(uploaded.getvalue())['records']
+            if not isinstance(imported,list) or len(imported)>5000:raise ValueError()
+            clean=[]
+            for r in imported:
+                if r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Moneyline'):raise ValueError()
+                if r['strategy'] not in ('Original','Cushion') or abs(float(r['odds']))<100 or not 0<float(r['probability'])<1:raise ValueError()
+                if not math.isfinite(float(r['odds'])):raise ValueError()
+                if r['evidence']!='Historical import':
+                    if utc(r['published_utc'])>=utc(r['starts_utc']):raise ValueError()
+                    r=dict(r,evidence='Personal paper record')
+                # Recheck grades from ESPN instead of trusting imported outcomes.
+                r=dict(r,result='Pending',actual=None,profit_per_1=None)
+                clean.append(r)
+            st.session_state['personal_paper_records']=clean
+            st.session_state.pop('ledger_live_grades',None)
+            st.success('Restored. Refresh completed-game grades to verify results. Imported personal records remain user-editable evidence.')
+        except (ValueError,KeyError,TypeError):st.warning('This file could not be restored as a paper-pick ledger.')
+    merged={r['id']:r for r in records}
+    for r in st.session_state.get('personal_paper_records',[]):merged.setdefault(r['id'],r)
+    records=list(merged.values())
     st.caption('Original and cushion strategies are separate. Historical imports are labeled and excluded from the prospective record. Returns assume $1 straight bets at recorded prices, excluding fees and platform void rules. No guaranteed returns.')
     if st.button('Refresh completed-game grades',key='ledger_refresh'):
         st.session_state['ledger_live_grades']=grade_all(records)
-    records=st.session_state.get('ledger_live_grades',records)
-    evidence=st.selectbox('Results record',['Published before kickoff','Historical import'],key='ledger_evidence')
+    graded={r['id']:r for r in st.session_state.get('ledger_live_grades',[])}
+    records=[graded.get(r['id'],r) for r in records]
+    evidence=st.selectbox('Results record',['Personal paper record','Published before kickoff','Historical import'],key='ledger_evidence')
     strategy=st.selectbox('Strategy',['Original','Cushion'],key='ledger_strategy')
     selected=[r for r in records if r['evidence']==evidence and r['strategy']==strategy]
     category=st.selectbox('Pick category',['All']+sorted({r['category'] for r in selected}),key='ledger_category')
@@ -98,10 +124,34 @@ def render_history():
 def publish_rows(rows,events,cushions=(),key_prefix='ledger'):
     import streamlit as st
     import requests
+    with st.expander('Save picks for testing — no password'):
+        st.caption('Saves qualifying originals and cushions before kickoff. Download your paper-pick JSON from Personal paper-pick tracking to preserve it between sessions. These are experimental selections, not automatically placed bets.')
+        if st.button('Save picks for testing',key=key_prefix+'_personal_save'):
+            try:
+                to_save=[(r,'Original') for r in rows]
+                for c in cushions:
+                    if c['Cushion decision']=='Pass':continue
+                    original=next(r for r in rows if r['Player']==c['Player'] and r['Game']==c['Game'])
+                    alternate=dict(original,Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
+                    alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
+                    to_save.append((alternate,'Cushion'))
+                boards={};saved=st.session_state.setdefault('personal_paper_records',[]);existing={r['id'] for r in saved};added=0
+                for row,strategy in to_save:
+                    match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
+                    if not match:continue
+                    day=utc(match['commence_time']).strftime('%Y%m%d')
+                    if day not in boards:
+                        response=requests.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard',params={'dates':day},timeout=15);response.raise_for_status();boards[day]=response.json()
+                    espn=next((e for e in boards[day].get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
+                    if not espn:continue
+                    record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
+                    record['evidence']='Personal paper record'
+                    if record['id'] not in existing:saved.append(record);existing.add(record['id']);added+=1
+                st.success(f'{added} new picks saved for testing. Download your JSON to keep them.')
+            except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):st.warning('Some picks could not be saved. Check your history, refresh stale prices, and try again.')
     try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
     except Exception:token=''
     if not token:
-        st.caption('Permanent publishing needs the administrator’s PICK_HISTORY_GITHUB_TOKEN in Streamlit secrets. Viewing and grading history do not require it.')
         return
     with st.expander('Administrator: publish current original and cushion picks'):
         password=st.text_input('Publishing password',type='password',key=key_prefix+'_password')
