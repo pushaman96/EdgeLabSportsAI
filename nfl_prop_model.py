@@ -385,6 +385,9 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
     display=clear_prop_shortlist(display)
+    display=[dict([('Paper pick', row['Paper pick']), ('Decision', row['Decision']),
+                   ('Reason', row['Reason'])] + [(key,value) for key,value in row.items()
+                   if key not in ('Paper pick','Decision','Reason')]) for row in display]
     for issue in saved.get('issues',[]):st.warning(issue)
     st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
     watch = [r for r in display if r['Decision'] != 'Pass']
@@ -395,7 +398,10 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     if watch:
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
-        st.info('PASS: no supported player props meet the current research filters. No bet is suggested.')
+        if display:
+            st.info('No qualifying yardage paper picks. See Reason beside each Pass; missing data and failed model tests do not establish an Under or Over.')
+        else:
+            st.info('No supported yardage props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
     with st.expander('Check the yardage model test results'):
         st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
         st.caption('2024 chooses forecast parameters and supplies errors; 2025 tests them without refitting. Forecasts use only earlier weeks, current-season workload and opponent yardage allowed. Baseline is the preceding four-game yardage average. Benchmark thresholds are that pregame average rounded down plus 0.5 yards, not actual sportsbook lines. Missing player game rows are not invented as zero-yard outcomes. Injuries, weather and lineup changes were not backtested. Rushing/receiving models that fail the forecast baseline stay on Pass.')
