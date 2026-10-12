@@ -288,6 +288,17 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row['Reason'] = 'Player history too old for this game.';continue
                 model = research['models'][market['key']]
                 projected = projection(feature,model['blend'],model['defense_weight'])
+                if research.get('experiment'):
+                    from nfl_workload_lab import live_opportunity_projection
+                    sample={'player_id':next(iter(ids)),'season':context['season'],'week':int(schedule['week']),
+                            'team':team,'opponent_team':opponent,'position':feature['position'],
+                            MARKETS[market['key']][1]:0,MARKETS[market['key']][2]:0}
+                    try:
+                        projected,volume=live_opportunity_projection(sample,market['key'],idx,model['parameters'])
+                    except ValueError:
+                        row['Reason']='Experimental opportunity inputs unavailable.';continue
+                    feature=dict(feature,volume_forecast=volume)
+                    row['Model']='NFL opportunity experiment v2 / 2024 fit / 2025 development'
                 residuals=model['residuals']
                 lower=projected+residuals[int(.1*(len(residuals)-1))]*error_scale(projected)
                 upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
@@ -461,8 +472,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
-    st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Experimental probabilities use 2024 forecast errors; 2025 is the held-out test. This test does not establish profit at sportsbook prices.')
-    cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)))
+    st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Probabilities use 2024 forecast errors; historical comparisons do not establish profit at sportsbook prices.')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing'],key='nfl_forecast_mode')
+    experimental=mode.startswith('Experimental')
+    if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
+    cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
         try:
@@ -474,6 +488,9 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 st.info('Pass: loaded games must belong to the same NFL season.');return
             with st.spinner('Testing historical forecasts and checking current player availability...'):
                 research = load_prop_research(usable[0]['season'])
+                if experimental:
+                    from nfl_workload_lab import load_experimental_research
+                    research=load_experimental_research(usable[0]['season'])
                 injury_context.clear()
                 injuries = injury_context()
                 team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
@@ -542,7 +559,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             st.info('No supported yardage props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
     with st.expander('Check the yardage model test results'):
         st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
-        st.caption('2024 chooses forecast parameters and supplies errors; 2025 tests them without refitting. Forecasts use only earlier weeks, current-season workload and opponent yardage allowed. Baseline is the preceding four-game yardage average. Benchmark thresholds are that pregame average rounded down plus 0.5 yards, not actual sportsbook lines. Missing player game rows are not invented as zero-yard outcomes. Injuries, weather and lineup changes were not backtested. Rushing/receiving models that fail the forecast baseline stay on Pass.')
+        st.caption('2024 chooses forecast parameters and supplies errors. The opportunity experiment uses 2025 as development evidence; future saved picks provide the prospective test. The original report uses benchmark thresholds, not historical sportsbook prices. Missing/DNP rows are not assigned zero. Availability gates remain active, but injury impacts, weather and lineup changes were not backtested. Failed baseline or price checks remain Pass.')
         st.markdown('[Statistics source: nflverse](https://nflreadr.nflverse.com/reference/load_player_stats.html)')
     if display:
         buffer = io.StringIO()
