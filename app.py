@@ -1223,6 +1223,30 @@ try:
     with st.spinner(f"Loading {sport} games..."):
         scoreboard = get_scoreboard(SPORTS[sport], selected_date)
     show_games(scoreboard, SPORTS[sport])
+    if sport == "NFL":
+        with st.expander("Game winner probabilities — selected date"):
+            st.caption("Adjusted Elo estimates from completed games. These percentages are separate from sportsbook value picks and do not include injury or weather adjustments.")
+            if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
+                try:
+                    contexts = sportsbook_model_context(sport, scoreboard)
+                    forecast_rows = []
+                    for event in scoreboard.get('events', []):
+                        if event.get('status', {}).get('type', {}).get('state') != 'pre':continue
+                        competition = event.get('competitions', [{}])[0]
+                        competitors = competition.get('competitors', [])
+                        home = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'home'), None)
+                        away = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'away'), None)
+                        context = contexts.get((home, away))
+                        if context:
+                            p = context['probability']
+                            forecast_rows.append({'Game':event.get('name'), 'Model lean':home if p >= .5 else away,
+                                'Home team':home, 'Home win %':round(p*100,1), 'Away team':away,
+                                'Away win %':round((1-p)*100,1), 'History through':context['cutoff'],
+                                'Status':'Experimental estimate' if context['eligible'] else 'History/season not eligible for moneyline picks'})
+                    if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
+                    else:st.info('No matched upcoming games available for a pregame forecast.')
+                except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
+                    st.warning('Winner forecasts could not be loaded. Try Refresh live data and calculate again.')
     show_live_game_stats(scoreboard, SPORTS[sport])
     if sport == "NFL":
         show_espn_nfl_weather(scoreboard, selected_date)
