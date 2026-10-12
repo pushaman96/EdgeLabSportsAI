@@ -44,7 +44,73 @@ def workload_inputs(row, market, idx):
       VARIANTS[4]:base*(1+.25*(opponent_ratio-1)),
     }
     efficiency=sum(r[stat] for r in history)/sum(r[workload] for r in history)
-    return {'feature':feature,'predictions':predictions,'efficiency':efficiency,'actual_workload':row[workload],'actual_yards':row[stat],'row':row}
+    weights=[.8**(len(history)-1-i) for i in range(len(history))]
+    weighted_volume=sum(r[workload]*w for r,w in zip(history,weights))/sum(weights)
+    own_by_game={r['game_id']:r for r in own}
+    shares=[r[workload]/own_by_game[r['game_id']][workload] for r in history[-4:] if r['game_id'] in own_by_game and own_by_game[r['game_id']][workload]>0]
+    share=avg(shares)
+    development_volumes={'Eight-game workload':avg([r[workload] for r in history]),
+        'Weighted eight-game workload':weighted_volume,
+        'Team volume × aligned player share':team_expected*min(1,share) if share is not None else base}
+    recent_efficiency=sum(r[stat] for r in history[-4:])/sum(r[workload] for r in history[-4:])
+    return {'feature':feature,'predictions':predictions,'efficiency':efficiency,'recent_efficiency':recent_efficiency,
+        'historical_workload':sum(r[workload] for r in history),'development_volumes':development_volumes,
+        'actual_workload':row[workload],'actual_yards':row[stat],'row':row}
+
+
+def forecast_development(research,samples):
+    reports=[];details=[];models={}
+    for market,(label,stat,workload,positions,_) in MARKETS.items():
+        training=samples[(market,2024)]
+        if len(training)<100:continue
+        totals=defaultdict(lambda:[0,0])
+        for r in research['players']:
+            if r['position'] in positions and r[stat] is not None and r[workload] is not None:
+                totals[(r['season'],r['week'])][0]+=r[stat];totals[(r['season'],r['week'])][1]+=r[workload]
+        priors={}
+        for season in {r['season'] for r in research['players']}:
+            yards=volume=0
+            for week in range(1,23):
+                priors[(season,week)]=yards/volume if volume>0 else None
+                y,v=totals[(season,week)];yards+=y;volume+=v
+        def predict(sample,params):
+            variant,efficiency_method,blend,defense=params
+            efficiency=sample['recent_efficiency'] if efficiency_method=='Recent four-game efficiency' else sample['efficiency']
+            if efficiency_method=='Shrink efficiency toward position average':
+                r=sample['row'];prior=priors.get((r['season'],r['week']))
+                if prior is not None:
+                    n=sample['historical_workload'];efficiency=(n*efficiency+40*prior)/(n+40)
+            feature=dict(sample['feature'],efficiency_forecast=sample['development_volumes'][variant]*efficiency)
+            return projection(feature,blend,defense)
+        candidates=[(v,e,b,d) for v in training[0]['development_volumes'] for e in ('Eight-game efficiency','Recent four-game efficiency','Shrink efficiency toward position average') for b in (.5,1) for d in (0,.25,.5)]
+        chosen=min(candidates,key=lambda p:avg([abs(predict(s,p)-s['actual_yards']) for s in training]))
+        models[market]=chosen
+        # Paired error differences quantify uncertainty, with season outcomes never used for selection.
+        for year in sorted({2025,research['season']}):
+            tested=samples[(market,year)]
+            if not tested:continue
+            errors=[abs(predict(s,chosen)-s['actual_yards']) for s in tested]
+            differences=[abs(s['feature']['baseline']-s['actual_yards'])-error for s,error in zip(tested,errors)]
+            # Weekly clusters avoid treating many same-week observations as independent.
+            weekly=defaultdict(list)
+            for s,difference in zip(tested,differences):weekly[s['row']['week']].append(difference)
+            week_means=[avg(v) for v in weekly.values()]
+            uncertainty=1.96*statistics.stdev(week_means)/math.sqrt(len(week_means)) if len(week_means)>1 else None
+            improvement=avg(differences)
+            reports.append({'Category':label,'Season':year,'Forecasts':len(tested),'Workload model':chosen[0],
+                'Efficiency model':chosen[1],'Opportunity blend':chosen[2],'Opponent weight':chosen[3],
+                'Forecast error (yards)':round(avg(errors),2),'Baseline error (yards)':round(avg([abs(s['feature']['baseline']-s['actual_yards']) for s in tested]),2),
+                'Mean improvement (yards)':round(improvement,2),'Weeks observed':len(weekly),
+                'Weekly mean improvement low':round(avg(week_means)-uncertainty,2) if uncertainty is not None else None,
+                'Weekly mean improvement high':round(avg(week_means)+uncertainty,2) if uncertainty is not None else None,
+                'Status':'Historical development — not independent validation' if year==2025 else 'Forward season — more evidence required'})
+            for sample in tested:
+                r=sample['row'];prediction=predict(sample,chosen)
+                details.append({'Category':label,'Season':year,'Week':r['week'],'Player':r['player_display_name'],'Game ID':r['game_id'],
+                    'Predicted opportunities':round(sample['development_volumes'][chosen[0]],2),'Predicted yards':round(prediction,2),
+                    'Baseline yards':round(sample['feature']['baseline'],2),'Actual yards':sample['actual_yards'],
+                    'Absolute error':round(abs(prediction-sample['actual_yards']),2)})
+    return {'reports':reports,'rows':details,'models':models}
 
 def yardage_with_workload(sample,model,volume):
     feature=dict(sample['feature'],efficiency_forecast=volume*sample['efficiency'])
@@ -99,7 +165,8 @@ def run_workload_test(research):
             for s in tested:
                 r=s['row'];v=s['predictions'][variant]
                 rows.append({'Category':label,'Season':year,'Week':r['week'],'Player':r['player_display_name'],'Team':r['team'],'Opponent':r['opponent_team'],'Units':UNITS[market],'Predicted workload':round(v,1),'Actual workload':s['actual_workload'],'Workload miss':round(s['actual_workload']-v,1),'Plausible workload low':round(max(0,v+low),1),'Plausible workload high':round(max(0,v+high),1),'Current yardage prediction':round(projection(s['feature'],model['blend'],model['defense_weight']),1),'Experimental yardage prediction':round(yardage_with_workload(s,model,v),1),'Actual yards':s['actual_yards'],'Variant':variant})
-    return {'reports':reports,'rows':rows,'chosen':chosen,'opportunity_reports':opportunity_reports,'opportunity_models':opportunity_models,'retrieved':research['retrieved'],'season':research['season']}
+    development=forecast_development(research,samples)
+    return {'reports':reports,'rows':rows,'chosen':chosen,'opportunity_reports':opportunity_reports,'opportunity_models':opportunity_models,'forecast_development':development,'retrieved':research['retrieved'],'season':research['season']}
 
 def render_workload_lab():
     st.divider();st.header('NFL Workload Forecast Lab')
@@ -118,6 +185,14 @@ def render_workload_lab():
             st.warning('Workload tests could not be loaded. Existing sportsbook and prop sections remain available.');return
     saved=st.session_state.get('nfl_workload_lab')
     if not saved:return
+    development=saved.get('forecast_development')
+    if development and development['reports']:
+        st.subheader('Forecast improvement tests — workload and efficiency')
+        st.caption('Compares weighted usage, team volume × same-game player share, recent efficiency and efficiency stabilized toward a position average. All choices use 2024 only; 2025 is development evidence, not a new independent test. Approximate weekly ranges describe uncertainty in improvement, not player yardage ranges. Injuries, snap counts and game script are not modeled yet. No changes to live picks.')
+        st.dataframe(development['reports'],hide_index=True,use_container_width=True)
+        if development['rows']:
+            output=io.StringIO();writer=csv.DictWriter(output,fieldnames=list(development['rows'][0]));writer.writeheader();writer.writerows(development['rows'])
+            st.download_button('Download forecast development results',output.getvalue(),file_name='kamikaze_picks_forecast_development.csv',mime='text/csv',key='forecast_development_download')
     if saved.get('opportunity_reports'):
         st.subheader('Opportunity-based yardage experiment')
         st.caption('Tests carries/targets/attempts × historical yards per opportunity, optionally blended with recent yardage. Workload variant and yardage parameters are selected on 2024 only. The 2025 season has already informed development, so it is not a fresh independent test. Current-season results are separate. Injury impacts and game-script features are not included yet.')
