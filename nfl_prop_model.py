@@ -331,6 +331,77 @@ def clear_prop_shortlist(rows):
         result.append({'Paper pick':row.pop('Paper pick'),**row})
     return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
 
+def cushion_target(row):
+    if row.get('Decision') == 'Pass' or row.get('Category') != 'Passing yards':return None
+    line=num(row.get('Line'))
+    if line is None:return None
+    return max(0,line+30 if row.get('Selection')=='Under' else line-30)
+
+
+def cushion_result(direction,line,actual):
+    if actual == line:return 'Push'
+    return 'Win' if (actual < line if direction=='Under' else actual > line) else 'Loss'
+
+
+def render_cushion_tracker(watch,starts):
+    with st.expander('30-yard passing cushion experiment and results'):
+        st.caption('Target only: Under adds 30 yards; Over subtracts 30. This is not a verified alternate quote or recommendation. Original probability and odds do not apply to the new line. Enter the actual available threshold and American-equivalent odds. For No to 300+, enter Under 299.5; Yes to 275+ means Over 274.5. Confirm the platform settlement rules.')
+        records=st.session_state.setdefault('passing_cushion_records',[])
+        uploaded=st.file_uploader('Restore cushion tracking CSV',type=['csv'],key='cushion_restore_file')
+        if uploaded is not None and st.button('Restore cushion records',key='cushion_restore'):
+            try:
+                loaded=list(csv.DictReader(io.StringIO(uploaded.getvalue().decode('utf-8-sig'))))
+                if len(loaded)>500:raise ValueError()
+                clean=[]
+                for r in loaded:
+                    if r['Direction'] not in ('Under','Over'):raise ValueError()
+                    for key in ('Original line','Actual cushion line','Original odds','Actual cushion odds'):
+                        value=num(r[key])
+                        if value is None or (key.endswith('odds') and abs(value)<100) or (key.endswith('line') and value<0):raise ValueError()
+                        r[key]=value
+                    if datetime.fromisoformat(r['Recorded UTC'])>=datetime.fromisoformat(r['Game starts UTC'].replace('Z','+00:00')):raise ValueError()
+                    if r.get('Final yards','')!='':
+                        r['Final yards']=num(r['Final yards'])
+                        if r['Final yards'] is None or r['Final yards']<0:raise ValueError()
+                    clean.append(r)
+                records[:]=clean
+                st.success('Tracking records restored. Imported records are user-editable evidence.')
+            except (ValueError,KeyError,TypeError,UnicodeError):st.warning('Could not restore this tracking CSV.')
+        picks=[r for r in watch if cushion_target(r) is not None]
+        if picks:
+            index=st.selectbox('Original pick to track',range(len(picks)),format_func=lambda i:picks[i]['Paper pick'],key='cushion_pick')
+            row=picks[index];target=cushion_target(row)
+            st.write(f"30-yard target: **{row['Selection']} {target:g} passing yards**")
+            actual=st.number_input('Actual available alternate line',min_value=0.0,value=float(target),step=.5,key='cushion_actual_line_'+str(index))
+            price=st.number_input('Actual alternate American odds',value=-110.0,step=1.0,key='cushion_actual_price_'+str(index))
+            if st.button('Record original and actual cushion selection',key='cushion_record'):
+                now=datetime.now(timezone.utc)
+                if now>=datetime.fromisoformat(starts[row['Game']].replace('Z','+00:00')):st.warning('Record selections before kickoff.')
+                elif abs(price)<100:st.warning('Enter valid American odds.')
+                elif (row['Selection']=='Under' and actual<=row['Line']) or (row['Selection']=='Over' and actual>=row['Line']):st.warning('The alternate line must give the original direction more room.')
+                elif any(r['Game']==row['Game'] and r['Player']==row['Player'] for r in records):st.info('This player/game is already recorded.')
+                else:
+                    records.append({'Recorded UTC':now.isoformat(),'Game starts UTC':starts[row['Game']],'Game':row['Game'],'Player':row['Player'],'Direction':row['Selection'],'Original line':row['Line'],'Original odds':row['Odds'],'30-yard target':target,'Actual cushion line':actual,'Actual cushion odds':price,'Final yards':''})
+                    st.success('Both selections recorded. Download the CSV to keep it after this session.')
+        if records:
+            index=st.selectbox('Record to grade',range(len(records)),format_func=lambda i:records[i]['Player']+' — '+records[i]['Game'],key='cushion_grade_pick')
+            final=st.number_input('Final passing yards from completed game',min_value=0,step=1,key='cushion_final_yards')
+            if st.button('Save final yards and compare',key='cushion_grade'):
+                records[index]['Final yards']=final
+            results=[]
+            for r in records:
+                item=dict(r)
+                for label,linekey,pricekey in [('Original','Original line','Original odds'),('Cushioned','Actual cushion line','Actual cushion odds')]:
+                    result=cushion_result(r['Direction'],float(r[linekey]),float(r['Final yards'])) if r['Final yards']!='' else 'Pending'
+                    item[label+' result']=result
+                    odds=float(r[pricekey]);item[label+' return per $1']=round((odds/100 if odds>0 else 100/abs(odds)) if result=='Win' else -1 if result=='Loss' else 0,3) if result!='Pending' else None
+                results.append(item)
+            st.dataframe(results,hide_index=True,use_container_width=True)
+            buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
+            st.download_button('Download cushion tracking CSV',buffer.getvalue(),file_name='kamikaze_picks_passing_cushion.csv',mime='text/csv',key='cushion_download')
+            st.caption('Results are manually entered. Returns compare $1 straight selections, excluding fees; combo/parlay payouts are not inferred. Download and restore the CSV to preserve records between sessions.')
+
+
 def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze=False):
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
@@ -385,6 +456,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
     display=clear_prop_shortlist(display)
+    for row in display:
+        row['30-yard cushion target'] = cushion_target(row)
     display=[dict([('Paper pick', row['Paper pick']), ('Decision', row['Decision']),
                    ('Reason', row['Reason'])] + [(key,value) for key,value in row.items()
                    if key not in ('Paper pick','Decision','Reason')]) for row in display]
@@ -395,6 +468,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     picks_only=st.checkbox('Show only qualifying paper picks',key='nfl_only_clear_picks')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
+    render_cushion_tracker(watch, starts)
     if watch:
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
