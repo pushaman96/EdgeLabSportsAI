@@ -331,6 +331,59 @@ def clear_prop_shortlist(rows):
         result.append({'Paper pick':row.pop('Paper pick'),**row})
     return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
 
+def analyzed_cushions(watch, events, books, models, now=None):
+    now=now or datetime.now(timezone.utc)
+    results=[]
+    model=models.get('player_pass_yds',{})
+    for original in watch:
+        target=cushion_target(original)
+        if target is None:continue
+        row={'Player':original['Player'],'Game':original['Game'],'Original pick':original['Paper pick'],
+             '30-yard target':target,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
+             'Sportsbook':'—','Actual odds':None,'Recalculated win %':None,'Break-even %':None,
+             'Model edge (pp)':None,'Reason':'No fresh alternate quote with a 25–40-yard cushion. Load both Passing yards and Alternate passing yards.'}
+        candidates=[]
+        for event in events:
+            if event.get('away_team','')+' at '+event.get('home_team','')!=original['Game']:continue
+            try:
+                if datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))<=now:continue
+            except (KeyError,ValueError,TypeError):continue
+            for book in event.get('bookmakers',[]):
+                if book.get('title') not in books:continue
+                for market in book.get('markets',[]):
+                    if market.get('key')!='player_pass_yds_alternate':continue
+                    try:
+                        age=(now-datetime.fromisoformat((market.get('last_update') or book.get('last_update')).replace('Z','+00:00'))).total_seconds()
+                        if not 0<=age<=900:continue
+                    except (ValueError,TypeError,AttributeError):continue
+                    for outcome in market.get('outcomes',[]):
+                        if name_key(outcome.get('description',''))!=name_key(original['Player']) or outcome.get('name')!=original['Selection']:continue
+                        line=num(outcome.get('point'));odds=num(outcome.get('price'))
+                        if line is None or odds is None or abs(odds)<100 or line<0 or line%1!=.5:continue
+                        cushion=line-float(original['Line']) if original['Selection']=='Under' else float(original['Line'])-line
+                        if not 25<=cushion<=40:continue
+                        candidates.append((abs(cushion-30),book['title'],line,odds,cushion))
+        if candidates and model.get('residuals') and num(original.get('Projection (yards)')) is not None:
+            evaluated=[]
+            for distance,book,line,odds,cushion in candidates:
+                p=over_probability(float(original['Projection (yards)']),line,model['residuals'])
+                if original['Selection']=='Under':p=1-p
+                breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
+                ev=p*(odds/100 if odds>0 else 100/abs(odds))-(1-p)
+                evaluated.append((distance,-ev,book,line,odds,cushion,p,breakeven,ev))
+            _,_,book,line,odds,cushion,p,breakeven,ev=min(evaluated)
+            qualifies=p-breakeven>=.05 and ev>0 and model.get('forecast_passed',False)
+            row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass',
+                'Available selection':f"{original['Selection']} {line:g} passing yards",'Actual cushion yards':cushion,
+                'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
+                'Break-even %':round(breakeven*100,1),'Model edge (pp)':round((p-breakeven)*100,1),
+                'Reason':'Closest available cushion to 30 yards; price passes the existing five-point edge filter. Paper only; profitability unverified.' if qualifies else 'Available cushion does not pass the model/price filter.'})
+        elif candidates:
+            row['Reason']='Reanalyze to load the probability model for this comparison.'
+        results.append(row)
+    return results
+
+
 def cushion_target(row):
     if row.get('Decision') == 'Pass' or row.get('Category') != 'Passing yards':return None
     line=num(row.get('Line'))
@@ -435,7 +488,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
-                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues}
+                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError):
             st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
     saved = st.session_state.get('nfl_prop_analysis')
@@ -468,6 +521,14 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     picks_only=st.checkbox('Show only qualifying paper picks',key='nfl_only_clear_picks')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
+    cushions=analyzed_cushions(watch,events,books,saved.get('models',{}))
+    if cushions:
+        st.subheader('Analyzed passing-yard cushions')
+        st.caption('Loads actual alternate prices separately. Keeps the original forecast and eligibility checks; recalculates probability for the new half-yard line. Chooses the closest 25–40-yard cushion to 30, then the best estimated return at equal distance. This is a separate paper experiment, not validated betting advice. Kalshi quotes are not connected.')
+        st.dataframe(cushions,hide_index=True,use_container_width=True)
+        output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(cushions[0]));writer.writeheader()
+        for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
+        st.download_button('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
     render_cushion_tracker(watch, starts)
     if watch:
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
