@@ -57,6 +57,38 @@ def numeric(value):
         return number if math.isfinite(number) else None
     except (TypeError,ValueError):return None
 
+def prop_market_board(events,books,sport):
+    labels={value:label for label,value in PROP_MARKETS[sport].items()}
+    grouped={}
+    for row in bookmaker_rows(events,books,True):
+        if row['Market'] not in labels:continue
+        identity=(row['Game'],row['Player'],row['Market'],str(row['Line']))
+        entry=grouped.setdefault(identity,{'Game':row['Game'],'Player/team':row['Player'],
+            'Category':labels[row['Market']],'Line':row['Line'],'Forecast status':
+            'Experimental yardage model — see analyzed shortlist' if sport=='NFL' and row['Market'] in ('player_pass_yds','player_rush_yds','player_reception_yds') else 'Market prices only — forecast not tested',
+            'Over price':'—','Over book':'—','Under price':'—','Under book':'—','Other selection':'—'})
+        side=row['Selection'];price=numeric(row['Odds'])
+        if side in ('Over','Under') and price is not None:
+            previous=numeric(entry[side+' price'])
+            if previous is None or price>previous:
+                entry[side+' price']=row['Odds'];entry[side+' book']=row['Sportsbook'];entry[side+' quote UTC']=row['Quote updated UTC']
+        else:entry['Other selection']=row['Selection']+' '+str(row['Odds'])+' · '+row['Sportsbook']
+    return list(grouped.values())
+
+def render_prop_market_board(events,books,sport,key_prefix):
+    st.subheader(f'{sport} player-prop market board')
+    st.caption('One row per player/category/line, with Over and Under prices in separate columns. Best loaded price across selected books is a price comparison, not a recommended direction. Different thresholds remain separate. Check quote timestamps; prices can change.')
+    rows=prop_market_board(events,books,sport)
+    if not rows:st.info('No matching categories returned by the selected sportsbooks.');return
+    categories=sorted({r['Category'] for r in rows})
+    selected=st.multiselect('Market board categories',categories,default=categories,key=key_prefix+'_categories')
+    shown=[r for r in rows if r['Category'] in selected]
+    search=st.text_input('Find a player or team',key=key_prefix+'_search').strip().lower()
+    if search:shown=[r for r in shown if search in r['Player/team'].lower() or search in r['Game'].lower()]
+    if shown:st.dataframe(shown,hide_index=True,use_container_width=True)
+    else:st.info('No entries match these filters.')
+    st.caption('Solo tackles and tackles + assists are different markets. Sacks may be credited in half-sacks. The odds imply a break-even rate, not a researched player probability. Rushing/receiving prices remain visible even when the forecast stays on Pass.')
+
 def implied(odds):
     value=numeric(odds)
     if value is None or abs(value)<100:return None
@@ -188,6 +220,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if not events:st.info('No bookmaker events for the selected date. Choose a different sidebar date; preseason or distant dates may not be covered.');return
         names=sorted({book['title'] for event in events for book in event.get('bookmakers',[])})
         selected_books=st.multiselect('Compare sportsbooks',names,default=names,key='sportsbook_books')
+        st.caption('Select multiple books for a broader price comparison. Only place or paper-record selections at the actual book and price you can use. More sportsbook prices do not provide bet counts or money volume.')
         if not selected_books:st.info('Select at least one sportsbook.');return
         filtered=[dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in selected_books]) for event in events]
         st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
@@ -217,6 +250,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 loaded_events = [r['data'] for r in batch['results']]
                 st.caption(f"Loaded {len(loaded_events)} of {len(targets)} games. Most recent provider-reported credits remaining: {batch['remaining']}.")
                 if loaded_events:
+                    render_prop_market_board(loaded_events,selected_books,sport,'all_prop_board')
                     if sport=='NFL':render_prop_research(loaded_events,scoreboard,selected_books,batch['loaded'],auto_analyze=loaded_all)
                     else:render_nba_paper_quotes(loaded_events,selected_books,'nba_all_props_paper')
                     with st.expander('View all sportsbook prices — not recommendations'):
@@ -233,6 +267,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 if not props:st.info('No selected player props returned.')
                 st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
                 if props:
+                    render_prop_market_board([prop_saved[4]['data']],selected_books,sport,'single_prop_board')
                     if sport=='NFL':render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'])
                     else:render_nba_paper_quotes([prop_saved[4]['data']],selected_books,'nba_single_props_paper')
                     with st.expander('View all sportsbook prices — not recommendations'):
