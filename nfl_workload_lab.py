@@ -58,19 +58,36 @@ def run_workload_test(research):
             if row['position'] not in positions or row[stat] is None or row[workload] is None:continue
             sample=workload_inputs(row,market,idx)
             if sample:samples[(market,row['season'])].append(sample)
-    reports=[];rows=[];chosen={};training_errors={}
+    reports=[];rows=[];chosen={};training_errors={};opportunity_reports=[];opportunity_models={}
     for market,(label,*_) in MARKETS.items():
         training=samples[(market,2024)]
         if len(training)<100:continue
         chosen[market]=min(VARIANTS,key=lambda variant:avg([abs(s['predictions'][variant]-s['actual_workload']) for s in training]))
         variant=chosen[market]
         model=research['models'][market]
+        # Fit workload choice AND yardage conversion on 2024 only. Never select using later results.
+        candidates=[(v,b,w) for v in VARIANTS for b in (.5,1) for w in (0,.25,.5)]
+        def opportunity_prediction(sample, parameters):
+            v,b,w=parameters
+            feature=dict(sample['feature'],efficiency_forecast=sample['predictions'][v]*sample['efficiency'])
+            return projection(feature,b,w)
+        parameters=min(candidates,key=lambda p:avg([abs(opportunity_prediction(s,p)-s['actual_yards']) for s in training]))
+        opportunity_models[market]=parameters
         # Intervals are built entirely from 2024 errors, before testing 2025/current season.
         errors=[s['actual_workload']-s['predictions'][variant] for s in training]
         training_errors[market]=(percentile(errors,.1),percentile(errors,.9))
         for year in sorted({2025,research['season']}):
             tested=samples[(market,year)]
             if not tested:continue
+            opportunity_mae=avg([abs(opportunity_prediction(s,parameters)-s['actual_yards']) for s in tested])
+            yardage_baseline=avg([abs(s['feature']['baseline']-s['actual_yards']) for s in tested])
+            opportunity_reports.append({'Category':label,'Season':year,'Forecasts':len(tested),
+                'Opportunity variant (fit on 2024)':parameters[0], 'Opportunity blend':parameters[1],
+                'Opponent adjustment weight':parameters[2], 'Opportunity yardage error':round(opportunity_mae,2),
+                'Four-game yardage baseline error':round(yardage_baseline,2),
+                'Improvement vs yardage baseline':round(yardage_baseline-opportunity_mae,2),
+                'Evaluation':'Historical development comparison — previously inspected season' if year==2025 else 'Forward season — limited sample' if len(tested)<100 else 'Forward season',
+                'Status':'Lab only — no change to picks'})
             baseline=avg([abs(s['predictions'][VARIANTS[0]]-s['actual_workload']) for s in tested])
             current=avg([abs(s['predictions'][VARIANTS[2]]-s['actual_workload']) for s in tested])
             experimental=avg([abs(s['predictions'][variant]-s['actual_workload']) for s in tested])
@@ -82,7 +99,7 @@ def run_workload_test(research):
             for s in tested:
                 r=s['row'];v=s['predictions'][variant]
                 rows.append({'Category':label,'Season':year,'Week':r['week'],'Player':r['player_display_name'],'Team':r['team'],'Opponent':r['opponent_team'],'Units':UNITS[market],'Predicted workload':round(v,1),'Actual workload':s['actual_workload'],'Workload miss':round(s['actual_workload']-v,1),'Plausible workload low':round(max(0,v+low),1),'Plausible workload high':round(max(0,v+high),1),'Current yardage prediction':round(projection(s['feature'],model['blend'],model['defense_weight']),1),'Experimental yardage prediction':round(yardage_with_workload(s,model,v),1),'Actual yards':s['actual_yards'],'Variant':variant})
-    return {'reports':reports,'rows':rows,'chosen':chosen,'retrieved':research['retrieved'],'season':research['season']}
+    return {'reports':reports,'rows':rows,'chosen':chosen,'opportunity_reports':opportunity_reports,'opportunity_models':opportunity_models,'retrieved':research['retrieved'],'season':research['season']}
 
 def render_workload_lab():
     st.divider();st.header('NFL Workload Forecast Lab')
@@ -101,6 +118,12 @@ def render_workload_lab():
             st.warning('Workload tests could not be loaded. Existing sportsbook and prop sections remain available.');return
     saved=st.session_state.get('nfl_workload_lab')
     if not saved:return
+    if saved.get('opportunity_reports'):
+        st.subheader('Opportunity-based yardage experiment')
+        st.caption('Tests carries/targets/attempts × historical yards per opportunity, optionally blended with recent yardage. Workload variant and yardage parameters are selected on 2024 only. The 2025 season has already informed development, so it is not a fresh independent test. Current-season results are separate. Injury impacts and game-script features are not included yet.')
+        st.dataframe(saved['opportunity_reports'],hide_index=True,use_container_width=True)
+        buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(saved['opportunity_reports'][0]));writer.writeheader();writer.writerows(saved['opportunity_reports'])
+        st.download_button('Download opportunity yardage comparison',buffer.getvalue(),file_name='kamikaze_picks_opportunity_yardage.csv',mime='text/csv',key='opportunity_yardage_download')
     if saved['reports']:st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
     else:st.info('Not enough eligible completed games for this test.')
     st.info('These results do not change Watch/Pass picks. Better workload accuracy alone does not establish a profitable prop model. Actual-price paper records, probability calibration, and more games are still required.')
