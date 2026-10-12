@@ -7,7 +7,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 import requests
 import streamlit as st
-from nfl_prop_model import MARKETS, indexes, features, projection, load_prop_research, load_season_stats
+from nfl_prop_model import MARKETS, indexes, features, projection, error_scale, load_prop_research, load_season_stats
 
 VARIANTS = ['Recent four-game average','Recent eight-game average','Current weighted recent workload','Team volume and player share','Opponent-adjusted workload']
 UNITS = {'player_pass_yds':'Pass attempts','player_rush_yds':'Carries','player_reception_yds':'Targets'}
@@ -84,7 +84,8 @@ def forecast_development(research,samples):
             return projection(feature,blend,defense)
         candidates=[(v,e,b,d) for v in training[0]['development_volumes'] for e in ('Eight-game efficiency','Recent four-game efficiency','Shrink efficiency toward position average') for b in (.5,1) for d in (0,.25,.5)]
         chosen=min(candidates,key=lambda p:avg([abs(predict(s,p)-s['actual_yards']) for s in training]))
-        models[market]=chosen
+        residuals=sorted((s['actual_yards']-predict(s,chosen))/error_scale(predict(s,chosen)) for s in training)
+        models[market]={'parameters':chosen,'residuals':residuals}
         # Paired error differences quantify uncertainty, with season outcomes never used for selection.
         for year in sorted({2025,research['season']}):
             tested=samples[(market,year)]
@@ -111,6 +112,35 @@ def forecast_development(research,samples):
                     'Baseline yards':round(sample['feature']['baseline'],2),'Actual yards':sample['actual_yards'],
                     'Absolute error':round(abs(prediction-sample['actual_yards']),2)})
     return {'reports':reports,'rows':details,'models':models}
+
+
+def live_opportunity_projection(row,market,idx,parameters):
+    sample=workload_inputs(row,market,idx)
+    if not sample:raise ValueError('Opportunity inputs unavailable.')
+    variant,method,blend,defense=parameters
+    efficiency=sample['recent_efficiency'] if method=='Recent four-game efficiency' else sample['efficiency']
+    if method=='Shrink efficiency toward position average':
+        _,stat,workload,positions,_=MARKETS[market]
+        history=[r for values in idx[0].values() for r in values if r['season']==row['season'] and r['week']<row['week'] and r['position'] in positions and r[stat] is not None and r[workload] is not None]
+        total=sum(r[workload] for r in history)
+        if total>0:
+            prior=sum(r[stat] for r in history)/total;n=sample['historical_workload']
+            efficiency=(n*efficiency+40*prior)/(n+40)
+    volume=sample['development_volumes'][variant]
+    feature=dict(sample['feature'],efficiency_forecast=volume*efficiency)
+    return projection(feature,blend,defense),volume
+
+
+@st.cache_data(ttl=21600)
+def load_experimental_research(season):
+    research=load_prop_research(season)
+    experiment=run_workload_test(research)['forecast_development']
+    models={}
+    for market,model in experiment['models'].items():
+        label=MARKETS[market][0]
+        report=next(r for r in experiment['reports'] if r['Category']==label and r['Season']==2025)
+        models[market]=dict(model,forecast_passed=report['Mean improvement (yards)']>0,blend=1,defense_weight=0)
+    return dict(research,models=models,reports=experiment['reports'],experiment=True)
 
 def yardage_with_workload(sample,model,volume):
     feature=dict(sample['feature'],efficiency_forecast=volume*sample['efficiency'])
@@ -179,6 +209,7 @@ def render_workload_lab():
                 if datetime.now(timezone.utc).month<3:season-=1
                 load_prop_research.clear()
                 load_season_stats.clear()
+                load_experimental_research.clear()
                 result=run_workload_test(load_prop_research(season))
                 st.session_state['nfl_workload_lab']=result
         except (requests.exceptions.RequestException,ValueError,TypeError,KeyError,AttributeError,OSError):
