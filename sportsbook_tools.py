@@ -11,6 +11,21 @@ class OddsSourceError(ValueError):
 
 SPORT_KEYS = {'NFL':'americanfootball_nfl', 'NBA':'basketball_nba'}
 PROP_MARKETS = {'NFL':{'Passing yards':'player_pass_yds','Rushing yards':'player_rush_yds','Receiving yards':'player_reception_yds','Receptions':'player_receptions'},'NBA':{'Points':'player_points','Rebounds':'player_rebounds','Assists':'player_assists','Three-pointers made':'player_threes'}}
+PROP_MARKETS['NFL'].update({
+    'Passing attempts':'player_pass_attempts', 'Passing completions':'player_pass_completions',
+    'Rushing attempts':'player_rush_attempts', 'Anytime touchdown scorer':'player_anytime_td',
+    'Passing touchdowns':'player_pass_tds', 'Rushing touchdowns':'player_rush_tds',
+    'Receiving touchdowns':'player_reception_tds', 'Passing interceptions':'player_pass_interceptions',
+    'Passing + rushing yards':'player_pass_rush_yds', 'Rushing + receiving yards':'player_rush_reception_yds',
+    'Longest completion':'player_pass_longest_completion', 'Longest rush':'player_rush_longest',
+    'Longest reception':'player_reception_longest', 'Field goals':'player_field_goals',
+    'Kicking points':'player_kicking_points', 'Sacks':'player_sacks',
+    'Solo tackles':'player_solo_tackles', 'Tackles + assists':'player_tackles_assists',
+    'Team total points':'team_totals', 'Alternate team totals':'alternate_team_totals',
+    'Alternate spreads':'alternate_spreads', 'Alternate game totals':'alternate_totals',
+    'First-half moneyline':'h2h_h1', 'First-half spread':'spreads_h1',
+    'First-half game total':'totals_h1', 'First-half team totals':'team_totals_h1',
+})
 
 def numeric(value):
     try:
@@ -153,8 +168,9 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         filtered=[dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in selected_books]) for event in events]
         st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
-        st.subheader('Player props — common categories')
+        st.subheader('Player props and additional game markets')
         st.caption('This feed does not report bet counts or betting volume. Common categories are not a ranking of popular bets. Load yardage props, then use Analyze loaded player props for a watch/pass shortlist. Spreads and totals are not modeled yet.')
+        st.caption('Choose categories to load prices for your paper parlay. Attempts, touchdowns, team totals and other added markets are prices only; no tested pick model is available for them yet. Availability varies by sportsbook and game. Each selected category increases the potential request cost.')
         all_option = '__all_nfl_games__'
         event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],format_func=lambda value:'All NFL games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game')
         labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=list(PROP_MARKETS[sport])[:2],key='sportsbook_props_categories')
