@@ -9,6 +9,7 @@ import statistics
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import requests
 import streamlit as st
 from pick_history import publish_rows
@@ -219,7 +220,7 @@ def event_context(event, scoreboard):
         if abs((source_start-odds_start).total_seconds()) > 3600:
             return None
         season = source.get('season',scoreboard.get('season',{}))
-        return {'season':int(season['year']), 'regular':int(season['type']) == 2,'home':home,'away':away,'date':source_start.date()}
+        return {'season':int(season['year']), 'regular':int(season['type']) == 2,'home':home,'away':away,'date':source_start.astimezone(ZoneInfo('America/Los_Angeles')).date()}
     return None
 
 def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
@@ -237,8 +238,14 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     continue
                 row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':MARKETS[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Historical error range low':None,'Historical error range high':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
                 rows.append(row)
-                if starts <= now or not context or not context['regular'] or not schedule:
-                    row['Reason'] = 'Game started or regular-season schedule match unavailable.';continue
+                if starts <= now:
+                    row['Reason'] = 'Game already started; pregame analysis closed.';continue
+                if not context:
+                    row['Reason'] = 'ESPN matchup or kickoff time could not be matched.';continue
+                if not context['regular']:
+                    row['Reason'] = 'This game is not a regular-season matchup.';continue
+                if not schedule:
+                    row['Reason'] = 'No unique regular-season schedule match for '+context['date'].isoformat()+'.';continue
                 try:
                     age = (now-datetime.fromisoformat(row['Quote updated UTC'].replace('Z','+00:00'))).total_seconds()
                 except (ValueError,TypeError,AttributeError):
