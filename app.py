@@ -1219,44 +1219,60 @@ if st.button("Refresh scores, plays and game stats", key="scoreboard_refresh_top
     get_scoreboard.clear()
     get_game_boxscore.clear()
 
-try:
-    with st.spinner(f"Loading {sport} games..."):
-        scoreboard = get_scoreboard(SPORTS[sport], selected_date)
-    show_games(scoreboard, SPORTS[sport])
-    if sport == "NFL":
-        with st.expander("Game winner probabilities — selected date"):
-            st.caption("Adjusted Elo estimates from completed games. These percentages are separate from sportsbook value picks and do not include injury or weather adjustments.")
-            if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
-                try:
-                    contexts = sportsbook_model_context(sport, scoreboard)
-                    forecast_rows = []
-                    for event in scoreboard.get('events', []):
-                        if event.get('status', {}).get('type', {}).get('state') != 'pre':continue
-                        competition = event.get('competitions', [{}])[0]
-                        competitors = competition.get('competitors', [])
-                        home = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'home'), None)
-                        away = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'away'), None)
-                        context = contexts.get((home, away))
-                        if context:
-                            p = context['probability']
-                            forecast_rows.append({'Game':event.get('name'), 'Model lean':home if p >= .5 else away,
-                                'Home team':home, 'Home win %':round(p*100,1), 'Away team':away,
-                                'Away win %':round((1-p)*100,1), 'History through':context['cutoff'],
-                                'Status':'Experimental estimate' if context['eligible'] else 'History/season not eligible for moneyline picks'})
-                    if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
-                    else:st.info('No matched upcoming games available for a pregame forecast.')
-                except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
-                    st.warning('Winner forecasts could not be loaded. Try Refresh live data and calculate again.')
-    show_live_game_stats(scoreboard, SPORTS[sport])
-    if sport == "NFL":
-        show_espn_nfl_weather(scoreboard, selected_date)
+score_tab, activity_tab = st.tabs(["Scores, plays and statistics", "Popular bets and betting splits"])
+with score_tab:
+    try:
+        with st.spinner(f"Loading {sport} games..."):
+            scoreboard = get_scoreboard(SPORTS[sport], selected_date)
+        show_games(scoreboard, SPORTS[sport])
+        if sport == "NFL":
+            with st.expander("Game winner probabilities — selected date"):
+                st.caption("Adjusted Elo estimates from completed games. These percentages are separate from sportsbook value picks and do not include injury or weather adjustments.")
+                if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
+                    try:
+                        contexts = sportsbook_model_context(sport, scoreboard)
+                        forecast_rows = []
+                        for event in scoreboard.get('events', []):
+                            if event.get('status', {}).get('type', {}).get('state') != 'pre':continue
+                            competition = event.get('competitions', [{}])[0]
+                            competitors = competition.get('competitors', [])
+                            home = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'home'), None)
+                            away = next((c.get('team', {}).get('displayName') for c in competitors if c.get('homeAway') == 'away'), None)
+                            context = contexts.get((home, away))
+                            if context:
+                                p = context['probability']
+                                forecast_rows.append({'Game':event.get('name'), 'Model lean':home if p >= .5 else away,
+                                    'Home team':home, 'Home win %':round(p*100,1), 'Away team':away,
+                                    'Away win %':round((1-p)*100,1), 'History through':context['cutoff'],
+                                    'Status':'Experimental estimate' if context['eligible'] else 'History/season not eligible for moneyline picks'})
+                        if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
+                        else:st.info('No matched upcoming games available for a pregame forecast.')
+                    except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
+                        st.warning('Winner forecasts could not be loaded. Try Refresh live data and calculate again.')
+        show_live_game_stats(scoreboard, SPORTS[sport])
+        if sport == "NFL":
+            show_espn_nfl_weather(scoreboard, selected_date)
 
-except requests.exceptions.Timeout:
-    st.error("The scoreboard took too long to respond. Try again.")
-except requests.exceptions.RequestException as exc:
-    st.error(f"Could not retrieve game data: {exc}")
-except (ValueError, TypeError, KeyError) as exc:
-    st.error(f"Could not read scoreboard data: {exc}")
+    except requests.exceptions.Timeout:
+        st.error("The scoreboard took too long to respond. Try again.")
+    except requests.exceptions.RequestException as exc:
+        st.error(f"Could not retrieve game data: {exc}")
+    except (ValueError, TypeError, KeyError) as exc:
+        st.error(f"Could not read scoreboard data: {exc}")
+
+with activity_tab:
+    st.subheader(f"{sport} betting activity — source pages")
+    st.caption(f"Sidebar date: {selected_date.strftime('%B %d, %Y')}. Set the sport and date on the source page too; its filters are independent of this app.")
+    st.write("**Bet %** is the share of tickets on a side. **Money/handle %** is the share of dollars on that side. Neither is a model win probability.")
+    st.info("Raw bet counts and dollars wagered: unavailable. Our Odds API connection provides prices, not betting volume. These sources cover DraftKings activity, not all of Vegas or Bovada.")
+    activity_source = st.selectbox("View betting activity", ["Moneyline, spread and total splits", "Most-bet player props by money wagered"], key="betting_activity_source")
+    activity_url = "https://dknetwork.draftkings.com/draftkings-sportsbook-betting-splits/" if activity_source.startswith("Moneyline") else "https://dknetwork.draftkings.com/draftkings-sportsbook-player-props/"
+    st.markdown(f"[Open the official DraftKings activity page]({activity_url})")
+    st.caption("The source reports player-prop rankings by handle and game splits as percentages. Popularity is market context, not a recommendation. Provider dates and update times determine freshness.")
+    if st.checkbox("Show source page inside this tab", key="betting_activity_embed"):
+        import streamlit.components.v1 as components
+        components.iframe(activity_url, height=750, scrolling=True)
+        st.caption("If the source blocks embedding or the panel stays blank, use the link above. No Odds API credits are used.")
 
 
 # -------------------------
