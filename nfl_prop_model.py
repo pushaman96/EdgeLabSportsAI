@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import requests
 import streamlit as st
+from pick_history import publish_rows
 
 MARKETS = {
  'player_pass_yds': ('Passing yards', 'passing_yards', 'attempts', ('QB',), 20),
@@ -362,20 +363,21 @@ def analyzed_cushions(watch, events, books, models, now=None):
                         if line is None or odds is None or abs(odds)<100 or line<0 or line%1!=.5:continue
                         cushion=line-float(original['Line']) if original['Selection']=='Under' else float(original['Line'])-line
                         if not 25<=cushion<=40:continue
-                        candidates.append((abs(cushion-30),book['title'],line,odds,cushion))
+                        candidates.append((abs(cushion-30),book['title'],line,odds,cushion,market.get('last_update') or book.get('last_update')))
         if candidates and model.get('residuals') and num(original.get('Projection (yards)')) is not None:
             evaluated=[]
-            for distance,book,line,odds,cushion in candidates:
+            for distance,book,line,odds,cushion,updated in candidates:
                 p=over_probability(float(original['Projection (yards)']),line,model['residuals'])
                 if original['Selection']=='Under':p=1-p
                 breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 ev=p*(odds/100 if odds>0 else 100/abs(odds))-(1-p)
-                evaluated.append((distance,-ev,book,line,odds,cushion,p,breakeven,ev))
-            _,_,book,line,odds,cushion,p,breakeven,ev=min(evaluated)
+                evaluated.append((distance,-ev,book,line,odds,cushion,p,breakeven,ev,updated))
+            _,_,book,line,odds,cushion,p,breakeven,ev,updated=min(evaluated)
             qualifies=p-breakeven>=.05 and ev>0 and model.get('forecast_passed',False)
             row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass',
                 'Available selection':f"{original['Selection']} {line:g} passing yards",'Actual cushion yards':cushion,
                 'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
+                'Available line':line,'Quote updated UTC':updated,
                 'Break-even %':round(breakeven*100,1),'Model edge (pp)':round((p-breakeven)*100,1),
                 'Reason':'Closest available cushion to 30 yards; price passes the existing five-point edge filter. Paper only; profitability unverified.' if qualifies else 'Available cushion does not pass the model/price filter.'})
         elif candidates:
@@ -526,10 +528,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         st.subheader('Analyzed passing-yard cushions')
         st.caption('Loads actual alternate prices separately. Keeps the original forecast and eligibility checks; recalculates probability for the new half-yard line. Chooses the closest 25–40-yard cushion to 30, then the best estimated return at equal distance. This is a separate paper experiment, not validated betting advice. Kalshi quotes are not connected.')
         st.dataframe(cushions,hide_index=True,use_container_width=True)
-        output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(cushions[0]));writer.writeheader()
+        output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
         st.download_button('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
     render_cushion_tracker(watch, starts)
+    publish_rows(watch, events, cushions)
     if watch:
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
