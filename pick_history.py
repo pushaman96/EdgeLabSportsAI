@@ -19,7 +19,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
     if line is not None and (not math.isfinite(line) or line<0 or (strategy!='Manual' and line%1!=.5)):raise ValueError('Invalid prop line.')
-    identity='|'.join([str(event_id),row['Player'],category,strategy])
+    identity='|'.join([str(event_id),row['Player'],category,strategy,row.get('Model','Experimental')])
     return {'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'sport':row.get('Sport','NFL'),'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
 
 def grade_record(record,data):
@@ -110,6 +110,8 @@ def render_history(sport='NFL'):
     evidence=st.selectbox('Results record',['Personal paper record','Published before kickoff','Historical import'],key='ledger_evidence')
     strategy=st.selectbox('Strategy',['Original','Cushion','Manual'],key='ledger_strategy')
     selected=[r for r in records if r['evidence']==evidence and r['strategy']==strategy]
+    model_choice=st.selectbox('Forecast model record',['All']+sorted({r.get('model','Unknown') for r in selected}),key='ledger_model_filter')
+    if model_choice!='All':selected=[r for r in selected if r.get('model','Unknown')==model_choice]
     category=st.selectbox('Pick category',['All']+sorted({r['category'] for r in selected}),key='ledger_category')
     if category!='All':selected=[r for r in selected if r['category']==category]
     settled=[r for r in selected if r['result'] in ('Win','Loss')]
