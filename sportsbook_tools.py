@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 import requests
 import streamlit as st
 from nfl_prop_model import render_prop_research
+from pick_history import publish_rows
 
 class OddsSourceError(ValueError):
     pass
@@ -217,11 +218,25 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
             models=model_loader(sport,scoreboard)
             reviews=moneyline_reviews(filtered,models)
+            st.session_state['moneyline_history_candidates']=(str(selected_date),tuple(selected_books),reviews,datetime.now(timezone.utc).isoformat())
+        saved_reviews=st.session_state.get('moneyline_history_candidates')
+        if saved_reviews and saved_reviews[:2]==(str(selected_date),tuple(selected_books)):
+            reviews=saved_reviews[2]
+            now=datetime.now(timezone.utc)
+            if (now-datetime.fromisoformat(saved_reviews[3])).total_seconds()>900:reviews=[]
+            reviews=[r for r in reviews if 0<=(now-datetime.fromisoformat(r['Quote updated UTC'].replace('Z','+00:00'))).total_seconds()<=900 and any(e['away_team']+' at '+e['home_team']==r['Game'] and datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>now for e in filtered)]
             if reviews:
+                unique={}
+                for row in reviews:
+                    identity=(row['Game'],row['Team to research'])
+                    if identity not in unique or row['Estimated return per $1']>unique[identity]['Estimated return per $1']:unique[identity]=row
+                reviews=list(unique.values())
                 for row in reviews:
                     row['Decision'] = 'Watch — experimental'
                     row['Reason'] = 'Adjusted win probability exceeds the quoted break-even price by at least five percentage points. Check quarterback, injuries and weather.'
                 st.dataframe(reviews,hide_index=True,use_container_width=True)
+                records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':'Adjusted NFL Elo moneyline'} for r in reviews]
+                publish_rows(records,filtered,key_prefix='moneyline_ledger')
             else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
     except OddsSourceError as exc:
         st.warning(str(exc))
