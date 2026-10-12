@@ -10,6 +10,14 @@ import pick_history
 # Streamlit reruns app.py while imported modules can retain an older API after deployment.
 pick_history = importlib.reload(pick_history)
 render_history = pick_history.render_history
+import nfl_prop_model
+import nfl_workload_lab
+import sportsbook_tools
+nfl_prop_model = importlib.reload(nfl_prop_model)
+nfl_workload_lab = importlib.reload(nfl_workload_lab)
+sportsbook_tools = importlib.reload(sportsbook_tools)
+render_workload_lab = nfl_workload_lab.render_workload_lab
+render_sportsbooks = sportsbook_tools.render_sportsbooks
 import csv
 import io
 import math
