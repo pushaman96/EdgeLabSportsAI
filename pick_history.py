@@ -13,11 +13,13 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     now=now or datetime.now(timezone.utc)
     if now>=utc(start):raise ValueError('Publish before kickoff.')
     if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900:raise ValueError('Refresh the quote before publishing.')
-    if row['Decision']=='Pass' or row['Category']!='Passing yards':raise ValueError('Only qualifying passing-yard picks are supported.')
-    line=float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100
-    if not all(math.isfinite(x) for x in (line,odds,prob)) or line<0 or line%1!=.5 or abs(odds)<100 or not 0<prob<1:raise ValueError('Invalid line, price or probability.')
-    identity='|'.join([str(event_id),row['Player'],'Passing yards',strategy])
-    return {'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':'Passing yards','direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
+    category=row['Category']
+    if row['Decision']=='Pass' or category not in ('Passing yards','Rushing yards','Receiving yards','Moneyline'):raise ValueError('Only qualifying modeled picks are supported.')
+    line=None if category=='Moneyline' else float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100
+    if not all(math.isfinite(x) for x in (odds,prob)) or abs(odds)<100 or not 0<prob<1:raise ValueError('Invalid price or probability.')
+    if line is not None and (not math.isfinite(line) or line<0 or line%1!=.5):raise ValueError('Invalid prop line.')
+    identity='|'.join([str(event_id),row['Player'],category,strategy])
+    return {'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
 
 def grade_record(record,data):
     r=dict(record)
@@ -25,10 +27,19 @@ def grade_record(record,data):
     competitions=data.get('header',{}).get('competitions',[])
     if not competitions or not competitions[0].get('status',{}).get('type',{}).get('completed'):return r
     if str(data.get('header',{}).get('id'))!=str(r['event_id']):raise ValueError('Game identity mismatch.')
+    if r['category']=='Moneyline':
+        teams=competitions[0].get('competitors',[])
+        selected=[t for t in teams if t.get('team',{}).get('displayName')==r['player']]
+        if len(teams)!=2 or len(selected)!=1:return r
+        scores=[float(t['score']) for t in teams]
+        result='Push' if scores[0]==scores[1] else 'Win' if float(selected[0]['score'])==max(scores) else 'Loss'
+        odds=r['odds'];profit=odds/100 if odds>0 else 100/abs(odds)
+        r.update(result=result,actual={t['team']['displayName']:t['score'] for t in teams},profit_per_1=profit if result=='Win' else -1 if result=='Loss' else 0,graded_utc=datetime.now(timezone.utc).isoformat(),grading_note='Final ESPN score; tied two-way moneyline recorded as Push. Platform rules may differ.')
+        return r
     values=[]
     for team in data.get('boxscore',{}).get('players',[]):
         for group in team.get('statistics',[]):
-            if group.get('name')!='passing':continue
+            if group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving'}.get(r['category']):continue
             labels=group.get('labels',[])
             for entry in group.get('athletes',[]):
                 if entry.get('athlete',{}).get('displayName')==r['player']:
@@ -67,6 +78,8 @@ def render_history():
     evidence=st.selectbox('Results record',['Published before kickoff','Historical import'],key='ledger_evidence')
     strategy=st.selectbox('Strategy',['Original','Cushion'],key='ledger_strategy')
     selected=[r for r in records if r['evidence']==evidence and r['strategy']==strategy]
+    category=st.selectbox('Pick category',['All']+sorted({r['category'] for r in selected}),key='ledger_category')
+    if category!='All':selected=[r for r in selected if r['category']==category]
     settled=[r for r in selected if r['result'] in ('Win','Loss')]
     if settled:
         wins=sum(r['result']=='Win' for r in settled);profit=sum(r['profit_per_1'] for r in settled)
@@ -82,7 +95,7 @@ def render_history():
     if selected:st.dataframe(selected,hide_index=True,use_container_width=True)
     st.download_button('Download permanent pick ledger',json.dumps({'records':records},indent=2),file_name='kamikaze_picks_published_history.json',mime='application/json',key='ledger_download')
 
-def publish_rows(rows,events,cushions=()):
+def publish_rows(rows,events,cushions=(),key_prefix='ledger'):
     import streamlit as st
     import requests
     try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
@@ -91,8 +104,8 @@ def publish_rows(rows,events,cushions=()):
         st.caption('Permanent publishing needs the administrator’s PICK_HISTORY_GITHUB_TOKEN in Streamlit secrets. Viewing and grading history do not require it.')
         return
     with st.expander('Administrator: publish current original and cushion picks'):
-        password=st.text_input('Publishing password',type='password',key='ledger_password')
-        if not st.button('Publish qualifying picks permanently',key='ledger_publish'):return
+        password=st.text_input('Publishing password',type='password',key=key_prefix+'_password')
+        if not st.button('Publish qualifying picks permanently',key=key_prefix+'_publish'):return
         if not st.secrets.get('PICK_HISTORY_ADMIN_PASSWORD') or password!=st.secrets.get('PICK_HISTORY_ADMIN_PASSWORD'):
             st.warning('Administrator password required.');return
         try:
@@ -116,7 +129,7 @@ def publish_rows(rows,events,cushions=()):
             response=requests.get(url,headers=headers,params={'ref':'main'},timeout=15);response.raise_for_status();payload=response.json()
             data=json.loads(base64.b64decode(payload['content']));existing={r['id'] for r in data['records']}
             new=[r for r in new if r['id'] not in existing]
-            if not new:st.info('No new eligible passing picks to publish.');return
+            if not new:st.info('No new eligible picks to publish.');return
             data['records'].extend(new)
             response=requests.put(url,headers=headers,json={'message':'Publish frozen pregame paper picks','branch':'main','sha':payload['sha'],'content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()},timeout=20);response.raise_for_status()
             st.success(f'{len(new)} picks saved permanently. History appears after the app updates.')
