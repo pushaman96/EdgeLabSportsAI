@@ -1184,11 +1184,12 @@ def current_nba_season_end():
 
 sport = st.sidebar.selectbox("Choose a sport", list(SPORTS))
 
+pacific_today = datetime.now(ZoneInfo("America/Los_Angeles")).date()
 selected_date = st.sidebar.date_input(
     "Choose game date",
-    value=date.today(),
-    min_value=date.today() - timedelta(days=365),
-    max_value=date.today() + timedelta(days=365),
+    value=pacific_today,
+    min_value=pacific_today - timedelta(days=365),
+    max_value=pacific_today + timedelta(days=365),
 )
 
 if st.sidebar.button("Refresh live data"):
@@ -1208,6 +1209,10 @@ if st.sidebar.button("Refresh live data"):
 # -------------------------
 
 st.subheader(f"{sport} Schedule & Scores")
+st.caption(f"Showing games for {selected_date.strftime('%B %d, %Y')}. Completed games stay listed. Choose an earlier game date in the sidebar to see past scores.")
+if st.button("Refresh scores, plays and game stats", key="scoreboard_refresh_top"):
+    get_scoreboard.clear()
+    get_game_boxscore.clear()
 
 try:
     with st.spinner(f"Loading {sport} games..."):
