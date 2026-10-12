@@ -5,6 +5,7 @@ from nba_tools import render_nba_tools, clear_nba_caches, load_nba_saved_history
 from sportsbook_tools import render_sportsbooks
 from paper_parlay import render_paper_parlay
 from nfl_workload_lab import render_workload_lab
+from pick_history import render_history
 import csv
 import io
 import math
@@ -1292,6 +1293,7 @@ except (ValueError, TypeError, KeyError, AttributeError) as exc:
 if sport == "NFL":
     render_sportsbooks(sport, selected_date, locals().get("scoreboard", {}), sportsbook_model_context)
     render_workload_lab()
+    render_history()
 
 render_paper_parlay(sport, selected_date)
 
