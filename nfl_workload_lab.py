@@ -248,3 +248,60 @@ def render_workload_lab():
         buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(saved['rows'][0]));writer.writeheader();writer.writerows(saved['rows'])
         st.download_button('Download workload test results',buffer.getvalue(),file_name='kamikaze_picks_workload_tests.csv',mime='text/csv',key='workload_lab_download')
     st.caption(f"Statistics retrieved: {saved['retrieved']}. Interval limits use the 10th/90th percentiles of 2024 errors; the measured coverage may differ from 80%. They are not guarantees. Evaluation covers players with observed game rows and stable recent usage; missing/DNP rows are not assigned zero. Injuries, weather and sportsbook spread/total expectations are not modeled in this lab yet.")
+
+
+def returning_player_test(players):
+    pi=defaultdict(list)
+    for r in players:pi[(r['season'],r['player_id'])].append(r)
+    for rows in pi.values():rows.sort(key=lambda r:r['week'])
+    samples=defaultdict(list)
+    for row in players:
+        for market,(label,stat,workload,positions,minimum) in MARKETS.items():
+            if row['position'] not in positions or row[stat] is None or row[workload] is None:continue
+            current=[r for r in pi[(row['season'],row['player_id'])] if r['week']<row['week'] and r['team']==row['team'] and r[stat] is not None and r[workload] is not None]
+            if not 1<=len(current)<=3:continue
+            prior=[r for r in pi.get((row['season']-1,row['player_id']),[]) if r['team']==row['team'] and r['position'] in positions and r[stat] is not None and r[workload] is not None][-8:]
+            if len(prior)<8 or avg([r[workload] for r in current])<minimum:continue
+            current_volume=avg([r[workload] for r in current]);prior_volume=avg([r[workload] for r in prior])
+            current_total=sum(r[workload] for r in current);prior_total=sum(r[workload] for r in prior)
+            if not current_total or not prior_total:continue
+            samples[(market,row['season'])].append({'row':row,'current_games':len(current),'current_volume':current_volume,'prior_volume':prior_volume,
+                'current_efficiency':sum(r[stat] for r in current)/current_total,'prior_efficiency':sum(r[stat] for r in prior)/prior_total,
+                'baseline':avg([r[stat] for r in current]),'actual':row[stat]})
+    reports=[];details=[];choices={}
+    def predict(s,w):return (w*s['current_volume']+(1-w)*s['prior_volume'])*(w*s['current_efficiency']+(1-w)*s['prior_efficiency'])
+    for market,(label,*_) in MARKETS.items():
+        training=samples[(market,2024)]
+        if len(training)<30:continue
+        w=min((.25,.5,.75,1),key=lambda weight:avg([abs(predict(s,weight)-s['actual']) for s in training]))
+        choices[market]=w
+        for year in sorted({r['season'] for r in players if r['season']>=2025}):
+            tested=samples[(market,year)]
+            if not tested:continue
+            baseline=avg([abs(s['baseline']-s['actual']) for s in tested]);error=avg([abs(predict(s,w)-s['actual']) for s in tested])
+            reports.append({'Category':label,'Season':year,'Forecasts':len(tested),'Current-season weight (fit 2024)':w,'Forecast error':round(error,2),'Current-games baseline error':round(baseline,2),'Improvement':round(baseline-error,2),'Status':'Lab only — no picks enabled'})
+            for s in tested:
+                r=s['row'];details.append({'Category':label,'Season':year,'Week':r['week'],'Player':r['player_display_name'],'Current games':s['current_games'],'Projected yards':round(predict(s,w),2),'Current-games baseline':round(s['baseline'],2),'Actual yards':s['actual']})
+    return {'reports':reports,'rows':details,'choices':choices}
+
+
+def render_returning_player_lab():
+    st.subheader('Returning and limited-history player experiment')
+    st.caption('Tests players with 1–3 earlier current-season appearances and at least eight prior-season games for the same team. Parameters fit 2024 using 2023 history. This population includes early-season players, not only injury returns. Snap/route limits and injury impact still require separate data and validation.')
+    if st.button('Test prior-season support for limited-history players',key='returning_player_test'):
+        try:
+            season=datetime.now(timezone.utc).year
+            research=load_prop_research(season)
+            with st.spinner('Testing prior-season workload support...'):
+                prior=load_season_stats('player',2023)
+                result=returning_player_test(prior+research['players'])
+                st.session_state['returning_player_experiment']=result
+        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,OSError):st.warning('Returning-player test could not load. Existing forecasts remain available.');return
+    result=st.session_state.get('returning_player_experiment')
+    if not result:return
+    if result['reports']:st.dataframe(result['reports'],hide_index=True,use_container_width=True)
+    else:st.info('Not enough eligible historical examples for this test.')
+    st.info('No automatic promotion: test forecast accuracy, availability and actual-price probability calibration before enabling this fallback. Missing/DNP rows are not graded as zero.')
+    if result['rows']:
+        output=io.StringIO();writer=csv.DictWriter(output,fieldnames=list(result['rows'][0]));writer.writeheader();writer.writerows(result['rows'])
+        st.download_button('Download limited-history forecast results',output.getvalue(),file_name='kamikaze_limited_history_tests.csv',mime='text/csv',key='returning_player_download')
