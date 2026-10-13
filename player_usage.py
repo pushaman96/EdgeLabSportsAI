@@ -73,3 +73,29 @@ def nba_role_rows(players):
             value=num(p.get(key));row[label+' per 36 minutes']=round(36*value/minutes,2) if minutes and minutes>0 and value is not None else None
         out.append(row)
     return out
+
+
+def render_nba_usage():
+    with st.expander('NBA player usage and playing-time measurements'):
+        st.caption('ESPN minutes, attempts and per-36 production. No player probability or causal team-dependence score is inferred. Official USG%, touches, starting roles, rebound chances and teammate-absence effects require additional data.')
+        from nba_tools import load_espn_nba_teams,load_espn_nba_players
+        year=datetime.now(timezone.utc).year
+        season=st.selectbox('NBA usage season ending year',[year+1,year,year-1],index=1,key='role_nba_season')
+        kind=st.selectbox('NBA usage season type',['Regular Season','Pre Season'],key='role_nba_type')
+        if st.button('Load NBA usage teams',key='role_nba_teams_load'):
+            try:st.session_state['role_nba_teams']=(season,kind,load_espn_nba_teams(season,kind))
+            except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,OSError):st.warning('NBA team usage data unavailable.');return
+        saved=st.session_state.get('role_nba_teams')
+        if not saved or saved[:2]!=(season,kind):return
+        teams=[r for r in saved[2]['rows'] if (r.get('GP') or 0)>0]
+        if not teams:st.info('No played-game statistics for this season/type.');return
+        team_id=st.selectbox('NBA usage team',[r['TEAM_ID'] for r in teams],format_func=lambda value:next(r['TEAM_NAME'] for r in teams if r['TEAM_ID']==value),key='role_nba_team')
+        if st.button('Load selected NBA player usage',key='role_nba_players_load'):
+            try:
+                data=load_espn_nba_players(season,kind,team_id)
+                st.session_state['role_nba_players']=(season,kind,team_id,nba_role_rows(data['rows']))
+            except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,OSError):st.warning('NBA player usage unavailable.');return
+        players=st.session_state.get('role_nba_players')
+        if players and players[:3]==(season,kind,team_id):
+            st.dataframe(players[3],hide_index=True,use_container_width=True)
+            st.caption('Per-36 rates normalize playing time; they do not predict 36 minutes. ESPN roster-associated season totals may include previous-team games. No new NBA prop model has been validated from these measurements.')
