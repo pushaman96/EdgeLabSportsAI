@@ -323,6 +323,15 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent allowed {feature['ratio']*100:.0f}% of league yardage average. Availability: {status}. Confirm lineup/weather."
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
 
+def estimated_risk(probability):
+    p=num(probability)
+    if p is None:return 'Not estimated'
+    if p>=70:return 'Lower estimated loss risk — unverified'
+    if p>=60:return 'Moderate estimated loss risk — unverified'
+    if p>=50:return 'Elevated estimated loss risk — unverified'
+    return 'High estimated loss risk — unverified'
+
+
 def clear_prop_shortlist(rows):
     grouped=defaultdict(list)
     for row in rows:
@@ -537,9 +546,15 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     display=clear_prop_shortlist(display)
     for row in display:
         row['30-yard cushion target'] = cushion_target(row)
+        probability=num(row.get('Estimated win %'))
+        row['Risk label']=estimated_risk(probability) if row['Decision']!='Pass' else 'Pass — no selection'
+        row['Estimated loss %']=round(100-probability,1) if probability is not None else None
+        row['Selection type']='Value selection — less likely to win than lose' if row['Decision']!='Pass' and probability is not None and probability<50 else 'Higher-probability experimental selection' if row['Decision']!='Pass' and probability is not None and probability>=60 else 'Experimental value selection' if row['Decision']!='Pass' else 'No selection'
     display=[dict([('Paper pick', row['Paper pick']), ('Decision', row['Decision']),
+                   ('Risk label',row['Risk label']),('Selection type',row['Selection type']),
+                   ('Estimated win %',row.get('Estimated win %')),('Estimated loss %',row['Estimated loss %']),
                    ('Reason', row['Reason'])] + [(key,value) for key,value in row.items()
-                   if key not in ('Paper pick','Decision','Reason')]) for row in display]
+                   if key not in ('Paper pick','Decision','Reason','Risk label','Selection type','Estimated win %','Estimated loss %')]) for row in display]
     for issue in saved.get('issues',[]):st.warning(issue)
     st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
     watch = [r for r in display if r['Decision'] != 'Pass']
@@ -547,8 +562,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     picks_only=st.checkbox('Show only qualifying paper picks',key='nfl_only_clear_picks')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
+    st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
     cushions=analyzed_cushions(watch,events,books,saved.get('models',{}))
     if cushions:
+        for r in cushions:
+            r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
         st.subheader('Analyzed passing-yard cushions')
         st.caption('Loads actual alternate prices separately. Keeps the original forecast and eligibility checks; recalculates probability for the new half-yard line. Chooses the closest 25–40-yard cushion to 30, then the best estimated return at equal distance. This is a separate paper experiment, not validated betting advice. Kalshi quotes are not connected.')
         st.dataframe(cushions,hide_index=True,use_container_width=True)
