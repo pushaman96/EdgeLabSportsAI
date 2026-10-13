@@ -200,6 +200,8 @@ def run_workload_test(research):
 
 def render_workload_lab():
     st.divider();st.header('NFL Workload Forecast Lab')
+    from player_usage import render_nfl_usage
+    render_nfl_usage()
     render_returning_player_lab()
     st.write('Test how well the program forecasts pass attempts, carries and receiving targets before trying changes on the prop Watch list.')
     st.caption('Uses free nflverse statistics. This button spends no sportsbook credits. Models use earlier weeks only. Five workload variants are selected using 2024; 2025 is the held-out test. Current-season results are reported separately and may be too sparse to support conclusions.')
