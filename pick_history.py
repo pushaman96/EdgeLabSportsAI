@@ -135,6 +135,11 @@ def render_history(sport='NFL'):
     records=[graded.get(r['id'],r) for r in records]
     all_records=records
     records=[r for r in records if r.get('sport','NFL')==sport]
+    season_types=sorted({r.get('season_type','Unknown') for r in records})
+    if season_types:
+        if 'Regular season' in season_types:season_types.remove('Regular season');season_types.insert(0,'Regular season')
+        season_type=st.selectbox('Season type — results kept separate',season_types,key='ledger_season_type_'+sport)
+        records=[r for r in records if r.get('season_type','Unknown')==season_type]
     evidence=st.selectbox('Results record',['Personal paper record','Published before kickoff','Historical import'],key='ledger_evidence')
     strategy=st.selectbox('Strategy',['Original','Cushion','Manual'],key='ledger_strategy')
     selected=[r for r in records if r['evidence']==evidence and r['strategy']==strategy]
@@ -223,7 +228,10 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
                     path='basketball/nba' if sport=='NBA' else 'football/nfl'
                     board=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':scoreboard_day(match['commence_time'])},timeout=15).json()
                     espn=next((e for e in board.get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
-                    if espn:new.append(make_record(row,espn['id'],match['commence_time'],strategy=strategy))
+                    if espn:
+                        record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
+                        record['season_type']='Preseason' if espn.get('season',{}).get('type')==1 else 'Regular season' if espn.get('season',{}).get('type')==2 else 'Other/unknown'
+                        new.append(record)
             headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
             url=f'https://api.github.com/repos/{REPO}/contents/{LEDGER}'
             response=requests.get(url,headers=headers,params={'ref':'main'},timeout=15);response.raise_for_status();payload=response.json()
