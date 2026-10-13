@@ -111,6 +111,9 @@ def grade_all(records,fetch=None):
 def render_history(sport='NFL'):
     import streamlit as st
     st.divider();st.header('Published pick history and results')
+    if sport=='NBA':
+        from player_usage import render_nba_usage
+        render_nba_usage()
     try:records=json.loads(Path(LEDGER).read_text())['records']
     except (OSError,ValueError,KeyError):records=[]
     st.subheader('Personal paper-pick tracking')
