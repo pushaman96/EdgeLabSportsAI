@@ -14,6 +14,7 @@ SPORT_KEYS = {'NFL':'americanfootball_nfl', 'NBA':'basketball_nba'}
 PROP_MARKETS = {'NFL':{'Passing yards':'player_pass_yds','Rushing yards':'player_rush_yds','Receiving yards':'player_reception_yds','Receptions':'player_receptions'},'NBA':{'Points':'player_points','Rebounds':'player_rebounds','Assists':'player_assists','Three-pointers made':'player_threes'}}
 PROP_MARKETS['NFL'].update({
     'Alternate passing yards — cushion comparison':'player_pass_yds_alternate',
+    'Alternate receiving yards — cushion comparison':'player_reception_yds_alternate',
     'Passing attempts':'player_pass_attempts', 'Passing completions':'player_pass_completions',
     'Rushing attempts':'player_rush_attempts', 'Anytime touchdown scorer':'player_anytime_td',
     'Passing touchdowns':'player_pass_tds', 'Rushing touchdowns':'player_rush_tds',
