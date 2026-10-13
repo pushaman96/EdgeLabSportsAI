@@ -2,12 +2,41 @@
 import json, math, hashlib, base64
 from pathlib import Path
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from urllib.request import urlopen
 REPO='pushaman96/EdgeLabSportsAI'
 LEDGER='published_picks.json'
 SUMMARY='https://site.api.espn.com/apis/site/v2/sports/{sport}/summary?event='
 
 def utc(value):return datetime.fromisoformat(value.replace('Z','+00:00'))
+
+def scoreboard_day(value):return utc(value).astimezone(ZoneInfo('America/Los_Angeles')).strftime('%Y%m%d')
+
+def restore_records(payload):
+    imported=payload['records']
+    if not isinstance(imported,list) or len(imported)>5000:raise ValueError('Invalid record list.')
+    clean=[];seen=set()
+    for original in imported:
+        r=dict(original)
+        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
+        if r['strategy'] not in ('Original','Cushion','Manual'):raise ValueError('Invalid strategy.')
+        r['odds']=float(r['odds'])
+        if not math.isfinite(r['odds']) or abs(r['odds'])<100:raise ValueError('Invalid price.')
+        if r.get('probability') is not None:
+            r['probability']=float(r['probability'])
+            if not 0<r['probability']<1:raise ValueError('Invalid probability.')
+        if r['category']!='Moneyline':
+            r['line']=float(r['line'])
+            if not math.isfinite(r['line']) or r['line']<0 or r['direction'] not in ('Over','Under'):raise ValueError('Invalid line/direction.')
+        if r['evidence']!='Historical import':
+            if utc(r['published_utc'])>=utc(r['starts_utc']):raise ValueError('Late record.')
+            r['evidence']='Personal paper record'
+        for key in ('id','event_id','game','player','model'):
+            if not isinstance(r[key],str) or not r[key] or len(r[key])>500:raise ValueError('Invalid identity.')
+        if r['id'] in seen:raise ValueError('Duplicate record ID.')
+        seen.add(r['id']);r.update(result='Pending',actual=None,profit_per_1=None)
+        clean.append(r)
+    return clean
 
 def make_record(row,event_id,start,now=None,strategy='Original'):
     now=now or datetime.now(timezone.utc)
@@ -20,7 +49,9 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
     if line is not None and (not math.isfinite(line) or line<0 or (strategy!='Manual' and line%1!=.5)):raise ValueError('Invalid prop line.')
     identity='|'.join([str(event_id),row['Player'],category,strategy,row.get('Model','Experimental')])
-    return {'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'sport':row.get('Sport','NFL'),'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
+    record={'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'sport':row.get('Sport','NFL'),'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
+    record['projected_yards']=row.get('Projection (yards)');record['expected_opportunities']=row.get('Expected opportunities');record['reason']=row.get('Reason','')
+    return record
 
 def grade_record(record,data):
     r=dict(record)
@@ -47,7 +78,13 @@ def grade_record(record,data):
                 if entry.get('athlete',{}).get('displayName')==r['player']:
                     stats=dict(zip(labels,entry.get('stats',[])))
                     label={'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}.get(r['category'],'YDS')
-                    if label in stats:values.append(float(str(stats[label]).split('/')[0].split('-')[0]))
+                    if label in stats:
+                        value=str(stats[label])
+                        if label=='3PT':value=value.replace('/','-').split('-')[0]
+                        values.append(float(value))
+                        workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS'}.get(r['category'])
+                        if workload_label in stats:
+                            raw=str(stats[workload_label]);r['actual_opportunities']=float(raw.split('/')[-1])
     if len(values)!=1:
         r['grading_note']='Player total not uniquely reported; manual settlement review required.'
         return r
@@ -55,6 +92,8 @@ def grade_record(record,data):
     result='Push' if actual==line else 'Win' if win else 'Loss'
     odds=r['odds'];profit=odds/100 if odds>0 else 100/abs(odds)
     r.update(actual=actual,result=result,profit_per_1=profit if result=='Win' else -1 if result=='Loss' else 0,graded_utc=datetime.now(timezone.utc).isoformat(),grading_note='Final ESPN yards; platform-specific void rules and fees are not modeled.')
+    if r.get('projected_yards') is not None:r['yardage_miss']=actual-float(r['projected_yards'])
+    if r.get('expected_opportunities') is not None and r.get('actual_opportunities') is not None:r['opportunity_miss']=r['actual_opportunities']-float(r['expected_opportunities'])
     return r
 
 def grade_all(records,fetch=None):
@@ -62,38 +101,27 @@ def grade_all(records,fetch=None):
     cache={};out=[]
     for record in records:
         if record.get('result')!='Pending':out.append(record);continue
-        eid=record['event_id']
+        eid=record['event_id'];cache_key=(record.get('sport','NFL'),eid)
         try:
-            if eid not in cache:cache[eid]=fetch(eid,record.get('sport','NFL'))
-            out.append(grade_record(record,cache[eid]))
-        except (OSError,ValueError,KeyError,TypeError):out.append(record)
+            if cache_key not in cache:cache[cache_key]=fetch(eid,record.get('sport','NFL'))
+            out.append(grade_record(record,cache[cache_key]))
+        except (OSError,ValueError,KeyError,TypeError):out.append(dict(record,grading_note='Source unavailable or inconsistent; remains Pending. Refresh to retry.'))
     return out
 
 def render_history(sport='NFL'):
     import streamlit as st
     st.divider();st.header('Published pick history and results')
     try:records=json.loads(Path(LEDGER).read_text())['records']
-    except (OSError,ValueError,KeyError):st.info('No published picks yet.');return
+    except (OSError,ValueError,KeyError):records=[]
     st.subheader('Personal paper-pick tracking')
     st.caption('Use Save picks for testing beneath the analyzed shortlist. Personal records stay in this browser session. Download the JSON before closing or restarting, and restore it here next time. This is not automatic permanent storage.')
     uploaded=st.file_uploader('Restore saved paper-pick JSON',type=['json'],key='personal_history_restore')
     if uploaded is not None and st.button('Restore paper-pick records',key='personal_history_restore_button'):
         try:
-            imported=json.loads(uploaded.getvalue())['records']
-            if not isinstance(imported,list) or len(imported)>5000:raise ValueError()
-            clean=[]
-            for r in imported:
-                if r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError()
-                if r['strategy'] not in ('Original','Cushion','Manual') or abs(float(r['odds']))<100:raise ValueError()
-                if r.get('probability') is not None and not 0<float(r['probability'])<1:raise ValueError()
-                if not math.isfinite(float(r['odds'])):raise ValueError()
-                if r['evidence']!='Historical import':
-                    if utc(r['published_utc'])>=utc(r['starts_utc']):raise ValueError()
-                    r=dict(r,evidence='Personal paper record')
-                # Recheck grades from ESPN instead of trusting imported outcomes.
-                r=dict(r,result='Pending',actual=None,profit_per_1=None)
-                clean.append(r)
-            st.session_state['personal_paper_records']=clean
+            clean=restore_records(json.loads(uploaded.getvalue()))
+            merged_restore={r['id']:r for r in st.session_state.get('personal_paper_records',[])}
+            for r in clean:merged_restore.setdefault(r['id'],r)
+            st.session_state['personal_paper_records']=list(merged_restore.values())
             st.session_state.pop('ledger_live_grades',None)
             st.success('Restored. Refresh completed-game grades to verify results. Imported personal records remain user-editable evidence.')
         except (ValueError,KeyError,TypeError):st.warning('This file could not be restored as a paper-pick ledger.')
@@ -129,6 +157,15 @@ def render_history(sport='NFL'):
         st.dataframe(bins,hide_index=True,use_container_width=True)
     else:st.info('No settled picks in this record yet.')
     if selected:st.dataframe(selected,hide_index=True,use_container_width=True)
+    with st.expander('Review forecast misses and improvement process'):
+        reviewed=[r for r in settled if r.get('yardage_miss') is not None]
+        if reviewed:
+            st.dataframe([{'Player':r['player'],'Model':r['model'],'Result':r['result'],
+                'Predicted yards':r.get('projected_yards'),'Actual yards':r['actual'],
+                'Yards above/below forecast':r['yardage_miss'],'Expected opportunities':r.get('expected_opportunities'),
+                'Actual opportunities':r.get('actual_opportunities'),'Opportunity miss':r.get('opportunity_miss')} for r in reviewed],hide_index=True,use_container_width=True)
+        else:st.info('No graded records with saved forecast inputs yet. New saves include yardage and workload estimates; older files may lack them.')
+        st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. No automatic retraining or promotion is enabled.')
     st.download_button('Download all saved NFL and NBA records',json.dumps({'records':all_records},indent=2),file_name='kamikaze_picks_published_history.json',mime='application/json',key='ledger_download')
 
 def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=False):
@@ -149,7 +186,7 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
                 for row,strategy in to_save:
                     match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
                     if not match:continue
-                    day=utc(match['commence_time']).strftime('%Y%m%d')
+                    day=scoreboard_day(match['commence_time'])
                     if day not in boards:
                         path='basketball/nba' if sport=='NBA' else 'football/nfl'
                         response=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':day},timeout=15);response.raise_for_status();boards[day]=response.json()
@@ -184,7 +221,7 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
                 if match:
                     # Resolve the ESPN event identity independently of the odds-provider ID.
                     path='basketball/nba' if sport=='NBA' else 'football/nfl'
-                    board=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':utc(match['commence_time']).strftime('%Y%m%d')},timeout=15).json()
+                    board=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':scoreboard_day(match['commence_time'])},timeout=15).json()
                     espn=next((e for e in board.get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
                     if espn:new.append(make_record(row,espn['id'],match['commence_time'],strategy=strategy))
             headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
