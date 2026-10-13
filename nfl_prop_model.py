@@ -253,6 +253,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if not 0 <= age <= 900:
                     row['Reason'] = 'Quote older than 15 minutes or timestamp unavailable.';continue
                 line = num(row['Line']);odds = num(row['Odds'])
+                if market['key']=='player_reception_yds' and line is not None and line<15:
+                    row['Reason']='Receiving line below your 15-yard minimum; excluded from picks.';continue
                 if line is None or line < 0 or not math.isclose(line%1,.5) or odds is None or abs(odds)<100 or row['Selection'] not in ('Over','Under'):
                     row['Reason'] = 'Only valid prices and half-yard over/under lines are supported.';continue
                 key = name_key(row['Player'])
@@ -362,14 +364,17 @@ def clear_prop_shortlist(rows):
 def analyzed_cushions(watch, events, books, models, now=None):
     now=now or datetime.now(timezone.utc)
     results=[]
-    model=models.get('player_pass_yds',{})
     for original in watch:
+        receiving=original.get('Category')=='Receiving yards'
+        model=models.get('player_reception_yds' if receiving else 'player_pass_yds',{})
+        desired=25 if receiving else 30
+        minimum,maximum=(20,25) if receiving else (25,40)
         target=cushion_target(original)
         if target is None:continue
         row={'Player':original['Player'],'Game':original['Game'],'Original pick':original['Paper pick'],
-             '30-yard target':target,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
+             'Category':original['Category'],'Cushion target':target,'Target cushion yards':desired,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
              'Sportsbook':'—','Actual odds':None,'Recalculated win %':None,'Break-even %':None,
-             'Model edge (pp)':None,'Reason':'No fresh alternate quote with a 25–40-yard cushion. Load both Passing yards and Alternate passing yards.'}
+             'Model edge (pp)':None,'Reason':f'No fresh alternate quote with a {minimum}–{maximum}-yard cushion. Load the matching original and alternate yardage categories.'}
         candidates=[]
         for event in events:
             if event.get('away_team','')+' at '+event.get('home_team','')!=original['Game']:continue
@@ -379,7 +384,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
             for book in event.get('bookmakers',[]):
                 if book.get('title') not in books:continue
                 for market in book.get('markets',[]):
-                    if market.get('key')!='player_pass_yds_alternate':continue
+                    if market.get('key')!=('player_reception_yds_alternate' if receiving else 'player_pass_yds_alternate'):continue
                     try:
                         age=(now-datetime.fromisoformat((market.get('last_update') or book.get('last_update')).replace('Z','+00:00'))).total_seconds()
                         if not 0<=age<=900:continue
@@ -388,9 +393,10 @@ def analyzed_cushions(watch, events, books, models, now=None):
                         if name_key(outcome.get('description',''))!=name_key(original['Player']) or outcome.get('name')!=original['Selection']:continue
                         line=num(outcome.get('point'));odds=num(outcome.get('price'))
                         if line is None or odds is None or abs(odds)<100 or line<0 or line%1!=.5:continue
+                        if receiving and line<15:continue
                         cushion=line-float(original['Line']) if original['Selection']=='Under' else float(original['Line'])-line
-                        if not 25<=cushion<=40:continue
-                        candidates.append((abs(cushion-30),book['title'],line,odds,cushion,market.get('last_update') or book.get('last_update')))
+                        if not minimum<=cushion<=maximum:continue
+                        candidates.append((abs(cushion-desired),book['title'],line,odds,cushion,market.get('last_update') or book.get('last_update')))
         if candidates and model.get('residuals') and num(original.get('Projection (yards)')) is not None:
             evaluated=[]
             for distance,book,line,odds,cushion,updated in candidates:
@@ -402,11 +408,11 @@ def analyzed_cushions(watch, events, books, models, now=None):
             _,_,book,line,odds,cushion,p,breakeven,ev,updated=min(evaluated)
             qualifies=p-breakeven>=.05 and ev>0 and model.get('forecast_passed',False)
             row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass',
-                'Available selection':f"{original['Selection']} {line:g} passing yards",'Actual cushion yards':cushion,
+                'Available selection':f"{original['Selection']} {line:g} {original['Category'].lower()}",'Actual cushion yards':cushion,
                 'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
                 'Available line':line,'Quote updated UTC':updated,
                 'Break-even %':round(breakeven*100,1),'Model edge (pp)':round((p-breakeven)*100,1),
-                'Reason':'Closest available cushion to 30 yards; price passes the existing five-point edge filter. Paper only; profitability unverified.' if qualifies else 'Available cushion does not pass the model/price filter.'})
+                'Reason':f'Closest available cushion to {desired} yards; price passes the existing five-point edge filter. Paper only; profitability unverified.' if qualifies else 'Available cushion does not pass the model/price filter.'})
         elif candidates:
             row['Reason']='Reanalyze to load the probability model for this comparison.'
         results.append(row)
@@ -414,10 +420,14 @@ def analyzed_cushions(watch, events, books, models, now=None):
 
 
 def cushion_target(row):
-    if row.get('Decision') == 'Pass' or row.get('Category') != 'Passing yards':return None
+    if row.get('Decision') == 'Pass' or row.get('Category') not in ('Passing yards','Receiving yards'):return None
     line=num(row.get('Line'))
     if line is None:return None
-    return max(0,line+30 if row.get('Selection')=='Under' else line-30)
+    receiving=row['Category']=='Receiving yards'
+    if receiving and line<15:return None
+    amount=25 if receiving else 30
+    target=line+amount if row.get('Selection')=='Under' else line-amount
+    return target if target>=(15 if receiving else 0) else None
 
 
 def cushion_result(direction,line,actual):
@@ -449,7 +459,7 @@ def render_cushion_tracker(watch,starts):
                 records[:]=clean
                 st.success('Tracking records restored. Imported records are user-editable evidence.')
             except (ValueError,KeyError,TypeError,UnicodeError):st.warning('Could not restore this tracking CSV.')
-        picks=[r for r in watch if cushion_target(r) is not None]
+        picks=[r for r in watch if r['Category']=='Passing yards' and cushion_target(r) is not None]
         if picks:
             index=st.selectbox('Original pick to track',range(len(picks)),format_func=lambda i:picks[i]['Paper pick'],key='cushion_pick')
             row=picks[index];target=cushion_target(row)
@@ -545,7 +555,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         display.append(row)
     display=clear_prop_shortlist(display)
     for row in display:
-        row['30-yard cushion target'] = cushion_target(row)
+        row['30-yard cushion target'] = cushion_target(row) if row['Category']=='Passing yards' else None
+        row['25-yard receiving cushion target'] = cushion_target(row) if row['Category']=='Receiving yards' else None
         probability=num(row.get('Estimated win %'))
         row['Risk label']=estimated_risk(probability) if row['Decision']!='Pass' else 'Pass — no selection'
         row['Estimated loss %']=round(100-probability,1) if probability is not None else None
@@ -567,8 +578,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     if cushions:
         for r in cushions:
             r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
-        st.subheader('Analyzed passing-yard cushions')
-        st.caption('Loads actual alternate prices separately. Keeps the original forecast and eligibility checks; recalculates probability for the new half-yard line. Chooses the closest 25–40-yard cushion to 30, then the best estimated return at equal distance. This is a separate paper experiment, not validated betting advice. Kalshi quotes are not connected.')
+        st.subheader('Analyzed passing and receiving cushions')
+        st.caption('Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
         st.dataframe(cushions,hide_index=True,use_container_width=True)
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
