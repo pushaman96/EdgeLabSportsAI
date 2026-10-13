@@ -314,7 +314,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 p = over_probability(projected,line,model['residuals'])
                 if row['Selection'] == 'Under':p = 1-p
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
-                row.update({'Projection (yards)':round(projected,1),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
+                row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
                 if not model['forecast_passed']:
                     row['Reason'] = 'Forecast did not beat the recent-average baseline on the 2025 test.';continue
                 if p-break_even < .05:
