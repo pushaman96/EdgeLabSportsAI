@@ -111,6 +111,8 @@ def grade_all(records,fetch=None):
 def render_history(sport='NFL'):
     import streamlit as st
     st.divider();st.header('Published pick history and results')
+    from research_feeds import render_research_feeds
+    render_research_feeds(sport)
     if sport=='NBA':
         from player_usage import render_nba_usage
         render_nba_usage()
