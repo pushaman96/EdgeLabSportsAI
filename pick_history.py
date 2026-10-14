@@ -119,7 +119,7 @@ def render_history(sport='NFL'):
     try:records=json.loads(Path(LEDGER).read_text())['records']
     except (OSError,ValueError,KeyError):records=[]
     st.subheader('Personal paper-pick tracking')
-    st.caption('Use Save picks for testing beneath the analyzed shortlist. Personal records stay in this browser session. Download the JSON before closing or restarting, and restore it here next time. This is not automatic permanent storage.')
+    st.caption('Qualifying recommendations save automatically when displayed. Permanent autosave requires PICK_HISTORY_GITHUB_TOKEN in Streamlit Secrets; the shortlist shows whether permanent storage succeeded. Session-only records need a JSON backup until setup is complete.')
     uploaded=st.file_uploader('Restore saved paper-pick JSON',type=['json'],key='personal_history_restore')
     if uploaded is not None and st.button('Restore paper-pick records',key='personal_history_restore_button'):
         try:
@@ -178,75 +178,75 @@ def render_history(sport='NFL'):
         st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. No automatic retraining or promotion is enabled.')
     st.download_button('Download all saved NFL and NBA records',json.dumps({'records':all_records},indent=2),file_name='kamikaze_picks_published_history.json',mime='application/json',key='ledger_download')
 
+def persist_records(records,token,client=None):
+    """Append frozen records; retry SHA conflicts without replacing existing picks."""
+    if client is None:
+        import requests as client
+    headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
+    url=f'https://api.github.com/repos/{REPO}/contents/{LEDGER}'
+    for attempt in range(3):
+        response=client.get(url,headers=headers,params={'ref':'main'},timeout=15)
+        response.raise_for_status();payload=response.json()
+        data=json.loads(base64.b64decode(payload['content']))
+        existing={r['id'] for r in data['records']}
+        new=[r for r in records if r['id'] not in existing]
+        if not new:return 0
+        data['records'].extend(new)
+        response=client.put(url,headers=headers,json={'message':'Automatically save frozen pregame paper picks','branch':'main','sha':payload['sha'],'content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()},timeout=20)
+        if response.status_code in (409,422):continue
+        response.raise_for_status();return len(new)
+    raise ValueError('Ledger changed concurrently; retry required.')
+
 def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=False):
     import streamlit as st
     import requests
-    with st.expander('Save picks for testing — no password'):
-        st.caption('Saves qualifying originals and cushions before kickoff. Download your paper-pick JSON from Personal paper-pick tracking to preserve it between sessions. These are experimental selections, not automatically placed bets.')
-        if st.button('Save picks for testing',key=key_prefix+'_personal_save'):
-            try:
-                to_save=[(dict(r,Sport=sport),'Manual' if manual else 'Original') for r in rows]
-                for c in cushions:
-                    if c['Cushion decision']=='Pass':continue
-                    original=next(r for r in rows if r['Player']==c['Player'] and r['Game']==c['Game'])
-                    alternate=dict(original,Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
-                    alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
-                    to_save.append((alternate,'Cushion'))
-                boards={};saved=st.session_state.setdefault('personal_paper_records',[]);existing={r['id'] for r in saved};added=0
-                for row,strategy in to_save:
-                    match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
-                    if not match:continue
-                    day=scoreboard_day(match['commence_time'])
-                    if day not in boards:
-                        path='basketball/nba' if sport=='NBA' else 'football/nfl'
-                        response=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':day},timeout=15);response.raise_for_status();boards[day]=response.json()
-                    espn=next((e for e in boards[day].get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
-                    if not espn:continue
-                    record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
-                    record['season_type']='Preseason' if espn.get('season',{}).get('type')==1 else 'Regular season' if espn.get('season',{}).get('type')==2 else 'Other/unknown'
-                    record['evidence']='Personal paper record'
-                    if record['id'] not in existing:saved.append(record);existing.add(record['id']);added+=1
-                st.success(f'{added} new picks saved for testing. Download your JSON to keep them.')
-            except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):st.warning('Some picks could not be saved. Check your history, refresh stale prices, and try again.')
+    saved=st.session_state.setdefault('personal_paper_records',[])
+    existing={r['id'] for r in saved}
+    to_save=[(dict(r,Sport=sport),'Manual' if manual else 'Original') for r in rows if r.get('Decision')!='Pass']
+    for c in cushions:
+        if c['Cushion decision']=='Pass':continue
+        original=next((r for r in rows if r['Player']==c['Player'] and r['Game']==c['Game'] and r.get('Category')==c.get('Category',r.get('Category'))),None)
+        if original is None:continue
+        alternate=dict(original,Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
+        alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
+        to_save.append((alternate,'Cushion'))
+    boards={};failed=0
+    for row,strategy in to_save:
+        try:
+            match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
+            if not match:failed+=1;continue
+            # Skip records frozen earlier in this session, including after kickoff.
+            identity='|'.join([sport,match['id'],row['Player'],row['Category'],strategy,row.get('Model','Experimental')])
+            seen=st.session_state.setdefault('autosave_seen',set())
+            if identity in seen:continue
+            day=scoreboard_day(match['commence_time'])
+            if day not in boards:
+                path='basketball/nba' if sport=='NBA' else 'football/nfl'
+                response=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':day},timeout=15)
+                response.raise_for_status();boards[day]=response.json()
+            espn=next((e for e in boards[day].get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
+            if not espn:failed+=1;continue
+            record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
+            record['season_type']='Preseason' if espn.get('season',{}).get('type')==1 else 'Regular season' if espn.get('season',{}).get('type')==2 else 'Other/unknown'
+            record['evidence']='Personal paper record'
+            if record['id'] not in existing:saved.append(record);existing.add(record['id'])
+            seen.add(identity)
+        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):failed+=1
+    if failed:st.warning(f'{failed} recommendations could not be frozen. Refresh prices and analysis; no late or unverifiable pick is recorded.')
+    confirmed=st.session_state.setdefault('autosave_permanent_ids',set())
+    pending=[r for r in saved if r['id'] not in confirmed]
     try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
     except Exception:token=''
     if not token:
+        if saved:st.warning('Automatic session save complete; permanent autosave needs one-time setup. Add PICK_HISTORY_GITHUB_TOKEN to Streamlit Secrets with repository Contents read/write access. Until configured, closing/restarting can lose session picks. JSON backup remains available in history. Never paste the token into chat.')
         return
-    with st.expander('Administrator: publish current original and cushion picks'):
-        password=st.text_input('Publishing password',type='password',key=key_prefix+'_password')
-        if not st.button('Publish qualifying picks permanently',key=key_prefix+'_publish'):return
-        if not st.secrets.get('PICK_HISTORY_ADMIN_PASSWORD') or password!=st.secrets.get('PICK_HISTORY_ADMIN_PASSWORD'):
-            st.warning('Administrator password required.');return
+    if pending:
         try:
-            new=[]
-            to_publish=[(dict(row,Sport=sport),'Manual' if manual else 'Original') for row in rows]
-            for c in cushions:
-                if c['Cushion decision']=='Pass':continue
-                original=next(r for r in rows if r['Player']==c['Player'] and r['Game']==c['Game'])
-                alternate=dict(original,Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
-                alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
-                to_publish.append((alternate,'Cushion'))
-            for row,strategy in to_publish:
-                match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
-                if match:
-                    # Resolve the ESPN event identity independently of the odds-provider ID.
-                    path='basketball/nba' if sport=='NBA' else 'football/nfl'
-                    board=requests.get('https://site.api.espn.com/apis/site/v2/sports/'+path+'/scoreboard',params={'dates':scoreboard_day(match['commence_time'])},timeout=15).json()
-                    espn=next((e for e in board.get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
-                    if espn:
-                        record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
-                        record['season_type']='Preseason' if espn.get('season',{}).get('type')==1 else 'Regular season' if espn.get('season',{}).get('type')==2 else 'Other/unknown'
-                        new.append(record)
-            headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
-            url=f'https://api.github.com/repos/{REPO}/contents/{LEDGER}'
-            response=requests.get(url,headers=headers,params={'ref':'main'},timeout=15);response.raise_for_status();payload=response.json()
-            data=json.loads(base64.b64decode(payload['content']));existing={r['id'] for r in data['records']}
-            new=[r for r in new if r['id'] not in existing]
-            if not new:st.info('No new eligible picks to publish.');return
-            data['records'].extend(new)
-            response=requests.put(url,headers=headers,json={'message':'Publish frozen pregame paper picks','branch':'main','sha':payload['sha'],'content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()},timeout=20);response.raise_for_status()
-            st.success(f'{len(new)} picks saved permanently. History appears after the app updates.')
-        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):st.warning('Publishing did not complete. Refresh and check history before retrying.')
+            persist_records(pending,token,requests)
+            confirmed.update(r['id'] for r in pending)
+        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):
+            st.warning('Permanent autosave failed. Picks remain in this session and will retry on the next analysis/rerun. Check the private token permissions or download a backup from history.');return
+    if saved:st.success('Automatic permanent save confirmed. Original picks stay frozen; duplicates are skipped. Results are graded by the scheduled ledger job.')
 
 if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
