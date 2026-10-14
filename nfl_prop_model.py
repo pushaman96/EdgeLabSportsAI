@@ -308,6 +308,10 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                         row['Reason']='Experimental opportunity inputs unavailable.';continue
                     feature=dict(feature,volume_forecast=volume)
                     row['Model']='NFL opportunity experiment v2 / 2024 fit / 2025 development'
+                    row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets'}[market['key']]
+                    row['Workload method']=model['parameters'][0]
+                    row['Efficiency method']=model['parameters'][1]
+                    row['Opportunity forecast blend %']=100*model['parameters'][2]
                 residuals=model['residuals']
                 lower=projected+residuals[int(.1*(len(residuals)-1))]*error_scale(projected)
                 upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
@@ -499,9 +503,10 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Probabilities use 2024 forecast errors; historical comparisons do not establish profit at sportsbook prices.')
-    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing'],key='nfl_forecast_mode')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode.startswith('Experimental')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
+    if experimental:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
