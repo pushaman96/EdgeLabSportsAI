@@ -237,6 +237,8 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
     pending=[r for r in saved if r['id'] not in confirmed]
     try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
     except Exception:token=''
+    from pick_explanations import render_explanations
+    render_explanations(rows,key_prefix)
     if not token:
         if saved:st.warning('Automatic session save complete; permanent autosave needs one-time setup. Add PICK_HISTORY_GITHUB_TOKEN to Streamlit Secrets with repository Contents read/write access. Until configured, closing/restarting can lose session picks. JSON backup remains available in history. Never paste the token into chat.')
         return
