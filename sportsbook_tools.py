@@ -67,7 +67,7 @@ def prop_market_board(events,books,sport):
         identity=(row['Game'],participant,row['Market'],str(row['Line']))
         entry=grouped.setdefault(identity,{'Game':row['Game'],'Player/team':participant,
             'Category':labels[row['Market']],'Line':row['Line'],'Forecast status':
-            'Experimental yardage model — see analyzed shortlist' if sport=='NFL' and row['Market'] in ('player_pass_yds','player_rush_yds','player_reception_yds') else 'Market prices only — forecast not tested',
+            'Experimental forecast — see analyzed shortlist' if sport=='NFL' and row['Market'] in ('player_pass_yds','player_rush_yds','player_reception_yds','player_receptions','player_pass_attempts','player_rush_attempts') else 'Market prices only — forecast not tested',
             'Over price':'—','Over book':'—','Under price':'—','Under book':'—','Other selection':'—'})
         side=row['Selection'];price=numeric(row['Odds'])
         if side in ('Over','Under') and price is not None:
