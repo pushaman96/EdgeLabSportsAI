@@ -212,8 +212,9 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
         if c['Cushion decision']=='Pass':continue
         original=next((r for r in rows if r['Player']==c['Player'] and r['Game']==c['Game'] and r.get('Category')==c.get('Category',r.get('Category'))),None)
         if original is None:continue
-        alternate=dict(original,Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
+        alternate=dict(original,Decision=c['Cushion decision'],Selection=c.get('Direction',original['Selection']),Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
         alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
+        alternate['Reason']=c['Reason']+' Original decision: '+original['Decision']
         to_save.append((alternate,'Cushion'))
     boards={};failed=0
     for row,strategy in to_save:
