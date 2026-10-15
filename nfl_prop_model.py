@@ -93,10 +93,14 @@ def features(player, season, week, team, opponent, market, idx):
     if len(history) < 4 or len(team_history) < 4:
         return None, 'Fewer than four current-season games.'
     recent = history[-4:]
-    if {r['game_id'] for r in recent} != {r['game_id'] for r in team_history}:
-        return None, 'Missed games, a team change, or incomplete recent history.'
     if recent[-1]['position'] not in positions:
         return None, 'This position is not supported for this prop yet.'
+    expected={r['game_id'] for r in team_history}
+    observed={r['game_id'] for r in history}
+    missing=sorted(expected-observed)
+    if missing:
+        return None, ('Recent player-stat coverage gap: '+', '.join(missing)+
+            '. A missing row does not establish an injury or DNP. No zero is assumed; the model requires the latest four team games.')
     if any(r[stat] is None or r[workload] is None for r in history):
         return None, 'Missing yardage or workload data.'
     volume = mean([r[workload] for r in recent])
