@@ -63,8 +63,9 @@ def prop_market_board(events,books,sport):
     grouped={}
     for row in bookmaker_rows(events,books,True):
         if row['Market'] not in labels:continue
-        identity=(row['Game'],row['Player'],row['Market'],str(row['Line']))
-        entry=grouped.setdefault(identity,{'Game':row['Game'],'Player/team':row['Player'],
+        participant=row['Player'] if row['Player']!='—' else row['Selection'] if row['Selection'] not in ('Over','Under') else 'Game total'
+        identity=(row['Game'],participant,row['Market'],str(row['Line']))
+        entry=grouped.setdefault(identity,{'Game':row['Game'],'Player/team':participant,
             'Category':labels[row['Market']],'Line':row['Line'],'Forecast status':
             'Experimental yardage model — see analyzed shortlist' if sport=='NFL' and row['Market'] in ('player_pass_yds','player_rush_yds','player_reception_yds') else 'Market prices only — forecast not tested',
             'Over price':'—','Over book':'—','Under price':'—','Under book':'—','Other selection':'—'})
