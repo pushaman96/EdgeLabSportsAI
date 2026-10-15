@@ -293,7 +293,11 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 ids = {r['player_id'] for r in research['players'] if r['season'] == context['season'] and r['team'] == team and name_key(r['player_display_name']) == key}
                 if len(ids) != 1:
                     row['Reason'] = 'No unique current-season player-stat match.';continue
-                feature,reason = features(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,market['key'],idx)
+                if research['models'].get(market['key'],{}).get('boosted'):
+                    from boosted_yardage import base_feature
+                    feature,reason=base_feature({'player_id':next(iter(ids)),'season':context['season'],'week':int(schedule['week']),'team':team,'opponent_team':opponent},market['key'],idx)
+                else:
+                    feature,reason = features(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,market['key'],idx)
                 if not feature:
                     row['Reason'] = reason;continue
                 coverage_ok = True
@@ -315,11 +319,17 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                             'team':team,'opponent_team':opponent,'position':feature['position'],
                             MARKETS[market['key']][1]:0,MARKETS[market['key']][2]:0}
                     try:
-                        projected,volume=live_opportunity_projection(sample,market['key'],idx,model['parameters'])
+                        if model.get('boosted'):
+                            from boosted_yardage import live_boost
+                            projected,volume=live_boost(sample,market['key'],idx,model,research['boosted_snaps'])
+                        else:projected,volume=live_opportunity_projection(sample,market['key'],idx,model['parameters'])
                     except ValueError:
                         row['Reason']='Experimental opportunity inputs unavailable.';continue
                     feature=dict(feature,volume_forecast=volume)
                     row['Model']='NFL count workload v1 / 2024 fit / 2025 development' if market['key'] in COUNT_MARKETS else 'NFL opportunity experiment v2 / 2024 fit / 2025 development'
+                    if model.get('boosted'):
+                        row['Model']='NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration'
+                        row['Boosted tree weight %']=100*model['opportunity_fit']['weight']
                     if research.get('chronological_calibration'):row['Model']='NFL chronological calibration v1 / early-2024 fit / late-2024 calibration'
                     row['Probability adjustment strength']=model.get('probability_strength',.8)
                     row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Passing attempts','player_rush_attempts':'Carries'}[market['key']]
@@ -361,7 +371,9 @@ def evidence_explanation(row):
         text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
         if reason.startswith('Estimated edge below five percentage points.'):
             text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
-    text+='Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
+    text+='Experimental estimates, not independently verified confidence or profitability. '
+    if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
+    text+='Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
     return text
 
 def estimated_risk(probability):
@@ -555,12 +567,14 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
-    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing'],index=1,key='nfl_workload_forecast_mode')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
+    boosted=mode.startswith('Boosted')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
     if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
-    if experimental:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
+    if boosted:st.info('Boosted paper candidate: passing attempts and receiving targets use team/opponent workload, player share, snap participation and role trends. Passing/receiving yardage and passing-attempt props use a candidate only when it beats the baseline and current v2 on comparable historical games; other cases retain the existing opportunity model. Historical gaps may use three consecutive recent games when supported. Current roster, injury, quote and schedule checks remain required.')
+    if experimental and not boosted:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
@@ -575,7 +589,10 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 research = load_prop_research(usable[0]['season'])
                 if experimental:
                     from nfl_workload_lab import load_experimental_research
-                    research=load_experimental_research(usable[0]['season'],chronological)
+                    if boosted:
+                        from boosted_yardage import load_boosted_pick_research
+                        research=load_boosted_pick_research(usable[0]['season'])
+                    else:research=load_experimental_research(usable[0]['season'],chronological)
                 injury_context.clear()
                 injuries = injury_context()
                 team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
@@ -593,7 +610,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
                 st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues}
-        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError):
+        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):
             st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
     saved = st.session_state.get('nfl_prop_analysis')
     if not saved or saved['key'] != cache_key:
