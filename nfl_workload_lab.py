@@ -10,7 +10,7 @@ import streamlit as st
 from nfl_prop_model import MARKETS, indexes, features, projection, error_scale, load_prop_research, load_season_stats
 
 VARIANTS = ['Recent four-game average','Recent eight-game average','Current weighted recent workload','Team volume and player share','Opponent-adjusted workload']
-UNITS = {'player_pass_yds':'Pass attempts','player_rush_yds':'Carries','player_reception_yds':'Targets'}
+UNITS = {'player_pass_yds':'Pass attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Pass attempts','player_rush_attempts':'Carries'}
 
 def avg(values):
     return statistics.mean(values) if values else None
@@ -100,8 +100,8 @@ def forecast_development(research,samples):
             improvement=avg(differences)
             reports.append({'Category':label,'Season':year,'Forecasts':len(tested),'Workload model':chosen[0],
                 'Efficiency model':chosen[1],'Opportunity blend':chosen[2],'Opponent weight':chosen[3],
-                'Forecast error (yards)':round(avg(errors),2),'Baseline error (yards)':round(avg([abs(s['feature']['baseline']-s['actual_yards']) for s in tested]),2),
-                'Mean improvement (yards)':round(improvement,2),'Weeks observed':len(weekly),
+                'Forecast error (category units)':round(avg(errors),2),'Baseline error (category units)':round(avg([abs(s['feature']['baseline']-s['actual_yards']) for s in tested]),2),
+                'Mean improvement (category units)':round(improvement,2),'Weeks observed':len(weekly),
                 'Weekly mean improvement low':round(avg(week_means)-uncertainty,2) if uncertainty is not None else None,
                 'Weekly mean improvement high':round(avg(week_means)+uncertainty,2) if uncertainty is not None else None,
                 'Status':'Historical development — not independent validation' if year==2025 else 'Forward season — more evidence required'})
@@ -139,8 +139,8 @@ def load_experimental_research(season):
     for market,model in experiment['models'].items():
         label=MARKETS[market][0]
         report=next(r for r in experiment['reports'] if r['Category']==label and r['Season']==2025)
-        models[market]=dict(model,forecast_passed=report['Mean improvement (yards)']>0,blend=1,defense_weight=0)
-    return dict(research,models=models,reports=experiment['reports'],experiment=True)
+        models[market]=dict(model,forecast_passed=report['Mean improvement (category units)']>0,blend=1,defense_weight=0)
+    return dict(research,schema_version=2,models=models,reports=experiment['reports'],experiment=True)
 
 def yardage_with_workload(sample,model,volume):
     feature=dict(sample['feature'],efficiency_forecast=volume*sample['efficiency'])
