@@ -1,4 +1,4 @@
-"""NFL yardage research, with a frozen 2024 fit and an untouched 2025 test.
+"""NFL prop research: 2024 fit, 2025 historical development, future paper testing.
 No historical sportsbook prop prices are inferred from box scores.
 """
 import csv
@@ -19,6 +19,12 @@ MARKETS = {
  'player_rush_yds': ('Rushing yards', 'rushing_yards', 'carries', ('RB', 'HB', 'FB'), 8),
  'player_reception_yds': ('Receiving yards', 'receiving_yards', 'targets', ('WR', 'TE'), 3),
 }
+COUNT_MARKETS = {
+ 'player_receptions': ('Receptions','receptions','targets',('WR','TE','RB','HB','FB'),3),
+ 'player_pass_attempts': ('Passing attempts','attempts','attempts',('QB',),20),
+ 'player_rush_attempts': ('Rushing attempts','carries','carries',('RB','HB','FB'),8),
+}
+MARKETS.update(COUNT_MARKETS)
 MODEL_VERSION = 'NFL yardage v1 / 2024 fit / 2025 test'
 SCHEDULE_URL = 'https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv'
 ALIASES = {'LAR': 'LA', 'WSH': 'WAS', 'JAC': 'JAX', 'LV': 'LV'}
@@ -46,7 +52,7 @@ def load_season_stats(kind, season):
     rows = csv_url(f'https://github.com/nflverse/nflverse-data/releases/download/stats_{kind}/stats_{kind}_week_{season}.csv')
     required = {'season', 'week', 'season_type', 'team', 'opponent_team', 'game_id', 'passing_yards', 'rushing_yards', 'receiving_yards'}
     if kind == 'player':
-        required |= {'player_id', 'player_display_name', 'position', 'attempts', 'carries', 'targets'}
+        required |= {'player_id', 'player_display_name', 'position', 'attempts', 'carries', 'targets', 'receptions'}
     if not rows or not required.issubset(rows[0]):
         raise ValueError('NFL weekly stats are missing required fields.')
     return normalize_stats(rows, kind)
@@ -61,7 +67,7 @@ def normalize_stats(rows, kind):
             continue
         converted = {k: row.get(k) for k in ['player_id', 'player_display_name', 'position', 'game_id']}
         converted.update(season=int(row['season']), week=int(row['week']), team=ALIASES.get(row['team'], row['team']), opponent_team=ALIASES.get(row['opponent_team'], row['opponent_team']))
-        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets']:
+        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions']:
             converted[key] = num(row.get(key))
         identity = (converted['game_id'], converted.get('player_id') if kind == 'player' else converted['team'])
         if identity in seen:
@@ -160,7 +166,7 @@ def fit_and_test(players, teams):
             briers.append((p-y)**2)
             correct.append((p >= .5) == bool(y))
         models[market] = {'blend': blend, 'defense_weight': weight, 'residuals': residuals, 'forecast_passed': mae < baseline_mae, 'mae': mae, 'baseline_mae': baseline_mae, 'test_count': len(tested)}
-        reports.append({'Category': label, '2025 test forecasts': len(tested), 'Model error (yards, lower is better)': round(mae,2), 'Recent-average error (yards)': round(baseline_mae,2), 'Error improvement (yards)': round(baseline_mae-mae,2), 'Benchmark Brier': round(mean(briers),4), '50/50 benchmark Brier': .25, 'Benchmark accuracy %': round(mean(correct)*100,1), 'Forecast beats baseline': mae < baseline_mae})
+        reports.append({'Category': label, '2025 test forecasts': len(tested), 'Model error (category units, lower is better)': round(mae,2), 'Recent-average error (category units)': round(baseline_mae,2), 'Error improvement (category units)': round(baseline_mae-mae,2), 'Benchmark Brier': round(mean(briers),4), '50/50 benchmark Brier': .25, 'Benchmark accuracy %': round(mean(correct)*100,1), 'Forecast beats baseline': mae < baseline_mae})
     return models, reports
 
 @st.cache_data(ttl=21600)
@@ -174,7 +180,7 @@ def load_prop_research(season):
     models, reports = fit_and_test(players,teams)
     if len(models) != len(MARKETS):
         raise ValueError('Insufficient NFL historical model data.')
-    return {'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    return {'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -237,6 +243,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if market['key'] not in MARKETS:
                     continue
                 row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':MARKETS[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Historical error range low':None,'Historical error range high':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
+                if market['key'] in COUNT_MARKETS:row['Model']='NFL count forecast v1 / 2024 fit / 2025 development'
                 rows.append(row)
                 if starts <= now:
                     row['Reason'] = 'Game already started; pregame analysis closed.';continue
@@ -256,7 +263,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if market['key']=='player_reception_yds' and line is not None and line<15:
                     row['Reason']='Receiving line below your 15-yard minimum; excluded from picks.';continue
                 if line is None or line < 0 or not math.isclose(line%1,.5) or odds is None or abs(odds)<100 or row['Selection'] not in ('Over','Under'):
-                    row['Reason'] = 'Only valid prices and half-yard over/under lines are supported.';continue
+                    row['Reason'] = 'Only valid prices and half-unit over/under lines are supported.';continue
                 key = name_key(row['Player'])
                 roster_matches = [(side,p) for side in ('home','away') for p in rosters.get(context[side].get('displayName'),[]) if name_key(p['name']) == key]
                 if len(roster_matches) != 1:
@@ -307,8 +314,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     except ValueError:
                         row['Reason']='Experimental opportunity inputs unavailable.';continue
                     feature=dict(feature,volume_forecast=volume)
-                    row['Model']='NFL opportunity experiment v2 / 2024 fit / 2025 development'
-                    row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets'}[market['key']]
+                    row['Model']='NFL count workload v1 / 2024 fit / 2025 development' if market['key'] in COUNT_MARKETS else 'NFL opportunity experiment v2 / 2024 fit / 2025 development'
+                    row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Passing attempts','player_rush_attempts':'Carries'}[market['key']]
                     row['Workload method']=model['parameters'][0]
                     row['Efficiency method']=model['parameters'][1]
                     row['Opportunity forecast blend %']=100*model['parameters'][2]
@@ -321,6 +328,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if row['Selection'] == 'Under':p = 1-p
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
+                if market['key'] in COUNT_MARKETS:
+                    row['Projection (count)']=row.pop('Projection (yards)')
+                    row['Forecast units']=row['Category']
                 if not model['forecast_passed']:
                     row['Reason'] = 'Forecast did not beat the recent-average baseline on the 2025 test.';continue
                 if p-break_even < .05:
@@ -502,7 +512,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
-    st.caption('Passing, rushing and receiving yardage only. Receptions and QB rushing are not modeled yet. Probabilities use 2024 forecast errors; historical comparisons do not establish profit at sportsbook prices.')
+    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
     mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode.startswith('Experimental')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
@@ -600,10 +610,10 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
         if display:
-            st.info('No qualifying yardage paper picks. See Reason beside each Pass; missing data and failed model tests do not establish an Under or Over.')
+            st.info('No qualifying modeled paper picks. See Reason beside each Pass; missing data and failed model tests do not establish an Under or Over.')
         else:
-            st.info('No supported yardage props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
-    with st.expander('Check the yardage model test results'):
+            st.info('No supported modeled props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
+    with st.expander('Check the prop model test results'):
         st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
         st.caption('2024 chooses forecast parameters and supplies errors. The opportunity experiment uses 2025 as development evidence; future saved picks provide the prospective test. The original report uses benchmark thresholds, not historical sportsbook prices. Missing/DNP rows are not assigned zero. Availability gates remain active, but injury impacts, weather and lineup changes were not backtested. Failed baseline or price checks remain Pass.')
         st.markdown('[Statistics source: nflverse](https://nflreadr.nflverse.com/reference/load_player_stats.html)')
