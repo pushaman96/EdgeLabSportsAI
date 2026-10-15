@@ -129,11 +129,11 @@ def projection(feature, blend, defense_weight):
 def error_scale(projected):
     return max(15, .35*projected)
 
-def over_probability(projected, line, residuals):
+def over_probability(projected, line, residuals, strength=.8):
     # Yardage is integer-valued. Half-yard lines are supported, avoiding push ambiguity.
     cutoff = (line-projected)/error_scale(projected)
     raw = (sum(error > cutoff for error in residuals)+1)/(len(residuals)+2)
-    return max(.05, min(.95, .5 + .8*(raw-.5)))
+    return max(.05, min(.95, .5 + strength*(raw-.5)))
 
 def samples_for_season(season, players, idx):
     samples = defaultdict(list)
@@ -320,6 +320,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                         row['Reason']='Experimental opportunity inputs unavailable.';continue
                     feature=dict(feature,volume_forecast=volume)
                     row['Model']='NFL count workload v1 / 2024 fit / 2025 development' if market['key'] in COUNT_MARKETS else 'NFL opportunity experiment v2 / 2024 fit / 2025 development'
+                    if research.get('chronological_calibration'):row['Model']='NFL chronological calibration v1 / early-2024 fit / late-2024 calibration'
+                    row['Probability adjustment strength']=model.get('probability_strength',.8)
                     row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Passing attempts','player_rush_attempts':'Carries'}[market['key']]
                     row['Workload method']=model['parameters'][0]
                     row['Efficiency method']=model['parameters'][1]
@@ -329,7 +331,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
                 row['Historical error range low']=round(max(0,lower),1)
                 row['Historical error range high']=round(max(0,upper),1)
-                p = over_probability(projected,line,model['residuals'])
+                p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':p = 1-p
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
@@ -453,7 +455,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
         if candidates and model.get('residuals') and num(original.get('Projection (yards)')) is not None:
             evaluated=[]
             for distance,book,line,odds,cushion,updated in candidates:
-                p=over_probability(float(original['Projection (yards)']),line,model['residuals'])
+                p=over_probability(float(original['Projection (yards)']),line,model['residuals'],model.get('probability_strength',.8))
                 if original['Selection']=='Under':p=1-p
                 breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 ev=p*(odds/100 if odds>0 else 100/abs(odds))-(1-p)
@@ -553,9 +555,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
-    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
-    experimental=mode.startswith('Experimental')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing'],index=1,key='nfl_workload_forecast_mode')
+    experimental=mode!='Original model'
+    chronological=mode.startswith('Chronological')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
+    if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
     if experimental:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
@@ -571,7 +575,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 research = load_prop_research(usable[0]['season'])
                 if experimental:
                     from nfl_workload_lab import load_experimental_research
-                    research=load_experimental_research(usable[0]['season'])
+                    research=load_experimental_research(usable[0]['season'],chronological)
                 injury_context.clear()
                 injuries = injury_context()
                 team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
