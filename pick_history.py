@@ -235,12 +235,25 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
     if failed:st.warning(f'{failed} recommendations could not be frozen. Refresh prices and analysis; no late or unverifiable pick is recorded.')
     confirmed=st.session_state.setdefault('autosave_permanent_ids',set())
     pending=[r for r in saved if r['id'] not in confirmed]
-    try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
-    except Exception:token=''
+    secret_issue=''
+    try:
+        token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
+        if not isinstance(token,str) or not token.strip():
+            token=''
+            secret_issue='The running app has no nonempty top-level PICK_HISTORY_GITHUB_TOKEN setting.'
+        else:token=token.strip()
+    except Exception:
+        token=''
+        secret_issue='The running app could not load Streamlit Secrets.' 
     from pick_explanations import render_explanations
     render_explanations(rows,key_prefix)
     if not token:
-        if saved:st.warning('Automatic session save complete; permanent autosave needs one-time setup. Add PICK_HISTORY_GITHUB_TOKEN to Streamlit Secrets with repository Contents read/write access. Until configured, closing/restarting can lose session picks. JSON backup remains available in history. Never paste the token into chat.')
+        if saved:
+            st.warning('Session-only save. '+secret_issue+' This is a configuration/read problem, not a GitHub permission rejection. Permanent saving has not been tested.')
+            with st.expander('Fix permanent storage configuration'):
+                st.write('Open Manage app → Settings → Secrets for THIS deployed app. Put the exact setting below at the top of the box, above any [section] heading, replacing the placeholder privately. Save, then reboot the app from Manage app and rerun analysis. Do not create another token yet.')
+                st.code('PICK_HISTORY_GITHUB_TOKEN = "your-actual-github-token"',language='toml')
+                st.caption('Never share the token or screenshot its value. Until permanent save is confirmed, download your JSON backup from history.')
         return
     if pending:
         try:
