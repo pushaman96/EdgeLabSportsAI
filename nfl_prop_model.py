@@ -416,16 +416,26 @@ def clear_prop_shortlist(rows):
     return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
 
 def cushion_sources(rows):
+    eligible=[r for r in rows if r.get('Category') in ('Passing yards','Receiving yards')]
+    selected={(r['Game'],name_key(r['Player']),r['Category']):r for r in clear_prop_shortlist(eligible)}
     grouped={}
-    for original in rows:
-        if original.get('Category') not in ('Passing yards','Receiving yards'):continue
+    for original in eligible:
+        key=(original['Game'],name_key(original['Player']),original['Category'])
+        chosen=selected[key]
+        # A selected direction owns its cushion; never replace it with the rejected opposite side.
+        if chosen['Decision']!='Pass':
+            grouped[key+('selected',)]=dict(chosen)
+            continue
+        if chosen.get('Reason','').startswith('Qualifying Over and Under quotes conflict'):continue
         if original.get('Selection') not in ('Over','Under'):continue
         if original.get('Decision')=='Pass' and original.get('Reason')!='Estimated edge below five percentage points.':continue
         if num(original.get('Projection (yards)')) is None or num(original.get('Line')) is None:continue
         row=dict(original)
-        row['Paper pick']=f"{row['Player']} {row['Selection']} {row['Line']} {row['Category']}"
-        key=(row['Game'],name_key(row['Player']),row['Category'],row['Selection'])
-        if key not in grouped or (num(row.get('Model edge (pp)')) or -999)>(num(grouped[key].get('Model edge (pp)')) or -999):grouped[key]=row
+        row['Paper pick']=f"PASS — evaluated quote: {row['Player']} {row['Selection']} {row['Line']} {row['Category']}"
+        direction_key=key+(row['Selection'],)
+        score=num(row.get('Model edge (pp)'))
+        prior=num(grouped.get(direction_key,{}).get('Model edge (pp)'))
+        if direction_key not in grouped or (score if score is not None else -999)>(prior if prior is not None else -999):grouped[direction_key]=row
     return list(grouped.values())
 
 def analyzed_cushions(watch, events, books, models, now=None):
@@ -439,7 +449,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
         target=cushion_target(original)
         if target is None:continue
         row={'Player':original['Player'],'Game':original['Game'],'Original pick':original['Paper pick'],
-             'Original decision':original['Decision'],'Original reason':original.get('Reason'),'Original explanation':original.get('Evidence explanation',''),'Direction':original['Selection'],'Category':original['Category'],'Cushion target':target,'Target cushion yards':desired,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
+             'Original decision':original['Decision'],'Original reason':original.get('Reason'),'Original explanation':original.get('Evidence explanation',''),'Direction':original['Selection'],'Category':original['Category'],'Cushion target':target,'Target cushion yards':desired,'Cushion decision':'Pass','Selection status':'Not recommended — Pass','Available selection':'—','Actual cushion yards':None,
              'Sportsbook':'—','Actual odds':None,'Recalculated win %':None,'Break-even %':None,
              'Model edge (pp)':None,'Reason':f'No fresh alternate quote with a {minimum}–{maximum}-yard cushion. Load the matching original and alternate yardage categories.'}
         candidates=[]
@@ -474,7 +484,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
                 evaluated.append((distance,-ev,book,line,odds,cushion,p,breakeven,ev,updated))
             _,_,book,line,odds,cushion,p,breakeven,ev,updated=min(evaluated)
             qualifies=p-breakeven>=.05 and ev>0 and model.get('forecast_passed',False)
-            row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass',
+            row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass','Selection status':'Qualifying paper candidate' if qualifies else 'Not recommended — Pass',
                 'Available selection':f"{original['Selection']} {line:g} {original['Category'].lower()}",'Actual cushion yards':cushion,
                 'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
                 'Available line':line,'Quote updated UTC':updated,
@@ -674,7 +684,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         for r in cushions:
             r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
         st.subheader('Analyzed passing and receiving cushions')
-        st.caption('Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
+        st.caption('Cushions follow the selected original direction. Rejected originals are compared only when no original qualifies; Pass rows are not recommendations. Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
         st.dataframe(cushions,hide_index=True,use_container_width=True)
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
