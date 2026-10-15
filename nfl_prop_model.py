@@ -336,8 +336,26 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if p-break_even < .05:
                     row['Reason'] = 'Estimated edge below five percentage points.';continue
                 row['Decision'] = 'Watch — experimental'
-                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent allowed {feature['ratio']*100:.0f}% of league yardage average. Availability: {status}. Confirm lineup/weather."
+                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Confirm lineup/weather."
+    for row in rows:row['Evidence explanation']=evidence_explanation(row)
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
+
+def evidence_explanation(row):
+    reason=row.get('Reason','')
+    projected=num(row.get('Projection (count)'))
+    if projected is None:projected=num(row.get('Projection (yards)'))
+    if projected is None:
+        return 'Not evaluated: '+reason+' This does not predict an Over or Under.'
+    probability=num(row.get('Estimated win %'));breakeven=num(row.get('Break-even %'))
+    text=f"Forecast: {projected:g} {row.get('Category','').lower()}. Compared quote: {row.get('Selection')} {row.get('Line')} at {row.get('Odds')} ({row.get('Sportsbook')}). "
+    volume=num(row.get('Expected opportunities'))
+    if volume is not None:text+=f"Expected workload: {volume:g} {row.get('Opportunity type','opportunities').lower()}. "
+    if probability is not None and breakeven is not None:
+        text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
+        if reason.startswith('Estimated edge below five percentage points.'):
+            text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
+    text+='Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
+    return text
 
 def estimated_risk(probability):
     p=num(probability)
@@ -378,6 +396,19 @@ def clear_prop_shortlist(rows):
         result.append({'Paper pick':row.pop('Paper pick'),**row})
     return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
 
+def cushion_sources(rows):
+    grouped={}
+    for original in rows:
+        if original.get('Category') not in ('Passing yards','Receiving yards'):continue
+        if original.get('Selection') not in ('Over','Under'):continue
+        if original.get('Decision')=='Pass' and original.get('Reason')!='Estimated edge below five percentage points.':continue
+        if num(original.get('Projection (yards)')) is None or num(original.get('Line')) is None:continue
+        row=dict(original)
+        row['Paper pick']=f"{row['Player']} {row['Selection']} {row['Line']} {row['Category']}"
+        key=(row['Game'],name_key(row['Player']),row['Category'],row['Selection'])
+        if key not in grouped or (num(row.get('Model edge (pp)')) or -999)>(num(grouped[key].get('Model edge (pp)')) or -999):grouped[key]=row
+    return list(grouped.values())
+
 def analyzed_cushions(watch, events, books, models, now=None):
     now=now or datetime.now(timezone.utc)
     results=[]
@@ -389,7 +420,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
         target=cushion_target(original)
         if target is None:continue
         row={'Player':original['Player'],'Game':original['Game'],'Original pick':original['Paper pick'],
-             'Category':original['Category'],'Cushion target':target,'Target cushion yards':desired,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
+             'Original decision':original['Decision'],'Original reason':original.get('Reason'),'Original explanation':original.get('Evidence explanation',''),'Direction':original['Selection'],'Category':original['Category'],'Cushion target':target,'Target cushion yards':desired,'Cushion decision':'Pass','Available selection':'—','Actual cushion yards':None,
              'Sportsbook':'—','Actual odds':None,'Recalculated win %':None,'Break-even %':None,
              'Model edge (pp)':None,'Reason':f'No fresh alternate quote with a {minimum}–{maximum}-yard cushion. Load the matching original and alternate yardage categories.'}
         candidates=[]
@@ -429,7 +460,7 @@ def analyzed_cushions(watch, events, books, models, now=None):
                 'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
                 'Available line':line,'Quote updated UTC':updated,
                 'Break-even %':round(breakeven*100,1),'Model edge (pp)':round((p-breakeven)*100,1),
-                'Reason':f'Closest available cushion to {desired} yards; price passes the existing five-point edge filter. Paper only; profitability unverified.' if qualifies else 'Available cushion does not pass the model/price filter.'})
+                'Reason':f"At {line:g}, the {original['Selection']} has estimated win chance {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. It meets the 5-point edge requirement. Original decision: {original['Decision']}. Experimental, not verified profitability." if qualifies else f"At {line:g}, estimated win chance is {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. The cushion fails the model baseline or 5-point price-edge requirement. More cushion does not necessarily mean better value."})
         elif candidates:
             row['Reason']='Reanalyze to load the probability model for this comparison.'
         results.append(row)
@@ -437,7 +468,8 @@ def analyzed_cushions(watch, events, books, models, now=None):
 
 
 def cushion_target(row):
-    if row.get('Decision') == 'Pass' or row.get('Category') not in ('Passing yards','Receiving yards'):return None
+    if row.get('Category') not in ('Passing yards','Receiving yards'):return None
+    if row.get('Decision')=='Pass' and row.get('Reason')!='Estimated edge below five percentage points.':return None
     line=num(row.get('Line'))
     if line is None:return None
     receiving=row['Category']=='Receiving yards'
@@ -571,6 +603,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         except (ValueError,TypeError,AttributeError):
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
+    cushion_inputs=cushion_sources(display)
     display=clear_prop_shortlist(display)
     for row in display:
         row['30-yard cushion target'] = cushion_target(row) if row['Category']=='Passing yards' else None
@@ -601,18 +634,27 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             st.dataframe(rejected,hide_index=True,use_container_width=True)
             st.caption('Evaluated quote fields in the full export preserve the compared line, odds and probability as diagnostics, not recommendations. Missing-history exclusions require separate investigation; they are not price-based betting decisions.')
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
-    cushions=analyzed_cushions(watch,events,books,saved.get('models',{}))
+    cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}))
+    grouped_cushions=defaultdict(list)
+    for c in cushions:grouped_cushions[(c['Game'],c['Player'],c['Category'])].append(c)
+    cushions=[]
+    for group in grouped_cushions.values():
+        qualified=[c for c in group if c['Cushion decision']!='Pass']
+        if len({c['Direction'] for c in qualified})>1:
+            row=dict(qualified[0],**{'Cushion decision':'Pass','Reason':'Qualifying cushion directions conflict; no single selection.'})
+        else:row=max(qualified or group,key=lambda c:num(c.get('Model edge (pp)')) if num(c.get('Model edge (pp)')) is not None else -999)
+        cushions.append(row)
     if cushions:
         for r in cushions:
             r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
         st.subheader('Analyzed passing and receiving cushions')
-        st.caption('Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
+        st.caption('Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
         st.dataframe(cushions,hide_index=True,use_container_width=True)
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
         st.download_button('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
     render_cushion_tracker(watch, starts)
-    publish_rows(watch, events, cushions)
+    publish_rows(watch+[r for r in cushion_inputs if r['Decision']=='Pass'], events, cushions)
     if watch:
         st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
