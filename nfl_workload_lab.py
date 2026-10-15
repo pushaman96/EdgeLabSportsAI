@@ -7,7 +7,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 import requests
 import streamlit as st
-from nfl_prop_model import MARKETS, indexes, features, projection, error_scale, load_prop_research, load_season_stats
+from nfl_prop_model import MARKETS, indexes, features, projection, error_scale, over_probability, load_prop_research, load_season_stats
 
 VARIANTS = ['Recent four-game average','Recent eight-game average','Current weighted recent workload','Team volume and player share','Opponent-adjusted workload']
 UNITS = {'player_pass_yds':'Pass attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Pass attempts','player_rush_attempts':'Carries'}
@@ -58,11 +58,13 @@ def workload_inputs(row, market, idx):
         'actual_workload':row[workload],'actual_yards':row[stat],'row':row}
 
 
-def forecast_development(research,samples):
+def forecast_development(research,samples,chronological=False):
     reports=[];details=[];models={}
     for market,(label,stat,workload,positions,_) in MARKETS.items():
-        training=samples[(market,2024)]
-        if len(training)<100:continue
+        all_training=samples[(market,2024)]
+        training=[s for s in all_training if s['row']['week']<=12] if chronological else all_training
+        calibration=[s for s in all_training if s['row']['week']>12] if chronological else all_training
+        if len(training)<100 or len(calibration)<50:continue
         totals=defaultdict(lambda:[0,0])
         for r in research['players']:
             if r['position'] in positions and r[stat] is not None and r[workload] is not None:
@@ -84,8 +86,23 @@ def forecast_development(research,samples):
             return projection(feature,blend,defense)
         candidates=[(v,e,b,d) for v in training[0]['development_volumes'] for e in ('Eight-game efficiency','Recent four-game efficiency','Shrink efficiency toward position average') for b in (.5,1) for d in (0,.25,.5)]
         chosen=min(candidates,key=lambda p:avg([abs(predict(s,p)-s['actual_yards']) for s in training]))
-        residuals=sorted((s['actual_yards']-predict(s,chosen))/error_scale(predict(s,chosen)) for s in training)
-        models[market]={'parameters':chosen,'residuals':residuals}
+        residuals=sorted((s['actual_yards']-predict(s,chosen))/error_scale(predict(s,chosen)) for s in calibration)
+        models[market]={'parameters':chosen,'residuals':residuals,'chronological_calibration':chronological,'fitting_examples':len(training),'calibration_examples':len(calibration)}
+        strength=.8
+        if chronological:
+            # Leave each calibration game's own residual out when selecting probability shrinkage.
+            probability_cases=[]
+            for sample in calibration:
+                pred=predict(sample,chosen)
+                own=(sample['actual_yards']-pred)/error_scale(pred)
+                for offset in (-.5,0,.5):
+                    line=max(.5,math.floor(sample['feature']['baseline']+offset*error_scale(pred))+.5)
+                    cutoff=(line-pred)/error_scale(pred)
+                    successes=sum(e>cutoff for e in residuals)-int(own>cutoff)
+                    raw=(successes+1)/(len(residuals)+1)
+                    probability_cases.append((raw,int(sample['actual_yards']>line)))
+            strength=min((.25,.5,.75,1),key=lambda v:avg([(max(.05,min(.95,.5+v*(raw-.5)))-y)**2 for raw,y in probability_cases]))
+        models[market]['probability_strength']=strength
         # Paired error differences quantify uncertainty, with season outcomes never used for selection.
         for year in sorted({2025,research['season']}):
             tested=samples[(market,year)]
@@ -98,8 +115,18 @@ def forecast_development(research,samples):
             week_means=[avg(v) for v in weekly.values()]
             uncertainty=1.96*statistics.stdev(week_means)/math.sqrt(len(week_means)) if len(week_means)>1 else None
             improvement=avg(differences)
+            briers=[];correct=[];covered=[]
+            for sample in tested:
+                pred=predict(sample,chosen);line=math.floor(sample['feature']['baseline'])+.5
+                probability=over_probability(pred,line,residuals,strength);outcome=sample['actual_yards']>line
+                briers.append((probability-int(outcome))**2);correct.append((probability>=.5)==outcome)
+                low=pred+residuals[int(.1*(len(residuals)-1))]*error_scale(pred)
+                high=pred+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(pred)
+                covered.append(low<=sample['actual_yards']<=high)
             reports.append({'Category':label,'Season':year,'Forecasts':len(tested),'Workload model':chosen[0],
                 'Efficiency model':chosen[1],'Opportunity blend':chosen[2],'Opponent weight':chosen[3],
+                'Calibration':'Later 2024 weeks, excluded from parameter selection' if chronological else 'Same 2024 fitting examples',
+                'Probability adjustment strength':strength,'Fitting examples':len(training),'Calibration examples':len(calibration),'Benchmark Brier':round(avg(briers),4),'Benchmark accuracy %':round(100*avg(correct),1),'Historical interval coverage %':round(100*avg(covered),1),
                 'Forecast error (category units)':round(avg(errors),2),'Baseline error (category units)':round(avg([abs(s['feature']['baseline']-s['actual_yards']) for s in tested]),2),
                 'Mean improvement (category units)':round(improvement,2),'Weeks observed':len(weekly),
                 'Weekly mean improvement low':round(avg(week_means)-uncertainty,2) if uncertainty is not None else None,
@@ -132,15 +159,15 @@ def live_opportunity_projection(row,market,idx,parameters):
 
 
 @st.cache_data(ttl=21600)
-def load_experimental_research(season):
+def load_experimental_research(season,chronological=False):
     research=load_prop_research(season)
-    experiment=run_workload_test(research)['forecast_development']
+    experiment=run_workload_test(dict(research,chronological_calibration=chronological))['forecast_development']
     models={}
     for market,model in experiment['models'].items():
         label=MARKETS[market][0]
         report=next(r for r in experiment['reports'] if r['Category']==label and r['Season']==2025)
         models[market]=dict(model,forecast_passed=report['Mean improvement (category units)']>0,blend=1,defense_weight=0)
-    return dict(research,schema_version=2,models=models,reports=experiment['reports'],experiment=True)
+    return dict(research,schema_version=3,chronological_calibration=chronological,models=models,reports=experiment['reports'],experiment=True)
 
 def yardage_with_workload(sample,model,volume):
     feature=dict(sample['feature'],efficiency_forecast=volume*sample['efficiency'])
@@ -195,7 +222,7 @@ def run_workload_test(research):
             for s in tested:
                 r=s['row'];v=s['predictions'][variant]
                 rows.append({'Category':label,'Season':year,'Week':r['week'],'Player':r['player_display_name'],'Team':r['team'],'Opponent':r['opponent_team'],'Units':UNITS[market],'Predicted workload':round(v,1),'Actual workload':s['actual_workload'],'Workload miss':round(s['actual_workload']-v,1),'Plausible workload low':round(max(0,v+low),1),'Plausible workload high':round(max(0,v+high),1),'Current yardage prediction':round(projection(s['feature'],model['blend'],model['defense_weight']),1),'Experimental yardage prediction':round(yardage_with_workload(s,model,v),1),'Actual yards':s['actual_yards'],'Variant':variant})
-    development=forecast_development(research,samples)
+    development=forecast_development(research,samples,chronological=research.get("chronological_calibration",False))
     return {'reports':reports,'rows':rows,'chosen':chosen,'opportunity_reports':opportunity_reports,'opportunity_models':opportunity_models,'forecast_development':development,'retrieved':research['retrieved'],'season':research['season']}
 
 def render_workload_lab():
