@@ -369,6 +369,9 @@ def clear_prop_shortlist(rows):
         else:
             row=dict(max(group,key=lambda r:num(r.get('Model edge (pp)')) or -999))
             row['Decision']='Pass'
+            for field in ('Selection','Line','Sportsbook','Odds','Estimated win %','Break-even %','Model edge (pp)'):
+                row['Evaluated quote — '+field]=row.get(field)
+            row['Evaluation status']='Evaluated — price edge insufficient' if row.get('Reason')=='Estimated edge below five percentage points.' else 'No qualifying pick — see reason'
             if candidates:row['Reason']='Qualifying Over and Under quotes conflict or no supported direction exists. No single paper pick.'
             row.update({'Paper pick':'PASS — no pick','Selection':'—','Line':'—','Sportsbook':'—','Odds':'—','Estimated win %':None,'Break-even %':None,'Model edge (pp)':None})
         # Put the explicit direction first in the displayed/exported table.
@@ -583,6 +586,9 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                    if key not in ('Paper pick','Decision','Reason','Risk label','Selection type','Estimated win %','Estimated loss %')]) for row in display]
     for issue in saved.get('issues',[]):st.warning(issue)
     st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
+    present={r.get('Category') for r in saved['rows']}
+    missing=[label for label,*_ in MARKETS.values() if label not in present]
+    if missing:st.info('No analyzed quotes for: '+', '.join(missing)+'. Select these in the prop REQUEST categories and load again if offered by your books. Market-board filters only filter already loaded prices.')
     watch = [r for r in display if r['Decision'] != 'Pass']
     st.write(f'**{len(watch)} unique experimental paper picks; {len(display)-len(watch)} player/category passes.**')
     picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
@@ -593,6 +599,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         with st.expander('Why other player props did not qualify'):
             st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
             st.dataframe(rejected,hide_index=True,use_container_width=True)
+            st.caption('Evaluated quote fields in the full export preserve the compared line, odds and probability as diagnostics, not recommendations. Missing-history exclusions require separate investigation; they are not price-based betting decisions.')
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
     cushions=analyzed_cushions(watch,events,books,saved.get('models',{}))
     if cushions:
