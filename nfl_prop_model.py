@@ -575,9 +575,14 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     st.caption(f'Combined results for {len(events)} loaded NFL game(s).')
     watch = [r for r in display if r['Decision'] != 'Pass']
     st.write(f'**{len(watch)} unique experimental paper picks; {len(display)-len(watch)} player/category passes.**')
-    picks_only=st.checkbox('Show only qualifying paper picks',key='nfl_only_clear_picks')
+    picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
+    rejected=[{'Player':r.get('Player'),'Category':r.get('Category'),'Reason':r.get('Reason')} for r in display if r['Decision']=='Pass']
+    if rejected:
+        with st.expander('Why other player props did not qualify'):
+            st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
+            st.dataframe(rejected,hide_index=True,use_container_width=True)
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
     cushions=analyzed_cushions(watch,events,books,saved.get('models',{}))
     if cushions:
