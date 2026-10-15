@@ -291,6 +291,32 @@
       "expected_opportunities": null,
       "reason": "",
       "season_type": "Regular season"
+    },
+    {
+      "id": "555a9ce32e8dd96f7dcc",
+      "sport": "NFL",
+      "event_id": "401872995",
+      "game": "Seattle Seahawks at Denver Broncos",
+      "player": "Emanuel Wilson",
+      "category": "Rushing attempts",
+      "direction": "Under",
+      "line": 18.5,
+      "odds": -112.0,
+      "probability": 0.636,
+      "sportsbook": "DraftKings",
+      "model": "NFL count workload v1 / 2024 fit / 2025 development",
+      "strategy": "Original",
+      "published_utc": "2026-10-15T01:54:00.852692+00:00",
+      "starts_utc": "2026-10-16T00:15:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 16.1,
+      "reason": "5 recent games; expected 16.1 opportunities; opponent allowed 109% of league yardage average. Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+      "projected_count": 16.5,
+      "season_type": "Regular season"
     }
   ]
 }
