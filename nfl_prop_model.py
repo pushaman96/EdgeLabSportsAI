@@ -85,14 +85,15 @@ def indexes(players, teams):
         defense[(row['season'], row['opponent_team'])].append(row)
     return pi, ti, defense
 
-def features(player, season, week, team, opponent, market, idx):
+def features(player, season, week, team, opponent, market, idx, history_games=4):
+    if history_games not in (3,4):raise ValueError("Unsupported history window.")
     _, stat, workload, positions, minimum = MARKETS[market]
     pi, ti, defense = idx
     history = [r for r in pi.get((season, player), []) if r['week'] < week and r['team'] == team][-8:]
-    team_history = [r for r in ti.get((season, team), []) if r['week'] < week][-4:]
-    if len(history) < 4 or len(team_history) < 4:
-        return None, 'Fewer than four current-season games.'
-    recent = history[-4:]
+    team_history = [r for r in ti.get((season, team), []) if r['week'] < week][-history_games:]
+    if len(history) < history_games or len(team_history) < history_games:
+        return None, f'Fewer than {history_games} current-season games.'
+    recent = history[-history_games:]
     if recent[-1]['position'] not in positions:
         return None, 'This position is not supported for this prop yet.'
     expected={r['game_id'] for r in team_history}
@@ -100,7 +101,7 @@ def features(player, season, week, team, opponent, market, idx):
     missing=sorted(expected-observed)
     if missing:
         return None, ('Recent player-stat coverage gap: '+', '.join(missing)+
-            '. A missing row does not establish an injury or DNP. No zero is assumed; the model requires the latest four team games.')
+            '. A missing row does not establish an injury or DNP. No zero is assumed; the model requires the latest '+str(history_games)+' team games.')
     if any(r[stat] is None or r[workload] is None for r in history):
         return None, 'Missing yardage or workload data.'
     volume = mean([r[workload] for r in recent])
