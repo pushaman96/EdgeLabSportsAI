@@ -20,6 +20,9 @@ def explain(record,key,model='gpt-6.1-sol',client=requests):
 
 def render_explanations(rows,prefix):
     if not rows:return
+    try:key=st.secrets.get('OPENAI_API_KEY','');model=st.secrets.get('OPENAI_EXPLANATION_MODEL','gpt-6.1-sol')
+    except Exception:return
+    if not key:return
     with st.expander('AI pick explanation'):
         st.caption('Explains the selected model record; it does not research live news or change picks. Only the displayed evidence is sent to OpenAI when you press the button. API usage is billed separately.')
         try:key=st.secrets.get('OPENAI_API_KEY','');model=st.secrets.get('OPENAI_EXPLANATION_MODEL','gpt-6.1-sol')
