@@ -409,6 +409,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Historical error range high']=round(max(0,upper),1)
                 p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':p = 1-p
+                from pick_learning import adjust_row
+                p=adjust_row(row,p,now)
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
                 if market['key'] in COUNT_MARKETS:
@@ -457,6 +459,7 @@ def evidence_explanation(row):
     if row.get('Snap coverage'):text+=f"Snap coverage: {row['Snap coverage']}; recent share {row.get('Recent snap share %')}%, usual share {row.get('Usual snap share %')}%, selected effect weight {row.get('Snap effect weight')}. Routes run are unavailable. "
     if row.get('Expected team passing attempts') is not None:text+=f"Team passing forecast: {row['Expected team passing attempts']} attempts; player catch probability: {row['Catch probability %']}%. "
     if row.get('Game-script risk'):text+=row['Game-script risk']+' Historical high-volume workload: '+str(row['Historical high-volume attempts (80th percentile)'])+' attempts. '
+    if row.get('Feedback status'):text+=row['Feedback status']+'. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
     if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
     text+='Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
