@@ -19,11 +19,11 @@ jobs:
       - run: python pick_history.py
       - name: Save completed grades
         run: |
-          if ! git diff --quiet -- published_picks.json game_usage_history.json; then
+          if ! git diff --quiet -- published_picks.json game_usage_history.json pick_learning_state.json; then
             git config user.name "Kamikaze Picks grading"
             git config user.email "actions@users.noreply.github.com"
             git add published_picks.json game_usage_history.json
-            git commit -m "Grade picks and archive completed usage"
+            git commit -m "Grade picks, archive usage and update validated feedback"
             git pull --rebase origin main
             git push
           fi
