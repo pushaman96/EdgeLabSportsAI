@@ -187,10 +187,13 @@ def moneyline_reviews(events,models,now=None):
                 for outcome,market_p in zip(market['outcomes'],probs):
                     if outcome['name'] not in (event['home_team'],event['away_team']):continue
                     p=model['probability'] if outcome['name']==event['home_team'] else 1-model['probability']
+                    from pick_learning import adjust_row
+                    feedback={'Model':'Adjusted NFL Elo moneyline','Category':'Moneyline','Selection':'Win'}
+                    p=adjust_row(feedback,p,now)
                     odds=numeric(outcome['price']);decimal=1+odds/100 if odds>0 else 1+100/abs(odds)
                     ev=p*decimal-1
                     if ev<=0 or p-market_p<.05:continue
-                    rows.append({'Game':event['away_team']+' at '+event['home_team'],'Team to research':outcome['name'],'Sportsbook':book['title'],'Moneyline':odds_text(odds),'Model win %':round(p*100,1),'Break-even %':round(market_p*100,1),'Market win % without margin':round(market_p/sum(probs)*100,1),'Model minus break-even (pp)':round((p-market_p)*100,1),'Model history through':model['cutoff'],'Quote updated UTC':updated,'Estimated return per $1':round(ev,3)})
+                    rows.append(dict(feedback,**{'Game':event['away_team']+' at '+event['home_team'],'Team to research':outcome['name'],'Sportsbook':book['title'],'Moneyline':odds_text(odds),'Model win %':round(p*100,1),'Break-even %':round(market_p*100,1),'Market win % without margin':round(market_p/sum(probs)*100,1),'Model minus break-even (pp)':round((p-market_p)*100,1),'Model history through':model['cutoff'],'Quote updated UTC':updated,'Estimated return per $1':round(ev,3)}))
     return sorted(rows,key=lambda row:row['Model minus break-even (pp)'],reverse=True)
 
 def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
@@ -297,7 +300,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     row['Decision'] = 'Watch — experimental'
                     row['Reason'] = 'Adjusted win probability exceeds the quoted break-even price by at least five percentage points. Check quarterback, injuries and weather.'
                 st.dataframe(reviews,hide_index=True,use_container_width=True)
-                records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':'Adjusted NFL Elo moneyline'} for r in reviews]
+                records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status')} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
             else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
     except OddsSourceError as exc:
