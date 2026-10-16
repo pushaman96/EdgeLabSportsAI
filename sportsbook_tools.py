@@ -173,7 +173,7 @@ def moneyline_reviews(events,models,now=None,sport='NFL'):
     for event in events:
         if datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))<=now:continue
         model=models.get((event['home_team'],event['away_team']))
-        if not model or not model['eligible'] or (sport=='NFL' and not model.get('injury_verified',False)):continue
+        if not model or not model['eligible']:continue
         for book in event.get('bookmakers',[]):
             for market in book.get('markets',[]):
                 if market['key']!='h2h' or len(market.get('outcomes',[]))!=2:continue
@@ -279,10 +279,10 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                         st.caption('Both sides are shown here as available bets, not picks. The analyzed shortlist is above.')
                         st.dataframe(props,hide_index=True,use_container_width=True)
         st.subheader(f'{sport} game shortlist — experimental moneylines')
-        st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. Current rosters and recent injury reports are checked for both teams. Unavailable or uncertain primary passers and major offensive usage players block picks. Elo has no validated numerical injury adjustment; defensive and offensive-line effects remain unmodeled.')
+        st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. Current rosters and recent injury reports are checked for both teams. Unavailable or uncertain players are shown as warnings and do not block candidates. Elo has no validated numerical injury adjustment; defensive and offensive-line effects remain unmodeled.')
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
             models=model_loader(sport,scoreboard)
-            injury_notes=[{'Game':away+' at '+home,'Status':'Availability screen passed' if context.get('injury_verified') else 'PASS — injury verification failed','Reason':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc')} for (home,away),context in models.items()] if sport=='NFL' else []
+            injury_notes=[{'Game':away+' at '+home,'Status':'Availability screen passed' if context.get('injury_verified') else 'Injury warning — not numerically adjusted','Reason':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc')} for (home,away),context in models.items()] if sport=='NFL' else []
             st.session_state['moneyline_injury_notes']=injury_notes
             reviews=moneyline_reviews(filtered,models,sport=sport)
             st.session_state['moneyline_history_candidates']=(str(selected_date),tuple(selected_books),reviews,datetime.now(timezone.utc).isoformat(),sport)
@@ -290,7 +290,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             with st.expander('Moneyline injury verification — both teams'):
                 st.dataframe(st.session_state['moneyline_injury_notes'],hide_index=True,use_container_width=True)
         saved_reviews=st.session_state.get('moneyline_history_candidates')
-        if saved_reviews and saved_reviews[:2]==(str(selected_date),tuple(selected_books)) and len(saved_reviews)>4 and saved_reviews[4]==sport and (sport!='NFL' or all(r.get('Injury verification passed') for r in saved_reviews[2])):
+        if saved_reviews and saved_reviews[:2]==(str(selected_date),tuple(selected_books)) and len(saved_reviews)>4 and saved_reviews[4]==sport:
             reviews=saved_reviews[2]
             now=datetime.now(timezone.utc)
             if (now-datetime.fromisoformat(saved_reviews[3])).total_seconds()>900:reviews=[]
@@ -303,7 +303,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 reviews=list(unique.values())
                 for row in reviews:
                     row['Decision'] = 'Watch — experimental'
-                    row['Reason'] = 'Elo probability exceeds the quoted break-even price by at least five points and both teams passed current offensive availability checks. Injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
+                    row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
                 st.dataframe(reviews,hide_index=True,use_container_width=True)
                 records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
