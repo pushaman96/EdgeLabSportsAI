@@ -1170,6 +1170,10 @@ def sportsbook_model_context(sport_name, scoreboard_data):
     cutoff = max(game["date"] for game in games)
     age = (datetime.now(timezone.utc).date() - cutoff).days
     output = {}
+    screens = {}
+    if sport_name == "NFL":
+        from injury_verification import load_matchup_screens
+        screens = load_matchup_screens(scoreboard_data)
     for event in scoreboard_data.get("events", []):
         competition = event.get("competitions", [{}])[0]
         competitors = competition.get("competitors", [])
@@ -1182,9 +1186,13 @@ def sportsbook_model_context(sport_name, scoreboard_data):
             continue
         probability = shrink_probability(expected_home_win(ratings[home_code], ratings[away_code]), strength)
         type_id = event.get("season", scoreboard_data.get("season", {})).get("type")
+        injury = screens.get((home.get("displayName"), away.get("displayName")), {})
         output[(home.get("displayName"), away.get("displayName"))] = {
             "probability":probability, "cutoff":cutoff.isoformat(),
-            "eligible":type_id == 2 and 0 <= age <= 30,
+            "eligible":type_id == 2 and 0 <= age <= 30 and (sport_name != "NFL" or injury.get("eligible",False)),
+            "injury_verified":sport_name == "NFL" and injury.get("eligible",False),
+            "injury_reason":injury.get("reason","Injury verification unavailable"),
+            "injury_checked_utc":injury.get("checked_utc"),
         }
     return output
 
@@ -1238,7 +1246,7 @@ with score_tab:
         show_games(scoreboard, SPORTS[sport])
         if sport == "NFL":
             with st.expander("Game winner probabilities — selected date"):
-                st.caption("Adjusted Elo estimates from completed games. These percentages are separate from sportsbook value picks and do not include injury or weather adjustments.")
+                st.caption("Historical Elo estimates with current roster/injury eligibility checks. Key offensive absences or unverified reports block moneyline picks; percentages are not numerically injury-adjusted.")
                 if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
                     try:
                         contexts = sportsbook_model_context(sport, scoreboard)
@@ -1252,10 +1260,10 @@ with score_tab:
                             context = contexts.get((home, away))
                             if context:
                                 p = context['probability']
-                                forecast_rows.append({'Game':event.get('name'), 'Model lean':home if p >= .5 else away,
-                                    'Home team':home, 'Home win %':round(p*100,1), 'Away team':away,
-                                    'Away win %':round((1-p)*100,1), 'History through':context['cutoff'],
-                                    'Status':'Experimental estimate' if context['eligible'] else 'History/season not eligible for moneyline picks'})
+                                forecast_rows.append({'Game':event.get('name'), 'Model lean':(home if p >= .5 else away) if context['eligible'] else 'PASS — verification incomplete',
+                                    'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
+                                    'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'],
+                                    'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':'Availability screen passed; Elo is not numerically injury-adjusted' if context['eligible'] else 'PASS — injury/history verification failed'})
                         if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
                         else:st.info('No matched upcoming games available for a pregame forecast.')
                     except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
@@ -1583,14 +1591,16 @@ if sport == "NFL":
             )
             away_probability = 1 - home_probability
 
+            from injury_verification import render_matchup_screen
+            render_matchup_screen(scoreboard,home_team,away_team)
             col1, col2 = st.columns(2)
 
             col1.metric(
-                f"{home_team} estimated win probability",
+                f"{home_team} historical Elo win % (injuries excluded)",
                 f"{home_probability * 100:.1f}%",
             )
             col2.metric(
-                f"{away_team} estimated win probability",
+                f"{away_team} historical Elo win % (injuries excluded)",
                 f"{away_probability * 100:.1f}%",
             )
 
@@ -1935,4 +1945,3 @@ st.caption(
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
-
