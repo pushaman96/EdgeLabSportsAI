@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - run: python -m unittest discover -s tests -p test_pick_learning.py
       - run: python pick_history.py
       - name: Save completed grades
         run: |
