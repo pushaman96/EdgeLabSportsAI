@@ -101,7 +101,10 @@ def build_feedback(records,asof=None):
 
 def write_feedback(records,path=STATE,asof=None):
     state=build_feedback(records,asof);target=Path(path);temporary=target.with_suffix('.tmp')
-    temporary.write_text(json.dumps(state,indent=2)+'\n');temporary.replace(target)
+    # Persist model settings only; player-level reviews are computed inside the app.
+    persisted={k:state[k] for k in ('schema','method','generated_utc','active_corrections')}
+    persisted['groups']={k:v for k,v in state['groups'].items() if v.get('active')}
+    temporary.write_text(json.dumps(persisted,indent=2)+'\n');temporary.replace(target)
     return state
 
 def adjust_row(row,probability,now=None,state=None,strategy='Original',sport='NFL'):
