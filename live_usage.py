@@ -66,7 +66,9 @@ def usage_snapshot(data):
     for (team,period),counts in sorted(grouped.items()):
         passes=counts['Pass plays']+counts['Sacks']+counts['QB scrambles'];runs=counts['Designed runs'];total=passes+runs
         quarters.append({'Team':team,'Quarter':period,**{k:counts[k] for k in ('Pass plays','Designed runs','QB scrambles','Sacks','Kneels','Spikes')},'Classified pass-call %':round(100*passes/total,1) if total else None,'Classified designed-run %':round(100*runs/total,1) if total else None})
-    return {'event_id':str(header.get('id','')),'completed':bool(competition.get('status',{}).get('type',{}).get('completed')),'period':competition.get('status',{}).get('period'),'clock':competition.get('status',{}).get('displayClock'),'retrieved_utc':datetime.now(timezone.utc).isoformat(),'teams':teams,'players':players,'quarters':quarters,'unique_feed_plays':len(seen),'unclassified_scrimmage_plays':unknown,'source':'ESPN summary; box-score usage and classified drive plays'}
+    from game_script import play_review
+    script=play_review(data)
+    return {'game_script':script,'event_id':str(header.get('id','')),'completed':bool(competition.get('status',{}).get('type',{}).get('completed')),'period':competition.get('status',{}).get('period'),'clock':competition.get('status',{}).get('displayClock'),'retrieved_utc':datetime.now(timezone.utc).isoformat(),'teams':teams,'players':players,'quarters':quarters,'unique_feed_plays':len(seen),'unclassified_scrimmage_plays':unknown,'source':'ESPN summary; box-score usage and classified drive plays'}
 
 def render_live_usage(data):
     import streamlit as st
@@ -82,6 +84,10 @@ def render_live_usage(data):
         st.dataframe(snapshot['quarters'],hide_index=True,use_container_width=True)
         st.caption(f"Based on {snapshot['unique_feed_plays']} unique feed plays; {snapshot['unclassified_scrimmage_plays']} scrimmage plays could not be classified. Pass calls include sacks and identified scrambles; designed runs exclude kneels. Spikes and no-play penalties are excluded. Feed coverage may be incomplete and classification is descriptive, not official charting.")
     else:st.info('Play-by-play usage is not available from ESPN yet; reported box-score usage remains above.')
+    st.write('Passing volume by game situation')
+    st.dataframe(snapshot['game_script']['attempt_totals'],hide_index=True,use_container_width=True)
+    st.dataframe(snapshot['game_script']['score_states'],hide_index=True,use_container_width=True)
+    st.caption('Score states use the score before each available play. Regulation/overtime totals are shown only when classified attempts match the official team box score. This describes the game; it does not prove why the forecast missed.')
     if snapshot['completed']:
         try:reviews=json.loads(Path('game_usage_history.json').read_text())['games'].get(snapshot['event_id'],{}).get('forecast_reviews',[])
         except (OSError,ValueError,KeyError):reviews=[]
@@ -98,7 +104,7 @@ def archive_completed_usage(records,fetch=None,path='game_usage_history.json'):
     except (OSError,ValueError):archive={'games':{}}
     added=0
     for eid in sorted({str(r['event_id']) for r in records if r.get('sport','NFL')=='NFL' and r.get('event_id')}):
-        if archive['games'].get(eid,{}).get('completed'):continue
+        if archive['games'].get(eid,{}).get('completed') and archive['games'][eid].get('game_script'):continue
         try:
             snap=usage_snapshot(fetch(eid))
             if snap['event_id']!=eid or not snap['completed']:continue
