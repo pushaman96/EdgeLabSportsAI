@@ -27,7 +27,15 @@ def transition_reason(context):
     return None
 
 def new_teammates(roster_names,team,season,week,players):
-    names={key(n):n for n in roster_names};arrivals=[]
+    # Same-named defensive players must not inherit an offensive player's history.
+    names={}
+    for entry in roster_names:
+        if isinstance(entry,dict):
+            if entry.get('position') and entry['position'] not in ('QB','RB','HB','FB','WR','TE'):continue
+            name=entry.get('name','')
+        else:name=entry
+        names[key(name)]=name
+    arrivals=[]
     for normalized,name in names.items():
         # Only observed same-season changes are warnings; rookies are not called trades.
         rows=[r for r in players if r['season']==season and r['week']<week and key(r.get('player_display_name'))==normalized]
