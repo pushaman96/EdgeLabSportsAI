@@ -48,10 +48,15 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
     if line is not None and (not math.isfinite(line) or line<0 or (strategy!='Manual' and line%1!=.5)):raise ValueError('Invalid prop line.')
-    identity='|'.join([str(event_id),row['Player'],category,strategy,row.get('Model','Experimental')])
+    identity='|'.join([str(event_id),row['Player'],category,strategy,row.get('Base model') or row.get('Model','Experimental')])
     record={'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'sport':row.get('Sport','NFL'),'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
     record['projected_yards']=row.get('Projection (yards)');record['expected_opportunities']=row.get('Expected opportunities');record['reason']=row.get('Reason','')
     record['projected_count']=row.get('Projection (count)')
+    record['base_model']=row.get('Base model') or row.get('Model','Experimental')
+    record['raw_probability']=float(row['Raw estimated win %'])/100 if row.get('Raw estimated win %') is not None else prob
+    record['feedback_version']=row.get('Feedback version')
+    record['feedback_status']=row.get('Feedback status')
+    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation') if k in row}
     return record
 
 def grade_record(record,data):
@@ -86,7 +91,7 @@ def grade_record(record,data):
                         if label=='C/ATT':value=value.split('/')[-1]
                         if label=='3PT':value=value.replace('/','-').split('-')[0]
                         values.append(float(value))
-                        workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS'}.get(r['category'])
+                        workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS','Passing attempts':'C/ATT','Passing interceptions':'C/ATT','Rushing attempts':'CAR','Receptions':'TGTS'}.get(r['category'])
                         if workload_label in stats:
                             raw=str(stats[workload_label]);r['actual_opportunities']=float(raw.split('/')[-1])
     if len(values)!=1:
@@ -144,6 +149,8 @@ def render_history(sport='NFL'):
     graded={r['id']:r for r in st.session_state.get('ledger_live_grades',[])}
     records=[graded.get(r['id'],r) for r in records]
     all_records=records
+    from pick_learning import render_feedback
+    render_feedback(all_records,sport)
     records=[r for r in records if r.get('sport','NFL')==sport]
     season_types=sorted({r.get('season_type','Unknown') for r in records})
     if season_types:
@@ -180,7 +187,7 @@ def render_history(sport='NFL'):
                 'Yards above/below forecast':r['yardage_miss'],'Expected opportunities':r.get('expected_opportunities'),
                 'Actual opportunities':r.get('actual_opportunities'),'Opportunity miss':r.get('opportunity_miss')} for r in reviewed],hide_index=True,use_container_width=True)
         else:st.info('No graded records with saved forecast inputs yet. New saves include yardage and workload estimates; older files may lack them.')
-        st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. No automatic retraining or promotion is enabled.')
+        st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Scheduled outcome feedback now tests probability corrections on later games before applying them. Workload-model retraining remains separate.')
     st.download_button('Download all saved NFL and NBA records',json.dumps({'records':all_records},indent=2),file_name='kamikaze_picks_published_history.json',mime='application/json',key='ledger_download')
 
 def persist_records(records,token,client=None):
@@ -215,6 +222,11 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
         alternate=dict(original,Decision=c['Cushion decision'],Selection=c.get('Direction',original['Selection']),Line=c['Available line'],Odds=c['Actual odds'],Sportsbook=c['Sportsbook'])
         alternate['Estimated win %']=c['Recalculated win %'];alternate['Quote updated UTC']=c['Quote updated UTC']
         alternate['Reason']=c['Reason']+' Original decision: '+original['Decision']
+        alternate['Model']=original.get('Base model') or original.get('Model','Experimental')
+        alternate['Base model']=alternate['Model']
+        alternate['Raw estimated win %']=c['Recalculated win %']
+        alternate['Feedback version']=None
+        alternate['Feedback status']='Cushion strategy tracked separately; original correction not inherited'
         to_save.append((alternate,'Cushion'))
     boards={};failed=0
     for row,strategy in to_save:
@@ -222,7 +234,7 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
             match=next((e for e in events if e['away_team']+' at '+e['home_team']==row['Game']),None)
             if not match:failed+=1;continue
             # Skip records frozen earlier in this session, including after kickoff.
-            identity='|'.join([sport,match['id'],row['Player'],row['Category'],strategy,row.get('Model','Experimental')])
+            identity='|'.join([sport,match['id'],row['Player'],row['Category'],strategy,row.get('Base model') or row.get('Model','Experimental')])
             seen=st.session_state.setdefault('autosave_seen',set())
             if identity in seen:continue
             day=scoreboard_day(match['commence_time'])
@@ -273,3 +285,5 @@ if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
     from live_usage import archive_completed_usage
     archive_completed_usage(data['records'])
+    from pick_learning import write_feedback
+    write_feedback(data['records'])
