@@ -271,3 +271,5 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
 
 if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
+    from live_usage import archive_completed_usage
+    archive_completed_usage(data['records'])
