@@ -441,6 +441,28 @@ def clear_prop_shortlist(rows):
             row['Evaluation status']='Evaluated — price edge insufficient' if row.get('Reason')=='Estimated edge below five percentage points.' else 'No qualifying pick — see reason'
             if candidates:row['Reason']='Qualifying Over and Under quotes conflict or no supported direction exists. No single paper pick.'
             row.update({'Paper pick':'PASS — no pick','Selection':'—','Line':'—','Sportsbook':'—','Odds':'—','Estimated win %':None,'Break-even %':None,'Model edge (pp)':None})
+        # A central forecast lean is context, never an instruction to bet.
+        passed=row['Decision']=='Pass'
+        line=num(row.get('Evaluated quote — Line') if passed else row.get('Line'))
+        projected=num(row.get('Projection (count)'))
+        if projected is None:projected=num(row.get('Projection (yards)'))
+        probability=num(row.get('Evaluated quote — Estimated win %') if passed else row.get('Estimated win %'))
+        selection=row.get('Evaluated quote — Selection') if passed else row.get('Selection')
+        evaluated=projected is not None and line is not None and probability is not None and selection in ('Over','Under')
+        conflict='conflict' in row.get('Reason','').lower()
+        lean=('Over' if projected>line else 'Under' if projected<line else 'At line') if evaluated and not conflict else 'No reliable lean shown'
+        row['Forecast lean']=lean
+        row['Forecast projection']=projected
+        row['Compared line']=line
+        row['Compared sportsbook']=row.get('Evaluated quote — Sportsbook') if passed else row.get('Sportsbook')
+        row['Compared odds']=row.get('Evaluated quote — Odds') if passed else row.get('Odds')
+        row['Compared direction']=selection if evaluated else None
+        row['Compared direction win %']=probability if evaluated else None
+        row['Compared break-even %']=row.get('Evaluated quote — Break-even %') if passed else row.get('Break-even %')
+        row['Compared edge (pp)']=row.get('Evaluated quote — Model edge (pp)') if passed else row.get('Model edge (pp)')
+        if passed:
+            row['Research summary']=f'Forecast leans {lean} — PASS; see reason' if lean in ('Over','Under') else 'PASS — no reliable direction; see reason'
+        else:row['Research summary']='Qualifying experimental paper pick'
         # Put the explicit direction first in the displayed/exported table.
         result.append({'Paper pick':row.pop('Paper pick'),**row})
     return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
@@ -693,12 +715,12 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
-    rejected=[{'Player':r.get('Player'),'Category':r.get('Category'),'Reason':r.get('Reason')} for r in display if r['Decision']=='Pass']
+    rejected=[{key:r.get(key) for key in ('Player','Category','Research summary','Forecast lean','Forecast projection','Compared direction','Compared line','Compared sportsbook','Compared odds','Compared direction win %','Compared break-even %','Compared edge (pp)','Reason')} for r in display if r['Decision']=='Pass']
     if rejected:
         with st.expander('Why other player props did not qualify'):
             st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
             st.dataframe(rejected,hide_index=True,use_container_width=True)
-            st.caption('Evaluated quote fields in the full export preserve the compared line, odds and probability as diagnostics, not recommendations. Missing-history exclusions require separate investigation; they are not price-based betting decisions.')
+            st.caption('Forecast lean compares the central projection with the displayed line. The win probability belongs to the compared Over/Under direction and can differ from that central lean because of the forecast distribution. PASS rows are research only and are not saved as recommended picks. Missing data produces no reliable lean.')
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
     cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}))
     grouped_cushions=defaultdict(list)
