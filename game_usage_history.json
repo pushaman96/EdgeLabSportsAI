@@ -1,3 +1,3361 @@
 {
-  "games": {}
+  "games": {
+    "401872981": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Philadelphia Eagles",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 40,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "Jacksonville Jaguars",
+            "Regulation attempts": 39,
+            "Overtime attempts": 0,
+            "Official total attempts": 39,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Jacksonville Jaguars",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 39,
+            "Sacks": 2,
+            "Rushing plays": 27
+          },
+          {
+            "Team": "Philadelphia Eagles",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 39,
+            "Sacks": 2,
+            "Rushing plays": 18
+          }
+        ]
+      },
+      "event_id": "401872981",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.157839+00:00",
+      "teams": [
+        {
+          "Team": "Philadelphia Eagles",
+          "Passing attempts": 40.0,
+          "Carries": 18.0,
+          "Targets": 37.0,
+          "Pass attempt %": 69.0,
+          "Rush attempt %": 31.0
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Passing attempts": 39.0,
+          "Carries": 27.0,
+          "Targets": 38.0,
+          "Pass attempt %": 59.1,
+          "Rush attempt %": 40.9
+        }
+      ],
+      "players": [
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Jalen Hurts",
+          "Passing attempts": 40.0,
+          "Carries": 2.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 11.1,
+          "Targets share %": null
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Dameon Pierce",
+          "Carries": 11.0,
+          "Targets": 5.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 61.1,
+          "Targets share %": 13.5
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Will Shipley",
+          "Carries": 5.0,
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 27.8,
+          "Targets share %": 5.4
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Darius Cooper",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 8.1
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Dontayvion Wicks",
+          "Targets": 8.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 21.6
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Makai Lemon",
+          "Targets": 7.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 18.9
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Dallas Goedert",
+          "Targets": 9.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 24.3
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Zach Ertz",
+          "Targets": 2.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 5.4
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Player": "Johnny Mundt",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.7
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Trevor Lawrence",
+          "Passing attempts": 39.0,
+          "Carries": 3.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 11.1,
+          "Targets share %": null
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Bhayshul Tuten",
+          "Carries": 22.0,
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 81.5,
+          "Targets share %": 7.9
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Chris Rodriguez Jr.",
+          "Carries": 2.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 7.4,
+          "Targets share %": 2.6
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Parker Washington",
+          "Targets": 9.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 23.7
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Brenton Strange",
+          "Targets": 8.0,
+          "Receptions": 7.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 21.1
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Josh Cameron",
+          "Targets": 6.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 15.8
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Jakobi Meyers",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 7.9
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Nate Boerkircher",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 5.3
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Travis Hunter",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.6
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "Brian Thomas Jr.",
+          "Targets": 3.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 7.9
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Player": "LeQuint Allen Jr.",
+          "Targets": 2.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 5.3
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Jacksonville Jaguars",
+          "Quarter": 1,
+          "Pass plays": 8,
+          "Designed runs": 4,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 69.2,
+          "Classified designed-run %": 30.8
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Quarter": 2,
+          "Pass plays": 11,
+          "Designed runs": 7,
+          "QB scrambles": 2,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 66.7,
+          "Classified designed-run %": 33.3
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Quarter": 3,
+          "Pass plays": 9,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 64.3,
+          "Classified designed-run %": 35.7
+        },
+        {
+          "Team": "Jacksonville Jaguars",
+          "Quarter": 4,
+          "Pass plays": 11,
+          "Designed runs": 8,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 60.0,
+          "Classified designed-run %": 40.0
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Quarter": 1,
+          "Pass plays": 8,
+          "Designed runs": 3,
+          "QB scrambles": 2,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 76.9,
+          "Classified designed-run %": 23.1
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Quarter": 2,
+          "Pass plays": 8,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 61.5,
+          "Classified designed-run %": 38.5
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Quarter": 3,
+          "Pass plays": 10,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 68.8,
+          "Classified designed-run %": 31.2
+        },
+        {
+          "Team": "Philadelphia Eagles",
+          "Quarter": 4,
+          "Pass plays": 13,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 82.4,
+          "Classified designed-run %": 17.6
+        }
+      ],
+      "unique_feed_plays": 199,
+      "unclassified_scrimmage_plays": 40,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872982": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Cincinnati Bengals",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 32,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "Miami Dolphins",
+            "Regulation attempts": 27,
+            "Overtime attempts": 0,
+            "Official total attempts": 27,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Cincinnati Bengals",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 20,
+            "Sacks": 0,
+            "Rushing plays": 18
+          },
+          {
+            "Team": "Miami Dolphins",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 7,
+            "Sacks": 0,
+            "Rushing plays": 13
+          },
+          {
+            "Team": "Miami Dolphins",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 20,
+            "Sacks": 3,
+            "Rushing plays": 20
+          },
+          {
+            "Team": "Cincinnati Bengals",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 11,
+            "Sacks": 0,
+            "Rushing plays": 13
+          }
+        ]
+      },
+      "event_id": "401872982",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.264806+00:00",
+      "teams": [
+        {
+          "Team": "Cincinnati Bengals",
+          "Passing attempts": 32.0,
+          "Carries": 31.0,
+          "Targets": 31.0,
+          "Pass attempt %": 50.8,
+          "Rush attempt %": 49.2
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Passing attempts": 27.0,
+          "Carries": 34.0,
+          "Targets": 26.0,
+          "Pass attempt %": 44.3,
+          "Rush attempt %": 55.7
+        }
+      ],
+      "players": [
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Joe Burrow",
+          "Passing attempts": 32.0,
+          "Carries": 4.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 12.9,
+          "Targets share %": null
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Samaje Perine",
+          "Carries": 14.0,
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 45.2,
+          "Targets share %": 6.5
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Chase Brown",
+          "Carries": 13.0,
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 41.9,
+          "Targets share %": 12.9
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Ja'Marr Chase",
+          "Targets": 10.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 32.3
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Erick All Jr.",
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.7
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Tee Higgins",
+          "Targets": 4.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 12.9
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Tanner Hudson",
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.7
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Dohnte Meyers",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 6.5
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Drew Sample",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.2
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Player": "Mike Gesicki",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 6.5
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Malik Willis",
+          "Passing attempts": 27.0,
+          "Carries": 8.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 23.5,
+          "Targets share %": null
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Ollie Gordon II",
+          "Carries": 18.0,
+          "Passing attempts share %": null,
+          "Carries share %": 52.9,
+          "Targets share %": null
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Chris Bell",
+          "Carries": 1.0,
+          "Targets": 2.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": 2.9,
+          "Targets share %": 7.7
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Malik Washington",
+          "Carries": 1.0,
+          "Targets": 8.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 2.9,
+          "Targets share %": 30.8
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Jaylen Wright",
+          "Carries": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 17.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Greg Dulcich",
+          "Targets": 5.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 19.2
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Kevin Coleman Jr.",
+          "Targets": 7.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 26.9
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Jalen Tolbert",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 7.7
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Player": "Will Kacmarek",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 7.7
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Cincinnati Bengals",
+          "Quarter": 1,
+          "Pass plays": 10,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 62.5,
+          "Classified designed-run %": 37.5
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Quarter": 2,
+          "Pass plays": 10,
+          "Designed runs": 9,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 55.0,
+          "Classified designed-run %": 45.0
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Quarter": 3,
+          "Pass plays": 7,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 58.3,
+          "Classified designed-run %": 41.7
+        },
+        {
+          "Team": "Cincinnati Bengals",
+          "Quarter": 4,
+          "Pass plays": 4,
+          "Designed runs": 8,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 2,
+          "Spikes": 0,
+          "Classified pass-call %": 33.3,
+          "Classified designed-run %": 66.7
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Quarter": 1,
+          "Pass plays": 4,
+          "Designed runs": 10,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 28.6,
+          "Classified designed-run %": 71.4
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Quarter": 2,
+          "Pass plays": 8,
+          "Designed runs": 3,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 75.0,
+          "Classified designed-run %": 25.0
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Quarter": 3,
+          "Pass plays": 4,
+          "Designed runs": 7,
+          "QB scrambles": 1,
+          "Sacks": 2,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "Miami Dolphins",
+          "Quarter": 4,
+          "Pass plays": 11,
+          "Designed runs": 9,
+          "QB scrambles": 2,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 60.9,
+          "Classified designed-run %": 39.1
+        }
+      ],
+      "unique_feed_plays": 179,
+      "unclassified_scrimmage_plays": 29,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872984": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Houston Texans",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 34,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "Tennessee Titans",
+            "Regulation attempts": 36,
+            "Overtime attempts": 0,
+            "Official total attempts": 36,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Tennessee Titans",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 11,
+            "Sacks": 0,
+            "Rushing plays": 7
+          },
+          {
+            "Team": "Houston Texans",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 20,
+            "Sacks": 1,
+            "Rushing plays": 12
+          },
+          {
+            "Team": "Tennessee Titans",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 25,
+            "Sacks": 4,
+            "Rushing plays": 10
+          },
+          {
+            "Team": "Houston Texans",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 13,
+            "Sacks": 1,
+            "Rushing plays": 15
+          }
+        ]
+      },
+      "event_id": "401872984",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.429946+00:00",
+      "teams": [
+        {
+          "Team": "Houston Texans",
+          "Passing attempts": 34.0,
+          "Carries": 27.0,
+          "Targets": 33.0,
+          "Pass attempt %": 55.7,
+          "Rush attempt %": 44.3
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Passing attempts": 36.0,
+          "Carries": 18.0,
+          "Targets": 35.0,
+          "Pass attempt %": 66.7,
+          "Rush attempt %": 33.3
+        }
+      ],
+      "players": [
+        {
+          "Team": "Houston Texans",
+          "Player": "C.J. Stroud",
+          "Passing attempts": 34.0,
+          "Carries": 6.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 22.2,
+          "Targets share %": null
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Woody Marks",
+          "Carries": 15.0,
+          "Targets": 4.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": 55.6,
+          "Targets share %": 12.1
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "David Montgomery",
+          "Carries": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 18.5,
+          "Targets share %": null
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Jaylin Noel",
+          "Carries": 1.0,
+          "Targets": 5.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.7,
+          "Targets share %": 15.2
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Xavier Hutchinson",
+          "Targets": 5.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 15.2
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Nico Collins",
+          "Targets": 7.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 21.2
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Kayshon Boutte",
+          "Targets": 5.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 15.2
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Dalton Schultz",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 12.1
+        },
+        {
+          "Team": "Houston Texans",
+          "Player": "Foster Moreau",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.1
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Cam Ward",
+          "Passing attempts": 36.0,
+          "Carries": 1.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 5.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Tony Pollard",
+          "Carries": 14.0,
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": 77.8,
+          "Targets share %": 2.9
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Kalel Mullings",
+          "Carries": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 5.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Tyjae Spears",
+          "Carries": 2.0,
+          "Targets": 9.0,
+          "Receptions": 9.0,
+          "Passing attempts share %": null,
+          "Carries share %": 11.1,
+          "Targets share %": 25.7
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Wan'Dale Robinson",
+          "Targets": 7.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 20.0
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Calvin Ridley",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 8.6
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Chimere Dike",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 11.4
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Elic Ayomanor",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 5.7
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Carnell Tate",
+          "Targets": 5.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 14.3
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Daniel Bellinger",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 5.7
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Kylen Granson",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.9
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Player": "Gunnar Helm",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.9
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Houston Texans",
+          "Quarter": 1,
+          "Pass plays": 8,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 56.2,
+          "Classified designed-run %": 43.8
+        },
+        {
+          "Team": "Houston Texans",
+          "Quarter": 2,
+          "Pass plays": 12,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 1,
+          "Spikes": 0,
+          "Classified pass-call %": 70.6,
+          "Classified designed-run %": 29.4
+        },
+        {
+          "Team": "Houston Texans",
+          "Quarter": 3,
+          "Pass plays": 11,
+          "Designed runs": 10,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 52.4,
+          "Classified designed-run %": 47.6
+        },
+        {
+          "Team": "Houston Texans",
+          "Quarter": 4,
+          "Pass plays": 2,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 1,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Quarter": 1,
+          "Pass plays": 7,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 58.3,
+          "Classified designed-run %": 41.7
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Quarter": 2,
+          "Pass plays": 10,
+          "Designed runs": 2,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 83.3,
+          "Classified designed-run %": 16.7
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Quarter": 3,
+          "Pass plays": 3,
+          "Designed runs": 4,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "Tennessee Titans",
+          "Quarter": 4,
+          "Pass plays": 16,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 4,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 80.0,
+          "Classified designed-run %": 20.0
+        }
+      ],
+      "unique_feed_plays": 177,
+      "unclassified_scrimmage_plays": 30,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872985": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Indianapolis Colts",
+            "Regulation attempts": 44,
+            "Overtime attempts": 0,
+            "Official total attempts": 44,
+            "Coverage": "Reconciled with box score"
+          },
+          {
+            "Team": "Pittsburgh Steelers",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 31,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Pittsburgh Steelers",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 29,
+            "Sacks": 1,
+            "Rushing plays": 16
+          },
+          {
+            "Team": "Indianapolis Colts",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 21,
+            "Sacks": 0,
+            "Rushing plays": 14
+          },
+          {
+            "Team": "Indianapolis Colts",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 23,
+            "Sacks": 1,
+            "Rushing plays": 10
+          },
+          {
+            "Team": "Pittsburgh Steelers",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 1,
+            "Sacks": 0,
+            "Rushing plays": 6
+          }
+        ]
+      },
+      "event_id": "401872985",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.509476+00:00",
+      "teams": [
+        {
+          "Team": "Indianapolis Colts",
+          "Passing attempts": 44.0,
+          "Carries": 24.0,
+          "Targets": 43.0,
+          "Pass attempt %": 64.7,
+          "Rush attempt %": 35.3
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Passing attempts": 31.0,
+          "Carries": 22.0,
+          "Targets": 30.0,
+          "Pass attempt %": 58.5,
+          "Rush attempt %": 41.5
+        }
+      ],
+      "players": [
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Daniel Jones",
+          "Passing attempts": 44.0,
+          "Carries": 3.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 12.5,
+          "Targets share %": null
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Jonathan Taylor",
+          "Carries": 15.0,
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 62.5,
+          "Targets share %": 9.3
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Seth McGowan",
+          "Carries": 5.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 20.8,
+          "Targets share %": 2.3
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Tyler Warren",
+          "Carries": 1.0,
+          "Targets": 9.0,
+          "Receptions": 7.0,
+          "Passing attempts share %": null,
+          "Carries share %": 4.2,
+          "Targets share %": 20.9
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Josh Downs",
+          "Targets": 6.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 14.0
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Keenan Allen",
+          "Targets": 9.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 20.9
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Laquon Treadwell",
+          "Targets": 8.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 18.6
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Mo Alie-Cox",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.7
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Drew Ogletree",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.3
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Nick Westbrook-Ikhine",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.3
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Player": "Deion Burks",
+          "Targets": 2.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.7
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Aaron Rodgers",
+          "Passing attempts": 31.0,
+          "Carries": 1.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 4.5,
+          "Targets share %": null
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Jaylen Warren",
+          "Carries": 15.0,
+          "Targets": 6.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 68.2,
+          "Targets share %": 20.0
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "DK Metcalf",
+          "Carries": 1.0,
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 4.5,
+          "Targets share %": 13.3
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Lew Nichols",
+          "Carries": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 4.5,
+          "Targets share %": null
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Germie Bernard",
+          "Carries": 1.0,
+          "Targets": 9.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 4.5,
+          "Targets share %": 30.0
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Pat Freiermuth",
+          "Carries": 1.0,
+          "Targets": 7.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 4.5,
+          "Targets share %": 23.3
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Mason Rudolph",
+          "Carries": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 9.1,
+          "Targets share %": null
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Darnell Washington",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 10.0
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Player": "Roman Wilson",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.3
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Indianapolis Colts",
+          "Quarter": 1,
+          "Pass plays": 5,
+          "Designed runs": 4,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 55.6,
+          "Classified designed-run %": 44.4
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Quarter": 2,
+          "Pass plays": 10,
+          "Designed runs": 8,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 55.6,
+          "Classified designed-run %": 44.4
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Quarter": 3,
+          "Pass plays": 10,
+          "Designed runs": 9,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 52.6,
+          "Classified designed-run %": 47.4
+        },
+        {
+          "Team": "Indianapolis Colts",
+          "Quarter": 4,
+          "Pass plays": 19,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 87.0,
+          "Classified designed-run %": 13.0
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Quarter": 1,
+          "Pass plays": 7,
+          "Designed runs": 4,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 66.7,
+          "Classified designed-run %": 33.3
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Quarter": 2,
+          "Pass plays": 13,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 81.2,
+          "Classified designed-run %": 18.8
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Quarter": 3,
+          "Pass plays": 4,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 62.5,
+          "Classified designed-run %": 37.5
+        },
+        {
+          "Team": "Pittsburgh Steelers",
+          "Quarter": 4,
+          "Pass plays": 6,
+          "Designed runs": 9,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 2,
+          "Spikes": 0,
+          "Classified pass-call %": 40.0,
+          "Classified designed-run %": 60.0
+        }
+      ],
+      "unique_feed_plays": 189,
+      "unclassified_scrimmage_plays": 29,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872986": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Las Vegas Raiders",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 36,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "New England Patriots",
+            "Regulation attempts": 34,
+            "Overtime attempts": 0,
+            "Official total attempts": 34,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Las Vegas Raiders",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 15,
+            "Sacks": 1,
+            "Rushing plays": 11
+          },
+          {
+            "Team": "New England Patriots",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 15,
+            "Sacks": 1,
+            "Rushing plays": 15
+          },
+          {
+            "Team": "Las Vegas Raiders",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 20,
+            "Sacks": 2,
+            "Rushing plays": 7
+          },
+          {
+            "Team": "New England Patriots",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 19,
+            "Sacks": 0,
+            "Rushing plays": 15
+          }
+        ]
+      },
+      "event_id": "401872986",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.875424+00:00",
+      "teams": [
+        {
+          "Team": "Las Vegas Raiders",
+          "Passing attempts": 36.0,
+          "Carries": 18.0,
+          "Targets": 36.0,
+          "Pass attempt %": 66.7,
+          "Rush attempt %": 33.3
+        },
+        {
+          "Team": "New England Patriots",
+          "Passing attempts": 34.0,
+          "Carries": 31.0,
+          "Targets": 31.0,
+          "Pass attempt %": 52.3,
+          "Rush attempt %": 47.7
+        }
+      ],
+      "players": [
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Kirk Cousins",
+          "Passing attempts": 28.0,
+          "Passing attempts share %": 77.8,
+          "Carries share %": null,
+          "Targets share %": null
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Fernando Mendoza",
+          "Passing attempts": 8.0,
+          "Carries": 1.0,
+          "Passing attempts share %": 22.2,
+          "Carries share %": 5.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Ashton Jeanty",
+          "Carries": 10.0,
+          "Targets": 6.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 55.6,
+          "Targets share %": 16.7
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Dylan Laube",
+          "Carries": 4.0,
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 22.2,
+          "Targets share %": 8.3
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Mike Washington Jr.",
+          "Carries": 1.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 5.6,
+          "Targets share %": 2.8
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Tre Tucker",
+          "Carries": 2.0,
+          "Targets": 5.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": 11.1,
+          "Targets share %": 13.9
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Brock Bowers",
+          "Targets": 10.0,
+          "Receptions": 8.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 27.8
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Cody White",
+          "Targets": 4.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 11.1
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Ian Thomas",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.8
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Deven Thompkins",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.8
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Malik Benson",
+          "Targets": 4.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 11.1
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Player": "Michael Mayer",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.8
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Drake Maye",
+          "Passing attempts": 34.0,
+          "Carries": 7.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 22.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Rhamondre Stevenson",
+          "Carries": 13.0,
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 41.9,
+          "Targets share %": 9.7
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Corey Kiner",
+          "Carries": 6.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 19.4,
+          "Targets share %": 3.2
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "TreVeyon Henderson",
+          "Carries": 4.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 12.9,
+          "Targets share %": 3.2
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Efton Chism III",
+          "Carries": 1.0,
+          "Targets": 6.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.2,
+          "Targets share %": 19.4
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Kyle Williams",
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.7
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "DeMario Douglas",
+          "Targets": 5.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 16.1
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Eli Raridon",
+          "Targets": 5.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 16.1
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Hunter Henry",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 12.9
+        },
+        {
+          "Team": "New England Patriots",
+          "Player": "Romeo Doubs",
+          "Targets": 3.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.7
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Las Vegas Raiders",
+          "Quarter": 1,
+          "Pass plays": 5,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 45.5,
+          "Classified designed-run %": 54.5
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Quarter": 2,
+          "Pass plays": 10,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 2,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 70.6,
+          "Classified designed-run %": 29.4
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Quarter": 3,
+          "Pass plays": 8,
+          "Designed runs": 2,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 80.0,
+          "Classified designed-run %": 20.0
+        },
+        {
+          "Team": "Las Vegas Raiders",
+          "Quarter": 4,
+          "Pass plays": 12,
+          "Designed runs": 4,
+          "QB scrambles": 1,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 77.8,
+          "Classified designed-run %": 22.2
+        },
+        {
+          "Team": "New England Patriots",
+          "Quarter": 1,
+          "Pass plays": 7,
+          "Designed runs": 7,
+          "QB scrambles": 2,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 56.2,
+          "Classified designed-run %": 43.8
+        },
+        {
+          "Team": "New England Patriots",
+          "Quarter": 2,
+          "Pass plays": 8,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 60.0,
+          "Classified designed-run %": 40.0
+        },
+        {
+          "Team": "New England Patriots",
+          "Quarter": 3,
+          "Pass plays": 13,
+          "Designed runs": 5,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 73.7,
+          "Classified designed-run %": 26.3
+        },
+        {
+          "Team": "New England Patriots",
+          "Quarter": 4,
+          "Pass plays": 6,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 3,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        }
+      ],
+      "unique_feed_plays": 183,
+      "unclassified_scrimmage_plays": 26,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872987": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Minnesota Vikings",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 30,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "New Orleans Saints",
+            "Regulation attempts": 25,
+            "Overtime attempts": 0,
+            "Official total attempts": 25,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Minnesota Vikings",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 28,
+            "Sacks": 2,
+            "Rushing plays": 27
+          },
+          {
+            "Team": "New Orleans Saints",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 16,
+            "Sacks": 0,
+            "Rushing plays": 17
+          },
+          {
+            "Team": "New Orleans Saints",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 9,
+            "Sacks": 1,
+            "Rushing plays": 0
+          },
+          {
+            "Team": "Minnesota Vikings",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 1,
+            "Sacks": 0,
+            "Rushing plays": 7
+          }
+        ]
+      },
+      "event_id": "401872987",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:06.982728+00:00",
+      "teams": [
+        {
+          "Team": "Minnesota Vikings",
+          "Passing attempts": 30.0,
+          "Carries": 36.0,
+          "Targets": 29.0,
+          "Pass attempt %": 45.5,
+          "Rush attempt %": 54.5
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Passing attempts": 25.0,
+          "Carries": 17.0,
+          "Targets": 24.0,
+          "Pass attempt %": 59.5,
+          "Rush attempt %": 40.5
+        }
+      ],
+      "players": [
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Kyler Murray",
+          "Passing attempts": 30.0,
+          "Carries": 10.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 27.8,
+          "Targets share %": null
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Aaron Jones Sr.",
+          "Carries": 25.0,
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 69.4,
+          "Targets share %": 10.3
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Justin Jefferson",
+          "Carries": 1.0,
+          "Targets": 7.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 2.8,
+          "Targets share %": 24.1
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Gavin Bartholomew",
+          "Targets": 6.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 20.7
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Jeshaun Jones",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Tai Felton",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 10.3
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Myles Price",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 13.8
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "DeeJay Dallas",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Ben Yurosek",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "T.J. Hockenson",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Demond Claiborne",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Player": "Jauan Jennings",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Tyler Shough",
+          "Passing attempts": 25.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": null,
+          "Targets share %": null
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Kendre Miller",
+          "Carries": 10.0,
+          "Passing attempts share %": null,
+          "Carries share %": 58.8,
+          "Targets share %": null
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "CJ Donaldson",
+          "Carries": 4.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 23.5,
+          "Targets share %": 4.2
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Alvin Kamara",
+          "Carries": 3.0,
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 17.6,
+          "Targets share %": 8.3
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Chris Olave",
+          "Targets": 6.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 25.0
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Devaughn Vele",
+          "Targets": 6.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 25.0
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Juwan Johnson",
+          "Targets": 5.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 20.8
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Noah Fant",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.2
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Player": "Bryce Lance",
+          "Targets": 3.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 12.5
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Minnesota Vikings",
+          "Quarter": 1,
+          "Pass plays": 11,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 66.7,
+          "Classified designed-run %": 33.3
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Quarter": 2,
+          "Pass plays": 7,
+          "Designed runs": 3,
+          "QB scrambles": 1,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 75.0,
+          "Classified designed-run %": 25.0
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Quarter": 3,
+          "Pass plays": 8,
+          "Designed runs": 6,
+          "QB scrambles": 4,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 66.7,
+          "Classified designed-run %": 33.3
+        },
+        {
+          "Team": "Minnesota Vikings",
+          "Quarter": 4,
+          "Pass plays": 3,
+          "Designed runs": 9,
+          "QB scrambles": 2,
+          "Sacks": 0,
+          "Kneels": 3,
+          "Spikes": 0,
+          "Classified pass-call %": 35.7,
+          "Classified designed-run %": 64.3
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Quarter": 1,
+          "Pass plays": 3,
+          "Designed runs": 2,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 60.0,
+          "Classified designed-run %": 40.0
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Quarter": 2,
+          "Pass plays": 8,
+          "Designed runs": 11,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 42.1,
+          "Classified designed-run %": 57.9
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Quarter": 3,
+          "Pass plays": 3,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "New Orleans Saints",
+          "Quarter": 4,
+          "Pass plays": 11,
+          "Designed runs": 1,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 92.3,
+          "Classified designed-run %": 7.7
+        }
+      ],
+      "unique_feed_plays": 165,
+      "unclassified_scrimmage_plays": 31,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872989": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Denver Broncos",
+            "Regulation attempts": 27,
+            "Overtime attempts": 0,
+            "Official total attempts": 27,
+            "Coverage": "Reconciled with box score"
+          },
+          {
+            "Team": "Los Angeles Chargers",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 24,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Denver Broncos",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 27,
+            "Sacks": 1,
+            "Rushing plays": 29
+          },
+          {
+            "Team": "Los Angeles Chargers",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 23,
+            "Sacks": 5,
+            "Rushing plays": 34
+          }
+        ]
+      },
+      "event_id": "401872989",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:07.057614+00:00",
+      "teams": [
+        {
+          "Team": "Denver Broncos",
+          "Passing attempts": 27.0,
+          "Carries": 29.0,
+          "Targets": 22.0,
+          "Pass attempt %": 48.2,
+          "Rush attempt %": 51.8
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Passing attempts": 24.0,
+          "Carries": 34.0,
+          "Targets": 21.0,
+          "Pass attempt %": 41.4,
+          "Rush attempt %": 58.6
+        }
+      ],
+      "players": [
+        {
+          "Team": "Denver Broncos",
+          "Player": "Bo Nix",
+          "Passing attempts": 27.0,
+          "Carries": 4.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 13.8,
+          "Targets share %": null
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "J.K. Dobbins",
+          "Carries": 18.0,
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 62.1,
+          "Targets share %": 9.1
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Jaylen Waddle",
+          "Carries": 1.0,
+          "Targets": 5.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.4,
+          "Targets share %": 22.7
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "RJ Harvey",
+          "Carries": 3.0,
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": 10.3,
+          "Targets share %": 4.5
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Tyler Badie",
+          "Carries": 1.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.4,
+          "Targets share %": 4.5
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Adam Prentice",
+          "Carries": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.4,
+          "Targets share %": null
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Marvin Mims Jr.",
+          "Carries": 1.0,
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.4,
+          "Targets share %": 9.1
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Evan Engram",
+          "Targets": 4.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 18.2
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Courtland Sutton",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 13.6
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Troy Franklin",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.1
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Lil'Jordan Humphrey",
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 9.1
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Justin Herbert",
+          "Passing attempts": 24.0,
+          "Carries": 6.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 17.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Kimani Vidal",
+          "Carries": 8.0,
+          "Targets": 2.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 23.5,
+          "Targets share %": 9.5
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Omarion Hampton",
+          "Carries": 14.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 41.2,
+          "Targets share %": 4.8
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Keaton Mitchell",
+          "Carries": 6.0,
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 17.6,
+          "Targets share %": 19.0
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Charlie Kolar",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 19.0
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Marquez Valdes-Scantling",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 14.3
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Theo Wease Jr.",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.8
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Tre' Harris",
+          "Targets": 4.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 19.0
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Hayden Rucci",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.8
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Player": "Oronde Gadsden",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.8
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 1,
+          "Pass plays": 9,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 60.0,
+          "Classified designed-run %": 40.0
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 2,
+          "Pass plays": 7,
+          "Designed runs": 11,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 42.1,
+          "Classified designed-run %": 57.9
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 3,
+          "Pass plays": 2,
+          "Designed runs": 3,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 4,
+          "Pass plays": 9,
+          "Designed runs": 8,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 52.9,
+          "Classified designed-run %": 47.1
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Quarter": 1,
+          "Pass plays": 3,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 36.4,
+          "Classified designed-run %": 63.6
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Quarter": 2,
+          "Pass plays": 6,
+          "Designed runs": 6,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Quarter": 3,
+          "Pass plays": 6,
+          "Designed runs": 13,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 35.0,
+          "Classified designed-run %": 65.0
+        },
+        {
+          "Team": "Los Angeles Chargers",
+          "Quarter": 4,
+          "Pass plays": 8,
+          "Designed runs": 5,
+          "QB scrambles": 2,
+          "Sacks": 4,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 73.7,
+          "Classified designed-run %": 26.3
+        }
+      ],
+      "unique_feed_plays": 187,
+      "unclassified_scrimmage_plays": 37,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872991": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Detroit Lions",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 30,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          },
+          {
+            "Team": "Arizona Cardinals",
+            "Regulation attempts": 48,
+            "Overtime attempts": 0,
+            "Official total attempts": 48,
+            "Coverage": "Reconciled with box score"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Detroit Lions",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 16,
+            "Sacks": 3,
+            "Rushing plays": 10
+          },
+          {
+            "Team": "Arizona Cardinals",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 16,
+            "Sacks": 1,
+            "Rushing plays": 9
+          },
+          {
+            "Team": "Arizona Cardinals",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 32,
+            "Sacks": 4,
+            "Rushing plays": 9
+          },
+          {
+            "Team": "Detroit Lions",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 13,
+            "Sacks": 0,
+            "Rushing plays": 22
+          }
+        ]
+      },
+      "event_id": "401872991",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:07.137600+00:00",
+      "teams": [
+        {
+          "Team": "Detroit Lions",
+          "Passing attempts": 30.0,
+          "Carries": 32.0,
+          "Targets": 29.0,
+          "Pass attempt %": 48.4,
+          "Rush attempt %": 51.6
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Passing attempts": 48.0,
+          "Carries": 18.0,
+          "Targets": 46.0,
+          "Pass attempt %": 72.7,
+          "Rush attempt %": 27.3
+        }
+      ],
+      "players": [
+        {
+          "Team": "Detroit Lions",
+          "Player": "Jared Goff",
+          "Passing attempts": 30.0,
+          "Carries": 1.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 3.1,
+          "Targets share %": null
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Jahmyr Gibbs",
+          "Carries": 25.0,
+          "Targets": 6.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 78.1,
+          "Targets share %": 20.7
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Sione Vaki",
+          "Carries": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": 18.8,
+          "Targets share %": null
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Sam LaPorta",
+          "Targets": 5.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 17.2
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Amon-Ra St. Brown",
+          "Targets": 11.0,
+          "Receptions": 6.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 37.9
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Jameson Williams",
+          "Targets": 4.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 13.8
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Brock Wright",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 3.4
+        },
+        {
+          "Team": "Detroit Lions",
+          "Player": "Isaac TeSlaa",
+          "Targets": 2.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 6.9
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Jacoby Brissett",
+          "Passing attempts": 47.0,
+          "Carries": 2.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": 97.9,
+          "Carries share %": 11.1,
+          "Targets share %": 2.2
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Michael Wilson",
+          "Passing attempts": 1.0,
+          "Targets": 7.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": 2.1,
+          "Carries share %": null,
+          "Targets share %": 15.2
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Jeremiyah Love",
+          "Carries": 12.0,
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": 66.7,
+          "Targets share %": 2.2
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Bam Knight",
+          "Carries": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 5.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Tyler Allgeier",
+          "Carries": 3.0,
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": 16.7,
+          "Targets share %": 4.3
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Kendrick Bourne",
+          "Targets": 8.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 17.4
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Trey McBride",
+          "Targets": 10.0,
+          "Receptions": 9.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 21.7
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Elijah Higgins",
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 6.5
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Reggie Virgil",
+          "Targets": 5.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 10.9
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Jalen Brooks",
+          "Targets": 7.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 15.2
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Player": "Teagan Quitoriano",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.3
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Arizona Cardinals",
+          "Quarter": 1,
+          "Pass plays": 10,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 61.1,
+          "Classified designed-run %": 38.9
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Quarter": 2,
+          "Pass plays": 12,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 2,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 82.4,
+          "Classified designed-run %": 17.6
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Quarter": 3,
+          "Pass plays": 11,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 70.6,
+          "Classified designed-run %": 29.4
+        },
+        {
+          "Team": "Arizona Cardinals",
+          "Quarter": 4,
+          "Pass plays": 15,
+          "Designed runs": 2,
+          "QB scrambles": 1,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 89.5,
+          "Classified designed-run %": 10.5
+        },
+        {
+          "Team": "Detroit Lions",
+          "Quarter": 1,
+          "Pass plays": 4,
+          "Designed runs": 2,
+          "QB scrambles": 0,
+          "Sacks": 3,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 77.8,
+          "Classified designed-run %": 22.2
+        },
+        {
+          "Team": "Detroit Lions",
+          "Quarter": 2,
+          "Pass plays": 15,
+          "Designed runs": 12,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 55.6,
+          "Classified designed-run %": 44.4
+        },
+        {
+          "Team": "Detroit Lions",
+          "Quarter": 3,
+          "Pass plays": 5,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 41.7,
+          "Classified designed-run %": 58.3
+        },
+        {
+          "Team": "Detroit Lions",
+          "Quarter": 4,
+          "Pass plays": 5,
+          "Designed runs": 11,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 31.2,
+          "Classified designed-run %": 68.8
+        }
+      ],
+      "unique_feed_plays": 190,
+      "unclassified_scrimmage_plays": 28,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": []
+    },
+    "401872995": {
+      "game_script": {
+        "attempt_totals": [
+          {
+            "Team": "Seattle Seahawks",
+            "Regulation attempts": 48,
+            "Overtime attempts": 3,
+            "Official total attempts": 51,
+            "Coverage": "Reconciled with box score"
+          },
+          {
+            "Team": "Denver Broncos",
+            "Regulation attempts": null,
+            "Overtime attempts": null,
+            "Official total attempts": 27,
+            "Coverage": "Incomplete/unreconciled play feed; split withheld"
+          }
+        ],
+        "score_states": [
+          {
+            "Team": "Seattle Seahawks",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 19,
+            "Sacks": 2,
+            "Rushing plays": 10
+          },
+          {
+            "Team": "Denver Broncos",
+            "Phase": "Regulation",
+            "Score before play": "Within 7",
+            "Passing attempts": 14,
+            "Sacks": 2,
+            "Rushing plays": 19
+          },
+          {
+            "Team": "Seattle Seahawks",
+            "Phase": "Regulation",
+            "Score before play": "Trailing by 8+",
+            "Passing attempts": 29,
+            "Sacks": 3,
+            "Rushing plays": 12
+          },
+          {
+            "Team": "Denver Broncos",
+            "Phase": "Regulation",
+            "Score before play": "Leading by 8+",
+            "Passing attempts": 12,
+            "Sacks": 0,
+            "Rushing plays": 6
+          },
+          {
+            "Team": "Seattle Seahawks",
+            "Phase": "Overtime",
+            "Score before play": "Within 7",
+            "Passing attempts": 3,
+            "Sacks": 0,
+            "Rushing plays": 3
+          },
+          {
+            "Team": "Denver Broncos",
+            "Phase": "Overtime",
+            "Score before play": "Within 7",
+            "Passing attempts": 0,
+            "Sacks": 0,
+            "Rushing plays": 3
+          }
+        ]
+      },
+      "event_id": "401872995",
+      "completed": true,
+      "period": null,
+      "clock": null,
+      "retrieved_utc": "2026-10-16T06:55:07.256909+00:00",
+      "teams": [
+        {
+          "Team": "Seattle Seahawks",
+          "Passing attempts": 51.0,
+          "Carries": 26.0,
+          "Targets": 46.0,
+          "Pass attempt %": 66.2,
+          "Rush attempt %": 33.8
+        },
+        {
+          "Team": "Denver Broncos",
+          "Passing attempts": 27.0,
+          "Carries": 28.0,
+          "Targets": 24.0,
+          "Pass attempt %": 49.1,
+          "Rush attempt %": 50.9
+        }
+      ],
+      "players": [
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Sam Darnold",
+          "Passing attempts": 51.0,
+          "Carries": 2.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 7.7,
+          "Targets share %": null
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Emanuel Wilson",
+          "Carries": 14.0,
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": 53.8,
+          "Targets share %": 2.2
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "George Holani",
+          "Carries": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 19.2,
+          "Targets share %": null
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Velus Jones Jr.",
+          "Carries": 4.0,
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 15.4,
+          "Targets share %": 2.2
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Rashid Shaheed",
+          "Carries": 1.0,
+          "Targets": 8.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.8,
+          "Targets share %": 17.4
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Jaxon Smith-Njigba",
+          "Targets": 16.0,
+          "Receptions": 12.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 34.8
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Cooper Kupp",
+          "Targets": 10.0,
+          "Receptions": 5.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 21.7
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "AJ Barner",
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 8.7
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Tory Horton",
+          "Targets": 5.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 10.9
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Player": "Eric Saubert",
+          "Targets": 1.0,
+          "Receptions": 0.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 2.2
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Bo Nix",
+          "Passing attempts": 27.0,
+          "Carries": 4.0,
+          "Passing attempts share %": 100.0,
+          "Carries share %": 14.3,
+          "Targets share %": null
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "J.K. Dobbins",
+          "Carries": 17.0,
+          "Targets": 3.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 60.7,
+          "Targets share %": 12.5
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "RJ Harvey",
+          "Carries": 6.0,
+          "Targets": 4.0,
+          "Receptions": 3.0,
+          "Passing attempts share %": null,
+          "Carries share %": 21.4,
+          "Targets share %": 16.7
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Tyler Badie",
+          "Carries": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": 3.6,
+          "Targets share %": null
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Jaylen Waddle",
+          "Targets": 7.0,
+          "Receptions": 4.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 29.2
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Courtland Sutton",
+          "Targets": 3.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 12.5
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Evan Engram",
+          "Targets": 2.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 8.3
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Marvin Mims Jr.",
+          "Targets": 4.0,
+          "Receptions": 2.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 16.7
+        },
+        {
+          "Team": "Denver Broncos",
+          "Player": "Troy Franklin",
+          "Targets": 1.0,
+          "Receptions": 1.0,
+          "Passing attempts share %": null,
+          "Carries share %": null,
+          "Targets share %": 4.2
+        }
+      ],
+      "quarters": [
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 1,
+          "Pass plays": 8,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 53.3,
+          "Classified designed-run %": 46.7
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 2,
+          "Pass plays": 7,
+          "Designed runs": 10,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 41.2,
+          "Classified designed-run %": 58.8
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 3,
+          "Pass plays": 6,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 66.7,
+          "Classified designed-run %": 33.3
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 4,
+          "Pass plays": 5,
+          "Designed runs": 4,
+          "QB scrambles": 0,
+          "Sacks": 2,
+          "Kneels": 1,
+          "Spikes": 0,
+          "Classified pass-call %": 63.6,
+          "Classified designed-run %": 36.4
+        },
+        {
+          "Team": "Denver Broncos",
+          "Quarter": 5,
+          "Pass plays": 0,
+          "Designed runs": 2,
+          "QB scrambles": 1,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 33.3,
+          "Classified designed-run %": 66.7
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Quarter": 1,
+          "Pass plays": 6,
+          "Designed runs": 5,
+          "QB scrambles": 0,
+          "Sacks": 2,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 61.5,
+          "Classified designed-run %": 38.5
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Quarter": 2,
+          "Pass plays": 9,
+          "Designed runs": 7,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 56.2,
+          "Classified designed-run %": 43.8
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Quarter": 3,
+          "Pass plays": 12,
+          "Designed runs": 4,
+          "QB scrambles": 0,
+          "Sacks": 2,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 77.8,
+          "Classified designed-run %": 22.2
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Quarter": 4,
+          "Pass plays": 21,
+          "Designed runs": 4,
+          "QB scrambles": 2,
+          "Sacks": 1,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 85.7,
+          "Classified designed-run %": 14.3
+        },
+        {
+          "Team": "Seattle Seahawks",
+          "Quarter": 5,
+          "Pass plays": 3,
+          "Designed runs": 3,
+          "QB scrambles": 0,
+          "Sacks": 0,
+          "Kneels": 0,
+          "Spikes": 0,
+          "Classified pass-call %": 50.0,
+          "Classified designed-run %": 50.0
+        }
+      ],
+      "unique_feed_plays": 201,
+      "unclassified_scrimmage_plays": 39,
+      "source": "ESPN summary; box-score usage and classified drive plays",
+      "forecast_reviews": [
+        {
+          "Pick ID": "f35f65f232081de08a5e",
+          "Player": "Emanuel Wilson",
+          "Category": "Rushing yards",
+          "Model": "NFL opportunity experiment v2 / 2024 fit / 2025 development",
+          "Expected opportunities": 14.6,
+          "Reported final opportunities": 14.0,
+          "Opportunity miss": -0.5999999999999996
+        },
+        {
+          "Pick ID": "555a9ce32e8dd96f7dcc",
+          "Player": "Emanuel Wilson",
+          "Category": "Rushing attempts",
+          "Model": "NFL count workload v1 / 2024 fit / 2025 development",
+          "Expected opportunities": 16.1,
+          "Reported final opportunities": 14.0,
+          "Opportunity miss": -2.1000000000000014
+        },
+        {
+          "Pick ID": "4d9500d09dbfc4d41280",
+          "Player": "Sam Darnold",
+          "Category": "Passing yards",
+          "Model": "NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration",
+          "Expected opportunities": 27.81,
+          "Reported final opportunities": 51.0,
+          "Opportunity miss": 23.19
+        },
+        {
+          "Pick ID": "81333ad62cd0726cb058",
+          "Player": "Sam Darnold",
+          "Category": "Passing attempts",
+          "Model": "NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration",
+          "Expected opportunities": 27.81,
+          "Reported final opportunities": 51.0,
+          "Opportunity miss": 23.19
+        },
+        {
+          "Pick ID": "74cfc503f5632e2927db",
+          "Player": "Bo Nix",
+          "Category": "Passing yards",
+          "Model": "NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration",
+          "Expected opportunities": 34.61,
+          "Reported final opportunities": 27.0,
+          "Opportunity miss": -7.609999999999999
+        }
+      ]
+    }
+  }
 }
