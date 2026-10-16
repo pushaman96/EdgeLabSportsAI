@@ -281,6 +281,9 @@ def show_live_game_stats(data, sport_path):
                 st.write("**" + game_status_text(competitions[0]) + "**")
             st.caption("ESPN data fetched at " + result['retrieved'])
             box = summary.get('boxscore', {})
+            if sport_path == 'football/nfl':
+                from live_usage import render_live_usage
+                render_live_usage(summary)
             teams = box.get('teams', [])
             if teams:
                 table = {}
