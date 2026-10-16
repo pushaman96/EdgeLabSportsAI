@@ -67,7 +67,7 @@ def normalize_stats(rows, kind):
             continue
         converted = {k: row.get(k) for k in ['player_id', 'player_display_name', 'position', 'game_id']}
         converted.update(season=int(row['season']), week=int(row['week']), team=ALIASES.get(row['team'], row['team']), opponent_team=ALIASES.get(row['opponent_team'], row['opponent_team']))
-        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions']:
+        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions', 'passing_interceptions']:
             converted[key] = num(row.get(key))
         identity = (converted['game_id'], converted.get('player_id') if kind == 'player' else converted['team'])
         if identity in seen:
@@ -242,12 +242,15 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
     starts = datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
     matching = [g for g in research['schedule'] if context and int(g['season']) == context['season'] and g['game_type'] == 'REG' and {g['home_team'],g['away_team']} == {ALIASES.get(context[s].get('abbreviation'),context[s].get('abbreviation')) for s in ('home','away')} and g['gameday'] == context['date'].isoformat()]
     schedule = matching[0] if len(matching) == 1 else None
+    from interception_model import estimate as interception_estimate, validation as interception_validation
+    interception_report = interception_validation(research['players'],research['teams'])
+    supported = dict(MARKETS, player_pass_interceptions=('Passing interceptions',))
     for book in event.get('bookmakers',[]):
         for market in book.get('markets',[]):
             for outcome in market.get('outcomes',[]):
-                if market['key'] not in MARKETS:
+                if market['key'] not in supported:
                     continue
-                row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':MARKETS[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Historical error range low':None,'Historical error range high':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
+                row = {'Decision':'Pass','Game':event['away_team']+' at '+event['home_team'],'Player':outcome.get('description','Unknown'),'Category':supported[market['key']][0],'Selection':outcome.get('name'),'Line':outcome.get('point'),'Sportsbook':book['title'],'Odds':outcome.get('price'),'Projection (yards)':None,'Historical error range low':None,'Historical error range high':None,'Estimated win %':None,'Break-even %':None,'Model edge (pp)':None,'Reason':'','Quote updated UTC':market.get('last_update') or book.get('last_update'),'Model':MODEL_VERSION}
                 if market['key'] in COUNT_MARKETS:row['Model']='NFL count forecast v1 / 2024 fit / 2025 development'
                 rows.append(row)
                 if starts <= now:
@@ -293,7 +296,13 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 ids = {r['player_id'] for r in research['players'] if r['season'] == context['season'] and r['team'] == team and name_key(r['player_display_name']) == key}
                 if len(ids) != 1:
                     row['Reason'] = 'No unique current-season player-stat match.';continue
-                if research['models'].get(market['key'],{}).get('boosted'):
+                interception = market['key']=='player_pass_interceptions'
+                if interception and line != .5:
+                    row['Reason']='Interception model supports only Over/Under 0.5; other thresholds not validated.';continue
+                if interception:
+                    from boosted_yardage import base_feature
+                    feature,reason=base_feature({'player_id':next(iter(ids)),'season':context['season'],'week':int(schedule['week']),'team':team,'opponent_team':opponent},'player_pass_attempts',idx)
+                elif research['models'].get(market['key'],{}).get('boosted'):
                     from boosted_yardage import base_feature
                     feature,reason=base_feature({'player_id':next(iter(ids)),'season':context['season'],'week':int(schedule['week']),'team':team,'opponent_team':opponent},market['key'],idx)
                 else:
@@ -311,6 +320,18 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 last_games = [g for g in research['schedule'] if int(g['season']) == context['season'] and int(g['week']) == feature['latest_week'] and team in (g['home_team'],g['away_team']) and g['game_type']=='REG']
                 if not last_games or not 0 <= (context['date']-datetime.fromisoformat(last_games[0]['gameday']).date()).days <= 21:
                     row['Reason'] = 'Player history too old for this game.';continue
+                if interception:
+                    forecast,reason=interception_estimate(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,idx)
+                    if not forecast:row['Reason']=reason;continue
+                    p=forecast['probability'] if row['Selection']=='Over' else 1-forecast['probability']
+                    breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
+                    row.pop('Projection (yards)',None)
+                    row.update({'Model':'NFL interceptions frequency/rate v1 — experimental','Projection (count)':round(forecast['expected'],2),'Expected opportunities':round(forecast['attempts'],2),'Opportunity type':'Passing attempts','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Prior games with interception %':round(100*forecast['frequency'],1),'Validation games':interception_report['games'],'Validation Brier':interception_report['brier'],'Baseline Brier':interception_report['baseline_brier']})
+                    if not interception_report['passed']:row['Reason']='Interception probability model has not beaten both prior-game frequency and 50/50 baselines in 2025 development; research estimate only.';continue
+                    if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points.';continue
+                    row['Decision']='Watch — experimental'
+                    row['Reason']=f"{forecast['games']} prior starter games; interception-game frequency {100*forecast['frequency']:.0f}%; passing attempts, QB interception rate and opponent interception rate included. Average interceptions is not probability of an interception."
+                    continue
                 model = research['models'][market['key']]
                 projected = projection(feature,model['blend'],model['defense_weight'])
                 if research.get('experiment'):
@@ -576,7 +597,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
-    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
+    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. Interceptions at 0.5 now show research estimates; picks remain blocked until their probability model beats both validation baselines. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
     mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
