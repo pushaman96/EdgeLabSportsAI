@@ -357,6 +357,14 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row['Workload method']=model['parameters'][0]
                     row['Efficiency method']=model['parameters'][1]
                     row['Opportunity forecast blend %']=100*model['parameters'][2]
+                if market['key'] in ('player_pass_yds','player_pass_attempts'):
+                    from game_script import workload_risk
+                    risk=workload_risk(next(iter(ids)),context['season'],int(schedule['week']),team,line if market['key']=='player_pass_attempts' else None,idx,research['schedule'])
+                    if risk:
+                        row['Historical high-volume attempts (80th percentile)']=risk['Historical high-volume attempts (80th percentile)']
+                        row['Game-script stress scenarios']=str(risk['Scenarios'])
+                        row['Game-script risk']='Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.'
+                        row['Prior attempts above quoted line %']=risk['Prior attempts above quoted line %']
                 residuals=model['residuals']
                 lower=projected+residuals[int(.1*(len(residuals)-1))]*error_scale(projected)
                 upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
@@ -392,6 +400,7 @@ def evidence_explanation(row):
         text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
         if reason.startswith('Estimated edge below five percentage points.'):
             text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
+    if row.get('Game-script risk'):text+=row['Game-script risk']+' Historical high-volume workload: '+str(row['Historical high-volume attempts (80th percentile)'])+' attempts. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
     if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
     text+='Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
