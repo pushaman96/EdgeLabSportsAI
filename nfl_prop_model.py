@@ -214,7 +214,7 @@ def current_roster(team_id):
     for group in response.json().get('athletes',[]):
         for athlete in group.get('items',[]):
             status = athlete.get('status',{})
-            rows.append({'name':athlete.get('displayName'),'status':status.get('name') if isinstance(status,dict) else str(status)})
+            rows.append({'name':athlete.get('displayName'),'status':status.get('name') if isinstance(status,dict) else str(status),'position':athlete.get('position',{}).get('abbreviation'),'espn_id':str(athlete.get('id',''))})
     if not rows:
         raise ValueError('Current roster unavailable.')
     return rows
@@ -274,7 +274,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if line is None or line < 0 or not math.isclose(line%1,.5) or odds is None or abs(odds)<100 or row['Selection'] not in ('Over','Under'):
                     row['Reason'] = 'Only valid prices and half-unit over/under lines are supported.';continue
                 key = name_key(row['Player'])
-                roster_matches = [(side,p) for side in ('home','away') for p in rosters.get(context[side].get('displayName'),[]) if name_key(p['name']) == key]
+                roster_matches = [(side,p) for side in ('home','away') for p in rosters.get(context[side].get('displayName'),[]) if name_key(p['name']) == key and (not p.get('position') or p['position'] in ('QB','RB','HB','FB','WR','TE'))]
                 if len(roster_matches) != 1:
                     row['Reason'] = 'Player cannot be matched uniquely to a current game roster.';continue
                 side,player = roster_matches[0]
@@ -302,7 +302,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 ids={trade['player_id']}
                 if team not in arrival_cache:
                     from trade_awareness import new_teammates
-                    arrival_cache[team]=new_teammates([p['name'] for p in rosters.get(team_name,[])],team,context['season'],int(schedule['week']),research['players'])
+                    arrival_cache[team]=new_teammates(rosters.get(team_name,[]),team,context['season'],int(schedule['week']),research['players'])
                 arrivals=[n for n in arrival_cache[team] if name_key(n)!=key]
                 if arrivals:row['New teammates — role uncertainty']=', '.join(arrivals)
                 trade_error=transition_reason(trade)
