@@ -340,7 +340,14 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                             'team':team,'opponent_team':opponent,'position':feature['position'],
                             MARKETS[market['key']][1]:0,MARKETS[market['key']][2]:0}
                     try:
-                        if model.get('boosted'):
+                        if model.get('reception_chain'):
+                            from reception_chain import chain_inputs,predict,VERSION
+                            chain_sample=chain_inputs(sample,idx)
+                            if not chain_sample:raise ValueError('Missing chain inputs')
+                            projected,volume,team_attempts,catch=predict(chain_sample,model['chain_parameters'])
+                            row['Expected team passing attempts']=round(team_attempts,2)
+                            row['Catch probability %']=round(100*catch,1)
+                        elif model.get('boosted'):
                             from boosted_yardage import live_boost
                             projected,volume=live_boost(sample,market['key'],idx,model,research['boosted_snaps'])
                         else:projected,volume=live_opportunity_projection(sample,market['key'],idx,model['parameters'])
@@ -351,6 +358,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     if model.get('boosted'):
                         row['Model']='NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration'
                         row['Boosted tree weight %']=100*model['opportunity_fit']['weight']
+                    if model.get('reception_chain'):
+                        from reception_chain import VERSION
+                        row['Model']=VERSION
                     if research.get('chronological_calibration'):row['Model']='NFL chronological calibration v1 / early-2024 fit / late-2024 calibration'
                     row['Probability adjustment strength']=model.get('probability_strength',.8)
                     row['Opportunity type']={'player_pass_yds':'Passing attempts','player_rush_yds':'Carries','player_reception_yds':'Targets','player_receptions':'Targets','player_pass_attempts':'Passing attempts','player_rush_attempts':'Carries'}[market['key']]
@@ -400,6 +410,7 @@ def evidence_explanation(row):
         text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
         if reason.startswith('Estimated edge below five percentage points.'):
             text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
+    if row.get('Expected team passing attempts') is not None:text+=f"Team passing forecast: {row['Expected team passing attempts']} attempts; player catch probability: {row['Catch probability %']}%. "
     if row.get('Game-script risk'):text+=row['Game-script risk']+' Historical high-volume workload: '+str(row['Historical high-volume attempts (80th percentile)'])+' attempts. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
     if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
@@ -629,10 +640,12 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. Interceptions at 0.5 now show research estimates; picks remain blocked until their probability model beats both validation baselines. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
-    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing'],index=1,key='nfl_workload_forecast_mode')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing','Team targets and receptions — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
     boosted=mode.startswith('Boosted')
+    chain=mode.startswith('Team targets')
+    if chain:st.info('Linked receptions candidate: team passing attempts → player target share → catch probability. Uses the candidate only after beating the current receptions model and recent-average baseline; otherwise retains the current model. Historical comparisons are not verified profitability.')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
     if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
     if boosted:st.info('Boosted paper candidate: passing attempts and receiving targets use team/opponent workload, player share, snap participation and role trends. Passing/receiving yardage and passing-attempt props use a candidate only when it beats the baseline and current v2 on comparable historical games; other cases retain the existing opportunity model. Historical gaps may use three consecutive recent games when supported. Current roster, injury, quote and schedule checks remain required.')
@@ -651,7 +664,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 research = load_prop_research(usable[0]['season'])
                 if experimental:
                     from nfl_workload_lab import load_experimental_research
-                    if boosted:
+                    if chain:
+                        from reception_chain import load_chain_research
+                        research=load_chain_research(usable[0]['season'])
+                        st.dataframe(research['chain_reports'],hide_index=True,use_container_width=True)
+                    elif boosted:
                         from boosted_yardage import load_boosted_pick_research
                         research=load_boosted_pick_research(usable[0]['season'])
                     else:research=load_experimental_research(usable[0]['season'],chronological)
