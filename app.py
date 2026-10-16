@@ -1173,7 +1173,8 @@ def sportsbook_model_context(sport_name, scoreboard_data):
     screens = {}
     if sport_name == "NFL":
         from injury_verification import load_matchup_screens
-        screens = load_matchup_screens(scoreboard_data)
+        try:screens = load_matchup_screens(scoreboard_data)
+        except Exception:screens = {}
     for event in scoreboard_data.get("events", []):
         competition = event.get("competitions", [{}])[0]
         competitors = competition.get("competitors", [])
@@ -1189,7 +1190,7 @@ def sportsbook_model_context(sport_name, scoreboard_data):
         injury = screens.get((home.get("displayName"), away.get("displayName")), {})
         output[(home.get("displayName"), away.get("displayName"))] = {
             "probability":probability, "cutoff":cutoff.isoformat(),
-            "eligible":type_id == 2 and 0 <= age <= 30 and (sport_name != "NFL" or injury.get("eligible",False)),
+            "eligible":type_id == 2 and 0 <= age <= 30,
             "injury_verified":sport_name == "NFL" and injury.get("eligible",False),
             "injury_reason":injury.get("reason","Injury verification unavailable"),
             "injury_checked_utc":injury.get("checked_utc"),
@@ -1246,7 +1247,7 @@ with score_tab:
         show_games(scoreboard, SPORTS[sport])
         if sport == "NFL":
             with st.expander("Game winner probabilities — selected date"):
-                st.caption("Historical Elo estimates with current roster/injury eligibility checks. Key offensive absences or unverified reports block moneyline picks; percentages are not numerically injury-adjusted.")
+                st.caption("Historical Elo estimates with current injury warnings. Injury issues do not block moneyline candidates; percentages are not numerically injury-adjusted.")
                 if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
                     try:
                         contexts = sportsbook_model_context(sport, scoreboard)
@@ -1260,10 +1261,10 @@ with score_tab:
                             context = contexts.get((home, away))
                             if context:
                                 p = context['probability']
-                                forecast_rows.append({'Game':event.get('name'), 'Model lean':(home if p >= .5 else away) if context['eligible'] else 'PASS — verification incomplete',
+                                forecast_rows.append({'Game':event.get('name'), 'Model lean':(home if p >= .5 else away) if context['eligible'] else 'PASS — history/season not eligible',
                                     'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
                                     'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'],
-                                    'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':'Availability screen passed; Elo is not numerically injury-adjusted' if context['eligible'] else 'PASS — injury/history verification failed'})
+                                    'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':('Injury warning — historical Elo only' if not context.get('injury_verified') else 'Availability checked — historical Elo only') if context['eligible'] else 'History/season not eligible'})
                         if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
                         else:st.info('No matched upcoming games available for a pregame forecast.')
                     except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
