@@ -340,7 +340,19 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                             'team':team,'opponent_team':opponent,'position':feature['position'],
                             MARKETS[market['key']][1]:0,MARKETS[market['key']][2]:0}
                     try:
-                        if model.get('reception_chain'):
+                        if model.get('receiver_role'):
+                            from receiver_role import role_inputs,predict
+                            role_sample=role_inputs(sample,market['key'],idx,research['receiver_role_snaps'])
+                            if not role_sample:raise ValueError('Participation inputs unavailable')
+                            projected,volume,team_attempts,catch=predict(role_sample,model['role_parameters'],model['chain_parameters'],market['key'])
+                            row['Expected team passing attempts']=round(team_attempts,2)
+                            row['Catch probability %']=round(100*catch,1)
+                            row['Recent snap share %']=round(100*role_sample['recent_snap'],1) if role_sample['recent_snap'] is not None else None
+                            row['Usual snap share %']=round(100*role_sample['usual_snap'],1) if role_sample['usual_snap'] is not None else None
+                            row['Snap effect weight']=model['role_parameters'][0]
+                            row['Snap coverage']='Available' if role_sample['snap_covered'] else 'Unavailable — neutral effect'
+                            row['Route coverage']='Unavailable; snap share is not route participation'
+                        elif model.get('reception_chain'):
                             from reception_chain import chain_inputs,predict,VERSION
                             chain_sample=chain_inputs(sample,idx)
                             if not chain_sample:raise ValueError('Missing chain inputs')
@@ -358,6 +370,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     if model.get('boosted'):
                         row['Model']='NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration'
                         row['Boosted tree weight %']=100*model['opportunity_fit']['weight']
+                    if model.get('receiver_role'):
+                        from receiver_role import VERSION
+                        row['Model']=VERSION
                     if model.get('reception_chain'):
                         from reception_chain import VERSION
                         row['Model']=VERSION
@@ -387,13 +402,27 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if market['key'] in COUNT_MARKETS:
                     row['Projection (count)']=row.pop('Projection (yards)')
                     row['Forecast units']=row['Category']
+                if 'receiver_role_snaps' in research and market['key'] in ('player_receptions','player_reception_yds'):
+                    from receiver_role import role_inputs
+                    context_role=role_inputs(sample,market['key'],idx,research['receiver_role_snaps'])
+                    if context_role:
+                        row['Recent snap share %']=round(100*context_role['recent_snap'],1) if context_role['recent_snap'] is not None else None
+                        row['Usual snap share %']=round(100*context_role['usual_snap'],1) if context_role['usual_snap'] is not None else None
+                        row['Recent target share %']=round(100*context_role['chain']['recent_share'],1)
+                        row['Usual target share %']=round(100*context_role['chain']['share'],1)
+                        row['Snap coverage']='Available' if context_role['snap_covered'] else 'Unavailable — neutral effect'
+                        row['Snap effect weight']=model['role_parameters'][0] if model.get('receiver_role') else 0
+                        row['Route coverage']='Unavailable; snap share is not route participation'
                 if not model['forecast_passed']:
                     row['Reason'] = 'Forecast did not beat the recent-average baseline on the 2025 test.';continue
                 if p-break_even < .05:
                     row['Reason'] = 'Estimated edge below five percentage points.';continue
                 row['Decision'] = 'Watch — experimental'
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Confirm lineup/weather."
-    for row in rows:row['Evidence explanation']=evidence_explanation(row)
+    for row in rows:
+        if row.get('Snap coverage'):
+            row['Reason']+=f" Expected targets {row.get('Expected opportunities')}; snap coverage {row['Snap coverage']}; selected snap effect weight {row['Snap effect weight']}. Routes unavailable."
+        row['Evidence explanation']=evidence_explanation(row)
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
 
 def evidence_explanation(row):
@@ -410,6 +439,7 @@ def evidence_explanation(row):
         text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
         if reason.startswith('Estimated edge below five percentage points.'):
             text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
+    if row.get('Snap coverage'):text+=f"Snap coverage: {row['Snap coverage']}; recent share {row.get('Recent snap share %')}%, usual share {row.get('Usual snap share %')}%, selected effect weight {row.get('Snap effect weight')}. Routes run are unavailable. "
     if row.get('Expected team passing attempts') is not None:text+=f"Team passing forecast: {row['Expected team passing attempts']} attempts; player catch probability: {row['Catch probability %']}%. "
     if row.get('Game-script risk'):text+=row['Game-script risk']+' Historical high-volume workload: '+str(row['Historical high-volume attempts (80th percentile)'])+' attempts. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
@@ -640,11 +670,13 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
     st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. Interceptions at 0.5 now show research estimates; picks remain blocked until their probability model beats both validation baselines. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
-    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing','Team targets and receptions — paper testing'],index=1,key='nfl_workload_forecast_mode')
+    mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing','Team targets and receptions — paper testing','Receiving participation — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
     boosted=mode.startswith('Boosted')
     chain=mode.startswith('Team targets')
+    participation=mode.startswith('Receiving participation')
+    if participation:st.info('Participation paper candidate: target share and snap-share changes feed receiving yards and receptions. Uses a candidate only when it beats the incumbent and baseline in development. Missing snaps have a neutral effect; routes, injury effects and weather are not quantified.')
     if chain:st.info('Linked receptions candidate: team passing attempts → player target share → catch probability. Uses the candidate only after beating the current receptions model and recent-average baseline; otherwise retains the current model. Historical comparisons are not verified profitability.')
     if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
     if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
@@ -664,7 +696,12 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 research = load_prop_research(usable[0]['season'])
                 if experimental:
                     from nfl_workload_lab import load_experimental_research
-                    if chain:
+                    if participation:
+                        from receiver_role import load_role_research
+                        research=load_role_research(usable[0]['season'])
+                        st.dataframe(research['role_reports'],hide_index=True,use_container_width=True)
+                        for issue in research['role_feed_issues']:st.warning(issue)
+                    elif chain:
                         from reception_chain import load_chain_research
                         research=load_chain_research(usable[0]['season'])
                         st.dataframe(research['chain_reports'],hide_index=True,use_container_width=True)
