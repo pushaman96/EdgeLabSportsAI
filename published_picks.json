@@ -661,6 +661,45 @@
         "Evidence explanation": "Forecast: 125.3 rushing yards. Compared quote: Over 90.5 at -114 (FanDuel). Current roster team: KC; current-team games: 4; Current team matches history. Expected workload: 21.75 carries. Estimated win chance 60.9% versus 53.3% needed to break even; estimated gap 7.6 percentage points. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
       "season_type": "Regular season"
+    },
+    {
+      "id": "1b3894a6f677a88f24ab",
+      "sport": "NFL",
+      "event_id": "401873005",
+      "game": "Buffalo Bills at Las Vegas Raiders",
+      "player": "Josh Allen",
+      "category": "Passing attempts",
+      "direction": "Under",
+      "line": 30.5,
+      "odds": -106.0,
+      "probability": 0.584,
+      "sportsbook": "DraftKings",
+      "model": "NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration",
+      "strategy": "Original",
+      "published_utc": "2026-10-16T22:57:13.836682+00:00",
+      "starts_utc": "2026-10-18T20:25:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 28.48,
+      "reason": "5 recent games; expected 28.5 opportunities; opponent historical passing attempts allowed: 99% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+      "projected_count": 28.5,
+      "base_model": "NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration",
+      "raw_probability": 0.58435,
+      "feedback_version": null,
+      "feedback_status": "Collecting evidence \u2014 original probability retained",
+      "forecast_context": {
+        "Opportunity type": "Passing attempts",
+        "Workload method": "Boosted tree and weighted ensemble",
+        "Efficiency method": "Eight-game efficiency",
+        "Current roster team": "BUF",
+        "Current-team games": 5,
+        "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
+        "Evidence explanation": "Forecast: 28.5 passing attempts. Compared quote: Under 30.5 at -106 (DraftKings). Current roster team: BUF; current-team games: 5; Current team matches history. Expected workload: 28.48 passing attempts. Estimated win chance 58.4% versus 51.5% needed to break even; estimated gap 6.9 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 34.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
+      },
+      "season_type": "Regular season"
     }
   ]
 }
