@@ -238,6 +238,8 @@ def render_workload_lab():
     render_boosted_opportunities()
     from reception_chain import render_reception_chain
     render_reception_chain()
+    from receiver_role import render_receiver_role
+    render_receiver_role()
     st.write('Test how well the program forecasts pass attempts, carries and receiving targets before trying changes on the prop Watch list.')
     st.caption('Uses free nflverse statistics. This button spends no sportsbook credits. Models use earlier weeks only. Five workload variants are selected using 2024; 2025 is the held-out test. Current-season results are reported separately and may be too sparse to support conclusions.')
     if st.button('Run / refresh workload tests',key='nfl_run_workload_lab'):
