@@ -18,7 +18,7 @@ def restore_records(payload):
     clean=[];seen=set()
     for original in imported:
         r=dict(original)
-        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
+        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
         if r['strategy'] not in ('Original','Cushion','Manual'):raise ValueError('Invalid strategy.')
         r['odds']=float(r['odds'])
         if not math.isfinite(r['odds']) or abs(r['odds'])<100:raise ValueError('Invalid price.')
@@ -43,7 +43,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if now>=utc(start):raise ValueError('Publish before kickoff.')
     if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900:raise ValueError('Refresh the quote before publishing.')
     category=row['Category']
-    if row['Decision']=='Pass' or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
+    if row['Decision']=='Pass' or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
     line=None if category=='Moneyline' else float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100 if row.get('Estimated win %') is not None else None
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
@@ -73,14 +73,14 @@ def grade_record(record,data):
     for team in data.get('boxscore',{}).get('players',[]):
         for group in team.get('statistics',[]):
             nba=r.get('sport')=='NBA'
-            if not nba and group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving','Receptions':'receiving','Passing attempts':'passing','Rushing attempts':'rushing'}.get(r['category']):continue
+            if not nba and group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving','Receptions':'receiving','Passing attempts':'passing','Passing interceptions':'passing','Rushing attempts':'rushing'}.get(r['category']):continue
             labels=group.get('labels',[])
             for entry in group.get('athletes',[]):
                 if entry.get('athlete',{}).get('displayName')==r['player']:
                     stats=dict(zip(labels,entry.get('stats',[])))
                     label={'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}.get(r['category'],'YDS')
                     if not nba:
-                        label={'Receptions':'REC','Passing attempts':'C/ATT','Rushing attempts':'CAR'}.get(r['category'],label)
+                        label={'Receptions':'REC','Passing attempts':'C/ATT','Passing interceptions':'INT','Rushing attempts':'CAR'}.get(r['category'],label)
                     if label in stats:
                         value=str(stats[label])
                         if label=='C/ATT':value=value.split('/')[-1]
