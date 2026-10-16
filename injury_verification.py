@@ -95,7 +95,7 @@ def render_matchup_screen(scoreboard,home_code,away_code):
         report=reports.get((home.get('displayName'),away.get('displayName')))
         if report:
             if report['eligible']:st.info(report['reason'])
-            else:st.warning('PASS — matchup probability is incomplete. '+report['reason'])
+            else:st.warning('Injury warning — historical Elo does not account for these availability changes. '+report['reason'])
             rows=[dict(item,Team=s['team']) for s in report['teams'] for item in s['reported_injuries']]
             if rows:st.dataframe(rows,hide_index=True,use_container_width=True)
             st.caption('Injury source updated: '+str(report['source_updated'])+'; verified: '+report['checked_utc']+'. No numerical injury adjustment has been validated.')
