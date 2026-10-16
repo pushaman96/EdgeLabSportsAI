@@ -242,6 +242,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
     starts = datetime.fromisoformat(event['commence_time'].replace('Z','+00:00'))
     matching = [g for g in research['schedule'] if context and int(g['season']) == context['season'] and g['game_type'] == 'REG' and {g['home_team'],g['away_team']} == {ALIASES.get(context[s].get('abbreviation'),context[s].get('abbreviation')) for s in ('home','away')} and g['gameday'] == context['date'].isoformat()]
     schedule = matching[0] if len(matching) == 1 else None
+    arrival_cache={}
     from interception_model import estimate as interception_estimate, validation as interception_validation
     interception_report = interception_validation(research['players'],research['teams'])
     supported = dict(MARKETS, player_pass_interceptions=('Passing interceptions',))
@@ -293,9 +294,20 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 team = ALIASES.get(context[side]['abbreviation'],context[side]['abbreviation'])
                 opponent_side = 'away' if side == 'home' else 'home'
                 opponent = ALIASES.get(context[opponent_side]['abbreviation'],context[opponent_side]['abbreviation'])
-                ids = {r['player_id'] for r in research['players'] if r['season'] == context['season'] and r['team'] == team and name_key(r['player_display_name']) == key}
-                if len(ids) != 1:
-                    row['Reason'] = 'No unique current-season player-stat match.';continue
+                from trade_awareness import player_context,transition_reason
+                trade,trade_error=player_context(row['Player'],team,context['season'],int(schedule['week']),research['players'])
+                if not trade:
+                    row['Reason']=trade_error;continue
+                row.update({k:v for k,v in trade.items() if k!='player_id'})
+                ids={trade['player_id']}
+                if team not in arrival_cache:
+                    from trade_awareness import new_teammates
+                    arrival_cache[team]=new_teammates([p['name'] for p in rosters.get(team_name,[])],team,context['season'],int(schedule['week']),research['players'])
+                arrivals=[n for n in arrival_cache[team] if name_key(n)!=key]
+                if arrivals:row['New teammates — role uncertainty']=', '.join(arrivals)
+                trade_error=transition_reason(trade)
+                if trade_error:
+                    row['Reason']=trade_error;continue
                 interception = market['key']=='player_pass_interceptions'
                 if interception and line != .5:
                     row['Reason']='Interception model supports only Over/Under 0.5; other thresholds not validated.';continue
@@ -420,6 +432,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Decision'] = 'Watch — experimental'
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Confirm lineup/weather."
     for row in rows:
+        if row.get('New teammates — role uncertainty'):
+            row['Reason']+=' New teammates with limited team history: '+row['New teammates — role uncertainty']+'. Target/carry redistribution is not quantified; previous shares may change.'
         if row.get('Snap coverage'):
             row['Reason']+=f" Expected targets {row.get('Expected opportunities')}; snap coverage {row['Snap coverage']}; selected snap effect weight {row['Snap effect weight']}. Routes unavailable."
         row['Evidence explanation']=evidence_explanation(row)
@@ -433,6 +447,7 @@ def evidence_explanation(row):
         return 'Not evaluated: '+reason+' This does not predict an Over or Under.'
     probability=num(row.get('Estimated win %'));breakeven=num(row.get('Break-even %'))
     text=f"Forecast: {projected:g} {row.get('Category','').lower()}. Compared quote: {row.get('Selection')} {row.get('Line')} at {row.get('Odds')} ({row.get('Sportsbook')}). "
+    if row.get('Roster/history status'):text+=f"Current roster team: {row['Current roster team']}; current-team games: {row['Current-team games']}; {row['Roster/history status']}. "
     volume=num(row.get('Expected opportunities'))
     if volume is not None:text+=f"Expected workload: {volume:g} {row.get('Opportunity type','opportunities').lower()}. "
     if probability is not None and breakeven is not None:
@@ -769,7 +784,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
     table=watch if picks_only else display
     if table:st.dataframe(table,hide_index=True,use_container_width=True)
-    rejected=[{key:r.get(key) for key in ('Player','Category','Research summary','Forecast lean','Forecast projection','Compared direction','Compared line','Compared sportsbook','Compared odds','Compared direction win %','Compared break-even %','Compared edge (pp)','Reason')} for r in display if r['Decision']=='Pass']
+    rejected=[{key:r.get(key) for key in ('Player','Category','Current roster team','Latest historical team','Current-team games','Roster/history status','Research summary','Forecast lean','Forecast projection','Compared direction','Compared line','Compared sportsbook','Compared odds','Compared direction win %','Compared break-even %','Compared edge (pp)','Reason')} for r in display if r['Decision']=='Pass']
     if rejected:
         with st.expander('Why other player props did not qualify'):
             st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
