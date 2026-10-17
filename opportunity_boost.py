@@ -1,3 +1,4 @@
+from automatic_reports import autosave_report, load_report
 """Chronological boosted-tree opportunity forecasts. No automatic pick promotion."""
 import math
 import statistics
@@ -113,4 +114,5 @@ def render_boosted_opportunities():
         import csv,io
         if result['details']:
             output=io.StringIO();writer=csv.DictWriter(output,fieldnames=list(result['details'][0]));writer.writeheader();writer.writerows(result['details'])
-            st.download_button('Download boosted opportunity forecasts',output.getvalue(),file_name='boosted_opportunity_forecasts.csv',mime='text/csv',key='boosted_opportunity_download')
+            autosave_report('Download boosted opportunity forecasts',output.getvalue(),file_name='boosted_opportunity_forecasts.csv',mime='text/csv',key='boosted_opportunity_download')
+
