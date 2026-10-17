@@ -38,6 +38,20 @@ def matchup(defense,offense):
     if d is None or o is None:return None
     return .5*(d+o)/100*offense['Average dropbacks']
 
+def display_profiles(data):
+    """Round presentation only; retain precise rates for matchup calculations."""
+    rows=[]
+    for profile in data.values():
+        row=dict(profile)
+        for key,value in row.items():
+            if isinstance(value,(int,float)) and not isinstance(value,bool):
+                if key.endswith('%'):
+                    row[key]=f'{value:.0f}%'
+                elif isinstance(value,float):
+                    row[key]=round(value,1)
+        rows.append(row)
+    return rows
+
 def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
     import streamlit as st
     from nfl_prop_model import csv_url, SCHEDULE_URL
@@ -79,7 +93,7 @@ def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
             autosave_report('Team sack research',json.dumps({'season':season,'asof':str(asof),'rows':slate},sort_keys=True),file_name=f'nfl_team_sack_research_{season}.json',mime='application/json')
         st.caption('More sacks allowed can raise the estimate, especially against a productive pass rush. Quarterback play, quick throws and game flow also matter; sacks allowed are a team protection measure, not an individual blocker grade. Blank estimates mean fewer than four usable games.')
         with st.expander('Explore protection statistics and the calculation'):
-            st.dataframe(list(data.values()),hide_index=True,use_container_width=True)
+            st.dataframe(display_profiles(data),hide_index=True,use_container_width=True)
             names=sorted(data)
             defense=st.selectbox('Defense to examine',names,key=prefix+'_sack_defense')
             offense=st.selectbox('Opposing offense to examine',[n for n in names if n!=defense],key=prefix+'_sack_offense')
