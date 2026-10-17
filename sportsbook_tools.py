@@ -1,3 +1,4 @@
+from team_emblems import render_team_table
 """Reported sportsbook prices and optional The Odds API connection."""
 import math
 from datetime import datetime, timezone
@@ -92,7 +93,7 @@ def render_prop_market_board(events,books,sport,key_prefix):
     shown=[r for r in rows if r['Category'] in selected]
     search=st.text_input('Find a player or team',key=key_prefix+'_search').strip().lower()
     if search:shown=[r for r in shown if search in r['Player/team'].lower() or search in r['Game'].lower()]
-    if shown:st.dataframe(shown,hide_index=True,use_container_width=True)
+    if shown:render_team_table(shown,hide_index=True,use_container_width=True, sport=sport)
     else:st.info('No entries match these filters.')
     st.caption('Solo tackles and tackles + assists are different markets. Sacks may be credited in half-sacks. The odds imply a break-even rate, not a researched player probability. Rushing/receiving prices remain visible even when the forecast stays on Pass.')
 
@@ -228,7 +229,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     if source.startswith('ESPN'):
         rows=espn_lines(scoreboard)
         st.caption('Source: ESPN sportsbook feed. Uses reported close quotes; the feed does not supply quote update times. These are not verified live prices. Refresh live data reloads the scoreboard.')
-        if rows:st.dataframe(rows,hide_index=True,use_container_width=True)
+        if rows:render_team_table(rows,hide_index=True,use_container_width=True, sport=sport)
         else:st.info(f'ESPN has no sportsbook prices for these {sport} games.')
         st.info('Select Multiple sportsbooks & props to compare books and load player props. That connection requires a data-provider API key.')
         return
@@ -267,7 +268,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if not selected_books:st.info('Select at least one sportsbook.');return
         filtered=[dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in selected_books]) for event in events]
         with st.expander('View sportsbook game prices'):
-            st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
+            render_team_table(bookmaker_rows(filtered),hide_index=True,use_container_width=True, sport=sport)
         if sport=='NBA':render_nba_paper_quotes(filtered,selected_books,'nba_moneyline_paper')
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
         st.subheader('Player props and additional game markets')
@@ -318,7 +319,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     else:render_nba_paper_quotes(loaded_events,selected_books,'nba_all_props_paper')
                     with st.expander('View all sportsbook prices — not recommendations'):
                         st.caption('Raw market quotes include both Over and Under. Use the analyzed shortlist above for an experimental paper direction or Pass.')
-                        st.dataframe(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True)
+                        render_team_table(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True, sport=sport)
                 else:st.info('No prop data loaded. Check coverage and the warnings above.')
         else:
             action_label='Load selected props & analyze' if sport=='NFL' else 'Load selected prop markets'
@@ -340,7 +341,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     else:render_nba_paper_quotes([prop_saved[4]['data']],selected_books,'nba_single_props_paper')
                     with st.expander('View all sportsbook prices — not recommendations'):
                         st.caption('Both sides are shown here as available bets, not picks. The analyzed shortlist is above.')
-                        st.dataframe(props,hide_index=True,use_container_width=True)
+                        render_team_table(props,hide_index=True,use_container_width=True, sport=sport)
         if sport=='NFL':
             if use_preset:st.session_state['quick_team_sacks_loaded']=True
             if st.session_state.get('quick_team_sacks_loaded'):
@@ -357,7 +358,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             st.session_state['moneyline_history_candidates']=(str(selected_date),tuple(selected_books),reviews,datetime.now(timezone.utc).isoformat(),sport)
         if st.session_state.get('moneyline_injury_notes'):
             with st.expander('Moneyline injury verification — both teams'):
-                st.dataframe(st.session_state['moneyline_injury_notes'],hide_index=True,use_container_width=True)
+                render_team_table(st.session_state['moneyline_injury_notes'],hide_index=True,use_container_width=True, sport=sport)
         saved_reviews=st.session_state.get('moneyline_history_candidates')
         if saved_reviews and saved_reviews[:2]==(str(selected_date),tuple(selected_books)) and len(saved_reviews)>4 and saved_reviews[4]==sport:
             reviews=saved_reviews[2]
@@ -373,7 +374,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 for row in reviews:
                     row['Decision'] = 'Watch — experimental'
                     row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
-                st.dataframe(reviews,hide_index=True,use_container_width=True)
+                render_team_table(reviews,hide_index=True,use_container_width=True, sport=sport)
                 records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
             else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
@@ -381,6 +382,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
+
 
 
 
