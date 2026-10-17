@@ -120,6 +120,10 @@ def grade_all(records,fetch=None):
 
 def render_history(sport='NFL'):
     import streamlit as st
+    from app_view import is_research
+    if not is_research():
+        from dashboard_history import render_public_history
+        return render_public_history(sport,LEDGER)
     st.divider();st.header('Published pick history and results')
     from research_feeds import render_research_feeds
     render_research_feeds(sport)
