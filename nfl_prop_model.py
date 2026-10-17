@@ -1,3 +1,5 @@
+from team_emblems import render_team_table
+from pick_readiness import render_source_status
 from automatic_reports import autosave_report, load_report
 """NFL prop research: 2024 fit, 2025 historical development, future paper testing.
 No historical sportsbook prop prices are inferred from box scores.
@@ -300,6 +302,11 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if not trade:
                     row['Reason']=trade_error;continue
                 row.update({k:v for k,v in trade.items() if k!='player_id'})
+                prior=[r for r in research['players'] if r.get('player_id')==trade['player_id'] and (r['season'],r['week'])<(context['season'],int(schedule['week']))]
+                history_ids={r.get('game_id') for r in prior}
+                history_dates=[g['gameday'] for g in research['schedule'] if g.get('game_id') in history_ids and g.get('gameday')]
+                row.update({'Statistics retrieved UTC':research.get('retrieved'),'Injury source updated UTC':injuries.get('source_updated'),'Injury retrieved UTC':injuries.get('retrieved'),'Roster checked UTC':now.isoformat(),'Player history through':max(history_dates) if history_dates else None})
+
                 ids={trade['player_id']}
                 if team not in arrival_cache:
                     from trade_awareness import new_teammates
@@ -678,10 +685,10 @@ def render_cushion_tracker(watch,starts):
                     item[label+' result']=result
                     odds=float(r[pricekey]);item[label+' return per $1']=round((odds/100 if odds>0 else 100/abs(odds)) if result=='Win' else -1 if result=='Loss' else 0,3) if result!='Pending' else None
                 results.append(item)
-            st.dataframe(results,hide_index=True,use_container_width=True)
+            render_team_table(results,hide_index=True,use_container_width=True, sport='NFL')
             buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
             autosave_report('Download cushion tracking CSV',buffer.getvalue(),file_name='kamikaze_picks_passing_cushion.csv',mime='text/csv',key='cushion_download')
-            st.caption('Results are manually entered. Returns compare $1 straight selections, excluding fees; combo/parlay payouts are not inferred. Download and restore the CSV to preserve records between sessions.')
+            st.caption('Results are manually entered. Returns compare $1 straight selections, excluding fees; combo/parlay payouts are not inferred. Report snapshots save automatically when permanent storage is configured. Check any save warnings.')
 
 
 def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze=False):
@@ -695,12 +702,13 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     boosted=mode.startswith('Boosted')
     chain=mode.startswith('Team targets')
     participation=mode.startswith('Receiving participation')
-    if participation:st.info('Participation paper candidate: target share and snap-share changes feed receiving yards and receptions. Uses a candidate only when it beats the incumbent and baseline in development. Missing snaps have a neutral effect; routes, injury effects and weather are not quantified.')
-    if chain:st.info('Linked receptions candidate: team passing attempts → player target share → catch probability. Uses the candidate only after beating the current receptions model and recent-average baseline; otherwise retains the current model. Historical comparisons are not verified profitability.')
-    if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
-    if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
-    if boosted:st.info('Boosted paper candidate: passing attempts and receiving targets use team/opponent workload, player share, snap participation and role trends. Passing/receiving yardage and passing-attempt props use a candidate only when it beats the baseline and current v2 on comparable historical games; other cases retain the existing opportunity model. Historical gaps may use three consecutive recent games when supported. Current roster, injury, quote and schedule checks remain required.')
-    if experimental and not boosted:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
+    with st.expander('Forecast coverage, model details and limitations'):
+        if participation:st.info('Participation paper candidate: target share and snap-share changes feed receiving yards and receptions. Uses a candidate only when it beats the incumbent and baseline in development. Missing snaps have a neutral effect; routes, injury effects and weather are not quantified.')
+        if chain:st.info('Linked receptions candidate: team passing attempts → player target share → catch probability. Uses the candidate only after beating the current receptions model and recent-average baseline; otherwise retains the current model. Historical comparisons are not verified profitability.')
+        if experimental:st.info('Paper experiment: improved workload and stabilized efficiency. The 2025 comparison informed development; it is not independent validation. Probabilities and profitability are unverified. Save this model’s picks separately before kickoff.')
+        if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
+        if boosted:st.info('Boosted paper candidate: passing attempts and receiving targets use team/opponent workload, player share, snap participation and role trends. Passing/receiving yardage and passing-attempt props use a candidate only when it beats the baseline and current v2 on comparable historical games; other cases retain the existing opportunity model. Historical gaps may use three consecutive recent games when supported. Current roster, injury, quote and schedule checks remain required.')
+        if experimental and not boosted:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
@@ -718,12 +726,12 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     if participation:
                         from receiver_role import load_role_research
                         research=load_role_research(usable[0]['season'])
-                        st.dataframe(research['role_reports'],hide_index=True,use_container_width=True)
+                        render_team_table(research['role_reports'],hide_index=True,use_container_width=True, sport='NFL')
                         for issue in research['role_feed_issues']:st.warning(issue)
                     elif chain:
                         from reception_chain import load_chain_research
                         research=load_chain_research(usable[0]['season'])
-                        st.dataframe(research['chain_reports'],hide_index=True,use_container_width=True)
+                        render_team_table(research['chain_reports'],hide_index=True,use_container_width=True, sport='NFL')
                     elif boosted:
                         from boosted_yardage import load_boosted_pick_research
                         research=load_boosted_pick_research(usable[0]['season'])
@@ -744,12 +752,13 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
-                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues}
+                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):
             st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
     saved = st.session_state.get('nfl_prop_analysis')
     if not saved or saved['key'] != cache_key:
         st.info('Click Analyze loaded player props. Analysis uses free statistics and does not request more sportsbook credits.');return
+    render_source_status(saved)
     # Recheck quote age on every display, rather than leaving an old shortlist actionable.
     now = datetime.now(timezone.utc)
     display = []
@@ -787,12 +796,12 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     st.write(f'**{len(watch)} unique experimental paper picks; {len(display)-len(watch)} player/category passes.**')
     picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
     table=watch if picks_only else display
-    if table:st.dataframe(table,hide_index=True,use_container_width=True)
+    if table:render_team_table(table,hide_index=True,use_container_width=True, sport='NFL')
     rejected=[{key:r.get(key) for key in ('Player','Category','Current roster team','Latest historical team','Current-team games','Roster/history status','Research summary','Forecast lean','Forecast projection','Compared direction','Compared line','Compared sportsbook','Compared odds','Compared direction win %','Compared break-even %','Compared edge (pp)','Reason')} for r in display if r['Decision']=='Pass']
     if rejected:
         with st.expander('Why other player props did not qualify'):
             st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
-            st.dataframe(rejected,hide_index=True,use_container_width=True)
+            render_team_table(rejected,hide_index=True,use_container_width=True, sport='NFL')
             st.caption('Forecast lean compares the central projection with the displayed line. The win probability belongs to the compared Over/Under direction and can differ from that central lean because of the forecast distribution. PASS rows are research only and are not saved as recommended picks. Missing data produces no reliable lean.')
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
     cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}))
@@ -810,7 +819,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
         st.subheader('Analyzed passing and receiving cushions')
         st.caption('Cushions follow the selected original direction. Rejected originals are compared only when no original qualifies; Pass rows are not recommendations. Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
-        st.dataframe(cushions,hide_index=True,use_container_width=True)
+        render_team_table(cushions,hide_index=True,use_container_width=True, sport='NFL')
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
         autosave_report('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
@@ -824,7 +833,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         else:
             st.info('No supported modeled props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
     with st.expander('Check the prop model test results'):
-        st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
+        render_team_table(saved['reports'],hide_index=True,use_container_width=True, sport='NFL')
         st.caption('2024 chooses forecast parameters and supplies errors. The opportunity experiment uses 2025 as development evidence; future saved picks provide the prospective test. The original report uses benchmark thresholds, not historical sportsbook prices. Missing/DNP rows are not assigned zero. Availability gates remain active, but injury impacts, weather and lineup changes were not backtested. Failed baseline or price checks remain Pass.')
         st.markdown('[Statistics source: nflverse](https://nflreadr.nflverse.com/reference/load_player_stats.html)')
     if display:
@@ -835,4 +844,5 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
 
