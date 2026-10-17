@@ -1,3 +1,4 @@
+from team_emblems import render_team_table
 from automatic_reports import autosave_report, load_report
 """NBA statistics and research tools for EdgeLab Sports AI."""
 import math
@@ -516,6 +517,11 @@ def load_nba_saved_history(end_year):
             "retrieved_at": snapshot["retrieved_at"],
             "extra_schedule_dates": snapshot.get("extra_schedule_dates", [])}
 
+def clear_nba_live_caches():
+    """Refresh live/stat feeds without discarding historical model caches."""
+    for function in (load_espn_nba_teams,load_espn_nba_players,load_nba_team_stats,load_nba_player_stats,load_nba_shooting,load_nba_injuries,load_nba_game_details):
+        function.clear()
+
 def clear_nba_caches():
     for function in (
         nba_saved_snapshot, load_espn_nba_teams, load_espn_nba_players,
@@ -584,7 +590,7 @@ def show_nba_season_validation(predictions, end_year):
     if not results:
         st.info("At least two completed seasons are needed for this comparison.")
         return
-    st.dataframe([{
+    render_team_table([{
         "Season": season_name(row["season"]), "Test games": row["games"],
         "Winner accuracy": f"{row['accuracy'] * 100:.1f}%",
         "Baseline accuracy": f"{row['baseline_accuracy'] * 100:.1f}%",
@@ -594,7 +600,7 @@ def show_nba_season_validation(predictions, end_year):
         "Adjustment improvement": f"{row['adjustment_gain']:+.6f}",
         "Adjustment strength": row["strength"],
         "Calibration season": season_name(row["season"] - 1),
-    } for row in results], hide_index=True, use_container_width=True)
+    } for row in results], hide_index=True, use_container_width=True, sport='NBA')
     beats_baseline = sum(row["brier"] < row["baseline_brier"] for row in results)
     helped = sum(row["adjustment_gain"] > 1e-12 for row in results)
     hurt = sum(row["adjustment_gain"] < -1e-12 for row in results)
@@ -610,12 +616,12 @@ def show_nba_season_validation(predictions, end_year):
         "establish future accuracy or betting profit."
     )
     with st.expander("View season calibration and evaluation dates"):
-        st.dataframe([{
+        render_team_table([{
             "Season": season_name(row["season"]),
             "Calibration games": row["calibration_games"],
             "Calibration start": row["calibration_first"], "Calibration end": row["calibration_last"],
             "Evaluation start": row["first_date"], "Evaluation end": row["last_date"],
-        } for row in results], hide_index=True, use_container_width=True)
+        } for row in results], hide_index=True, use_container_width=True, sport='NBA')
 
 
 def nba_recent_form_features(predictions):
@@ -706,7 +712,7 @@ def show_nba_recent_form_validation(predictions, end_year):
     if not results:
         st.info("At least two completed seasons are needed for the recent-form experiment.")
         return
-    st.dataframe([{
+    render_team_table([{
         "Season": season_name(row["season"]), "Test games": row["games"],
         "Original accuracy": f"{row['original_accuracy'] * 100:.1f}%",
         "With form accuracy": f"{row['form_accuracy'] * 100:.1f}%",
@@ -717,7 +723,7 @@ def show_nba_recent_form_validation(predictions, end_year):
         "Form weight": row["weight"],
         "Games with enough history": row["games_with_form"],
         "Training season": season_name(row["season"] - 1),
-    } for row in results], hide_index=True, use_container_width=True)
+    } for row in results], hide_index=True, use_container_width=True, sport='NBA')
     helped = sum(row["gain"] > 1e-12 for row in results)
     hurt = sum(row["gain"] < -1e-12 for row in results)
     games = sum(row["games"] for row in results)
@@ -832,7 +838,7 @@ def show_nba_rest_validation(predictions, end_year, extra_schedule_dates=()):
     if not results:
         st.info("At least two completed seasons are needed for the rest-days test.")
         return
-    st.dataframe([{
+    render_team_table([{
         "Season": season_name(row["season"]), "Test games": row["games"],
         "Original accuracy": f"{row['original_accuracy'] * 100:.1f}%",
         "With rest accuracy": f"{row['rest_accuracy'] * 100:.1f}%",
@@ -843,7 +849,7 @@ def show_nba_rest_validation(predictions, end_year, extra_schedule_dates=()):
         "Known rest games": row["rest_games"],
         "One team on back-to-back": row["back_advantage_games"],
         "Training season": season_name(row["season"] - 1),
-    } for row in results], hide_index=True, use_container_width=True)
+    } for row in results], hide_index=True, use_container_width=True, sport='NBA')
     helped = sum(row["gain"] > 1e-12 for row in results)
     hurt = sum(row["gain"] < -1e-12 for row in results)
     total = sum(row["games"] for row in results)
@@ -917,16 +923,16 @@ def show_nba_model(shared, end_year):
         adjustment = shared["test_probability_adjustment"](predictions)
         if research_view:
             st.subheader("NBA Backtest Results by Season")
-            st.dataframe(
+            render_team_table(
                 shared["get_season_backtest_rows"](test_games),
                 hide_index=True, use_container_width=True,
-            )
+             sport='NBA')
             st.caption("Season numbers are ending years. First/current seasons may be partial.")
             st.subheader("NBA Probability Calibration")
-            st.dataframe(
+            render_team_table(
                 shared["get_calibration_rows"](test_games),
                 hide_index=True, use_container_width=True,
-            )
+             sport='NBA')
             st.caption(
                 "Compare average predicted home win % with actual home win %. "
                 "Closer is better; small groups may fluctuate by chance."
@@ -966,7 +972,7 @@ def show_nba_model(shared, end_year):
             adjusted = shared["shrink_probability"](probability, adjustment["strength"])
             matchup[0]["Adjusted win %"] = round(adjusted * 100, 1)
             matchup[1]["Adjusted win %"] = round((1 - adjusted) * 100, 1)
-        st.dataframe(matchup, hide_index=True, use_container_width=True)
+        render_team_table(matchup, hide_index=True, use_container_width=True, sport='NBA')
         st.caption(
             "These estimates are for regular-season-style matchups, not a "
             "validated preseason model. Current injuries and stats below "
@@ -974,13 +980,13 @@ def show_nba_model(shared, end_year):
         )
         if research_view:
             st.subheader("Current NBA Model Team Ratings")
-            st.dataframe(
+            render_team_table(
                 [{"Team": team, "Elo rating": round(rating, 1)}
                  for team, rating in sorted(ratings.items(), key=lambda item: item[1], reverse=True)],
                 hide_index=True, use_container_width=True,
-            )
+             sport='NBA')
             with st.expander("View recent NBA historical test predictions"):
-                st.dataframe(test_games[-50:], hide_index=True, use_container_width=True)
+                render_team_table(test_games[-50:], hide_index=True, use_container_width=True, sport='NBA')
     except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
         st.warning(f"NBA historical model could not be loaded: {exc}")
         if history_source == "Live NBA.com connection":
@@ -1050,7 +1056,7 @@ def show_nba_statistics(end_year, player_container=None):
         with st.sidebar:
             st.subheader("NBA Team Strengths & Weaknesses")
             comparisons = team_comparison(selected, teams)
-            st.dataframe(comparisons, hide_index=True, use_container_width=True)
+            render_team_table(comparisons, hide_index=True, use_container_width=True, sport='NBA')
             strengths = [row["Statistic"] for row in comparisons if row["Assessment"] == "Above league average"]
             weaknesses = [row["Statistic"] for row in comparisons if row["Assessment"] == "Below league average"]
             st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
@@ -1066,9 +1072,9 @@ def show_nba_statistics(end_year, player_container=None):
                 zones = load_nba_shooting(season, type_name, "teams", use_saved)
                 zone = shooting_lookup(zones, "TEAM_ID").get(selected_id)
                 if zone:
-                    st.dataframe([{key: zone[key] for key in (
+                    render_team_table([{key: zone[key] for key in (
                         "TEAM_NAME", "Mid-range made", "Mid-range attempts", "Mid-range FG %",
-                    )}], hide_index=True, use_container_width=True)
+                    )}], hide_index=True, use_container_width=True, sport='NBA')
                 else:
                     st.info("No mid-range team shooting data available.")
             except (requests.exceptions.RequestException, ValueError, KeyError, TypeError) as exc:
@@ -1081,7 +1087,7 @@ def show_nba_statistics(end_year, player_container=None):
                     value = metric_value(team, key, is_percent)
                     row[label] = round(value, 2) if value is not None else None
                 rows.append(row)
-            st.dataframe(rows, hide_index=True, use_container_width=True)
+            render_team_table(rows, hide_index=True, use_container_width=True, sport='NBA')
         with player_container if player_container is not None else st.container():
             st.subheader("NBA Player Statistics & Shooting")
             if st.checkbox("Load players for selected NBA team", key="nba_players_open"):
@@ -1098,9 +1104,9 @@ def show_nba_statistics(end_year, player_container=None):
                                 player_zones = load_nba_shooting(season, type_name, "players", use_saved)
                             except (requests.exceptions.RequestException, ValueError, KeyError, TypeError):
                                 st.info("Mid-range data unavailable; other player stats remain available.")
-                display = player_display_rows(players, selected_id, player_zones)
+                display = [dict(row,Team=selected["TEAM_NAME"]) for row in player_display_rows(players, selected_id, player_zones)]
                 if display:
-                    st.dataframe(display, hide_index=True, use_container_width=True)
+                    render_team_table(display, hide_index=True, use_container_width=True, sport='NBA')
                 else:
                     st.info("No player stats available for this team and season type.")
                 st.caption(
@@ -1159,7 +1165,7 @@ def show_nba_injuries():
                 f"Source timestamp: {report['source_timestamp']}. Cached five minutes."
             )
             if rows:
-                st.dataframe(rows, hide_index=True, use_container_width=True)
+                render_team_table(rows, hide_index=True, use_container_width=True, sport='NBA')
             else:
                 st.info("No matching updates. This does not confirm that all players are healthy.")
             st.caption(
@@ -1205,7 +1211,7 @@ def show_nba_game_details(scoreboard, game_date, shared):
             event_weather = event.get("weather") or competition.get("weather") or {}
             rows = shared["get_espn_weather_rows"](event_weather, weather)
             if any(row["ESPN reported value"] != "Not provided" for row in rows):
-                st.dataframe(rows, hide_index=True, use_container_width=True)
+                render_team_table(rows, hide_index=True, use_container_width=True, sport='NBA')
                 st.caption("Values are reported by ESPN; this feed does not explicitly label the weather units.")
             else:
                 st.info("ESPN does not provide a weather report for this NBA game.")
@@ -1364,7 +1370,7 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
             if not new:
                 st.info("No eligible upcoming games on the selected sidebar date. Started games cannot be saved; unknown teams or season types are skipped.")
         if rows:
-            st.dataframe([{ "Game":row["Away"]+" at "+row["Home"], "Season type":row["Season type"], "Tip-off UTC":row["Tip-off UTC"], "Recorded UTC":row["Recorded UTC"], "Home win %":round(float(row["Original probability"])*100,1), "Adjusted home win %":round(float(row["Adjusted probability"])*100,1), "Model history through":row["Model history through"]} for row in rows], hide_index=True, use_container_width=True)
+            render_team_table([{ "Game":row["Away"]+" at "+row["Home"], "Season type":row["Season type"], "Tip-off UTC":row["Tip-off UTC"], "Recorded UTC":row["Recorded UTC"], "Home win %":round(float(row["Original probability"])*100,1), "Adjusted home win %":round(float(row["Adjusted probability"])*100,1), "Model history through":row["Model history through"]} for row in rows], hide_index=True, use_container_width=True, sport='NBA')
             autosave_report("Download saved NBA predictions", nba_tracker_csv(rows), file_name="edgelab_nba_predictions.csv", mime="text/csv", key="nba_tracker_download")
             if st.button("Check final scores & tracker accuracy", key="nba_tracker_grade"):
                 def check(row):
@@ -1380,9 +1386,9 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
                 for typ in sorted({r["Season type"] for r in graded}):
                     group = [r for r in graded if r["Season type"] == typ]
                     st.write(f"**{typ}: {len(group)} completed games**")
-                    st.dataframe([{"Winner accuracy":f"{sum(r['Correct'] for r in group)/len(group)*100:.1f}%", "Original Brier":round(sum(r['Original Brier'] for r in group)/len(group),4), "Adjusted Brier":round(sum(r['Adjusted Brier'] for r in group)/len(group),4), "Baseline accuracy":f"{sum(r['Baseline correct'] for r in group)/len(group)*100:.1f}%", "Baseline Brier":round(sum(r['Baseline Brier'] for r in group)/len(group),4)}], hide_index=True, use_container_width=True)
+                    render_team_table([{"Winner accuracy":f"{sum(r['Correct'] for r in group)/len(group)*100:.1f}%", "Original Brier":round(sum(r['Original Brier'] for r in group)/len(group),4), "Adjusted Brier":round(sum(r['Adjusted Brier'] for r in group)/len(group),4), "Baseline accuracy":f"{sum(r['Baseline correct'] for r in group)/len(group)*100:.1f}%", "Baseline Brier":round(sum(r['Baseline Brier'] for r in group)/len(group),4)}], hide_index=True, use_container_width=True, sport='NBA')
                 st.caption(f"{len(graded)}/{len(rows)} games graded. Pending or unavailable games are excluded from accuracy. Small samples are inconclusive.")
-                if graded:st.dataframe(graded, hide_index=True, use_container_width=True)
+                if graded:render_team_table(graded, hide_index=True, use_container_width=True, sport='NBA')
                 errors = [e for r,e in checked if e]
                 if errors:
                     with st.expander("Unavailable final scores"):st.write(errors)
@@ -1420,6 +1426,7 @@ def render_nba_tools(game_date, scoreboard, shared, statistics_tabs=None):
             show_nba_statistics(end_year, player_container=statistics_tabs[1])
     st.divider()
     show_nba_injuries()
+
 
 
 
