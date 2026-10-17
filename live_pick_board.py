@@ -40,7 +40,8 @@ def current_stat(record,data):
                 if parsed is not None:values.append(parsed)
     return values[0] if len(values)==1 else None
 
-def build_board(records,summaries,now=None):
+def build_board(records,summaries,now=None,team_assets=None):
+    from team_emblems import pick_team
     from pick_history import grade_record
     from saved_pick_explanation import short_reason
     now=now or datetime.now(timezone.utc);rows=[];seen=set();situation_cache={}
@@ -50,6 +51,9 @@ def build_board(records,summaries,now=None):
         row={'Player / team':record['player'],'Live stat':None,'Pick':record['direction']+(' '+str(record['line']) if record.get('line') is not None else ''),'Category':record['category'],'Live position':'Waiting for kickoff','Final result':'Pending','Game':record['game'],'Period / clock':'—','Score':'—','Difference vs line':None,'Frozen model probability %':round(100*record['probability'],1) if number(record.get('probability')) is not None else None,'Odds':record.get('odds'),'Sportsbook':record.get('sportsbook'),'Strategy':record.get('strategy','Original'),'Kickoff Pacific':utc(record['starts_utc']).astimezone(PACIFIC).strftime('%a %m/%d %I:%M %p'),'Data checked UTC':None,'Model':record.get('model'),'Pick ID':record.get('id')}
         row['Short reason']=short_reason(record)
         key=(record.get('sport','NFL'),str(record['event_id']));item=summaries.get(key)
+        valid_data=item.get('data') if item and str(item.get('data',{}).get('header',{}).get('id',''))==str(record['event_id']) else None
+        emblem=pick_team(record,valid_data,team_assets)
+        row={'Team logo':emblem.get('logo') if emblem else None,**row}
         # Even when the feed is down, retain previously verified final ledger grades.
         if record.get('result') in ('Win','Loss','Push'):
             row['Final result']=record['result'];row['Live position']='Final — saved grade'
@@ -137,9 +141,9 @@ def render_live_board(records,sport='NFL'):
     def panel():
         if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):cached_fetch.clear()
         summaries=collect_summaries(selected,cached_fetch)
-        rows=build_board(selected,summaries)
+        rows=build_board(selected,summaries,team_assets=st.session_state.get("team_emblems",{}))
         if rows:
-            st.dataframe(rows,hide_index=True,use_container_width=True,height=min(1000,max(200,35*(len(rows)+1))))
+            st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
             wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
             st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
             buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
@@ -148,6 +152,7 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
