@@ -860,23 +860,27 @@ def show_nba_rest_validation(predictions, end_year, extra_schedule_dates=()):
     )
 
 def show_nba_model(shared, end_year):
-    st.header("🏀 NBA Historical Prediction Model")
-    st.caption(
-        "Basic regular-season Elo research model. Preseason games and neutral-venue games without an identifiable home side are excluded. "
-        "It does not account for current injuries, player stats, rest, travel, "
-        "or sportsbook prices. K=20 and home advantage=55 are starting "
-        "settings, not tuned NBA parameters."
-    )
-    history_source = st.selectbox(
-        "NBA model history source", ["Saved NBA.com history", "Live NBA.com connection"],
-        key="nba_history_source",
-    )
-    if history_source == "Saved NBA.com history":
-        st.caption("Uses installed NBA.com game results without a live download. The retrieval time and last game date appear after loading. Saved history does not update automatically.")
-    if st.button("Load NBA model & backtest", key="nba_load_model"):
+    from app_view import is_research
+    research_view=is_research()
+    st.header("🏀 NBA Historical Prediction Model" if research_view else "NBA predictions & probability accuracy")
+    history_source="Saved NBA.com history"
+    if research_view:
+        st.caption(
+            "Basic regular-season Elo research model. Preseason games and neutral-venue games without an identifiable home side are excluded. "
+            "It does not account for current injuries, player stats, rest, travel, "
+            "or sportsbook prices. K=20 and home advantage=55 are starting "
+            "settings, not tuned NBA parameters."
+        )
+        history_source = st.selectbox(
+            "NBA model history source", ["Saved NBA.com history", "Live NBA.com connection"],
+            key="nba_history_source",
+        )
+        if history_source == "Saved NBA.com history":
+            st.caption("Uses installed NBA.com game results without a live download. The retrieval time and last game date appear after loading. Saved history does not update automatically.")
+    if st.button("Load NBA model & backtest" if research_view else "Load predictions and accuracy", key="nba_load_model"):
         st.session_state["nba_model_loaded"] = True
     if not st.session_state.get("nba_model_loaded"):
-        st.info("Click Load NBA model & backtest to retrieve historical NBA results.")
+        st.info("Load predictions and accuracy to view NBA matchup estimates.")
         return
     try:
         with st.spinner("Loading completed NBA games and building ratings..."):
@@ -888,8 +892,8 @@ def show_nba_model(shared, end_year):
                 games = load_nba_history(end_year)
             ratings, predictions = shared["build_elo_model"](games)
             summary, test_games = shared["get_backtest_summary"](predictions)
-        st.success(f"Loaded {len(games):,} completed NBA regular-season games.")
-        st.subheader("NBA Historical Backtest")
+        if research_view:st.success(f"Loaded {len(games):,} completed NBA regular-season games.")
+        st.subheader("NBA Historical Backtest" if research_view else "Historical model probability accuracy")
         if not summary:
             st.info("No test games available.")
             return
@@ -909,41 +913,43 @@ def show_nba_model(shared, end_year):
             "from before each game date. The baseline uses the historical "
             "home-result average. Lower Brier is better."
         )
-        st.subheader("NBA Backtest Results by Season")
-        st.dataframe(
-            shared["get_season_backtest_rows"](test_games),
-            hide_index=True, use_container_width=True,
-        )
-        st.caption("Season numbers are ending years. First/current seasons may be partial.")
-        st.subheader("NBA Probability Calibration")
-        st.dataframe(
-            shared["get_calibration_rows"](test_games),
-            hide_index=True, use_container_width=True,
-        )
-        st.caption(
-            "Compare average predicted home win % with actual home win %. "
-            "Closer is better; small groups may fluctuate by chance."
-        )
         adjustment = shared["test_probability_adjustment"](predictions)
-        st.subheader("NBA Probability Adjustment Test")
-        if adjustment:
-            cols = st.columns(3)
-            cols[0].metric("Original Brier (same games)", f"{adjustment['original_brier']:.4f}")
-            cols[1].metric("Adjusted Brier", f"{adjustment['adjusted_brier']:.4f}")
-            cols[2].metric("Brier improvement", f"{adjustment['improvement']:+.4f}")
-            st.caption(
-                f"Strength {adjustment['strength']:.2f}; learned from "
-                f"{adjustment['calibration_first']} to {adjustment['calibration_last']}. "
-                f"Evaluated on {adjustment['evaluation_games']:,} games from "
-                f"{adjustment['evaluation_first']} to {adjustment['evaluation_last']}. "
-                "Whole dates stay together. Positive improvement is better. "
-                "The adjustment is experimental and may not improve later games; "
-                "it preserves the favorite and winner accuracy."
+        if research_view:
+            st.subheader("NBA Backtest Results by Season")
+            st.dataframe(
+                shared["get_season_backtest_rows"](test_games),
+                hide_index=True, use_container_width=True,
             )
-        show_nba_season_validation(predictions, end_year)
-        show_nba_recent_form_validation(predictions, end_year)
-        extra_dates = saved_history.get("extra_schedule_dates", []) if history_source == "Saved NBA.com history" else []
-        show_nba_rest_validation(predictions, end_year, extra_dates)
+            st.caption("Season numbers are ending years. First/current seasons may be partial.")
+            st.subheader("NBA Probability Calibration")
+            st.dataframe(
+                shared["get_calibration_rows"](test_games),
+                hide_index=True, use_container_width=True,
+            )
+            st.caption(
+                "Compare average predicted home win % with actual home win %. "
+                "Closer is better; small groups may fluctuate by chance."
+            )
+            adjustment = shared["test_probability_adjustment"](predictions)
+            st.subheader("NBA Probability Adjustment Test")
+            if adjustment:
+                cols = st.columns(3)
+                cols[0].metric("Original Brier (same games)", f"{adjustment['original_brier']:.4f}")
+                cols[1].metric("Adjusted Brier", f"{adjustment['adjusted_brier']:.4f}")
+                cols[2].metric("Brier improvement", f"{adjustment['improvement']:+.4f}")
+                st.caption(
+                    f"Strength {adjustment['strength']:.2f}; learned from "
+                    f"{adjustment['calibration_first']} to {adjustment['calibration_last']}. "
+                    f"Evaluated on {adjustment['evaluation_games']:,} games from "
+                    f"{adjustment['evaluation_first']} to {adjustment['evaluation_last']}. "
+                    "Whole dates stay together. Positive improvement is better. "
+                    "The adjustment is experimental and may not improve later games; "
+                    "it preserves the favorite and winner accuracy."
+                )
+            show_nba_season_validation(predictions, end_year)
+            show_nba_recent_form_validation(predictions, end_year)
+            extra_dates = saved_history.get("extra_schedule_dates", []) if history_source == "Saved NBA.com history" else []
+            show_nba_rest_validation(predictions, end_year, extra_dates)
         st.subheader("Predict an NBA Matchup")
         teams = sorted(ratings)
         home = st.selectbox("NBA home team", teams, key="nba_home")
@@ -965,14 +971,15 @@ def show_nba_model(shared, end_year):
             "validated preseason model. Current injuries and stats below "
             "do not affect these percentages."
         )
-        st.subheader("Current NBA Model Team Ratings")
-        st.dataframe(
-            [{"Team": team, "Elo rating": round(rating, 1)}
-             for team, rating in sorted(ratings.items(), key=lambda item: item[1], reverse=True)],
-            hide_index=True, use_container_width=True,
-        )
-        with st.expander("View recent NBA historical test predictions"):
-            st.dataframe(test_games[-50:], hide_index=True, use_container_width=True)
+        if research_view:
+            st.subheader("Current NBA Model Team Ratings")
+            st.dataframe(
+                [{"Team": team, "Elo rating": round(rating, 1)}
+                 for team, rating in sorted(ratings.items(), key=lambda item: item[1], reverse=True)],
+                hide_index=True, use_container_width=True,
+            )
+            with st.expander("View recent NBA historical test predictions"):
+                st.dataframe(test_games[-50:], hide_index=True, use_container_width=True)
     except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
         st.warning(f"NBA historical model could not be loaded: {exc}")
         if history_source == "Live NBA.com connection":
@@ -1381,13 +1388,15 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
         st.warning(f"NBA tracker could not complete this action: {exc}")
 
 def render_nba_tools(game_date, scoreboard, shared):
+    from app_view import is_research
+    research_view=is_research()
     end_year = current_season_end()
     st.divider()
-    show_nba_game_details(scoreboard, game_date, shared)
+    if research_view:show_nba_game_details(scoreboard, game_date, shared)
     st.divider()
     show_nba_model(shared, end_year)
     st.divider()
-    show_nba_prediction_tracker(scoreboard, end_year, shared)
+    if research_view:show_nba_prediction_tracker(scoreboard, end_year, shared)
     st.divider()
     show_nba_statistics(end_year)
     st.divider()
