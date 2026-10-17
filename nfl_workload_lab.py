@@ -1,3 +1,4 @@
+from automatic_reports import autosave_report, load_report
 """Pregame workload experiments. Lab results do not change the betting shortlist."""
 import csv
 import io
@@ -263,13 +264,13 @@ def render_workload_lab():
         st.dataframe(development['reports'],hide_index=True,use_container_width=True)
         if development['rows']:
             output=io.StringIO();writer=csv.DictWriter(output,fieldnames=list(development['rows'][0]));writer.writeheader();writer.writerows(development['rows'])
-            st.download_button('Download forecast development results',output.getvalue(),file_name='kamikaze_picks_forecast_development.csv',mime='text/csv',key='forecast_development_download')
+            autosave_report('Download forecast development results',output.getvalue(),file_name='kamikaze_picks_forecast_development.csv',mime='text/csv',key='forecast_development_download')
     if saved.get('opportunity_reports'):
         st.subheader('Opportunity-based yardage experiment')
         st.caption('Tests carries/targets/attempts × historical yards per opportunity, optionally blended with recent yardage. Workload variant and yardage parameters are selected on 2024 only. The 2025 season has already informed development, so it is not a fresh independent test. Current-season results are separate. Injury impacts and game-script features are not included yet.')
         st.dataframe(saved['opportunity_reports'],hide_index=True,use_container_width=True)
         buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(saved['opportunity_reports'][0]));writer.writeheader();writer.writerows(saved['opportunity_reports'])
-        st.download_button('Download opportunity yardage comparison',buffer.getvalue(),file_name='kamikaze_picks_opportunity_yardage.csv',mime='text/csv',key='opportunity_yardage_download')
+        autosave_report('Download opportunity yardage comparison',buffer.getvalue(),file_name='kamikaze_picks_opportunity_yardage.csv',mime='text/csv',key='opportunity_yardage_download')
     if saved['reports']:st.dataframe(saved['reports'],hide_index=True,use_container_width=True)
     else:st.info('Not enough eligible completed games for this test.')
     st.info('These results do not change Watch/Pass picks. Better workload accuracy alone does not establish a profitable prop model. Actual-price paper records, probability calibration, and more games are still required.')
@@ -286,7 +287,7 @@ def render_workload_lab():
         if name!='All players':selected=[r for r in selected if r['Player']==name]
         st.dataframe(selected,hide_index=True,use_container_width=True)
         buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(saved['rows'][0]));writer.writeheader();writer.writerows(saved['rows'])
-        st.download_button('Download workload test results',buffer.getvalue(),file_name='kamikaze_picks_workload_tests.csv',mime='text/csv',key='workload_lab_download')
+        autosave_report('Download workload test results',buffer.getvalue(),file_name='kamikaze_picks_workload_tests.csv',mime='text/csv',key='workload_lab_download')
     st.caption(f"Statistics retrieved: {saved['retrieved']}. Interval limits use the 10th/90th percentiles of 2024 errors; the measured coverage may differ from 80%. They are not guarantees. Evaluation covers players with observed game rows and stable recent usage; missing/DNP rows are not assigned zero. Injuries, weather and sportsbook spread/total expectations are not modeled in this lab yet.")
 
 
@@ -344,4 +345,5 @@ def render_returning_player_lab():
     st.info('No automatic promotion: test forecast accuracy, availability and actual-price probability calibration before enabling this fallback. Missing/DNP rows are not graded as zero.')
     if result['rows']:
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=list(result['rows'][0]));writer.writeheader();writer.writerows(result['rows'])
-        st.download_button('Download limited-history forecast results',output.getvalue(),file_name='kamikaze_limited_history_tests.csv',mime='text/csv',key='returning_player_download')
+        autosave_report('Download limited-history forecast results',output.getvalue(),file_name='kamikaze_limited_history_tests.csv',mime='text/csv',key='returning_player_download')
+
