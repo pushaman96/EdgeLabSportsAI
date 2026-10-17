@@ -78,6 +78,8 @@ def get_standings(sport_path):
 
 
 def show_games(data, sport_path):
+    from team_emblems import remember_teams, render_team_score
+    remember_teams(data, "NBA" if "nba" in sport_path else "NFL")
     events = data.get("events", [])
 
     if not events:
@@ -116,8 +118,8 @@ def show_games(data, sport_path):
         with st.container(border=True):
             st.subheader(f"{away_team} at {home_team}")
             col1, col2, col3 = st.columns(3)
-            col1.metric(away_team, away_score)
-            col2.metric(home_team, home_score)
+            render_team_score(col1, away.get("team", {}), away_score)
+            render_team_score(col2, home.get("team", {}), home_score)
             col3.write("**Status**")
             col3.write(status)
 
@@ -1962,5 +1964,6 @@ st.caption(
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
+
 
 
