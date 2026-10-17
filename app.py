@@ -1800,7 +1800,7 @@ if sport == "NFL":
                                     if position_rows:
                                         render_team_table(
                                             position_rows, hide_index=True,
-                                            use_container_width=True,
+                                            team=player_team_name, use_container_width=True,
                                          sport=sport)
                                     else:
                                         st.info("No statistics available for this position.")
