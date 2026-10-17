@@ -149,9 +149,14 @@ def render_live_board(records,sport='NFL'):
             buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
             None
         else:st.info('No saved picks match the selected date and strategies.')
-    panel()
+    tracking_tab, cards_tab = st.tabs(['Live tracking table','Pick cards'])
+    with tracking_tab:panel()
+    with cards_tab:
+        from pick_cards import render_pick_cards
+        render_pick_cards(selected,sport)
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
