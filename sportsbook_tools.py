@@ -125,9 +125,23 @@ def odds_request(api_key,sport,event_id='',markets='h2h,spreads,totals'):
     except requests.exceptions.RequestException:
         raise OddsSourceError('The odds source did not respond. Try again later.') from None
     if response.status_code != 200:
-        messages={401:'API key not accepted. Check your key.',403:'This request is not available for this API key.',429:'Rate or usage limit reached. Check your provider account.'}
-        error = OddsSourceError(messages.get(response.status_code,f'Odds source returned HTTP {response.status_code}. Check market coverage and your account.'))
+        try:
+            payload=response.json()
+            code=str(payload.get('error_code') or payload.get('code') or '') if isinstance(payload,dict) else ''
+        except ValueError:code=''
+        remaining=response.headers.get('x-requests-remaining','Not supplied')
+        messages={401:'Provider could not authorize the request. Check subscription status and remaining credits before changing your key.',403:'This request is not available for this API subscription.',429:'Provider rate limit reached. Wait before retrying.'}
+        codes={'OUT_OF_USAGE_CREDITS':'The Odds API credits are exhausted. NFL and NBA share this quota. Wait for the quota reset or review your subscription; changing sport does not restore credits.',
+               'INVALID_KEY':'The Odds API reports an invalid key. Check the key privately in app settings.',
+               'MISSING_KEY':'No API key was supplied. Enter it privately in app settings.',
+               'DEACTIVATED_KEY':'The Odds API reports this key is deactivated. Check subscription status.',
+               'EXCEEDED_FREQ_LIMIT':'Requests were sent too quickly. Wait before retrying.'}
+        message=codes.get(code,messages.get(response.status_code,f'Odds source returned HTTP {response.status_code}. Check market coverage and subscription access.'))
+        if code not in ('INVALID_KEY','MISSING_KEY','DEACTIVATED_KEY') and numeric(remaining)==0:message=codes['OUT_OF_USAGE_CREDITS']
+        error = OddsSourceError(message)
         error.status_code = response.status_code
+        error.provider_code=code
+        error.remaining=remaining
         raise error
     try:data=response.json()
     except ValueError:raise OddsSourceError('Odds source returned unreadable data.') from None
@@ -137,6 +151,7 @@ def odds_request(api_key,sport,event_id='',markets='h2h,spreads,totals'):
 def load_all_prop_lines(api_key, sport, events, markets, now=None):
     now = now or datetime.now(timezone.utc)
     fetched, failures = [], []
+    reported_remaining='Not supplied'
     for event in events:
         if datetime.fromisoformat(event['commence_time'].replace('Z','+00:00')) <= now:
             continue
@@ -148,13 +163,18 @@ def load_all_prop_lines(api_key, sport, events, markets, now=None):
                 failures.append(game+': no matching prop data returned.')
                 continue
             fetched.append(result)
+            reported_remaining=result['remaining']
+            if numeric(reported_remaining)==0:
+                failures.append('All shared NFL/NBA odds credits have been used. Remaining games were skipped; already loaded prices remain visible.')
+                break
         except OddsSourceError as exc:
             failures.append(game+': '+str(exc))
-            if getattr(exc,'status_code',None) in (401,403,429):
+            if getattr(exc,'remaining','Not supplied')!='Not supplied':reported_remaining=exc.remaining
+            if getattr(exc,'status_code',None) in (401,403,429) or getattr(exc,'provider_code',None)=='OUT_OF_USAGE_CREDITS':
                 failures.append('Stopped remaining requests because the key, account access, or usage limit needs attention.')
                 break
     latest = max(fetched,key=lambda r:r['retrieved']) if fetched else None
-    return {'results':fetched,'failures':failures,'remaining':latest['remaining'] if latest else 'Not supplied','loaded':datetime.now(timezone.utc).isoformat()}
+    return {'results':fetched,'failures':failures,'remaining':reported_remaining,'loaded':datetime.now(timezone.utc).isoformat()}
 
 def bookmaker_rows(events,books=(),props=False):
     rows=[]
@@ -279,7 +299,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                         st.caption('Both sides are shown here as available bets, not picks. The analyzed shortlist is above.')
                         st.dataframe(props,hide_index=True,use_container_width=True)
         st.subheader(f'{sport} game shortlist — experimental moneylines')
-        st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, a quote no more than 15 minutes old, and regular-season model history no more than 30 days old. Current rosters and recent injury reports are checked for both teams. Unavailable or uncertain players are shown as warnings and do not block candidates. Elo has no validated numerical injury adjustment; defensive and offensive-line effects remain unmodeled.')
+        st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, quotes no more than 15 minutes old, and regular-season history no more than 30 days old. '+('NFL roster and injury checks are warnings only; injury, defensive and offensive-line effects are not numerically modeled.' if sport=='NFL' else 'NBA preseason games do not qualify for this regular-season model. NBA player props currently show market prices and manual paper tracking, not analyzed prop recommendations. NBA injury effects are not numerically modeled.'))
         if st.button('Compare model with current moneylines',key='sportsbook_research'):
             models=model_loader(sport,scoreboard)
             injury_notes=[{'Game':away+' at '+home,'Status':'Availability screen passed' if context.get('injury_verified') else 'Injury warning — not numerically adjusted','Reason':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc')} for (home,away),context in models.items()] if sport=='NFL' else []
