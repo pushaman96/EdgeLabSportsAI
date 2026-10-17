@@ -1,3 +1,4 @@
+from automatic_reports import autosave_report, load_report
 """Paper-only parlay builder and downloadable hypothetical ticket history."""
 import copy
 import json
@@ -173,20 +174,21 @@ def render_paper_parlay(sport, selected_date=None):
         st.caption('Use the sportsbook’s final combined quote for an exact payout. Same-game legs, promotions, rounding, pushes and voids can change the price. No model win probabilities are multiplied here.')
         fresh=all(quote_is_fresh(l) for l in legs)
         if not fresh:st.warning('Some legs have started or their loaded prices are stale. Refresh the prices and rebuild those legs before saving.')
-        history=st.session_state.setdefault('paper_parlay_tickets',[])
+        history=st.session_state.setdefault('paper_parlay_tickets',parse_history((load_report('kamikaze_picks_paper_parlays.json') or '{"schema":1,"tickets":[]}').encode()))
         if st.button('Save paper parlay before kickoff',disabled=not fresh or len(history)>=100,key='paper_save_'+sport):
             ticket={'id':uuid.uuid4().hex,'sport':sport,'recorded':datetime.now(timezone.utc).isoformat(),'stake':stake,'decimal':price,'quoted':quoted,'legs':copy.deepcopy(legs)}
-            history.append(ticket);st.success('Paper ticket saved for this session. Download your history below to keep it.')
+            history.append(ticket);st.success('Paper ticket created. Automatic permanent saving runs below.')
     except ValueError as exc:st.info(str(exc))
     render_paper_history(sport)
 
 def render_paper_history(sport):
+    st.session_state.setdefault('paper_parlay_tickets',parse_history((load_report('kamikaze_picks_paper_parlays.json') or '{"schema":1,"tickets":[]}').encode()))
     st.subheader('Paper parlay history')
     uploaded=st.file_uploader('Restore downloaded paper parlay history',type=['json'],key='paper_history_upload_'+sport)
     if uploaded is not None and st.button('Import paper history',key='paper_import_'+sport):
         try:
             imported=parse_history(uploaded.getvalue())
-            history=st.session_state.setdefault('paper_parlay_tickets',[])
+            history=st.session_state.setdefault('paper_parlay_tickets',parse_history((load_report('kamikaze_picks_paper_parlays.json') or '{"schema":1,"tickets":[]}').encode()))
             existing={t['id'] for t in history}
             new=[t for t in imported if t['id'] not in existing]
             if len(history)+len(new)>100:raise ValueError('Maximum 100 saved paper tickets.')
@@ -207,5 +209,6 @@ def render_paper_history(sport):
             graded=settle(item)
             rows.append({'Recorded UTC':item['recorded'],'Legs':len(item['legs']),'Stake ($)':item['stake'],'Result':graded['status'],'Paper profit/loss ($)':round(graded['profit'],2) if graded['profit'] is not None else None})
         st.dataframe(rows,hide_index=True,use_container_width=True)
-    if history:st.download_button('Download paper parlay history',json.dumps({'schema':1,'tickets':history},indent=2),file_name='kamikaze_picks_paper_parlays.json',mime='application/json',key='paper_history_download_'+sport)
-    st.caption('Manually grade each leg from official results and sportsbook settlement rules. This is an editable paper record, not verified betting evidence. Download after saving or grading; session history can disappear when you leave or the app restarts.')
+    if history:autosave_report('Download paper parlay history',json.dumps({'schema':1,'tickets':history},indent=2),file_name='kamikaze_picks_paper_parlays.json',mime='application/json',key='paper_history_download_'+sport)
+    st.caption('Manually grade each leg from official results and sportsbook settlement rules. This is an editable paper record, not verified betting evidence. Ticket history and grading changes save automatically when permanent storage is configured. Check any save warnings.')
+
