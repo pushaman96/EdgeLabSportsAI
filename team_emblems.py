@@ -71,7 +71,7 @@ def directory_index(sport):
 def enrich_rows(rows,sport,index,team=None):
     """Return display copies; never add image URLs to model inputs or saved records."""
     output=[]
-    fields=('Team','TEAM_NAME','TEAM_ABBREVIATION','Current roster team','Home team','Away team','Defense','Opposing offense','Team to research')
+    fields=('Team','TEAM_NAME','TEAM_ABBREVIATION','Current roster team','Home team','Away team','Defense','Opposing offense','Team to research','Player/team','Player / team','Saved team')
     for original in rows:
         row=dict(original);images={}
         for field in fields:
