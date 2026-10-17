@@ -136,6 +136,7 @@ def render_live_board(records,sport='NFL'):
             wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
             st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
             buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
-            st.download_button('Download current live pick board',buffer.getvalue(),file_name='kamikaze_live_pick_board.csv',mime='text/csv',key='pick_board_export_'+sport)
+            None
         else:st.info('No saved picks match the selected date and strategies.')
     panel()
+
