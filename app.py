@@ -1303,54 +1303,58 @@ with activity_tab:
 # -------------------------
 
 st.divider()
-st.subheader(f"{sport} Team Statistics & Standings")
-st.caption(
-    "Latest standings returned by ESPN, not necessarily standings "
-    "as of the selected game date."
-)
+st.subheader(f"{sport} Standings, Team & Player Statistics")
+standings_tab, team_statistics_tab, player_statistics_tab = st.tabs(["Standings", "Team statistics", "Player statistics"])
+with player_statistics_tab:
+    st.caption("Team and season settings are shared with the Team statistics tab.")
+with standings_tab:
+    st.caption(
+        "Latest standings returned by ESPN, not necessarily standings "
+        "as of the selected game date."
+    )
 
-try:
-    with st.spinner(f"Loading {sport} standings..."):
-        standings_data = get_standings(SPORTS[sport])
-        teams = parse_standings(standings_data)
+    try:
+        with st.spinner(f"Loading {sport} standings..."):
+            standings_data = get_standings(SPORTS[sport])
+            teams = parse_standings(standings_data)
 
-    if not teams:
-        st.warning(
-            "ESPN did not return recognizable standings. Try refreshing."
-        )
-    else:
-        team_names = ["All teams"] + sorted(
-            row["Team"] for row in teams
-        )
-        selected_team = st.selectbox(
-            "Find a team's record",
-            team_names,
-        )
+        if not teams:
+            st.warning(
+                "ESPN did not return recognizable standings. Try refreshing."
+            )
+        else:
+            team_names = ["All teams"] + sorted(
+                row["Team"] for row in teams
+            )
+            selected_team = st.selectbox(
+                "Find a team's record",
+                team_names,
+            )
 
-        filtered_teams = (
-            teams if selected_team == "All teams"
-            else [row for row in teams if row["Team"] == selected_team]
-        )
+            filtered_teams = (
+                teams if selected_team == "All teams"
+                else [row for row in teams if row["Team"] == selected_team]
+            )
 
-        st.dataframe(
-            filtered_teams,
-            hide_index=True,
-            use_container_width=True,
-        )
+            st.dataframe(
+                filtered_teams,
+                hide_index=True,
+                use_container_width=True,
+            )
 
-        if selected_team != "All teams":
-            record = filtered_teams[0]
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Wins", record["Wins"])
-            col2.metric("Losses", record["Losses"])
-            col3.metric("Win %", record["Win %"])
+            if selected_team != "All teams":
+                record = filtered_teams[0]
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Wins", record["Wins"])
+                col2.metric("Losses", record["Losses"])
+                col3.metric("Win %", record["Win %"])
 
-except requests.exceptions.Timeout:
-    st.error("Standings took too long to respond. Try again.")
-except requests.exceptions.RequestException as exc:
-    st.error(f"Could not retrieve standings: {exc}")
-except (ValueError, TypeError, KeyError, AttributeError) as exc:
-    st.error(f"Could not read standings: {exc}")
+    except requests.exceptions.Timeout:
+        st.error("Standings took too long to respond. Try again.")
+    except requests.exceptions.RequestException as exc:
+        st.error(f"Could not retrieve standings: {exc}")
+    except (ValueError, TypeError, KeyError, AttributeError) as exc:
+        st.error(f"Could not read standings: {exc}")
 
 
 # -------------------------
@@ -1655,11 +1659,8 @@ if sport == "NFL":
                 "They are model estimates, not live odds or guarantees."
             )
 
-        st.divider()
-        st.subheader("NFL Team & Player Statistics")
         available_seasons = sorted({game["season"] for game in history}, reverse=True)
-        nfl_team_stats_tab, nfl_player_stats_tab = st.tabs(["Team statistics", "Player statistics"])
-        with nfl_team_stats_tab:
+        with team_statistics_tab:
             st.caption(
                 "Season-to-date regular-season statistics for all 32 NFL teams. "
                 "These provide matchup context and do not change Elo probabilities. "
@@ -1735,7 +1736,7 @@ if sport == "NFL":
                 else:
                     st.info("Click Load team statistics to retrieve the selected season.")
 
-        with nfl_player_stats_tab:
+        with player_statistics_tab:
             st.caption(
                 "Browse any NFL team. Regular-season player totals provide context "
                 "and do not change matchup probabilities."
@@ -1950,6 +1951,7 @@ else:
             "format_game_time": format_game_time,
             "get_espn_weather_rows": get_espn_weather_rows,
         },
+        statistics_tabs=(team_statistics_tab, player_statistics_tab),
     )
 
 st.divider()
@@ -1958,3 +1960,4 @@ st.caption(
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
+
