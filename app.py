@@ -1661,6 +1661,8 @@ if sport == "NFL":
 
         available_seasons = sorted({game["season"] for game in history}, reverse=True)
         with team_statistics_tab:
+            from pass_protection import render_pass_protection
+            render_pass_protection(max(game["season"] for game in history), selected_date)
             st.caption(
                 "Season-to-date regular-season statistics for all 32 NFL teams. "
                 "These provide matchup context and do not change Elo probabilities. "
@@ -1960,4 +1962,5 @@ st.caption(
     "calculations are for research and educational purposes. "
     "No prediction guarantees a result or profit."
 )
+
 
