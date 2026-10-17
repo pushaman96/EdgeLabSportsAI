@@ -1656,86 +1656,86 @@ if sport == "NFL":
             )
 
         st.divider()
-        st.subheader("NFL Team Statistics")
-        st.caption(
-            "Season-to-date regular-season statistics for all 32 NFL teams. "
-            "These provide matchup context and do not change Elo probabilities. "
-            "Season totals are current, not historical snapshots for the sidebar date."
-        )
+        st.subheader("NFL Team & Player Statistics")
         available_seasons = sorted({game["season"] for game in history}, reverse=True)
-        stats_season = st.selectbox(
-            "Team statistics season", available_seasons[:5], key="team_stats_season",
-        )
-        with st.expander("View offense, defense, and league comparisons"):
-            if st.button("Load team statistics", key="load_team_stats"):
-                st.session_state["team_stats_loaded_season"] = stats_season
-            if st.session_state.get("team_stats_loaded_season") == stats_season:
-                try:
-                    with st.spinner("Loading all NFL teams..."):
-                        team_stats = load_all_nfl_team_statistics(stats_season)
-                    league_rows = team_stats["rows"]
-                    st.caption(
-                        f"Source: ESPN. Retrieved {team_stats['fetched_at']}. "
-                        f"Available teams: {len(league_rows)}/{team_stats['expected']}. "
-                        "Cached for up to one hour; Refresh live data clears the cache."
-                    )
-                    if len(league_rows) < 32:
-                        st.warning(
-                            "Some team data is unavailable. Averages and ranks "
-                            "compare only available teams."
+        nfl_team_stats_tab, nfl_player_stats_tab = st.tabs(["Team statistics", "Player statistics"])
+        with nfl_team_stats_tab:
+            st.caption(
+                "Season-to-date regular-season statistics for all 32 NFL teams. "
+                "These provide matchup context and do not change Elo probabilities. "
+                "Season totals are current, not historical snapshots for the sidebar date."
+            )
+            stats_season = st.selectbox(
+                "Team statistics season", available_seasons[:5], key="team_stats_season",
+            )
+            with st.expander("View offense, defense, and league comparisons"):
+                if st.button("Load team statistics", key="load_team_stats"):
+                    st.session_state["team_stats_loaded_season"] = stats_season
+                if st.session_state.get("team_stats_loaded_season") == stats_season:
+                    try:
+                        with st.spinner("Loading all NFL teams..."):
+                            team_stats = load_all_nfl_team_statistics(stats_season)
+                        league_rows = team_stats["rows"]
+                        st.caption(
+                            f"Source: ESPN. Retrieved {team_stats['fetched_at']}. "
+                            f"Available teams: {len(league_rows)}/{team_stats['expected']}. "
+                            "Cached for up to one hour; Refresh live data clears the cache."
                         )
-                    if league_rows:
-                        with st.sidebar:
-                            st.subheader("NFL Strengths & Weaknesses")
-                            names = [row["Team"] for row in league_rows]
-                            selected_name = st.selectbox(
-                                "Choose any NFL team", names, key="team_strength_selection",
+                        if len(league_rows) < 32:
+                            st.warning(
+                                "Some team data is unavailable. Averages and ranks "
+                                "compare only available teams."
                             )
-                            selected_stats = next(
-                                row for row in league_rows if row["Team"] == selected_name
-                            )
-                            st.write(
-                                f"**{selected_name}: {selected_stats['Games']} games**"
-                            )
-                            comparisons = get_team_comparison_rows(selected_stats, league_rows)
-                            st.dataframe(comparisons, hide_index=True, use_container_width=True)
-                            strengths = [
-                                row["Statistic"] for row in comparisons
-                                if row["Assessment"] == "Above league average"
-                            ]
-                            weaknesses = [
-                                row["Statistic"] for row in comparisons
-                                if row["Assessment"] == "Below league average"
-                            ]
-                            st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
-                            st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
-                            st.caption(
-                                "Rank 1 is best for the listed metric. Lower yards and "
-                                "points allowed are better on defense. League averages "
-                                "are unweighted averages of available team values. "
-                                "These comparisons do not adjust for opponent strength "
-                                "or game situation; yards alone do not establish quality. "
-                                "Points include all team scoring, including defense and "
-                                "special teams. Early-season samples may be small."
-                            )
-                        if st.checkbox("Show all NFL team statistics", value=True, key="show_all_team_stats"):
-                            st.dataframe(
-                                league_rows, hide_index=True, use_container_width=True,
-                            )
-                    else:
-                        st.info("No team statistics are available for this season.")
-                    if team_stats["errors"]:
-                        if st.checkbox("Show unavailable team data", key="show_team_stats_errors"):
-                            for error in team_stats["errors"]:
-                                st.write(error)
-                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
-                    st.warning(f"Team statistics could not be loaded: {exc}")
-            else:
-                st.info("Click Load team statistics to retrieve the selected season.")
+                        if league_rows:
+                            with st.sidebar:
+                                st.subheader("NFL Strengths & Weaknesses")
+                                names = [row["Team"] for row in league_rows]
+                                selected_name = st.selectbox(
+                                    "Choose any NFL team", names, key="team_strength_selection",
+                                )
+                                selected_stats = next(
+                                    row for row in league_rows if row["Team"] == selected_name
+                                )
+                                st.write(
+                                    f"**{selected_name}: {selected_stats['Games']} games**"
+                                )
+                                comparisons = get_team_comparison_rows(selected_stats, league_rows)
+                                st.dataframe(comparisons, hide_index=True, use_container_width=True)
+                                strengths = [
+                                    row["Statistic"] for row in comparisons
+                                    if row["Assessment"] == "Above league average"
+                                ]
+                                weaknesses = [
+                                    row["Statistic"] for row in comparisons
+                                    if row["Assessment"] == "Below league average"
+                                ]
+                                st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
+                                st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
+                                st.caption(
+                                    "Rank 1 is best for the listed metric. Lower yards and "
+                                    "points allowed are better on defense. League averages "
+                                    "are unweighted averages of available team values. "
+                                    "These comparisons do not adjust for opponent strength "
+                                    "or game situation; yards alone do not establish quality. "
+                                    "Points include all team scoring, including defense and "
+                                    "special teams. Early-season samples may be small."
+                                )
+                            if st.checkbox("Show all NFL team statistics", value=True, key="show_all_team_stats"):
+                                st.dataframe(
+                                    league_rows, hide_index=True, use_container_width=True,
+                                )
+                        else:
+                            st.info("No team statistics are available for this season.")
+                        if team_stats["errors"]:
+                            if st.checkbox("Show unavailable team data", key="show_team_stats_errors"):
+                                for error in team_stats["errors"]:
+                                    st.write(error)
+                    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                        st.warning(f"Team statistics could not be loaded: {exc}")
+                else:
+                    st.info("Click Load team statistics to retrieve the selected season.")
 
-        with st.sidebar:
-            st.divider()
-            st.subheader("NFL Player Statistics: QB, RB & WR")
+        with nfl_player_stats_tab:
             st.caption(
                 "Browse any NFL team. Regular-season player totals provide context "
                 "and do not change matchup probabilities."
