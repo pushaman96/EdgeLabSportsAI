@@ -41,8 +41,8 @@ def matchup(defense,offense):
 def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
     import streamlit as st
     from nfl_prop_model import csv_url, SCHEDULE_URL
-    st.subheader('Sack pressure & pass protection')
-    st.caption('Free nflverse completed-game statistics. Sack rates reflect the entire offense and defense, including quarterback decisions and scheme; they are not individual offensive-line grades.')
+    st.subheader('Team sack estimates')
+    st.caption('Estimated sacks for each defense, combining its sack production with the opposing offense’s pass-protection record. Experimental estimates, not guaranteed totals or betting recommendations.')
     if st.button('Load defense & offensive-line context — 0 odds credits',key=prefix+'_load_sack_context'):st.session_state[prefix+'_sack_context_loaded']=True
     if not auto_load and not st.session_state.get(prefix+'_sack_context_loaded'):return
     @st.cache_data(ttl=21600,show_spinner=False)
@@ -59,19 +59,25 @@ def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
                 defender=aliases.get(defender,defender);opponent=aliases.get(opponent,opponent)
                 if defender not in data or opponent not in data:continue
                 estimate=matchup(data[defender],data[opponent])
-                slate.append({'Defense':defender,'Opposing offense':opponent,'Team sack research estimate':round(estimate,2) if estimate is not None else None,'Defensive sack rate %':data[defender]['Defensive sack rate %'],'Opponent sacks allowed / game':data[opponent]['Sacks allowed / game'],'Forecast status':'Research only — no validated team-sack betting model or sportsbook line'})
+                defensive_games=data[defender]['Defensive games matched']
+                defensive_average=data[defender]['Defensive sacks']/defensive_games if defensive_games else None
+                allowed=data[opponent]['Sacks allowed / game']
+                slate.append({'Defense':defender,'Opposing offense':opponent,'Estimated team sacks':round(estimate,1) if estimate is not None else None,'Why':f"Defense averages {defensive_average:.1f} sacks/game; opponent allows {allowed:.1f}." if defensive_average is not None else 'Not enough matched game history.'})
         if slate:
-            st.write('**Team defensive sacks — selected-date matchups**')
+            st.write('**Estimated team sacks for the selected games**')
             st.dataframe(slate,hide_index=True,use_container_width=True)
             from automatic_reports import autosave_report
             import json
             autosave_report('Team sack research',json.dumps({'season':season,'asof':str(asof),'rows':slate},sort_keys=True),file_name=f'nfl_team_sack_research_{season}.json',mime='application/json')
-        st.dataframe(list(data.values()),hide_index=True,use_container_width=True)
-        names=sorted(data)
-        defense=st.selectbox('Defense to examine',names,key=prefix+'_sack_defense')
-        offense=st.selectbox('Opposing offense to examine',[n for n in names if n!=defense],key=prefix+'_sack_offense')
-        estimate=matchup(data[defense],data[offense])
-        if estimate is None:st.info('At least four matched defensive games and four offensive games are needed for the research comparison.')
-        else:st.metric('Research sack reference — not a betting prediction',f'{estimate:.2f}')
-        st.caption('Reference = average of defensive sack rate and opponent sack-allowed rate × opponent average dropbacks. This simple comparison has not passed a sportsbook-line backtest, provides no Over/Under recommendation or win probability, and does not change current picks. A weak protection record can raise sack risk, but quick throws, scrambling, line injuries and game script can change it. Pressures, time to throw and individual blocker grades are not supplied here. Data excludes games on or after the sidebar date.')
+        st.caption('More sacks allowed can raise the estimate, especially against a productive pass rush. Quarterback play, quick throws and game flow also matter; sacks allowed are a team protection measure, not an individual blocker grade. Blank estimates mean fewer than four usable games.')
+        with st.expander('Explore protection statistics and the calculation'):
+            st.dataframe(list(data.values()),hide_index=True,use_container_width=True)
+            names=sorted(data)
+            defense=st.selectbox('Defense to examine',names,key=prefix+'_sack_defense')
+            offense=st.selectbox('Opposing offense to examine',[n for n in names if n!=defense],key=prefix+'_sack_offense')
+            estimate=matchup(data[defense],data[offense])
+            if estimate is None:st.info('At least four matched defensive games and four offensive games are needed for the research comparison.')
+            else:st.metric('Research sack reference — not a betting prediction',f'{estimate:.2f}')
+            st.caption('Reference = average of defensive sack rate and opponent sack-allowed rate × opponent average dropbacks. This simple comparison has not passed a sportsbook-line backtest, provides no Over/Under recommendation or win probability, and does not change current picks. A weak protection record can raise sack risk, but quick throws, scrambling, line injuries and game script can change it. Pressures, time to throw and individual blocker grades are not supplied here. Data excludes games on or after the sidebar date.')
     except Exception:st.warning('Sack and protection data could not be loaded. Missing data is not interpreted as zero; retry later.')
+
