@@ -13,6 +13,7 @@ class CardTests(unittest.TestCase):
         st=types.ModuleType('streamlit');st.session_state={};writes=[]
         st.columns=lambda n:[Box() for _ in range(n if isinstance(n,int) else len(n))]
         st.selectbox=lambda label,options,**k:options[0]
+        st.markdown=lambda *a,**k:None
         st.write=lambda value:writes.append(value);st.caption=lambda *a:None;st.info=lambda *a:None;st.expander=lambda *a,**k:Box()
         records=[dict(id=str(i),player='Player '+str(i),category='Passing yards',direction='Under',line=200.5,probability=.6,odds=-110,strategy='Original') for i in range(28)]
         with patch.dict(sys.modules,{'streamlit':st}):render_pick_cards(records,'NFL')
