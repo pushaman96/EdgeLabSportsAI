@@ -1656,7 +1656,7 @@ if sport == "NFL":
             )
 
         st.divider()
-        st.subheader("NFL Team Strengths & Weaknesses")
+        st.subheader("NFL Team Statistics")
         st.caption(
             "Season-to-date regular-season statistics for all 32 NFL teams. "
             "These provide matchup context and do not change Elo probabilities. "
@@ -1685,38 +1685,40 @@ if sport == "NFL":
                             "compare only available teams."
                         )
                     if league_rows:
-                        names = [row["Team"] for row in league_rows]
-                        selected_name = st.selectbox(
-                            "Choose any NFL team", names, key="team_strength_selection",
-                        )
-                        selected_stats = next(
-                            row for row in league_rows if row["Team"] == selected_name
-                        )
-                        st.write(
-                            f"**{selected_name}: {selected_stats['Games']} games**"
-                        )
-                        comparisons = get_team_comparison_rows(selected_stats, league_rows)
-                        st.dataframe(comparisons, hide_index=True, use_container_width=True)
-                        strengths = [
-                            row["Statistic"] for row in comparisons
-                            if row["Assessment"] == "Above league average"
-                        ]
-                        weaknesses = [
-                            row["Statistic"] for row in comparisons
-                            if row["Assessment"] == "Below league average"
-                        ]
-                        st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
-                        st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
-                        st.caption(
-                            "Rank 1 is best for the listed metric. Lower yards and "
-                            "points allowed are better on defense. League averages "
-                            "are unweighted averages of available team values. "
-                            "These comparisons do not adjust for opponent strength "
-                            "or game situation; yards alone do not establish quality. "
-                            "Points include all team scoring, including defense and "
-                            "special teams. Early-season samples may be small."
-                        )
-                        if st.checkbox("Compare all NFL teams", key="show_all_team_stats"):
+                        with st.sidebar:
+                            st.subheader("NFL Strengths & Weaknesses")
+                            names = [row["Team"] for row in league_rows]
+                            selected_name = st.selectbox(
+                                "Choose any NFL team", names, key="team_strength_selection",
+                            )
+                            selected_stats = next(
+                                row for row in league_rows if row["Team"] == selected_name
+                            )
+                            st.write(
+                                f"**{selected_name}: {selected_stats['Games']} games**"
+                            )
+                            comparisons = get_team_comparison_rows(selected_stats, league_rows)
+                            st.dataframe(comparisons, hide_index=True, use_container_width=True)
+                            strengths = [
+                                row["Statistic"] for row in comparisons
+                                if row["Assessment"] == "Above league average"
+                            ]
+                            weaknesses = [
+                                row["Statistic"] for row in comparisons
+                                if row["Assessment"] == "Below league average"
+                            ]
+                            st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
+                            st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
+                            st.caption(
+                                "Rank 1 is best for the listed metric. Lower yards and "
+                                "points allowed are better on defense. League averages "
+                                "are unweighted averages of available team values. "
+                                "These comparisons do not adjust for opponent strength "
+                                "or game situation; yards alone do not establish quality. "
+                                "Points include all team scoring, including defense and "
+                                "special teams. Early-season samples may be small."
+                            )
+                        if st.checkbox("Show all NFL team statistics", value=True, key="show_all_team_stats"):
                             st.dataframe(
                                 league_rows, hide_index=True, use_container_width=True,
                             )
@@ -1811,96 +1813,95 @@ if sport == "NFL":
                     except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
                         st.warning(f"Player statistics could not be loaded: {exc}")
 
-        with st.sidebar:
-            st.divider()
-            st.subheader("NFL Injury & Availability Updates")
-            st.caption(
-                "Latest ESPN player statuses for all NFL teams. These are current "
-                "updates, not reports as of the sidebar date or selected statistics "
-                "season. They do not change model probabilities."
-            )
-            with st.expander("View current injury and availability reports"):
-                if st.button("Load / refresh injury updates", key="refresh_injury_updates"):
-                    load_nfl_injury_updates.clear()
-                    st.session_state["show_injury_updates"] = True
-                if st.session_state.get("show_injury_updates"):
-                    try:
-                        with st.spinner("Loading NFL injury updates..."):
-                            injury_report = load_nfl_injury_updates()
-                            injury_teams = load_nfl_player_team_directory()
-                        st.caption(
-                            f"Source: ESPN. Retrieved {injury_report['fetched_at']}. "
-                            f"Source timestamp: {injury_report['source_timestamp']}. "
-                            f"Source season: {injury_report['season']}. "
-                            "Data is cached for up to five minutes."
-                        )
-                        injury_team_options = sorted(
-                            {team["name"] for team in injury_teams}
-                            | set(injury_report["teams"])
-                        )
-                        injury_team = st.selectbox(
-                            "Injury report team", ["All teams"] + injury_team_options,
-                            key="injury_team_selection",
-                        )
-                        include_active = st.checkbox(
-                            "Include Active status updates", key="include_active_injury_updates",
-                            help="The source can list cleared players and other availability news with Active status.",
-                        )
+        st.divider()
+        st.subheader("NFL Injury & Availability Updates")
+        st.caption(
+            "Latest ESPN player statuses for all NFL teams. These are current "
+            "updates, not reports as of the sidebar date or selected statistics "
+            "season. They do not change model probabilities."
+        )
+        with st.expander("View current injury and availability reports"):
+            if st.button("Load / refresh injury updates", key="refresh_injury_updates"):
+                load_nfl_injury_updates.clear()
+                st.session_state["show_injury_updates"] = True
+            if st.session_state.get("show_injury_updates"):
+                try:
+                    with st.spinner("Loading NFL injury updates..."):
+                        injury_report = load_nfl_injury_updates()
+                        injury_teams = load_nfl_player_team_directory()
+                    st.caption(
+                        f"Source: ESPN. Retrieved {injury_report['fetched_at']}. "
+                        f"Source timestamp: {injury_report['source_timestamp']}. "
+                        f"Source season: {injury_report['season']}. "
+                        "Data is cached for up to five minutes."
+                    )
+                    injury_team_options = sorted(
+                        {team["name"] for team in injury_teams}
+                        | set(injury_report["teams"])
+                    )
+                    injury_team = st.selectbox(
+                        "Injury report team", ["All teams"] + injury_team_options,
+                        key="injury_team_selection",
+                    )
+                    include_active = st.checkbox(
+                        "Include Active status updates", key="include_active_injury_updates",
+                        help="The source can list cleared players and other availability news with Active status.",
+                    )
+                    injury_rows = [
+                        row for row in injury_report["rows"]
+                        if (injury_team == "All teams" or row["Team"] == injury_team)
+                        and (include_active or row["Status"].lower() != "active")
+                    ]
+                    status_options = sorted(
+                        {"Probable", "Questionable", "Doubtful", "Out", "Injured Reserve"}
+                        | {row["Status"] for row in injury_rows}
+                    )
+                    status_filter = st.multiselect(
+                        "Filter injury status",
+                        status_options,
+                        key="injury_status_selection",
+                        help="Leave empty to show all available statuses. Probable appears only when explicitly reported by ESPN; no status is inferred.",
+                    )
+                    if status_filter:
                         injury_rows = [
-                            row for row in injury_report["rows"]
-                            if (injury_team == "All teams" or row["Team"] == injury_team)
-                            and (include_active or row["Status"].lower() != "active")
+                            row for row in injury_rows if row["Status"] in status_filter
                         ]
-                        status_options = sorted(
-                            {"Probable", "Questionable", "Doubtful", "Out", "Injured Reserve"}
-                            | {row["Status"] for row in injury_rows}
+                    positions = sorted({row["Position"] for row in injury_rows})
+                    position_filter = st.selectbox(
+                        "Injury report position", ["All positions"] + positions,
+                        key="injury_position_selection",
+                    )
+                    if position_filter != "All positions":
+                        injury_rows = [
+                            row for row in injury_rows if row["Position"] == position_filter
+                        ]
+                    st.write(f"**{len(injury_rows)} listed updates match your filters.**")
+                    if injury_rows:
+                        st.dataframe(
+                            injury_rows, hide_index=True, use_container_width=True,
+                            column_config={
+                                "Player page": st.column_config.LinkColumn(
+                                    "ESPN player page", display_text="View player",
+                                ),
+                            },
                         )
-                        status_filter = st.multiselect(
-                            "Filter injury status",
-                            status_options,
-                            key="injury_status_selection",
-                            help="Leave empty to show all available statuses. Probable appears only when explicitly reported by ESPN; no status is inferred.",
+                    else:
+                        st.info(
+                            "No reports match these filters. This does not confirm "
+                            "that every player is healthy or available."
                         )
-                        if status_filter:
-                            injury_rows = [
-                                row for row in injury_rows if row["Status"] in status_filter
-                            ]
-                        positions = sorted({row["Position"] for row in injury_rows})
-                        position_filter = st.selectbox(
-                            "Injury report position", ["All positions"] + positions,
-                            key="injury_position_selection",
-                        )
-                        if position_filter != "All positions":
-                            injury_rows = [
-                                row for row in injury_rows if row["Position"] == position_filter
-                            ]
-                        st.write(f"**{len(injury_rows)} listed updates match your filters.**")
-                        if injury_rows:
-                            st.dataframe(
-                                injury_rows, hide_index=True, use_container_width=True,
-                                column_config={
-                                    "Player page": st.column_config.LinkColumn(
-                                        "ESPN player page", display_text="View player",
-                                    ),
-                                },
-                            )
-                        else:
-                            st.info(
-                                "No reports match these filters. This does not confirm "
-                                "that every player is healthy or available."
-                            )
-                        st.caption(
-                            "Questionable does not mean ruled out. Out and Injured "
-                            "Reserve are different statuses. Active updates are hidden "
-                            "unless selected. Report times are shown as supplied by "
-                            "ESPN in UTC. This feed may include older reports and "
-                            "availability news; it is not a confirmed game-day inactive "
-                            "list. Use the player links to review the latest details."
-                        )
-                    except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
-                        st.warning(f"Injury updates could not be loaded: {exc}")
-                else:
-                    st.info("Click Load / refresh injury updates to view the latest reports.")
+                    st.caption(
+                        "Questionable does not mean ruled out. Out and Injured "
+                        "Reserve are different statuses. Active updates are hidden "
+                        "unless selected. Report times are shown as supplied by "
+                        "ESPN in UTC. This feed may include older reports and "
+                        "availability news; it is not a confirmed game-day inactive "
+                        "list. Use the player links to review the latest details."
+                    )
+                except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+                    st.warning(f"Injury updates could not be loaded: {exc}")
+            else:
+                st.info("Click Load / refresh injury updates to view the latest reports.")
 
         if research_view:
             st.subheader("Current Model Team Ratings")
