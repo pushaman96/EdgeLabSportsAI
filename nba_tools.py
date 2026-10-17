@@ -1,3 +1,4 @@
+from automatic_reports import autosave_report, load_report
 """NBA statistics and research tools for EdgeLab Sports AI."""
 import math
 import json
@@ -1331,10 +1332,10 @@ def grade_nba_prediction(row, data):
 
 def show_nba_prediction_tracker(scoreboard, end_year, shared):
     st.header("NBA Future Prediction Tracker")
-    st.caption("Save predictions before tip-off, download the CSV, then upload it after games finish to check accuracy. The original probabilities stay frozen. Keep your downloaded file: this app session is temporary, and files are not saved automatically between visits.")
+    st.caption("Upcoming predictions are recorded before tip-off and archived automatically. Original probabilities stay frozen. Check save warnings; final scores can be checked below.")
     st.info("Preseason and playoff predictions are experimental and scored separately. Saved model history may be old; the history cutoff is recorded for every prediction. This CSV tracker is editable and is not a tamper-proof independent audit.")
     upload = st.file_uploader("Upload your saved NBA predictions", type=["csv"], key="nba_tracker_upload")
-    rows = st.session_state.setdefault("nba_tracked_predictions", [])
+    rows = st.session_state.setdefault("nba_tracked_predictions", read_nba_tracker_csv(load_report("edgelab_nba_predictions.csv")) if load_report("edgelab_nba_predictions.csv") else [])
     try:
         if upload is not None:
             content = upload.getvalue().decode("utf-8-sig")
@@ -1350,7 +1351,7 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
                     raise ValueError("Keep each tracker file to 100 predictions or fewer.")
                 rows[:] = list(existing.values())
                 st.session_state["nba_tracker_imported"] = digest
-        if st.button("Save upcoming predictions for selected date", key="nba_tracker_save"):
+        if True:  # Automatically freeze eligible upcoming predictions when this tracker runs.
             history = load_nba_saved_history(end_year)["games"]
             new = nba_tracking_rows(scoreboard, history, shared)
             seen = {row["Game ID"] for row in rows}
@@ -1358,12 +1359,12 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
             if len(rows) + len(additions) > 100:
                 raise ValueError("Tracker limit is 100 predictions; start another file in a new session.")
             rows.extend(additions)
-            st.success(f"Saved {len(additions)} new pre-game predictions. Download the CSV below to keep them.")
+            st.success(f"Saved {len(additions)} new pre-game predictions. Automatic permanent saving runs below.")
             if not new:
                 st.info("No eligible upcoming games on the selected sidebar date. Started games cannot be saved; unknown teams or season types are skipped.")
         if rows:
             st.dataframe([{ "Game":row["Away"]+" at "+row["Home"], "Season type":row["Season type"], "Tip-off UTC":row["Tip-off UTC"], "Recorded UTC":row["Recorded UTC"], "Home win %":round(float(row["Original probability"])*100,1), "Adjusted home win %":round(float(row["Adjusted probability"])*100,1), "Model history through":row["Model history through"]} for row in rows], hide_index=True, use_container_width=True)
-            st.download_button("Download saved NBA predictions", nba_tracker_csv(rows), file_name="edgelab_nba_predictions.csv", mime="text/csv", key="nba_tracker_download")
+            autosave_report("Download saved NBA predictions", nba_tracker_csv(rows), file_name="edgelab_nba_predictions.csv", mime="text/csv", key="nba_tracker_download")
             if st.button("Check final scores & tracker accuracy", key="nba_tracker_grade"):
                 def check(row):
                     try:
@@ -1387,10 +1388,23 @@ def show_nba_prediction_tracker(scoreboard, end_year, shared):
     except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, OSError, UnicodeError) as exc:
         st.warning(f"NBA tracker could not complete this action: {exc}")
 
+def autosave_nba_scheduled_predictions(scoreboard, end_year, shared):
+    """Freeze scheduled forecasts in both dashboard views without a save button."""
+    try:
+        stored=load_report('edgelab_nba_predictions.csv')
+        rows=st.session_state.setdefault('nba_tracked_predictions',read_nba_tracker_csv(stored) if stored else [])
+        history=load_nba_saved_history(end_year)['games']
+        seen={row['Game ID'] for row in rows}
+        rows.extend(row for row in nba_tracking_rows(scoreboard,history,shared) if row['Game ID'] not in seen)
+        if rows:autosave_report('NBA scheduled forecasts',nba_tracker_csv(rows),file_name='edgelab_nba_predictions.csv',mime='text/csv')
+    except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,OSError) as exc:
+        st.warning('Upcoming NBA forecasts could not be archived. Existing saved picks are preserved; retry after checking history availability.')
+
 def render_nba_tools(game_date, scoreboard, shared):
     from app_view import is_research
     research_view=is_research()
     end_year = current_season_end()
+    autosave_nba_scheduled_predictions(scoreboard,end_year,shared)
     st.divider()
     if research_view:show_nba_game_details(scoreboard, game_date, shared)
     st.divider()
@@ -1401,3 +1415,4 @@ def render_nba_tools(game_date, scoreboard, shared):
     show_nba_statistics(end_year)
     st.divider()
     show_nba_injuries()
+
