@@ -194,7 +194,7 @@ def render_history(sport='NFL'):
                 'Actual opportunities':r.get('actual_opportunities'),'Opportunity miss':r.get('opportunity_miss')} for r in reviewed],hide_index=True,use_container_width=True)
         else:st.info('No graded records with saved forecast inputs yet. New saves include yardage and workload estimates; older files may lack them.')
         st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Scheduled outcome feedback now tests probability corrections on later games before applying them. Workload-model retraining remains separate.')
-    st.download_button('Download all saved NFL and NBA records',json.dumps({'records':all_records},indent=2),file_name='kamikaze_picks_published_history.json',mime='application/json',key='ledger_download')
+    None
 
 def persist_records(records,token,client=None):
     """Append frozen records; retry SHA conflicts without replacing existing picks."""
@@ -277,14 +277,14 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
             with st.expander('Fix permanent storage configuration'):
                 st.write('Open Manage app → Settings → Secrets for THIS deployed app. Put the exact setting below at the top of the box, above any [section] heading, replacing the placeholder privately. Save, then reboot the app from Manage app and rerun analysis. Do not create another token yet.')
                 st.code('PICK_HISTORY_GITHUB_TOKEN = "your-actual-github-token"',language='toml')
-                st.caption('Never share the token or screenshot its value. Until permanent save is confirmed, download your JSON backup from history.')
+                st.caption('Never share the token or screenshot its value. Picks are not permanently saved until the app confirms automatic permanent saving.')
         return
     if pending:
         try:
             persist_records(pending,token,requests)
             confirmed.update(r['id'] for r in pending)
         except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):
-            st.warning('Permanent autosave failed. Picks remain in this session and will retry on the next analysis/rerun. Check the private token permissions or download a backup from history.');return
+            st.warning('Permanent autosave failed. Picks remain in this session and will retry on the next analysis/rerun. Check the private token permissions; no manual download is required after storage is working.');return
     if saved:st.success('Automatic permanent save confirmed. Original picks stay frozen; duplicates are skipped. Results are graded by the scheduled ledger job.')
 
 if __name__=='__main__':
@@ -293,3 +293,4 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from pick_learning import write_feedback
     write_feedback(data['records'])
+
