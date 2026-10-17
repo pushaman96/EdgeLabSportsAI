@@ -73,10 +73,11 @@ def render_overview(sport,day,path='published_picks.json'):
     cols[0].metric('Saved picks for this date',len(selected))
     cols[1].metric('Awaiting final results',sum(r.get('result')=='Pending' for r in selected))
     cols[2].metric('Permanent storage','Confirmed' if selected and not waiting else f'{waiting} awaiting confirmation' if waiting else 'No picks for this date')
+    from team_emblems import render_team_table
     with st.expander('Data freshness and saved-pick audit'):
         audit=audit_records(audit_input)
         issues=sum(r['Audit']=='Review needed' for r in audit)
-        if audit:st.write(f'{len(audit)-issues}/{len(audit)} saved records passed structural checks.');st.dataframe(audit,hide_index=True,use_container_width=True)
+        if audit:st.write(f'{len(audit)-issues}/{len(audit)} saved records passed structural checks.');render_team_table(audit,sport,hide_index=True,use_container_width=True)
         else:st.info('Select the game date containing your saved picks to review them.')
         st.caption('These checks do not independently validate model accuracy or current lineups. No sportsbook request is made here.')
         odds=st.session_state.get('sportsbook_result')
@@ -89,7 +90,7 @@ def render_overview(sport,day,path='published_picks.json'):
             verification=st.session_state.get('saved_pick_availability')
             if verification and verification.get('ids')==sorted(r['id'] for r in selected):
                 st.caption('Availability check: '+age_label(verification['checked'],900))
-                st.dataframe(verification['rows'],hide_index=True,use_container_width=True)
+                render_team_table(verification['rows'],sport,hide_index=True,use_container_width=True)
 
 def verify_current_players(records):
     """Free ESPN availability check, separate from frozen records and decisions."""
