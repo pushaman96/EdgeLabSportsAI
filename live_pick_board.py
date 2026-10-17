@@ -42,11 +42,13 @@ def current_stat(record,data):
 
 def build_board(records,summaries,now=None):
     from pick_history import grade_record
+    from saved_pick_explanation import short_reason
     now=now or datetime.now(timezone.utc);rows=[];seen=set();situation_cache={}
     for record in records:
         if record.get('id') in seen:continue
         seen.add(record.get('id'))
         row={'Player / team':record['player'],'Live stat':None,'Pick':record['direction']+(' '+str(record['line']) if record.get('line') is not None else ''),'Category':record['category'],'Live position':'Waiting for kickoff','Final result':'Pending','Game':record['game'],'Period / clock':'—','Score':'—','Difference vs line':None,'Frozen model probability %':round(100*record['probability'],1) if number(record.get('probability')) is not None else None,'Odds':record.get('odds'),'Sportsbook':record.get('sportsbook'),'Strategy':record.get('strategy','Original'),'Kickoff Pacific':utc(record['starts_utc']).astimezone(PACIFIC).strftime('%a %m/%d %I:%M %p'),'Data checked UTC':None,'Model':record.get('model'),'Pick ID':record.get('id')}
+        row['Short reason']=short_reason(record)
         key=(record.get('sport','NFL'),str(record['event_id']));item=summaries.get(key)
         # Even when the feed is down, retain previously verified final ledger grades.
         if record.get('result') in ('Win','Loss','Push'):
@@ -144,5 +146,8 @@ def render_live_board(records,sport='NFL'):
             None
         else:st.info('No saved picks match the selected date and strategies.')
     panel()
+    from saved_pick_explanation import render_saved_explanations
+    render_saved_explanations(selected,sport)
+
 
 
