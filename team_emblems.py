@@ -11,7 +11,7 @@ def team_index(competitions,sport):
     result={}
     for competition in competitions:
         for competitor in competition.get('competitors',[]):
-            team=competitor.get('team',{});entry={'id':str(team.get('id','')),'name':team.get('displayName'),'abbreviation':team.get('abbreviation'),'logo':logo_url(team)}
+            team=competitor.get('team',{});entry={'id':str(team.get('id','')),'name':team.get('displayName'),'abbreviation':team.get('abbreviation'),'logo':logo_url(team),'color':team.get('color')}
             for value in (team.get('id'),team.get('displayName'),team.get('abbreviation')):
                 if value:result[sport+':'+str(value)]=entry
             if sport=='NFL':
@@ -60,12 +60,12 @@ def directory_index(sport):
     import json
     from urllib.request import urlopen
     @st.cache_data(ttl=86400,show_spinner=False)
-    def fetch(league):
+    def fetch(league,emblem_schema=2):
         path='football/nfl' if league=='NFL' else 'basketball/nba'
         data=json.load(urlopen('https://site.api.espn.com/apis/site/v2/sports/'+path+'/teams?limit=100',timeout=12))
         competitors=[entry for s in data.get('sports',[]) for l in s.get('leagues',[]) for entry in l.get('teams',[])]
         return team_index([{'competitors':competitors}],league)
-    try:return fetch(sport)
+    try:return fetch(sport,2)
     except (OSError,ValueError,KeyError,TypeError):return {}
 
 def enrich_rows(rows,sport,index,team=None):
@@ -99,3 +99,4 @@ def render_team_table(rows,sport,team=None,**kwargs):
         for key in row:
             if key.endswith(' emblem'):columns[key]=st.column_config.ImageColumn('',width='small')
     st.dataframe(display,column_config=columns,**kwargs)
+
