@@ -4,8 +4,10 @@ from saved_pick_explanation import explanation
 from pick_readiness import risk_notes
 from team_emblems import pick_team
 
-def render_pick_cards(records,sport):
+def render_pick_cards(records,sport,live_rows=None):
     import streamlit as st
+    from pick_presentation import accent_html,badge_html,pick_status
+    live={r.get("Pick ID"):r for r in (live_rows or [])}
     unique={r['id']:r for r in records};rows=list(unique.values())
     if not rows:st.info('No saved picks match these filters.');return
     pages=math.ceil(len(rows)/6)
@@ -16,6 +18,8 @@ def render_pick_cards(records,sport):
             e=explanation(r)
             with column.container(border=True):
                 team=pick_team(r,index=st.session_state.get('team_emblems',{}))
+                st.markdown(accent_html(team.get('color') if team else None),unsafe_allow_html=True)
+                st.markdown(badge_html(pick_status(r,live.get(r['id']))),unsafe_allow_html=True)
                 if team and team.get('logo'):
                     icon,title=st.columns([1,7]);icon.image(team['logo'],width=28);title.write('**'+r.get('player','Unknown')+'**')
                 else:st.write('**'+r.get('player','Unknown')+'**')
@@ -35,3 +39,4 @@ def render_pick_cards(records,sport):
                         for label,value in source.items():st.caption(label+': '+str(value))
                     else:st.caption('Detailed source timestamps were not saved with this older pick. Reanalyze current prices for a fresh availability check; the original pick remains frozen.')
                 st.caption('Frozen forecast for tracking; recorded odds are not confirmed current prices.')
+
