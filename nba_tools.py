@@ -1047,19 +1047,20 @@ def show_nba_statistics(end_year, player_container=None):
                 with st.expander("Teams with unavailable statistics"):
                     st.write(data["errors"])
         st.write(f"**{selected['TEAM_NAME']}: {selected['GP']} games — {season_name(season)} {type_label}**")
-        st.subheader("NBA Team Strengths & Weaknesses")
-        comparisons = team_comparison(selected, teams)
-        st.dataframe(comparisons, hide_index=True, use_container_width=True)
-        strengths = [row["Statistic"] for row in comparisons if row["Assessment"] == "Above league average"]
-        weaknesses = [row["Statistic"] for row in comparisons if row["Assessment"] == "Below league average"]
-        st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
-        st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
-        st.caption(
-            "Rank 1 is best. Lower points/shooting allowed and turnovers are "
-            "better. League averages are unweighted team averages. These "
-            "comparisons do not adjust for pace, opponent strength, or lineups. "
-            "Above average may reflect only a small difference."
-        )
+        with st.sidebar:
+            st.subheader("NBA Team Strengths & Weaknesses")
+            comparisons = team_comparison(selected, teams)
+            st.dataframe(comparisons, hide_index=True, use_container_width=True)
+            strengths = [row["Statistic"] for row in comparisons if row["Assessment"] == "Above league average"]
+            weaknesses = [row["Statistic"] for row in comparisons if row["Assessment"] == "Below league average"]
+            st.write("**Above-average areas:** " + (", ".join(strengths) or "None in available metrics."))
+            st.write("**Below-average areas:** " + (", ".join(weaknesses) or "None in available metrics."))
+            st.caption(
+                "Rank 1 is best. Lower points/shooting allowed and turnovers are "
+                "better. League averages are unweighted team averages. These "
+                "comparisons do not adjust for pace, opponent strength, or lineups. "
+                "Above average may reflect only a small difference."
+            )
         if not use_espn and st.checkbox("Show NBA team mid-range shooting", key="nba_team_midrange"):
             try:
                 zones = load_nba_shooting(season, type_name, "teams", use_saved)
@@ -1072,7 +1073,7 @@ def show_nba_statistics(end_year, player_container=None):
                     st.info("No mid-range team shooting data available.")
             except (requests.exceptions.RequestException, ValueError, KeyError, TypeError) as exc:
                 st.info(f"Mid-range team data unavailable: {exc}")
-        if st.checkbox("Compare all NBA teams", key="nba_all_teams"):
+        if st.checkbox("Show NBA team statistics", value=True, key="nba_all_teams"):
             rows = []
             for team in teams:
                 row = {"Team": team["TEAM_NAME"], "Games": team["GP"]}
@@ -1419,5 +1420,6 @@ def render_nba_tools(game_date, scoreboard, shared, statistics_tabs=None):
             show_nba_statistics(end_year, player_container=statistics_tabs[1])
     st.divider()
     show_nba_injuries()
+
 
 
