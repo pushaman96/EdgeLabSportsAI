@@ -239,8 +239,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if sport=='NFL':
             st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns, rushing yards, receiving yards, passing/rushing attempts, and receptions. Fresh budget: up to 3 game-line credits plus 7 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
             quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 7/game credits',key='quick_nfl_slate')
-            with st.expander('Preset coverage: fantasy points and team sacks'):
-                st.write('Fantasy points: no supported NFL fantasy-points market is listed by this odds provider. A scoring system and separate forecasting model are needed. No fantasy-points selection is fabricated.')
+            with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
         if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load') or quick_nfl:
@@ -334,7 +333,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             if use_preset:st.session_state['quick_team_sacks_loaded']=True
             if st.session_state.get('quick_team_sacks_loaded'):
                 from pass_protection import render_pass_protection
-                with st.expander('Team defensive sacks — research estimates',expanded=False):
+                with st.expander('Team sack estimates — defense vs opposing pass protection',expanded=True):
                     render_pass_protection(selected_date.year,selected_date,auto_load=True,prefix='slate')
         st.subheader(f'{sport} game shortlist — experimental moneylines')
         st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, quotes no more than 15 minutes old, and regular-season history no more than 30 days old. '+('NFL roster and injury checks are warnings only; injury, defensive and offensive-line effects are not numerically modeled.' if sport=='NFL' else 'NBA preseason games do not qualify for this regular-season model. NBA player props currently show market prices and manual paper tracking, not analyzed prop recommendations. NBA injury effects are not numerically modeled.'))
@@ -370,4 +369,5 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
+
 
