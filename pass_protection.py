@@ -41,7 +41,7 @@ def matchup(defense,offense):
 def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
     import streamlit as st
     from nfl_prop_model import csv_url, SCHEDULE_URL
-    st.subheader('Team sack estimates')
+    st.subheader('Projected team sacks')
     st.caption('Estimated sacks for each defense, combining its sack production with the opposing offense’s pass-protection record. Experimental estimates, not guaranteed totals or betting recommendations.')
     if st.button('Load defense & offensive-line context — 0 odds credits',key=prefix+'_load_sack_context'):st.session_state[prefix+'_sack_context_loaded']=True
     if not auto_load and not st.session_state.get(prefix+'_sack_context_loaded'):return
@@ -62,9 +62,17 @@ def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
                 defensive_games=data[defender]['Defensive games matched']
                 defensive_average=data[defender]['Defensive sacks']/defensive_games if defensive_games else None
                 allowed=data[opponent]['Sacks allowed / game']
-                slate.append({'Defense':defender,'Opposing offense':opponent,'Estimated team sacks':round(estimate,1) if estimate is not None else None,'Why':f"Defense averages {defensive_average:.1f} sacks/game; opponent allows {allowed:.1f}." if defensive_average is not None else 'Not enough matched game history.'})
+                slate.append({'Defense':defender,'Opposing offense':opponent,'Projected sacks this game':round(estimate,1) if estimate is not None else None,'Why':f"Defense averages {defensive_average:.1f} sacks/game; opponent allows {allowed:.1f}." if defensive_average is not None else 'Not enough matched game history.'})
         if slate:
-            st.write('**Estimated team sacks for the selected games**')
+            st.write('**Projected sacks for each selected game**')
+            selected=st.selectbox('Team sack projection',list(range(len(slate))),format_func=lambda i:slate[i]['Defense']+' defense vs '+slate[i]['Opposing offense'],key=prefix+'_projected_sack_team')
+            projection=slate[selected]
+            value=projection['Projected sacks this game']
+            st.metric(projection['Defense']+' projected team sacks',f'{value:.1f}' if value is not None else 'Not enough history')
+            if value is not None:
+                st.write(f"{projection['Defense']} is projected to record about {value:.1f} sacks against {projection['Opposing offense']} in this game.")
+            st.caption('Matchup-specific experimental expectation, not a guaranteed total or a prediction for every game. A decimal describes an average expectation.')
+
             st.dataframe(slate,hide_index=True,use_container_width=True)
             from automatic_reports import autosave_report
             import json
@@ -77,7 +85,7 @@ def render_pass_protection(season,asof,auto_load=False,prefix='team_stats'):
             offense=st.selectbox('Opposing offense to examine',[n for n in names if n!=defense],key=prefix+'_sack_offense')
             estimate=matchup(data[defense],data[offense])
             if estimate is None:st.info('At least four matched defensive games and four offensive games are needed for the research comparison.')
-            else:st.metric('Research sack reference — not a betting prediction',f'{estimate:.2f}')
+            else:st.metric(defense+' projected team sacks vs '+offense,f'{estimate:.1f}')
             st.caption('Reference = average of defensive sack rate and opponent sack-allowed rate × opponent average dropbacks. This simple comparison has not passed a sportsbook-line backtest, provides no Over/Under recommendation or win probability, and does not change current picks. A weak protection record can raise sack risk, but quick throws, scrambling, line injuries and game script can change it. Pressures, time to throw and individual blocker grades are not supplied here. Data excludes games on or after the sidebar date.')
     except Exception:st.warning('Sack and protection data could not be loaded. Missing data is not interpreted as zero; retry later.')
 
