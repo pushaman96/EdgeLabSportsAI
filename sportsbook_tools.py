@@ -32,6 +32,8 @@ PROP_MARKETS['NFL'].update({
 PROP_MARKETS['NBA'].update({'Steals':'player_steals','Blocks':'player_blocks'})
 
 def render_nba_paper_quotes(events,books,key_prefix):
+    from app_view import is_research
+    if not is_research():return
     now=datetime.now(timezone.utc);rows=[]
     categories={v:k for k,v in PROP_MARKETS['NBA'].items()}
     for event in events:
