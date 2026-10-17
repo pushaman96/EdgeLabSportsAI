@@ -1,7 +1,8 @@
 
 import streamlit as st
 import requests
-from nba_tools import render_nba_tools, clear_nba_caches, load_nba_saved_history, NBA_ALIASES
+from team_emblems import render_team_table
+from nba_tools import render_nba_tools, clear_nba_caches, clear_nba_live_caches, load_nba_saved_history, NBA_ALIASES
 from sportsbook_tools import render_sportsbooks
 from paper_parlay import render_paper_parlay
 from nfl_workload_lab import render_workload_lab
@@ -32,7 +33,7 @@ st.set_page_config(
 )
 
 st.title("🏈 Kamikaze Picks")
-st.write("Scores, standings, betting value, and NFL/NBA research predictions")
+st.caption("NFL & NBA · Scores, saved picks and experimental forecasts")
 
 SPORTS = {
     "NFL": "football/nfl",
@@ -148,7 +149,7 @@ def show_games(data, sport_path):
             if visible:
                 leaders = game_leader_rows(competition)
                 if leaders:
-                    st.dataframe(leaders, hide_index=True, use_container_width=True)
+                    render_team_table(leaders, hide_index=True, use_container_width=True, sport=sport)
                     st.caption("ESPN game leaders for this game. Use Refresh scores and live stats below to update.")
                 else:
                     st.info("ESPN has not reported game leaders yet. Check again after play starts.")
@@ -162,7 +163,7 @@ def show_games(data, sport_path):
                     result = get_game_boxscore(sport_path, str(event['id']))
                     rows = defensive_game_rows(result['data'].get('boxscore', {}), sport_path)
                     if rows:
-                        st.dataframe(rows, hide_index=True, use_container_width=True)
+                        render_team_table(rows, hide_index=True, use_container_width=True, sport=sport)
                         st.caption("ESPN defensive player totals • fetched at " + result['retrieved'])
                         if sport_path == 'football/nfl':
                             st.caption("Fumble recoveries are listed separately in the full live box score because ESPN does not identify them here as offensive or defensive recoveries.")
@@ -296,7 +297,7 @@ def show_live_game_stats(data, sport_path):
                         table.setdefault(label, {'Statistic': label})[name] = stat.get('displayValue', '—')
                 if table:
                     st.write("**Team stats**")
-                    st.dataframe(list(table.values()), hide_index=True, use_container_width=True)
+                    render_team_table(list(table.values()), hide_index=True, use_container_width=True, sport=sport)
             found_players = False
             for team in box.get('players', []):
                 name = team.get('team', {}).get('displayName', 'Team')
@@ -312,7 +313,7 @@ def show_live_game_stats(data, sport_path):
                     if rows:
                         found_players = True
                         st.write(f"**{name} — {group.get('name', 'Player stats').replace('_', ' ').title()}**")
-                        st.dataframe(rows, hide_index=True, use_container_width=True)
+                        render_team_table(rows, hide_index=True, use_container_width=True, sport=sport)
             if not found_players:
                 st.info("Player stats have not been reported for this game yet. They usually become available after play starts.")
         except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
@@ -1140,7 +1141,7 @@ def show_espn_nfl_weather(scoreboard_data, game_date):
             event_weather = event.get("weather") or competition.get("weather") or {}
             rows = get_espn_weather_rows(event_weather, report["weather"])
             if any(row["ESPN reported value"] != "Not provided" for row in rows):
-                st.dataframe(rows, hide_index=True, use_container_width=True)
+                render_team_table(rows, hide_index=True, use_container_width=True, sport=sport)
             else:
                 st.info("ESPN has not supplied weather for this game.")
             st.caption(
@@ -1222,16 +1223,21 @@ selected_date = st.sidebar.date_input(
     max_value=pacific_today + timedelta(days=365),
 )
 
-if st.sidebar.button("Refresh live data"):
-    clear_nba_caches()
+if st.sidebar.button("Refresh live data — keep model history"):
+    clear_nba_live_caches()
     get_scoreboard.clear()
     get_standings.clear()
-    load_nfl_history.clear()
     load_all_nfl_team_statistics.clear()
     load_nfl_player_team_directory.clear()
     load_nfl_team_player_statistics.clear()
     load_nfl_injury_updates.clear()
     load_espn_game_weather.clear()
+
+if research_view and st.sidebar.button("Refresh historical model data"):
+    load_nfl_history.clear()
+    clear_nba_caches()
+
+dashboard_status = st.container()
 
 
 # -------------------------
@@ -1270,7 +1276,7 @@ with score_tab:
                                     'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
                                     'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'],
                                     'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':('Injury warning — historical Elo only' if not context.get('injury_verified') else 'Availability checked — historical Elo only') if context['eligible'] else 'History/season not eligible'})
-                        if forecast_rows:st.dataframe(forecast_rows, hide_index=True, use_container_width=True)
+                        if forecast_rows:render_team_table(forecast_rows, hide_index=True, use_container_width=True, sport=sport)
                         else:st.info('No matched upcoming games available for a pregame forecast.')
                     except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
                         st.warning('Winner forecasts could not be loaded. Try Refresh live data and calculate again.')
@@ -1338,11 +1344,11 @@ with standings_tab:
                 else [row for row in teams if row["Team"] == selected_team]
             )
 
-            st.dataframe(
+            render_team_table(
                 filtered_teams,
                 hide_index=True,
                 use_container_width=True,
-            )
+             sport=sport)
 
             if selected_team != "All teams":
                 record = filtered_teams[0]
@@ -1456,11 +1462,11 @@ if sport == "NFL":
                     "positive Brier improvement mean Elo beat the baseline. "
                     "pp means percentage points."
                 )
-                st.dataframe(
+                render_team_table(
                     get_season_backtest_rows(test_games),
                     hide_index=True,
                     use_container_width=True,
-                )
+                 sport=sport)
 
                 st.subheader("Probability Calibration")
                 st.write(
@@ -1479,11 +1485,11 @@ if sport == "NFL":
                 )
                 calibration_rows = get_calibration_rows(test_games)
                 if calibration_rows:
-                    st.dataframe(
+                    render_team_table(
                         calibration_rows,
                         hide_index=True,
                         use_container_width=True,
-                    )
+                     sport=sport)
                 else:
                     st.info("No non-tied test games are available for calibration.")
 
@@ -1549,7 +1555,7 @@ if sport == "NFL":
                     st.info("Not enough historical games for an adjustment test.")
 
                 with st.expander("View recent historical test predictions"):
-                    st.dataframe(
+                    render_team_table(
                         [
                             {
                                 "Date": game["Date"],
@@ -1565,7 +1571,7 @@ if sport == "NFL":
                         ],
                         hide_index=True,
                         use_container_width=True,
-            )
+             sport=sport)
 
         st.subheader("Predict an NFL Matchup")
 
@@ -1627,7 +1633,7 @@ if sport == "NFL":
                     adjusted_home = shrink_probability(home_probability, strength)
                     adjusted_away = 1 - adjusted_home
                     st.write("**Original and adjusted matchup probabilities**")
-                    st.dataframe(
+                    render_team_table(
                         [
                             {
                                 "Team": home_team,
@@ -1642,7 +1648,7 @@ if sport == "NFL":
                         ],
                         hide_index=True,
                         use_container_width=True,
-                    )
+                     sport=sport)
                     st.caption(
                         f"Adjusted probabilities use strength {strength:.2f}, "
                         "learned from the earlier calibration period shown above. "
@@ -1705,7 +1711,7 @@ if sport == "NFL":
                                     f"**{selected_name}: {selected_stats['Games']} games**"
                                 )
                                 comparisons = get_team_comparison_rows(selected_stats, league_rows)
-                                st.dataframe(comparisons, hide_index=True, use_container_width=True)
+                                render_team_table(comparisons, hide_index=True, use_container_width=True, sport=sport)
                                 strengths = [
                                     row["Statistic"] for row in comparisons
                                     if row["Assessment"] == "Above league average"
@@ -1726,9 +1732,9 @@ if sport == "NFL":
                                     "special teams. Early-season samples may be small."
                                 )
                             if st.checkbox("Show all NFL team statistics", value=True, key="show_all_team_stats"):
-                                st.dataframe(
+                                render_team_table(
                                     league_rows, hide_index=True, use_container_width=True,
-                                )
+                                 sport=sport)
                         else:
                             st.info("No team statistics are available for this season.")
                         if team_stats["errors"]:
@@ -1792,10 +1798,10 @@ if sport == "NFL":
                                         key=lambda row: row.get(sort_field) or 0, reverse=True,
                                     )
                                     if position_rows:
-                                        st.dataframe(
+                                        render_team_table(
                                             position_rows, hide_index=True,
                                             use_container_width=True,
-                                        )
+                                         sport=sport)
                                     else:
                                         st.info("No statistics available for this position.")
                             st.caption(
@@ -1882,14 +1888,14 @@ if sport == "NFL":
                         ]
                     st.write(f"**{len(injury_rows)} listed updates match your filters.**")
                     if injury_rows:
-                        st.dataframe(
+                        render_team_table(
                             injury_rows, hide_index=True, use_container_width=True,
                             column_config={
                                 "Player page": st.column_config.LinkColumn(
                                     "ESPN player page", display_text="View player",
                                 ),
                             },
-                        )
+                         sport=sport)
                     else:
                         st.info(
                             "No reports match these filters. This does not confirm "
@@ -1920,11 +1926,11 @@ if sport == "NFL":
                 )
             ]
 
-            st.dataframe(
+            render_team_table(
                 rating_table,
                 hide_index=True,
                 use_container_width=True,
-            )
+             sport=sport)
 
     except requests.exceptions.Timeout:
         st.error(
@@ -1967,3 +1973,8 @@ st.caption(
 
 
 
+
+
+from pick_readiness import render_overview
+with dashboard_status:
+    render_overview(sport, selected_date)
