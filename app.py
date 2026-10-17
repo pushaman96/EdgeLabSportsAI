@@ -1208,6 +1208,9 @@ def current_nba_season_end():
 # -------------------------
 
 sport = st.sidebar.selectbox("Choose a sport", list(SPORTS))
+st.sidebar.radio("View", ["Main dashboard", "Admin / Research"], key="app_view_mode")
+from app_view import is_research
+research_view = is_research()
 
 pacific_today = datetime.now(ZoneInfo("America/Los_Angeles")).date()
 selected_date = st.sidebar.date_input(
@@ -1271,7 +1274,7 @@ with score_tab:
                         st.warning('Winner forecasts could not be loaded. Try Refresh live data and calculate again.')
         show_live_game_stats(scoreboard, SPORTS[sport])
         if sport == "NFL":
-            show_espn_nfl_weather(scoreboard, selected_date)
+            if research_view:show_espn_nfl_weather(scoreboard, selected_date)
 
     except requests.exceptions.Timeout:
         st.error("The scoreboard took too long to respond. Try again.")
@@ -1355,11 +1358,11 @@ except (ValueError, TypeError, KeyError, AttributeError) as exc:
 # -------------------------
 
 render_sportsbooks(sport, selected_date, locals().get("scoreboard", {}), sportsbook_model_context)
-if sport == "NFL":
+if sport == "NFL" and research_view:
     render_workload_lab()
 render_history(sport)
 
-render_paper_parlay(sport, selected_date)
+if research_view:render_paper_parlay(sport, selected_date)
 
 # -------------------------
 # NFL HISTORICAL PREDICTION MODEL
@@ -1367,19 +1370,20 @@ render_paper_parlay(sport, selected_date)
 
 if sport == "NFL":
     st.divider()
-    st.header("🏈 NFL Historical Prediction Model")
+    st.header("🏈 NFL Historical Prediction Model" if research_view else "NFL predictions & probability accuracy")
 
-    st.write(
-        "This model uses historical regular-season results to maintain "
-        "Elo ratings for each team. Ratings are updated after games, "
-        "then used to estimate future matchup probabilities."
-    )
+    if research_view:
+        st.write(
+            "This model uses historical regular-season results to maintain "
+            "Elo ratings for each team. Ratings are updated after games, "
+            "then used to estimate future matchup probabilities."
+        )
 
-    st.info(
-        "This is a basic research model, not a guaranteed betting edge. "
-        "It does not currently account for injuries, starting quarterbacks, "
-        "weather, or current sportsbook prices."
-    )
+        st.info(
+            "This is a basic research model, not a guaranteed betting edge. "
+            "It does not currently account for injuries, starting quarterbacks, "
+            "weather, or current sportsbook prices."
+        )
 
     try:
         with st.spinner("Loading historical NFL games and building Elo ratings..."):
@@ -1389,19 +1393,21 @@ if sport == "NFL":
                 historical_predictions
             )
 
-        st.success(
-            f"Loaded {len(history):,} completed NFL regular-season games."
-        )
+        if research_view:
+            st.success(
+                f"Loaded {len(history):,} completed NFL regular-season games."
+            )
 
-        st.subheader("Historical Backtest")
+            st.subheader("Historical Backtest")
 
-        st.write(
-            "The model predicts each game before updating its ratings "
-            "with that game's result. The final 20% of games are used "
-            "for a chronological test."
-        )
+            st.write(
+                "The model predicts each game before updating its ratings "
+                "with that game's result. The final 20% of games are used "
+                "for a chronological test."
+            )
 
         if summary:
+            if not research_view:st.subheader("Historical model probability accuracy")
             col1, col2, col3, col4, col5 = st.columns(5)
 
             col1.metric(
@@ -1435,124 +1441,125 @@ if sport == "NFL":
                 "guarantee future performance."
             )
 
-            st.subheader("Backtest Results by Season")
-            st.caption(
-                "Uses only games in the same final-20% test period shown above. "
-                "The first and current seasons may be partial. Accuracy excludes "
-                "ties; Brier scores include them. Positive accuracy gain and "
-                "positive Brier improvement mean Elo beat the baseline. "
-                "pp means percentage points."
-            )
-            st.dataframe(
-                get_season_backtest_rows(test_games),
-                hide_index=True,
-                use_container_width=True,
-            )
-
-            st.subheader("Probability Calibration")
-            st.write(
-                "When the model assigns the home team around a 60% chance, "
-                "does the home team win around 60% of the time?"
-            )
-            st.caption(
-                "Uses the same test period, with ties excluded. Each row groups "
-                "home-team predictions into a 10-percentage-point range; upper "
-                "bounds are excluded except 100%. Compare the average prediction "
-                "with the actual home win rate. A gap near zero is better. "
-                "A positive gap means home teams won more often than predicted; "
-                "a negative gap means they won less often. Small samples can "
-                "produce large gaps by chance. This is a diagnostic, not an "
-                "adjustment to the model's probabilities."
-            )
-            calibration_rows = get_calibration_rows(test_games)
-            if calibration_rows:
+            if research_view:
+                st.subheader("Backtest Results by Season")
+                st.caption(
+                    "Uses only games in the same final-20% test period shown above. "
+                    "The first and current seasons may be partial. Accuracy excludes "
+                    "ties; Brier scores include them. Positive accuracy gain and "
+                    "positive Brier improvement mean Elo beat the baseline. "
+                    "pp means percentage points."
+                )
                 st.dataframe(
-                    calibration_rows,
+                    get_season_backtest_rows(test_games),
                     hide_index=True,
                     use_container_width=True,
                 )
-            else:
-                st.info("No non-tied test games are available for calibration.")
 
-            st.subheader("Probability Adjustment Test")
-            st.write(
-                "This experiment moves probabilities toward 50% to test "
-                "whether softer confidence improves forecasts."
-            )
-            adjustment = test_probability_adjustment(historical_predictions)
-            if adjustment:
-                st.caption(
-                    f"Adjustment learned from {adjustment['calibration_games']:,} "
-                    f"games dated {adjustment['calibration_first']} to "
-                    f"{adjustment['calibration_last']}. Compared on "
-                    f"{adjustment['evaluation_games']:,} later games dated "
-                    f"{adjustment['evaluation_first']} to "
-                    f"{adjustment['evaluation_last']}. Whole dates stay together, "
-                    "so the comparison may include slightly more games than "
-                    "the summary above. Elo still updates after each completed "
-                    "date; the adjustment is fixed before evaluation begins."
-                )
-                original_col, adjusted_col, improvement_col = st.columns(3)
-                original_col.metric(
-                    "Original Brier (comparison games)",
-                    f"{adjustment['original_brier']:.4f}",
-                )
-                adjusted_col.metric(
-                    "Adjusted Brier (same games)",
-                    f"{adjustment['adjusted_brier']:.4f}",
-                )
-                improvement_col.metric(
-                    "Brier improvement",
-                    f"{adjustment['improvement']:+.4f}",
-                    help="Positive means the adjustment improved the Brier score.",
-                )
-                example = shrink_probability(0.80, adjustment["strength"])
+                st.subheader("Probability Calibration")
                 st.write(
-                    f"**Adjustment strength:** {adjustment['strength']:.2f} "
-                    f"(1.00 keeps the original probability). "
-                    f"An 80% prediction becomes **{example * 100:.1f}%**."
+                    "When the model assigns the home team around a 60% chance, "
+                    "does the home team win around 60% of the time?"
                 )
-                if adjustment["improvement"] > 0:
-                    st.success(
-                        "The adjusted probabilities scored better on these "
-                        "later comparison games."
-                    )
-                elif adjustment["improvement"] < 0:
-                    st.warning(
-                        "The adjustment did not improve these later games. "
-                        "The original model scored better."
+                st.caption(
+                    "Uses the same test period, with ties excluded. Each row groups "
+                    "home-team predictions into a 10-percentage-point range; upper "
+                    "bounds are excluded except 100%. Compare the average prediction "
+                    "with the actual home win rate. A gap near zero is better. "
+                    "A positive gap means home teams won more often than predicted; "
+                    "a negative gap means they won less often. Small samples can "
+                    "produce large gaps by chance. This is a diagnostic, not an "
+                    "adjustment to the model's probabilities."
+                )
+                calibration_rows = get_calibration_rows(test_games)
+                if calibration_rows:
+                    st.dataframe(
+                        calibration_rows,
+                        hide_index=True,
+                        use_container_width=True,
                     )
                 else:
-                    st.info("The original and adjusted scores are equal.")
-                st.caption(
-                    "Ties count as 0.5 for Brier scoring. This adjustment keeps "
-                    "the same favorite, so winner accuracy does not change. "
-                    "This is an exploratory comparison: we already inspected "
-                    "this test period's results. Future unseen games are needed "
-                    "for independent confirmation. Matchup predictions below "
-                    "continue to use the original Elo probabilities."
-                )
-            else:
-                st.info("Not enough historical games for an adjustment test.")
+                    st.info("No non-tied test games are available for calibration.")
 
-            with st.expander("View recent historical test predictions"):
-                st.dataframe(
-                    [
-                        {
-                            "Date": game["Date"],
-                            "Season": game["Season"],
-                            "Home Team": game["Home Team"],
-                            "Away Team": game["Away Team"],
-                            "Predicted Home Win %": (
-                                game["Predicted Home Win %"]
-                            ),
-                            "Actual Result": game["Actual Result"],
-                        }
-                        for game in test_games[-50:]
-                    ],
-                    hide_index=True,
-                    use_container_width=True,
-        )
+                st.subheader("Probability Adjustment Test")
+                st.write(
+                    "This experiment moves probabilities toward 50% to test "
+                    "whether softer confidence improves forecasts."
+                )
+                adjustment = test_probability_adjustment(historical_predictions)
+                if adjustment:
+                    st.caption(
+                        f"Adjustment learned from {adjustment['calibration_games']:,} "
+                        f"games dated {adjustment['calibration_first']} to "
+                        f"{adjustment['calibration_last']}. Compared on "
+                        f"{adjustment['evaluation_games']:,} later games dated "
+                        f"{adjustment['evaluation_first']} to "
+                        f"{adjustment['evaluation_last']}. Whole dates stay together, "
+                        "so the comparison may include slightly more games than "
+                        "the summary above. Elo still updates after each completed "
+                        "date; the adjustment is fixed before evaluation begins."
+                    )
+                    original_col, adjusted_col, improvement_col = st.columns(3)
+                    original_col.metric(
+                        "Original Brier (comparison games)",
+                        f"{adjustment['original_brier']:.4f}",
+                    )
+                    adjusted_col.metric(
+                        "Adjusted Brier (same games)",
+                        f"{adjustment['adjusted_brier']:.4f}",
+                    )
+                    improvement_col.metric(
+                        "Brier improvement",
+                        f"{adjustment['improvement']:+.4f}",
+                        help="Positive means the adjustment improved the Brier score.",
+                    )
+                    example = shrink_probability(0.80, adjustment["strength"])
+                    st.write(
+                        f"**Adjustment strength:** {adjustment['strength']:.2f} "
+                        f"(1.00 keeps the original probability). "
+                        f"An 80% prediction becomes **{example * 100:.1f}%**."
+                    )
+                    if adjustment["improvement"] > 0:
+                        st.success(
+                            "The adjusted probabilities scored better on these "
+                            "later comparison games."
+                        )
+                    elif adjustment["improvement"] < 0:
+                        st.warning(
+                            "The adjustment did not improve these later games. "
+                            "The original model scored better."
+                        )
+                    else:
+                        st.info("The original and adjusted scores are equal.")
+                    st.caption(
+                        "Ties count as 0.5 for Brier scoring. This adjustment keeps "
+                        "the same favorite, so winner accuracy does not change. "
+                        "This is an exploratory comparison: we already inspected "
+                        "this test period's results. Future unseen games are needed "
+                        "for independent confirmation. Matchup predictions below "
+                        "continue to use the original Elo probabilities."
+                    )
+                else:
+                    st.info("Not enough historical games for an adjustment test.")
+
+                with st.expander("View recent historical test predictions"):
+                    st.dataframe(
+                        [
+                            {
+                                "Date": game["Date"],
+                                "Season": game["Season"],
+                                "Home Team": game["Home Team"],
+                                "Away Team": game["Away Team"],
+                                "Predicted Home Win %": (
+                                    game["Predicted Home Win %"]
+                                ),
+                                "Actual Result": game["Actual Result"],
+                            }
+                            for game in test_games[-50:]
+                        ],
+                        hide_index=True,
+                        use_container_width=True,
+            )
 
         st.subheader("Predict an NFL Matchup")
 
@@ -1605,42 +1612,43 @@ if sport == "NFL":
                 f"{away_probability * 100:.1f}%",
             )
 
-            matchup_adjustment = test_probability_adjustment(
-                historical_predictions
-            )
-            if matchup_adjustment:
-                strength = matchup_adjustment["strength"]
-                adjusted_home = shrink_probability(home_probability, strength)
-                adjusted_away = 1 - adjusted_home
-                st.write("**Original and adjusted matchup probabilities**")
-                st.dataframe(
-                    [
-                        {
-                            "Team": home_team,
-                            "Original Elo win %": round(home_probability * 100, 1),
-                            "Adjusted win %": round(adjusted_home * 100, 1),
-                        },
-                        {
-                            "Team": away_team,
-                            "Original Elo win %": round(away_probability * 100, 1),
-                            "Adjusted win %": round(adjusted_away * 100, 1),
-                        },
-                    ],
-                    hide_index=True,
-                    use_container_width=True,
+            if research_view:
+                matchup_adjustment = test_probability_adjustment(
+                    historical_predictions
                 )
-                st.caption(
-                    f"Adjusted probabilities use strength {strength:.2f}, "
-                    "learned from the earlier calibration period shown above. "
-                    "Both teams' adjusted probabilities add to 100%; the "
-                    "favorite stays the same. These are experimental estimates. "
-                    "The adjustment is recalculated when historical data updates "
-                    "and does not account for injuries or weather."
-                )
+                if matchup_adjustment:
+                    strength = matchup_adjustment["strength"]
+                    adjusted_home = shrink_probability(home_probability, strength)
+                    adjusted_away = 1 - adjusted_home
+                    st.write("**Original and adjusted matchup probabilities**")
+                    st.dataframe(
+                        [
+                            {
+                                "Team": home_team,
+                                "Original Elo win %": round(home_probability * 100, 1),
+                                "Adjusted win %": round(adjusted_home * 100, 1),
+                            },
+                            {
+                                "Team": away_team,
+                                "Original Elo win %": round(away_probability * 100, 1),
+                                "Adjusted win %": round(adjusted_away * 100, 1),
+                            },
+                        ],
+                        hide_index=True,
+                        use_container_width=True,
+                    )
+                    st.caption(
+                        f"Adjusted probabilities use strength {strength:.2f}, "
+                        "learned from the earlier calibration period shown above. "
+                        "Both teams' adjusted probabilities add to 100%; the "
+                        "favorite stays the same. These are experimental estimates. "
+                        "The adjustment is recalculated when historical data updates "
+                        "and does not account for injuries or weather."
+                    )
 
-            col1, col2 = st.columns(2)
-            col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
-            col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
+                col1, col2 = st.columns(2)
+                col1.metric(f"{home_team} Elo rating", f"{home_rating:.0f}")
+                col2.metric(f"{away_team} Elo rating", f"{away_rating:.0f}")
 
             st.caption(
                 "Probabilities include a fixed home-field advantage. "
@@ -1892,22 +1900,23 @@ if sport == "NFL":
             else:
                 st.info("Click Load / refresh injury updates to view the latest reports.")
 
-        st.subheader("Current Model Team Ratings")
+        if research_view:
+            st.subheader("Current Model Team Ratings")
 
-        rating_table = [
-            {"Team": team, "Elo Rating": round(rating, 1)}
-            for team, rating in sorted(
-                elo_ratings.items(),
-                key=lambda item: item[1],
-                reverse=True,
+            rating_table = [
+                {"Team": team, "Elo Rating": round(rating, 1)}
+                for team, rating in sorted(
+                    elo_ratings.items(),
+                    key=lambda item: item[1],
+                    reverse=True,
+                )
+            ]
+
+            st.dataframe(
+                rating_table,
+                hide_index=True,
+                use_container_width=True,
             )
-        ]
-
-        st.dataframe(
-            rating_table,
-            hide_index=True,
-            use_container_width=True,
-        )
 
     except requests.exceptions.Timeout:
         st.error(
