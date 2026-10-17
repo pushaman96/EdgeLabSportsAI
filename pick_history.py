@@ -143,6 +143,8 @@ def render_history(sport='NFL'):
     merged={r['id']:r for r in records}
     for r in st.session_state.get('personal_paper_records',[]):merged.setdefault(r['id'],r)
     records=list(merged.values())
+    from live_pick_board import render_live_board
+    render_live_board(records,sport)
     st.caption('Original and cushion strategies are separate. Historical imports are labeled and excluded from the prospective record. Returns assume $1 straight bets at recorded prices, excluding fees and platform void rules. No guaranteed returns.')
     if st.button('Refresh completed-game grades',key='ledger_refresh'):
         st.session_state['ledger_live_grades']=grade_all(records)
