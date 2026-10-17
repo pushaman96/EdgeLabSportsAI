@@ -987,8 +987,7 @@ def show_nba_model(shared, end_year):
             st.info("Choose Saved NBA.com history to run the backtest without the live connection.")
 
 
-def show_nba_statistics(end_year):
-    st.header("🏀 NBA Team Strengths, Weaknesses & Player Stats")
+def show_nba_statistics(end_year, player_container=None):
     season = st.selectbox(
         "NBA statistics season", list(range(end_year, end_year - 5, -1)),
         format_func=season_name, key="nba_stats_season",
@@ -1082,36 +1081,37 @@ def show_nba_statistics(end_year):
                     row[label] = round(value, 2) if value is not None else None
                 rows.append(row)
             st.dataframe(rows, hide_index=True, use_container_width=True)
-        st.subheader("NBA Player Statistics & Shooting")
-        if st.checkbox("Load players for selected NBA team", key="nba_players_open"):
-            with st.spinner("Loading player production and shooting zones..."):
-                if use_espn:
-                    player_data = load_espn_nba_players(season, type_name, selected_id)
-                    players, player_zones = player_data["rows"], []
-                    st.caption(f"ESPN statistics available for {len(players)}/{player_data['roster_count']} roster players. Players without statistics are omitted; roster association does not guarantee team-only season totals.")
+        with player_container if player_container is not None else st.container():
+            st.subheader("NBA Player Statistics & Shooting")
+            if st.checkbox("Load players for selected NBA team", key="nba_players_open"):
+                with st.spinner("Loading player production and shooting zones..."):
+                    if use_espn:
+                        player_data = load_espn_nba_players(season, type_name, selected_id)
+                        players, player_zones = player_data["rows"], []
+                        st.caption(f"ESPN statistics available for {len(players)}/{player_data['roster_count']} roster players. Players without statistics are omitted; roster association does not guarantee team-only season totals.")
+                    else:
+                        players = load_nba_player_stats(season, type_name, use_saved)
+                        player_zones = []
+                        if st.checkbox("Load NBA player mid-range shooting", key="nba_player_midrange"):
+                            try:
+                                player_zones = load_nba_shooting(season, type_name, "players", use_saved)
+                            except (requests.exceptions.RequestException, ValueError, KeyError, TypeError):
+                                st.info("Mid-range data unavailable; other player stats remain available.")
+                display = player_display_rows(players, selected_id, player_zones)
+                if display:
+                    st.dataframe(display, hide_index=True, use_container_width=True)
                 else:
-                    players = load_nba_player_stats(season, type_name, use_saved)
-                    player_zones = []
-                    if st.checkbox("Load NBA player mid-range shooting", key="nba_player_midrange"):
-                        try:
-                            player_zones = load_nba_shooting(season, type_name, "players", use_saved)
-                        except (requests.exceptions.RequestException, ValueError, KeyError, TypeError):
-                            st.info("Mid-range data unavailable; other player stats remain available.")
-            display = player_display_rows(players, selected_id, player_zones)
-            if display:
-                st.dataframe(display, hide_index=True, use_container_width=True)
-            else:
-                st.info("No player stats available for this team and season type.")
-            st.caption(
-                "Production and 3-point makes/attempts are per game. Mid-range "
-                "makes/attempts are season totals from NBA.com's Mid-Range zone. "
-                "Mid-range FG % is makes divided by attempts; it does not "
-                "include all two-point shots. A blank percentage means no "
-                "attempts or missing data. Players with no played games may "
-                "be absent. Multi-team season totals are identified by the "
-                "source's roster association and may include previous-team games. "
-                "This is not a confirmed starting lineup."
-            )
+                    st.info("No player stats available for this team and season type.")
+                st.caption(
+                    "Production and 3-point makes/attempts are per game. Mid-range "
+                    "makes/attempts are season totals from NBA.com's Mid-Range zone. "
+                    "Mid-range FG % is makes divided by attempts; it does not "
+                    "include all two-point shots. A blank percentage means no "
+                    "attempts or missing data. Players with no played games may "
+                    "be absent. Multi-team season totals are identified by the "
+                    "source's roster association and may include previous-team games. "
+                    "This is not a confirmed starting lineup."
+                )
         st.markdown("[Official NBA statistics](https://www.nba.com/stats/) · [NBA shooting zones](https://www.nba.com/stats/players/shooting)")
     except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError) as exc:
         st.warning(f"NBA statistics could not be loaded: {exc}")
@@ -1400,7 +1400,7 @@ def autosave_nba_scheduled_predictions(scoreboard, end_year, shared):
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,OSError) as exc:
         st.warning('Upcoming NBA forecasts could not be archived. Existing saved picks are preserved; retry after checking history availability.')
 
-def render_nba_tools(game_date, scoreboard, shared):
+def render_nba_tools(game_date, scoreboard, shared, statistics_tabs=None):
     from app_view import is_research
     research_view=is_research()
     end_year = current_season_end()
@@ -1412,7 +1412,12 @@ def render_nba_tools(game_date, scoreboard, shared):
     st.divider()
     if research_view:show_nba_prediction_tracker(scoreboard, end_year, shared)
     st.divider()
-    show_nba_statistics(end_year)
+    if statistics_tabs is None:
+        show_nba_statistics(end_year)
+    else:
+        with statistics_tabs[0]:
+            show_nba_statistics(end_year, player_container=statistics_tabs[1])
     st.divider()
     show_nba_injuries()
+
 
