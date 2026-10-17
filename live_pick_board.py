@@ -131,6 +131,18 @@ def render_live_board(records,sport='NFL'):
     selected=[r for r in selected if utc(r['starts_utc']).astimezone(PACIFIC).date()==day and r.get('strategy','Original') in chosen]
     include_moneylines=st.checkbox('Include saved moneyline picks',value=True,key='pick_board_ml_'+sport)
     if not include_moneylines:selected=[r for r in selected if r['category']!='Moneyline']
+    from pick_presentation import filter_matchup
+    games=sorted({r['game'] for r in selected})
+    game=st.selectbox('Focus on a matchup',['All games']+games,key='pick_board_matchup_'+sport)
+    selected=filter_matchup(selected,game)
+    if game!='All games' and ' at ' in game:
+        away,home=game.split(' at ',1)
+        index=st.session_state.get('team_emblems',{})
+        for column,name in zip(st.columns(2),(away,home)):
+            team=index.get(sport+':'+name,{})
+            if team.get('logo'):
+                icon,label=column.columns([1,7]);icon.image(team['logo'],width=28);label.write('**'+name+'**')
+            else:column.write('**'+name+'**')
     count=sum(r['category']!='Moneyline' for r in selected);moneylines=len(selected)-count
     st.write(f'**{count} saved props · {moneylines} moneyline picks**')
     auto=st.toggle('Auto-refresh live stats every 30 seconds',value=True,key='pick_board_auto_'+sport)
@@ -142,20 +154,23 @@ def render_live_board(records,sport='NFL'):
         if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):cached_fetch.clear()
         summaries=collect_summaries(selected,cached_fetch)
         rows=build_board(selected,summaries,team_assets=st.session_state.get("team_emblems",{}))
-        if rows:
-            st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
-            wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
-            st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
-            buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
-            None
-        else:st.info('No saved picks match the selected date and strategies.')
-    tracking_tab, cards_tab = st.tabs(['Live tracking table','Pick cards'])
-    with tracking_tab:panel()
-    with cards_tab:
-        from pick_cards import render_pick_cards
-        render_pick_cards(selected,sport)
+        from pick_presentation import pick_status
+        original={r['id']:r for r in selected}
+        rows=[{'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
+        tracking_tab,cards_tab=st.tabs(['Live tracking table','Pick cards'])
+        with tracking_tab:
+            if rows:
+                st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
+                wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
+                st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
+            else:st.info('No saved picks match the selected date and strategies.')
+        with cards_tab:
+            from pick_cards import render_pick_cards
+            render_pick_cards(selected,sport,live_rows=rows)
+    panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
