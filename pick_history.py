@@ -57,6 +57,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     record['feedback_version']=row.get('Feedback version')
     record['feedback_status']=row.get('Feedback status')
     record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation') if k in row}
+    record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through') if row.get(k) is not None}
     return record
 
 def grade_record(record,data):
@@ -293,4 +294,5 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from pick_learning import write_feedback
     write_feedback(data['records'])
+
 
