@@ -104,9 +104,10 @@ def archive_completed_usage(records,fetch=None,path='game_usage_history.json'):
     except (OSError,ValueError):archive={'games':{}}
     added=0
     for eid in sorted({str(r['event_id']) for r in records if r.get('sport','NFL')=='NFL' and r.get('event_id')}):
-        if archive['games'].get(eid,{}).get('completed') and archive['games'][eid].get('game_script'):continue
+        if archive['games'].get(eid,{}).get('completed') and archive['games'][eid].get('game_script') and archive['games'][eid].get('situations',{}).get('schema')==1 and archive['games'][eid]['situations'].get('plays'):continue
         try:
-            snap=usage_snapshot(fetch(eid))
+            data=fetch(eid)
+            snap=usage_snapshot(data)
             if snap['event_id']!=eid or not snap['completed']:continue
             reviews=[]
             fields={'Passing yards':'Passing attempts','Passing attempts':'Passing attempts','Rushing yards':'Carries','Rushing attempts':'Carries','Receiving yards':'Targets','Receptions':'Targets'}
@@ -116,8 +117,26 @@ def archive_completed_usage(records,fetch=None,path='game_usage_history.json'):
                 matched=[p for p in snap['players'] if p['Player']==record.get('player')]
                 actual=number(matched[0].get(field)) if len(matched)==1 and field else None
                 if expected is not None:reviews.append({'Pick ID':record.get('id'),'Player':record.get('player'),'Category':record.get('category'),'Model':record.get('model'),'Expected opportunities':expected,'Reported final opportunities':actual,'Opportunity miss':actual-expected if actual is not None else None})
+            from game_situations import situation_snapshot, forecast_situation_reviews
+            situations=situation_snapshot(data,'NFL')
+            situations['forecast_reviews']=forecast_situation_reviews(records,situations)
+            snap['situations']=situations
             snap['forecast_reviews']=reviews
             archive['games'][eid]=snap;added+=1
         except (OSError,ValueError,KeyError,TypeError):continue
+    # NBA uses its own sport-qualified keys; forecasts and box-score grades remain separate.
+    from game_situations import situation_snapshot, forecast_situation_reviews
+    nba_fetch=lambda eid:json.load(urlopen('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event='+eid,timeout=20))
+    for eid in sorted({str(r['event_id']) for r in records if r.get('sport')=='NBA' and r.get('event_id')}):
+        key='NBA:'+eid
+        if archive['games'].get(key,{}).get('situations',{}).get('plays'):continue
+        try:
+            data=nba_fetch(eid)
+            snap=situation_snapshot(data,'NBA')
+            if snap['event_id']!=eid or not snap['completed']:continue
+            snap['forecast_reviews']=forecast_situation_reviews(records,snap)
+            archive['games'][key]={'completed':True,'situations':snap};added+=1
+        except (OSError,ValueError,KeyError,TypeError):continue
     if added:target.write_text(json.dumps(archive,indent=2)+'\n')
     return added
+
