@@ -42,7 +42,7 @@ def current_stat(record,data):
 
 def build_board(records,summaries,now=None):
     from pick_history import grade_record
-    now=now or datetime.now(timezone.utc);rows=[];seen=set()
+    now=now or datetime.now(timezone.utc);rows=[];seen=set();situation_cache={}
     for record in records:
         if record.get('id') in seen:continue
         seen.add(record.get('id'))
@@ -59,6 +59,11 @@ def build_board(records,summaries,now=None):
         if str(header.get('id',''))!=str(record['event_id']):
             row['Live position']='Feed identity mismatch — no stats used';rows.append(row);continue
         competition=header.get('competitions',[{}])[0];status=competition.get('status',{});kind=status.get('type',{});state=kind.get('state')
+        from game_situations import situation_snapshot
+        if key not in situation_cache:situation_cache[key]=situation_snapshot(data,record.get('sport','NFL'))
+        last=situation_cache[key].get('last_play')
+        row['Latest reported play']=last.get('Text') if last else None
+        row['Latest play situation']=(' · '.join(str(last[k]) for k in ('Team','Period','Clock','Situation') if last.get(k) is not None)) if last else None
         row['Data checked UTC']=item.get('retrieved_utc')
         competitors=competition.get('competitors',[])
         row['Score']=' · '.join(c.get('team',{}).get('abbreviation',c.get('team',{}).get('displayName','Team'))+' '+str(c.get('score','—')) for c in competitors)
@@ -139,4 +144,5 @@ def render_live_board(records,sport='NFL'):
             None
         else:st.info('No saved picks match the selected date and strategies.')
     panel()
+
 
