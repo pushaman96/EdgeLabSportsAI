@@ -7,6 +7,7 @@ import streamlit as st
 from nfl_prop_model import render_prop_research
 from pick_history import publish_rows
 from odds_changes import estimated_credits, render_changes
+from sportsbook_presets import STANDARD_PRESETS, NBA_EXTRA_MARKETS, archive_market_board
 
 class OddsSourceError(ValueError):
     pass
@@ -31,6 +32,7 @@ PROP_MARKETS['NFL'].update({
     'First-half game total':'totals_h1', 'First-half team totals':'team_totals_h1',
 })
 PROP_MARKETS['NBA'].update({'Steals':'player_steals','Blocks':'player_blocks'})
+PROP_MARKETS['NBA'].update(NBA_EXTRA_MARKETS)
 
 def render_nba_paper_quotes(events,books,key_prefix):
     from app_view import is_research
@@ -236,14 +238,20 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     if not key:return
     try:
         quick_nfl=False
+        quick_nba=False
         if sport=='NFL':
             st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns, rushing yards, receiving yards, passing/rushing attempts, and receptions. Fresh budget: up to 3 game-line credits plus 7 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
             quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 7/game credits',key='quick_nfl_slate')
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
+        if sport=='NBA':
+            st.caption('NBA preset: moneylines, points, assists, rebounds, PRA, three-pointers made, field goals made, free throws made/attempted and team totals. Fresh budget: up to 3 credits for game lines plus 9 per upcoming game. NBA props remain market prices until a tested forecasting model is available.')
+            quick_nba=st.button('Load NBA slate & save board — up to 3 + 9/game credits',key='quick_nba_slate')
+            st.caption('Shooting categories are made shots unless explicitly labeled attempted. Field-goal attempts and three-point attempts are not included as unsupported market keys.')
+        quick_load=quick_nfl or quick_nba
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
-        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load') or quick_nfl:
-            if not quick_nfl:odds_request.clear()
+        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load') or quick_load:
+            if not quick_load:odds_request.clear()
             result=odds_request(key,sport)
             st.session_state['sportsbook_result']=(sport,key,result)
         saved=st.session_state.get('sportsbook_result')
@@ -254,11 +262,12 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption(f"Retrieved {result['retrieved']}. Credits remaining at retrieval: {result['remaining']}. Last request cost: {result['cost']}. Displaying sidebar date in Pacific time.")
         if not events:st.info('No bookmaker events for the selected date. Choose a different sidebar date; preseason or distant dates may not be covered.');return
         names=sorted({book['title'] for event in events for book in event.get('bookmakers',[])})
-        selected_books=st.multiselect('Compare sportsbooks',names,default=names,key='sportsbook_books')
+        selected_books=st.multiselect('Compare sportsbooks',names,default=names,key='sportsbook_books_'+sport)
         st.caption('Select multiple books for a broader price comparison. Only place or paper-record selections at the actual book and price you can use. More sportsbook prices do not provide bet counts or money volume.')
         if not selected_books:st.info('Select at least one sportsbook.');return
         filtered=[dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in selected_books]) for event in events]
-        st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
+        with st.expander('View sportsbook game prices'):
+            st.dataframe(bookmaker_rows(filtered),hide_index=True,use_container_width=True)
         if sport=='NBA':render_nba_paper_quotes(filtered,selected_books,'nba_moneyline_paper')
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
         st.subheader('Player props and additional game markets')
@@ -266,17 +275,16 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption('NFL passing/rushing/receiving yards, receptions and attempts have experimental analysis. Sacks and other unsupported markets show prices only. Each requested category can consume credits per game. Viewing cached results and rerunning analysis do not fetch new prices.')
         render_changes(filtered,sport+'_game_lines',result['retrieved'])
         upcoming_count=sum(datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc) for e in events)
-        preset_labels=['Passing yards','Anytime touchdown scorer','Rushing yards','Receiving yards','Passing attempts','Rushing attempts','Receptions']
-        use_preset=quick_nfl
-        if sport=='NFL':
-            if use_preset:
-                st.session_state['sportsbook_props_game']='__all_nfl_games__'
-                st.session_state['sportsbook_props_categories']=preset_labels
+        preset_labels=STANDARD_PRESETS[sport]
+        use_preset=quick_load
+        if use_preset:
+            st.session_state['sportsbook_props_game_'+sport]='__all_nfl_games__'
+            st.session_state['sportsbook_props_categories_'+sport]=preset_labels
         fresh_props=st.checkbox('Request fresh prop prices on next load (may spend credits)',value=False,key='force_fresh_props')
         st.caption('Unchecked: reuse the five-minute provider-response cache when available. Checked: next Load requests new prices. No free check can establish whether sportsbook lines changed; the snapshot comparison below only compares prices already loaded.')
         all_option = '__all_nfl_games__'
-        event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],index=len(events) if sport=='NFL' else 0,format_func=lambda value:f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game')
-        labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=preset_labels if sport=='NFL' else list(PROP_MARKETS[sport])[:2],key='sportsbook_props_categories')
+        event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],index=len(events),format_func=lambda value:f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
+        labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=preset_labels,key='sportsbook_props_categories_'+sport)
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
         preview_games=upcoming_count if event_id==all_option else 1
         if st.button('Preview prop credit cost — 0 credits',key='preview_prop_cost'):
@@ -285,7 +293,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             targets = [e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00')) > datetime.now(timezone.utc)]
             st.caption(f'All games: {len(targets)} upcoming {sport} games × {len(labels)} categories = up to {len(targets)*len(labels)} credits for a fresh load. Cached responses may cost no new credits. Started games are skipped. Analysis adds no sportsbook credits.')
             batch_key = (sport,key,str(selected_date),markets,tuple(e['id'] for e in targets))
-            loaded_all = st.button(f'Load all games & analyze — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets) or use_preset
+            action_label='Load all games & analyze' if sport=='NFL' else 'Load all game markets'
+            loaded_all = st.button(f'{action_label} — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets) or use_preset
             if loaded_all and numeric(result.get('remaining'))==0:
                 st.warning('The game-line response reports zero credits remaining. Prop requests were skipped; already loaded data remains available.')
                 loaded_all=False
@@ -302,6 +311,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 loaded_events = [r['data'] for r in batch['results']]
                 st.caption(f"Loaded {len(loaded_events)} of {len(targets)} games. Most recent provider-reported credits remaining: {batch['remaining']}.")
                 if loaded_events:
+                    if sport=='NBA':archive_market_board(loaded_events,batch['loaded'],sport)
                     render_changes(loaded_events,sport+'_all_props',batch['loaded'])
                     render_prop_market_board(loaded_events,selected_books,sport,'all_prop_board')
                     if sport=='NFL':render_prop_research(loaded_events,scoreboard,selected_books,batch['loaded'],auto_analyze=loaded_all)
@@ -311,13 +321,15 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                         st.dataframe(bookmaker_rows(loaded_events,selected_books,True),hide_index=True,use_container_width=True)
                 else:st.info('No prop data loaded. Check coverage and the warnings above.')
         else:
-            single_loaded=st.button(f'Load selected props & analyze — up to {estimated_credits(1,markets)} credits',key='sportsbook_props_load',disabled=not markets)
+            action_label='Load selected props & analyze' if sport=='NFL' else 'Load selected prop markets'
+            single_loaded=st.button(f'{action_label} — up to {estimated_credits(1,markets)} credits',key='sportsbook_props_load',disabled=not markets)
             if single_loaded and markets:
                 if fresh_props:odds_request.clear()
                 prop_result=odds_request(key,sport,event_id,markets)
                 st.session_state['sportsbook_props_result']=(sport,key,event_id,markets,prop_result)
             prop_saved=st.session_state.get('sportsbook_props_result')
             if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
+                if sport=='NBA':archive_market_board([prop_saved[4]['data']],prop_saved[4]['retrieved'],sport)
                 render_changes([prop_saved[4]['data']],sport+'_single_props_'+event_id,prop_saved[4]['retrieved'])
                 props=bookmaker_rows([prop_saved[4]['data']],selected_books,True)
                 if not props:st.info('No selected player props returned.')
@@ -369,5 +381,6 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
+
 
 
