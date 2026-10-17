@@ -1,3 +1,4 @@
+from automatic_reports import autosave_report, load_report
 """NFL prop research: 2024 fit, 2025 historical development, future paper testing.
 No historical sportsbook prop prices are inferred from box scores.
 """
@@ -679,7 +680,7 @@ def render_cushion_tracker(watch,starts):
                 results.append(item)
             st.dataframe(results,hide_index=True,use_container_width=True)
             buffer=io.StringIO();writer=csv.DictWriter(buffer,fieldnames=list(records[0]));writer.writeheader();writer.writerows(records)
-            st.download_button('Download cushion tracking CSV',buffer.getvalue(),file_name='kamikaze_picks_passing_cushion.csv',mime='text/csv',key='cushion_download')
+            autosave_report('Download cushion tracking CSV',buffer.getvalue(),file_name='kamikaze_picks_passing_cushion.csv',mime='text/csv',key='cushion_download')
             st.caption('Results are manually entered. Returns compare $1 straight selections, excluding fees; combo/parlay payouts are not inferred. Download and restore the CSV to preserve records between sessions.')
 
 
@@ -812,7 +813,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         st.dataframe(cushions,hide_index=True,use_container_width=True)
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
-        st.download_button('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
+        autosave_report('Download analyzed cushion comparison',output.getvalue(),file_name='kamikaze_picks_analyzed_cushions.csv',mime='text/csv',key='analyzed_cushion_export')
     render_cushion_tracker(watch, starts)
     publish_rows(watch+[r for r in cushion_inputs if r['Decision']=='Pass'], events, cushions)
     if watch:
@@ -832,5 +833,6 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         writer.writeheader()
         for row in display:
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
-        st.download_button('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
+        autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
