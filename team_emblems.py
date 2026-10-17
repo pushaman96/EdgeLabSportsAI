@@ -11,18 +11,26 @@ def team_index(competitions,sport):
     result={}
     for competition in competitions:
         for competitor in competition.get('competitors',[]):
-            team=competitor.get('team',{});entry={'name':team.get('displayName'),'abbreviation':team.get('abbreviation'),'logo':logo_url(team)}
+            team=competitor.get('team',{});entry={'id':str(team.get('id','')),'name':team.get('displayName'),'abbreviation':team.get('abbreviation'),'logo':logo_url(team)}
             for value in (team.get('id'),team.get('displayName'),team.get('abbreviation')):
                 if value:result[sport+':'+str(value)]=entry
             if sport=='NFL':
                 for source,target in {'LAR':'LA','WSH':'WAS'}.items():
                     if team.get('abbreviation')==source:result[sport+':'+target]=entry
+    if sport=='NBA':
+        for source,target in {'GSW':'GS','NYK':'NY','NOP':'NO','SAS':'SA','UTA':'UTAH','WAS':'WSH','LA Clippers':'Los Angeles Clippers'}.items():
+            if sport+':'+target in result:result[sport+':'+source]=result[sport+':'+target]
+            elif sport+':'+source in result:result[sport+':'+target]=result[sport+':'+source]
     return result
 
 def remember_teams(scoreboard,sport):
     import streamlit as st
-    entries=team_index([c for e in scoreboard.get('events',[]) for c in e.get('competitions',[])],sport)
-    st.session_state.setdefault('team_emblems',{}).update(entries)
+    entries=directory_index(sport)
+    entries.update(team_index([c for e in scoreboard.get('events',[]) for c in e.get('competitions',[])],sport))
+    current=st.session_state.setdefault('team_emblems',{})
+    for key,value in entries.items():
+        if not value.get('logo') and current.get(key,{}).get('logo'):value=dict(value,logo=current[key]['logo'])
+        current[key]=value
 
 def pick_team(record,data=None,index=None):
     sport=record.get('sport','NFL');index=dict(index or {})
@@ -44,3 +52,50 @@ def render_team_score(column,team,score):
     name=team.get('displayName','Team');url=logo_url(team)
     if not url:column.metric(name,score);return
     emblem,text=column.columns([1,7]);emblem.image(url,width=28);text.metric(name,score)
+
+
+def directory_index(sport):
+    """Cached full-league directory covers games outside the selected scoreboard."""
+    import streamlit as st
+    import json
+    from urllib.request import urlopen
+    @st.cache_data(ttl=86400,show_spinner=False)
+    def fetch(league):
+        path='football/nfl' if league=='NFL' else 'basketball/nba'
+        data=json.load(urlopen('https://site.api.espn.com/apis/site/v2/sports/'+path+'/teams?limit=100',timeout=12))
+        competitors=[entry for s in data.get('sports',[]) for l in s.get('leagues',[]) for entry in l.get('teams',[])]
+        return team_index([{'competitors':competitors}],league)
+    try:return fetch(sport)
+    except (OSError,ValueError,KeyError,TypeError):return {}
+
+def enrich_rows(rows,sport,index,team=None):
+    """Return display copies; never add image URLs to model inputs or saved records."""
+    output=[]
+    fields=('Team','TEAM_NAME','TEAM_ABBREVIATION','Current roster team','Home team','Away team','Defense','Opposing offense','Team to research')
+    for original in rows:
+        row=dict(original);images={}
+        for field in fields:
+            value=row.get(field)
+            if value is not None:
+                match=index.get(sport+':'+str(value))
+                if match and match.get('logo'):images[field+' emblem']=match['logo']
+        if not images and team is not None:
+            match=index.get(sport+':'+str(team))
+            if match and match.get('logo'):images['Team emblem']=match['logo']
+        if not images and ' at ' in str(row.get('Game','')):
+            away,home=row['Game'].split(' at ',1)
+            for label,name in (('Away emblem',away),('Home emblem',home)):
+                match=index.get(sport+':'+name)
+                if match and match.get('logo'):images[label]=match['logo']
+        output.append({**images,**row})
+    return output
+
+def render_team_table(rows,sport,team=None,**kwargs):
+    import streamlit as st
+    index=st.session_state.get('team_emblems',{})
+    display=enrich_rows(rows,sport,index,team)
+    columns=dict(kwargs.pop('column_config',{}) or {})
+    for row in display:
+        for key in row:
+            if key.endswith(' emblem'):columns[key]=st.column_config.ImageColumn('',width='small')
+    st.dataframe(display,column_config=columns,**kwargs)
