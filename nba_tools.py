@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 from team_emblems import render_team_table
 from automatic_reports import autosave_report, load_report
 """NBA statistics and research tools for EdgeLab Sports AI."""
@@ -972,6 +973,7 @@ def show_nba_model(shared, end_year):
             adjusted = shared["shrink_probability"](probability, adjustment["strength"])
             matchup[0]["Adjusted win %"] = round(adjusted * 100, 1)
             matchup[1]["Adjusted win %"] = round((1 - adjusted) * 100, 1)
+        matchup=highest_probability(matchup,"Adjusted win %" if adjustment else "Original Elo win %")
         render_team_table(matchup, hide_index=True, use_container_width=True, sport='NBA')
         st.caption(
             "These estimates are for regular-season-style matchups, not a "
@@ -1426,6 +1428,7 @@ def render_nba_tools(game_date, scoreboard, shared, statistics_tabs=None):
             show_nba_statistics(end_year, player_container=statistics_tabs[1])
     st.divider()
     show_nba_injuries()
+
 
 
 
