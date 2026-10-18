@@ -1,3 +1,4 @@
+from credit_saver import spending_allowed,choose_targets,balance_record
 from probability_order import highest_probability
 from team_emblems import render_team_table
 """Reported sportsbook prices and optional The Odds API connection."""
@@ -238,27 +239,48 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     st.caption('Start with the free allowance. Loads consume provider credits; no paid plan is purchased by this app. Game lines request three markets; props load only for the game and categories you select. Responses are cached five minutes. Coverage differs by book and season.')
     key=st.text_input('The Odds API key',type='password',key='sportsbook_api_key',help='Enter it here privately. Do not post your key in chat or GitHub. It is sent to The Odds API to retrieve your data and stays in this app session.')
     if not key:return
+    mode=st.radio('Odds credit mode',['Credit-saving mode','Saved data only — 0 credits','Standard mode'],key='odds_credit_mode',horizontal=True)
+    budget=int(st.number_input('Maximum credits per click',min_value=1,max_value=500,value=10,step=1,key='odds_click_budget')) if mode=='Credit-saving mode' else 500
+    existing=st.session_state.get('sportsbook_result')
+    remaining=existing[2].get('remaining') if existing and existing[:2]==(sport,key) else None
+    quota=st.session_state.get('odds_quota_check')
+    import hashlib
+    fingerprint=hashlib.sha256(key.encode()).hexdigest()
+    if quota and quota['key_hash']==fingerprint:remaining=quota['remaining']
+    if st.button('Check remaining credits — 0 credits',key='odds_check_quota'):
+        try:
+            response=requests.get('https://api.the-odds-api.com/v4/sports/',params={'apiKey':key},timeout=15)
+            response.raise_for_status()
+            remaining=response.headers.get('x-requests-remaining')
+            st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,remaining,datetime.now(timezone.utc).isoformat())
+        except (requests.exceptions.RequestException,ValueError):st.warning('The free balance check failed. No new odds were requested; check your provider dashboard.')
+    st.caption('Last reported credits remaining: '+str(remaining if remaining is not None else 'Unknown')+'. Cached prices may be outdated. Budget checks assume a fresh request; an available cache hit may cost 0.')
+    allow_game,game_reason=spending_allowed(mode,3,budget,remaining)
+    st.caption('Credit-saving mode: choose a few games and categories below. Full-slate preset buttons are available in Standard mode. Saved-data mode blocks new odds loads while keeping already loaded prices visible.')
     try:
         quick_nfl=False
         quick_nba=False
         if sport=='NFL':
             st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns, rushing yards, receiving yards, passing/rushing attempts, and receptions. Fresh budget: up to 3 game-line credits plus 7 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
-            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 7/game credits',key='quick_nfl_slate')
+            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 7/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         if sport=='NBA':
             st.caption('NBA preset: moneylines, points, assists, rebounds, PRA, three-pointers made, field goals made, free throws made/attempted and team totals. Fresh budget: up to 3 credits for game lines plus 9 per upcoming game. NBA props remain market prices until a tested forecasting model is available.')
-            quick_nba=st.button('Load NBA slate & save board — up to 3 + 9/game credits',key='quick_nba_slate')
+            quick_nba=st.button('Load NBA slate & save board — up to 3 + 9/game credits',key='quick_nba_slate',disabled=mode!='Standard mode' or not allow_game)
             st.caption('Shooting categories are made shots unless explicitly labeled attempted. Field-goal attempts and three-point attempts are not included as unsupported market keys.')
         quick_load=quick_nfl or quick_nba
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
-        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load') or quick_load:
+        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load',disabled=not allow_game) or quick_load:
             if not quick_load:odds_request.clear()
             result=odds_request(key,sport)
             st.session_state['sportsbook_result']=(sport,key,result)
+            remaining=result.get('remaining')
+            st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,remaining,result['retrieved'])
+            remaining=st.session_state['odds_quota_check']['remaining'] if st.session_state.get('odds_quota_check') else remaining
         saved=st.session_state.get('sportsbook_result')
         if not saved or saved[:2]!=(sport,key):
-            st.info('Click Load / refresh sportsbook game lines.');return
+            st.info('Load game lines once when credits are available. Saved predictions and ESPN live tracking remain available elsewhere on the dashboard without odds credits.');return
         result=saved[2]
         events=[event for event in result['data'] if pacific(event['commence_time']).date()==selected_date]
         st.caption(f"Retrieved {result['retrieved']}. Credits remaining at retrieval: {result['remaining']}. Last request cost: {result['cost']}. Displaying sidebar date in Pacific time.")
@@ -278,6 +300,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         render_changes(filtered,sport+'_game_lines',result['retrieved'])
         upcoming_count=sum(datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc) for e in events)
         preset_labels=STANDARD_PRESETS[sport]
+        compact_labels=['Passing yards','Rushing yards'] if sport=='NFL' else ['Points','Rebounds']
         use_preset=quick_load
         if use_preset:
             st.session_state['sportsbook_props_game_'+sport]='__all_nfl_games__'
@@ -286,32 +309,43 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption('Unchecked: reuse the five-minute provider-response cache when available. Checked: next Load requests new prices. No free check can establish whether sportsbook lines changed; the snapshot comparison below only compares prices already loaded.')
         all_option = '__all_nfl_games__'
         event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],index=len(events),format_func=lambda value:f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
-        labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=preset_labels,key='sportsbook_props_categories_'+sport)
+        labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=compact_labels if mode=='Credit-saving mode' else preset_labels,key='sportsbook_props_categories_'+sport)
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
-        preview_games=upcoming_count if event_id==all_option else 1
+        upcoming=[e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc)]
+        selected_ids=[e['id'] for e in upcoming]
+        if mode=='Credit-saving mode' and event_id==all_option:
+            selected_ids=st.multiselect('Games to load — only these games consume credits',[e['id'] for e in upcoming],default=[e['id'] for e in upcoming[:1]],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in upcoming if e['id']==value),key='credit_saver_games_'+sport)
+        preview_games=len(selected_ids) if event_id==all_option else int(any(e['id']==event_id for e in upcoming))
+        cost=estimated_credits(preview_games,markets)
+        allowed,blocked_reason=spending_allowed(mode,cost,budget,remaining)
+        st.caption(f'This prop load: up to {cost} credits for {preview_games} games × {len(labels)} categories. Viewing the current board costs 0.')
+        if not allowed:st.info(blocked_reason)
         if st.button('Preview prop credit cost — 0 credits',key='preview_prop_cost'):
             st.info(f'Fresh-request budget: up to {estimated_credits(preview_games,markets)} credits = {preview_games} games × {len(labels)} categories × 1 US region. Cache hits can cost 0; unavailable markets may reduce cost. The API response headers report the actual request cost. No API request was made by this preview.')
         if event_id == all_option:
-            targets = [e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00')) > datetime.now(timezone.utc)]
+            targets = choose_targets(events,selected_ids,datetime.now(timezone.utc))
             st.caption(f'All games: {len(targets)} upcoming {sport} games × {len(labels)} categories = up to {len(targets)*len(labels)} credits for a fresh load. Cached responses may cost no new credits. Started games are skipped. Analysis adds no sportsbook credits.')
             batch_key = (sport,key,str(selected_date),markets,tuple(e['id'] for e in targets))
             action_label='Load all games & analyze' if sport=='NFL' else 'Load all game markets'
-            loaded_all = st.button(f'{action_label} — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets) or use_preset
-            if loaded_all and numeric(result.get('remaining'))==0:
+            loaded_all = st.button(f'{action_label} — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets or not allowed) or use_preset
+            if loaded_all and not allowed:
+                st.warning(blocked_reason)
+                loaded_all=False
+            if loaded_all and numeric(remaining)==0:
                 st.warning('The game-line response reports zero credits remaining. Prop requests were skipped; already loaded data remains available.')
                 loaded_all=False
             if loaded_all and markets and targets:
                 if fresh_props:odds_request.clear()
-                st.session_state.pop('sportsbook_props_all_result',None)
                 with st.spinner(f'Loading selected prop categories for all upcoming {sport} games...'):
                     batch = load_all_prop_lines(key,sport,targets,markets)
                 st.session_state['sportsbook_props_all_result'] = (batch_key,batch)
+                st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,batch.get('remaining'),batch['loaded'])
             all_saved = st.session_state.get('sportsbook_props_all_result')
-            if all_saved and all_saved[0] == batch_key:
+            if all_saved and all_saved[0][:4] == batch_key[:4]:
                 batch = all_saved[1]
                 for failure in batch['failures']:st.warning(failure)
-                loaded_events = [r['data'] for r in batch['results']]
-                st.caption(f"Loaded {len(loaded_events)} of {len(targets)} games. Most recent provider-reported credits remaining: {batch['remaining']}.")
+                loaded_events = [r['data'] for r in batch['results'] if r['data']['id'] in selected_ids]
+                st.caption(f"Displaying {len(loaded_events)} saved game snapshots. Most recent provider-reported credits remaining: {batch['remaining']}.")
                 if loaded_events:
                     if sport=='NBA':archive_market_board(loaded_events,batch['loaded'],sport)
                     render_changes(loaded_events,sport+'_all_props',batch['loaded'])
@@ -324,11 +358,12 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 else:st.info('No prop data loaded. Check coverage and the warnings above.')
         else:
             action_label='Load selected props & analyze' if sport=='NFL' else 'Load selected prop markets'
-            single_loaded=st.button(f'{action_label} — up to {estimated_credits(1,markets)} credits',key='sportsbook_props_load',disabled=not markets)
-            if single_loaded and markets:
+            single_loaded=st.button(f'{action_label} — up to {estimated_credits(1,markets)} credits',key='sportsbook_props_load',disabled=not markets or not preview_games or not allowed)
+            if single_loaded and markets and allowed:
                 if fresh_props:odds_request.clear()
                 prop_result=odds_request(key,sport,event_id,markets)
                 st.session_state['sportsbook_props_result']=(sport,key,event_id,markets,prop_result)
+                st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,prop_result.get('remaining'),prop_result['retrieved'])
             prop_saved=st.session_state.get('sportsbook_props_result')
             if prop_saved and prop_saved[:4]==(sport,key,event_id,markets):
                 if sport=='NBA':archive_market_board([prop_saved[4]['data']],prop_saved[4]['retrieved'],sport)
@@ -384,6 +419,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
+
 
 
 
