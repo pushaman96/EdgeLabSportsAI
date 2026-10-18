@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 """Compact paginated cards for frozen predictions; no new provider requests."""
 import math
 from saved_pick_explanation import explanation
@@ -8,7 +9,7 @@ def render_pick_cards(records,sport,live_rows=None):
     import streamlit as st
     from pick_presentation import accent_html,badge_html,pick_status
     live={r.get("Pick ID"):r for r in (live_rows or [])}
-    unique={r['id']:r for r in records};rows=list(unique.values())
+    unique={r['id']:r for r in records};rows=highest_probability(list(unique.values()),'probability')
     if not rows:st.info('No saved picks match these filters.');return
     pages=math.ceil(len(rows)/6)
     page=st.selectbox('Pick-card page',list(range(pages)),format_func=lambda i:f'{i+1} of {pages}',key='pick_card_page_'+sport) if pages>1 else 0
@@ -39,6 +40,7 @@ def render_pick_cards(records,sport,live_rows=None):
                         for label,value in source.items():st.caption(label+': '+str(value))
                     else:st.caption('Detailed source timestamps were not saved with this older pick. Reanalyze current prices for a fresh availability check; the original pick remains frozen.')
                 st.caption('Frozen forecast for tracking; recorded odds are not confirmed current prices.')
+
 
 
 
