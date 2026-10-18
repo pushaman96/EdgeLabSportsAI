@@ -156,11 +156,12 @@ def render_live_board(records,sport='NFL'):
         if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):cached_fetch.clear()
         summaries=collect_summaries(selected,cached_fetch)
         rows=build_board(selected,summaries,team_assets=st.session_state.get("team_emblems",{}))
-        from pick_presentation import pick_status
+        from pick_presentation import pick_status,result_indicator
         original={r['id']:r for r in selected}
-        rows=[{'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
+        rows=[{'Result':result_indicator(row),'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
         tracking_tab,cards_tab=st.tabs(['Live tracking table','Pick cards'])
         with tracking_tab:
+            st.caption('✅ Win · ❌ Loss · ➖ Push · ⏳ Pending or review needed. Win/loss marks appear only after final grading.')
             if rows:
                 st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
                 wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
@@ -172,6 +173,7 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
