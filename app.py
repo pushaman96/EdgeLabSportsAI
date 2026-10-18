@@ -82,6 +82,8 @@ def show_games(data, sport_path):
     from team_emblems import remember_teams, render_team_score
     remember_teams(data, "NBA" if "nba" in sport_path else "NFL")
     events = data.get("events", [])
+    from half_possession import scoreboard_halves, half_possession
+    halves = scoreboard_halves(data, lambda eid:get_game_boxscore(sport_path,eid)) if sport_path=="football/nfl" else {}
 
     if not events:
         st.info("No games were listed for this date. Try another date.")
@@ -126,6 +128,17 @@ def show_games(data, sport_path):
 
             if start_time:
                 st.caption(f"Scheduled time: {start_time}")
+            if sport_path == "football/nfl":
+                half = halves.get(str(event.get('id')), half_possession({}))
+                kickoff_col, first_col, half_col = st.columns(3)
+                kickoff_col.caption("Kicked off first")
+                kickoff_col.write(half['Opening kickoff by'])
+                first_col.caption("Started with the ball")
+                first_col.write(half['Opening possession'])
+                half_col.caption("Ball to start second half")
+                half_col.write(half['Second-half start'])
+                if half['Second-half start'].startswith('Expected:'):
+                    st.caption("Expected second-half possession is unconfirmed until the opening Q3 kickoff is reported; unusual coin-toss choices or kickoffs may differ.")
             latest = latest_game_play(competition)
             st.write("**Latest reported play**")
             if latest['text']:
@@ -1978,3 +1991,4 @@ st.caption(
 from pick_readiness import render_overview
 with dashboard_status:
     render_overview(sport, selected_date)
+
