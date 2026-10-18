@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 """One live table for frozen picks. ESPN stats only; no sportsbook requests."""
 import csv
 import io
@@ -134,7 +135,7 @@ def render_live_board(records,sport='NFL'):
     from pick_presentation import filter_matchup
     games=sorted({r['game'] for r in selected})
     game=st.selectbox('Focus on a matchup',['All games']+games,key='pick_board_matchup_'+sport)
-    selected=filter_matchup(selected,game)
+    selected=highest_probability(filter_matchup(selected,game),"probability")
     if game!='All games' and ' at ' in game:
         away,home=game.split(' at ',1)
         index=st.session_state.get('team_emblems',{})
@@ -144,6 +145,7 @@ def render_live_board(records,sport='NFL'):
                 icon,label=column.columns([1,7]);icon.image(team['logo'],width=28);label.write('**'+name+'**')
             else:column.write('**'+name+'**')
     count=sum(r['category']!='Moneyline' for r in selected);moneylines=len(selected)-count
+    st.caption('Sorted by frozen estimated win probability, highest first; unmodeled entries appear last.')
     st.write(f'**{count} saved props · {moneylines} moneyline picks**')
     auto=st.toggle('Auto-refresh live stats every 30 seconds',value=True,key='pick_board_auto_'+sport)
     st.caption('Uses ESPN stats, not sportsbook credits. Updates while this app session is active; feed delays and stat corrections are possible. Original lines and probabilities remain frozen. Below an Under line during a game is not a final win. Missing stats are never treated as zero or DNP.')
@@ -170,6 +172,7 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
