@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 
 import streamlit as st
 import requests
@@ -1286,9 +1287,10 @@ with score_tab:
                             if context:
                                 p = context['probability']
                                 forecast_rows.append({'Game':event.get('name'), 'Model lean':(home if p >= .5 else away) if context['eligible'] else 'PASS — history/season not eligible',
-                                    'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
+                                    'Winner probability %':round(max(p,1-p)*100,1) if context['eligible'] else None, 'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
                                     'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'],
                                     'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':('Injury warning — historical Elo only' if not context.get('injury_verified') else 'Availability checked — historical Elo only') if context['eligible'] else 'History/season not eligible'})
+                        forecast_rows=highest_probability(forecast_rows,"Winner probability %")
                         if forecast_rows:render_team_table(forecast_rows, hide_index=True, use_container_width=True, sport=sport)
                         else:st.info('No matched upcoming games available for a pregame forecast.')
                     except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
@@ -1627,6 +1629,7 @@ if sport == "NFL":
             from injury_verification import render_matchup_screen
             render_matchup_screen(scoreboard,home_team,away_team)
             col1, col2 = st.columns(2)
+            if away_probability > home_probability:col1, col2 = col2, col1
 
             col1.metric(
                 f"{home_team} historical Elo win % (injuries excluded)",
@@ -1991,4 +1994,5 @@ st.caption(
 from pick_readiness import render_overview
 with dashboard_status:
     render_overview(sport, selected_date)
+
 
