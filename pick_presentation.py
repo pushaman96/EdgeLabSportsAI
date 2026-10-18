@@ -31,3 +31,9 @@ def badge_html(label):
 
 def filter_matchup(records,game):
     return list(records) if game=='All games' else [r for r in records if r.get('game')==game]
+
+
+
+def result_indicator(row):
+    """Only verified final grades receive a win/loss symbol."""
+    return {'Win':'✅ Win','Loss':'❌ Loss','Push':'➖ Push'}.get(row.get('Final result'),'⏳ Pending')
