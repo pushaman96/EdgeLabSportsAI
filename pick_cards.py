@@ -25,6 +25,10 @@ def render_pick_cards(records,sport,live_rows=None):
                 else:st.write('**'+r.get('player','Unknown')+'**')
                 st.write(e['selection'])
                 st.caption(r.get('game',''))
+                live_row=live.get(r['id'],{})
+                if sport=='NFL' and live_row.get('Opening possession'):
+                    st.caption('Started with ball: '+live_row['Opening possession'])
+                    st.caption('Second-half start: '+live_row.get('Second-half start','Not confirmed'))
                 prob=r.get('probability');prob_text=f'{prob:.0%}' if isinstance(prob,(int,float)) and 0<prob<1 else 'Not modeled'
                 metrics=st.columns(2);metrics[0].metric('Estimated win chance',prob_text)
                 metrics[1].metric('Recorded odds',str(r.get('odds','Unknown')))
@@ -39,4 +43,5 @@ def render_pick_cards(records,sport,live_rows=None):
                         for label,value in source.items():st.caption(label+': '+str(value))
                     else:st.caption('Detailed source timestamps were not saved with this older pick. Reanalyze current prices for a fresh availability check; the original pick remains frozen.')
                 st.caption('Frozen forecast for tracking; recorded odds are not confirmed current prices.')
+
 
