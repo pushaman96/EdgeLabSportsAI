@@ -795,9 +795,9 @@
       "published_utc": "2026-10-16T23:11:46.652010+00:00",
       "starts_utc": "2026-10-18T13:30:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 56.0,
+      "profit_per_1": -1,
       "projected_yards": 28.5,
       "expected_opportunities": 8.6,
       "reason": "5 recent games; expected 8.6 opportunities; opponent historical rushing yards allowed: 75% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. New teammates with limited team history: Marvin Harrison Jr.. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -814,7 +814,12 @@
         "Current-team games": 5,
         "Evidence explanation": "Forecast: 28.5 rushing yards. Compared quote: Under 47.5 at -110 (DraftKings). Current roster team: HOU; current-team games: 5; Current team matches history. Expected workload: 8.6 carries. Estimated win chance 73.5% versus 52.4% needed to break even; estimated gap 21.1 percentage points. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 15.0,
+      "graded_utc": "2026-10-18T18:42:38.567012+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 27.5,
+      "opportunity_miss": 6.4
     },
     {
       "id": "5aa67ab0eab0c240ee83",
@@ -1221,9 +1226,9 @@
       "published_utc": "2026-10-16T23:11:46.652568+00:00",
       "starts_utc": "2026-10-18T13:30:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 41.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 29.46,
       "reason": "5 recent games; expected 29.5 opportunities; opponent historical passing attempts allowed: 110% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -1241,7 +1246,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 29.5 passing attempts. Compared quote: Under 32.5 at -126 (DraftKings). Current roster team: JAX; current-team games: 5; Current team matches history. Expected workload: 29.46 passing attempts. Estimated win chance 62.8% versus 55.8% needed to break even; estimated gap 7.0 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 39.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 41.0,
+      "graded_utc": "2026-10-18T18:42:38.823883+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 11.5,
+      "opportunity_miss": 11.54
     },
     {
       "id": "caec7ea290ff2f581039",
@@ -1530,9 +1540,9 @@
       "published_utc": "2026-10-16T23:11:46.653012+00:00",
       "starts_utc": "2026-10-18T13:30:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 34.0,
+      "profit_per_1": 0.9090909090909091,
       "projected_yards": null,
       "expected_opportunities": 33.96,
       "reason": "5 recent games; expected 34.0 opportunities; opponent historical passing attempts allowed: 116% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. New teammates with limited team history: Marvin Harrison Jr.. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -1550,7 +1560,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 34 passing attempts. Compared quote: Under 35.5 at -110 (BetMGM). Current roster team: HOU; current-team games: 5; Current team matches history. Expected workload: 33.96 passing attempts. Estimated win chance 57.9% versus 52.4% needed to break even; estimated gap 5.5 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 38.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 34.0,
+      "graded_utc": "2026-10-18T18:42:38.868564+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.0,
+      "opportunity_miss": 0.03999999999999915
     },
     {
       "id": "fcf56758229e5d9fce17",
