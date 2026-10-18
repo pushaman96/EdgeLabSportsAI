@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 from team_emblems import render_team_table
 """Reported sportsbook prices and optional The Odds API connection."""
 import math
@@ -370,10 +371,11 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 for row in reviews:
                     identity=(row['Game'],row['Team to research'])
                     if identity not in unique or row['Estimated return per $1']>unique[identity]['Estimated return per $1']:unique[identity]=row
-                reviews=list(unique.values())
+                reviews=highest_probability(list(unique.values()),"Model win %")
                 for row in reviews:
                     row['Decision'] = 'Watch — experimental'
                     row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
+                st.caption("Sorted by estimated win probability, highest first. Probability and payout value are different measures.")
                 render_team_table(reviews,hide_index=True,use_container_width=True, sport=sport)
                 records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
@@ -382,6 +384,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
+
 
 
 
