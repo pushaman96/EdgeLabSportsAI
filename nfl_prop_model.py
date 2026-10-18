@@ -1,3 +1,4 @@
+from probability_order import highest_probability
 from team_emblems import render_team_table
 from pick_readiness import render_source_status
 from automatic_reports import autosave_report, load_report
@@ -792,7 +793,9 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     present={r.get('Category') for r in saved['rows']}
     missing=[label for label,*_ in MARKETS.values() if label not in present]
     if missing:st.info('No analyzed quotes for: '+', '.join(missing)+'. Select these in the prop REQUEST categories and load again if offered by your books. Market-board filters only filter already loaded prices.')
+    display=highest_probability(display,'Estimated win %',decision_key='Decision')
     watch = [r for r in display if r['Decision'] != 'Pass']
+    st.caption('Qualifying picks are sorted by estimated win probability, highest first. Pass rows follow when included; missing probabilities are last.')
     st.write(f'**{len(watch)} unique experimental paper picks; {len(display)-len(watch)} player/category passes.**')
     picks_only=st.checkbox('Show only qualifying paper picks',value=True,key='nfl_only_clear_picks_v2')
     table=watch if picks_only else display
@@ -844,5 +847,6 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
 
 
