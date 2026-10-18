@@ -70,11 +70,6 @@ def build_board(records,summaries,now=None,team_assets=None):
         last=situation_cache[key].get('last_play')
         row['Latest reported play']=last.get('Text') if last else None
         row['Latest play situation']=(' · '.join(str(last[k]) for k in ('Team','Period','Clock','Situation') if last.get(k) is not None)) if last else None
-        if record.get('sport','NFL')=='NFL':
-            from half_possession import half_possession
-            half=half_possession(data)
-            row['Opening possession']=half['Opening possession']
-            row['Second-half start']=half['Second-half start']
         row['Data checked UTC']=item.get('retrieved_utc')
         competitors=competition.get('competitors',[])
         row['Score']=' · '.join(c.get('team',{}).get('abbreviation',c.get('team',{}).get('displayName','Team'))+' '+str(c.get('score','—')) for c in competitors)
@@ -159,22 +154,6 @@ def render_live_board(records,sport='NFL'):
         if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):cached_fetch.clear()
         summaries=collect_summaries(selected,cached_fetch)
         rows=build_board(selected,summaries,team_assets=st.session_state.get("team_emblems",{}))
-        if sport=='NFL':
-            from half_possession import half_possession
-            from team_emblems import render_team_table
-            games=[]
-            for (league,eid),item in summaries.items():
-                if league!='NFL' or item.get('error'):continue
-                data=item.get('data',{})
-                if str(data.get('header',{}).get('id',''))!=str(eid):continue
-                match=next((r for r in selected if str(r['event_id'])==str(eid)),None)
-                if not match:continue
-                half=half_possession(data)
-                games.append({'Game':match['game'],'Started with the ball':half['Opening possession'],'Second-half start':half['Second-half start']})
-            if games:
-                st.write('**Who started with the ball / second-half possession**')
-                render_team_table(games,'NFL',hide_index=True,use_container_width=True)
-                st.caption('Expected = the usual opposite team from the opening kickoff, not confirmed coin-toss information. Confirmed = the second-half opening kickoff outcome has been reported. Missing kickoff coverage stays unknown.')
         from pick_presentation import pick_status
         original={r['id']:r for r in selected}
         rows=[{'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
@@ -191,6 +170,7 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 
 
 
