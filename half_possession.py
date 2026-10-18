@@ -31,4 +31,22 @@ def half_possession(data):
                 opening=names.get(str(drive.get('team',{}).get('id','')));break
     confirmed=names.get(second.get('possessor'))
     expected=names.get(first.get('kicker')) if first and len(names)==2 and first.get('kicker') in names and first.get('possessor') in names and not first.get('unusual') and first.get('kicker')!=first.get('possessor') and opening else None
-    return {'Opening possession':opening or 'Not reported','Second-half start':('Confirmed: '+confirmed) if confirmed else ('Expected: '+expected+' — unconfirmed') if expected else 'Not confirmed','Second-half confirmed':bool(confirmed),'Note':'Opening possession uses the reported kickoff outcome or an explicitly timed opening drive. Expected second-half possession assumes the usual alternating kickoff choices; coin-toss choices and unusual kickoffs can differ. Confirmed means the Q3 opening kickoff outcome was reported.'}
+    return {'Opening kickoff by':names.get(first.get('kicker')) or 'Not reported','Opening possession':opening or 'Not reported','Second-half start':('Confirmed: '+confirmed) if confirmed else ('Expected: '+expected+' — unconfirmed') if expected else 'Not confirmed','Second-half confirmed':bool(confirmed),'Note':'Opening possession uses the reported kickoff outcome or an explicitly timed opening drive. Expected second-half possession assumes the usual alternating kickoff choices; coin-toss choices and unusual kickoffs can differ. Confirmed means the Q3 opening kickoff outcome was reported.'}
+
+
+
+def scoreboard_halves(scoreboard,fetch):
+    """One cached-summary fetch per started NFL game, shared across its score card."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids=set()
+    for event in scoreboard.get('events',[]):
+        competition=(event.get('competitions') or [{}])[0]
+        state=event.get('status',competition.get('status',{})).get('type',{}).get('state')
+        if event.get('id') and state in ('in','post'):ids.add(str(event['id']))
+    def read(eid):
+        try:
+            result=fetch(eid);data=result.get('data',result)
+            if str(data.get('header',{}).get('id',''))!=eid:return eid,half_possession({})
+            return eid,half_possession(data)
+        except Exception:return eid,half_possession({})
+    with ThreadPoolExecutor(max_workers=4) as pool:return dict(pool.map(read,sorted(ids)))
