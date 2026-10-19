@@ -143,77 +143,77 @@
     "NFL:2026-10-18": {
       "sport": "NFL",
       "date": "2026-10-18",
-      "stage": "Partial slate \u2014 games remain unfinished or unavailable",
-      "all_games_final": false,
+      "stage": "All games final \u2014 unresolved picks need review",
+      "all_games_final": true,
       "metrics": {
         "picks": 32,
-        "settled": 25,
-        "wins": 12,
-        "losses": 13,
-        "pending": 7,
+        "settled": 31,
+        "wins": 16,
+        "losses": 15,
+        "pending": 1,
         "pushes": 0,
         "distinct_games": 11,
-        "accuracy": 0.48,
-        "brier": 0.29333908000000003,
-        "mean_estimated_probability": 0.60732,
-        "profit_per_1_each": 3.0990871335470875
+        "accuracy": 0.5161290322580645,
+        "brier": 0.2828061935483871,
+        "mean_estimated_probability": 0.6087096774193549,
+        "profit_per_1_each": 4.677748810034851
       },
       "categories": [
         {
           "category": "Moneyline",
           "picks": 4,
-          "settled": 3,
-          "wins": 1,
+          "settled": 4,
+          "wins": 2,
           "losses": 2,
-          "pending": 1,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 4,
-          "accuracy": 0.3333333333333333,
-          "brier": 0.41858700000000004,
-          "mean_estimated_probability": 0.435,
-          "profit_per_1_each": 4.0
+          "accuracy": 0.5,
+          "brier": 0.34544650000000005,
+          "mean_estimated_probability": 0.4875,
+          "profit_per_1_each": 4.869565217391305
         },
         {
           "category": "Passing attempts",
           "picks": 12,
-          "settled": 10,
-          "wins": 4,
-          "losses": 6,
-          "pending": 2,
+          "settled": 12,
+          "wins": 5,
+          "losses": 7,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 9,
-          "accuracy": 0.4,
-          "brier": 0.2843986,
-          "mean_estimated_probability": 0.606,
-          "profit_per_1_each": -2.0491615180935567
+          "accuracy": 0.4166666666666667,
+          "brier": 0.28155916666666664,
+          "mean_estimated_probability": 0.6015,
+          "profit_per_1_each": -2.0876230565550955
         },
         {
           "category": "Passing yards",
           "picks": 8,
-          "settled": 6,
-          "wins": 4,
-          "losses": 2,
-          "pending": 2,
+          "settled": 8,
+          "wins": 5,
+          "losses": 3,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 6,
-          "accuracy": 0.6666666666666666,
-          "brier": 0.21226366666666666,
-          "mean_estimated_probability": 0.6433333333333333,
-          "profit_per_1_each": 1.5166697042722235
+          "accuracy": 0.625,
+          "brier": 0.23638900000000002,
+          "mean_estimated_probability": 0.64225,
+          "profit_per_1_each": 1.4095268471293663
         },
         {
           "category": "Rushing yards",
           "picks": 8,
-          "settled": 6,
-          "wins": 3,
+          "settled": 7,
+          "wins": 4,
           "losses": 3,
-          "pending": 2,
+          "pending": 1,
           "pushes": 0,
           "distinct_games": 7,
-          "accuracy": 0.5,
-          "brier": 0.32669133333333333,
-          "mean_estimated_probability": 0.6596666666666667,
-          "profit_per_1_each": -0.3684210526315791
+          "accuracy": 0.5714285714285714,
+          "brier": 0.3021977142857143,
+          "mean_estimated_probability": 0.652,
+          "profit_per_1_each": 0.48627980206927557
         }
       ],
       "calibration": [
@@ -225,15 +225,15 @@
         },
         {
           "Probability band": "50%\u201360%",
-          "Settled picks": 7,
+          "Settled picks": 9,
           "Mean estimate %": 57.8,
-          "Actual win %": 42.9
+          "Actual win %": 44.4
         },
         {
           "Probability band": "60%\u201370%",
-          "Settled picks": 11,
-          "Mean estimate %": 62.8,
-          "Actual win %": 63.6
+          "Settled picks": 15,
+          "Mean estimate %": 62.9,
+          "Actual win %": 66.7
         },
         {
           "Probability band": "70%\u201380%",
@@ -253,31 +253,31 @@
         {
           "Phase": "Regulation",
           "Score situation": "Leading by 8+",
-          "Passing attempts": 56.0,
-          "Rushing plays": 62.0,
-          "Sacks": 6.0
+          "Passing attempts": 81.0,
+          "Rushing plays": 76.0,
+          "Sacks": 7.0
         },
         {
           "Phase": "Regulation",
           "Score situation": "Trailing by 8+",
-          "Passing attempts": 137.0,
-          "Rushing plays": 46.0,
-          "Sacks": 11.0
+          "Passing attempts": 181.0,
+          "Rushing plays": 55.0,
+          "Sacks": 12.0
         },
         {
           "Phase": "Regulation",
           "Score situation": "Within 7",
-          "Passing attempts": 363.0,
-          "Rushing plays": 265.0,
-          "Sacks": 19.0
+          "Passing attempts": 389.0,
+          "Rushing plays": 282.0,
+          "Sacks": 21.0
         }
       ],
-      "reconciled_team_games": 15,
+      "reconciled_team_games": 17,
       "observations": [
-        "Across 22 picks with saved workload and observed opportunities, average actual minus expected workload was +1.0. Correlated picks are included; this does not prove a cause.",
-        "Across 12 yardage forecasts, mean absolute yardage error was 30.8; signed error was -3.2. A correct betting direction can still have a large yardage miss.",
-        "Across 10 count forecasts, mean absolute count error was 6.8.",
-        "3 settled picks lack a complete saved workload comparison; the missing cause is not inferred.",
+        "Across 27 picks with saved workload and observed opportunities, average actual minus expected workload was +2.5. Correlated picks are included; this does not prove a cause.",
+        "Across 15 yardage forecasts, mean absolute yardage error was 29.1; signed error was -2.5. A correct betting direction can still have a large yardage miss.",
+        "Across 12 count forecasts, mean absolute count error was 7.7.",
+        "4 settled picks lack a complete saved workload comparison; the missing cause is not inferred.",
         "Moneylines use historical team ratings. Injury effects, replacements and offensive-line changes are not numerically modeled; review availability warnings separately.",
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
@@ -285,5 +285,5 @@
       "learning_status": "Results enter existing outcome-feedback tests. Corrections require at least 100 eligible picks and 30 distinct games per model/category/direction/strategy, plus later-game validation. Workload retraining and causal diagnosis are not automatic."
     }
   },
-  "updated_utc": "2026-10-19T01:42:21.332800+00:00"
+  "updated_utc": "2026-10-19T04:43:52.491289+00:00"
 }

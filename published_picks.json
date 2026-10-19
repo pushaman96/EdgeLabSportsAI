@@ -519,9 +519,12 @@
       "published_utc": "2026-10-16T22:48:03.805949+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": {
+        "Green Bay Packers": "23",
+        "Dallas Cowboys": "13"
+      },
+      "profit_per_1": 0.8695652173913043,
       "projected_yards": null,
       "expected_opportunities": null,
       "reason": "",
@@ -531,7 +534,9 @@
       "feedback_version": null,
       "feedback_status": "Collecting evidence \u2014 original probability retained",
       "forecast_context": {},
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-19T04:43:52.334087+00:00",
+      "grading_note": "Final ESPN score; tied two-way moneyline recorded as Push. Platform rules may differ."
     },
     {
       "id": "14e694c0fdc12f2ca3be",
@@ -927,9 +932,9 @@
       "published_utc": "2026-10-16T23:11:46.652111+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 276.0,
+      "profit_per_1": -1,
       "projected_yards": 241.8,
       "expected_opportunities": 32.31,
       "reason": "5 recent games; expected 32.3 opportunities; opponent historical passing yards allowed: 98% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -947,7 +952,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 241.8 passing yards. Compared quote: Under 274.5 at -111 (BetOnline.ag). Current roster team: GB; current-team games: 5; Current team matches history. Expected workload: 32.31 passing attempts. Estimated win chance 67.7% versus 52.6% needed to break even; estimated gap 15.1 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 37.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 41.0,
+      "graded_utc": "2026-10-19T04:43:52.334134+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 34.19999999999999,
+      "opportunity_miss": 8.689999999999998
     },
     {
       "id": "a2c413e6a26f02e9b00b",
@@ -1272,9 +1282,9 @@
       "published_utc": "2026-10-16T23:11:46.652506+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 258.0,
+      "profit_per_1": 0.8928571428571429,
       "projected_yards": 269.0,
       "expected_opportunities": 38.51,
       "reason": "5 recent games; expected 38.5 opportunities; opponent historical passing yards allowed: 89% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -1292,7 +1302,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 269 passing yards. Compared quote: Under 278.5 at -112 (BetOnline.ag). Current roster team: DAL; current-team games: 5; Current team matches history. Expected workload: 38.51 passing attempts. Estimated win chance 60.1% versus 52.8% needed to break even; estimated gap 7.3 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 40.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 54.0,
+      "graded_utc": "2026-10-19T04:43:52.334158+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": -11.0,
+      "opportunity_miss": 15.490000000000002
     },
     {
       "id": "3feeb34c18811ed6df48",
@@ -1438,9 +1453,9 @@
       "published_utc": "2026-10-16T23:11:46.652755+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 41.0,
+      "profit_per_1": 0.8547008547008547,
       "projected_yards": 63.2,
       "expected_opportunities": 14.8,
       "reason": "5 recent games; expected 14.8 opportunities; opponent historical rushing yards allowed: 121% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -1457,7 +1472,12 @@
         "Current-team games": 5,
         "Evidence explanation": "Forecast: 63.2 rushing yards. Compared quote: Under 71.5 at -117 (BetRivers). Current roster team: DAL; current-team games: 5; Current team matches history. Expected workload: 14.8 carries. Estimated win chance 60.6% versus 53.9% needed to break even; estimated gap 6.7 percentage points. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 11.0,
+      "graded_utc": "2026-10-19T04:43:52.377748+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": -22.200000000000003,
+      "opportunity_miss": -3.8000000000000007
     },
     {
       "id": "dae23f786531d3100ee1",
@@ -1520,9 +1540,9 @@
       "published_utc": "2026-10-16T23:11:46.652876+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 54.0,
+      "profit_per_1": 0.9615384615384616,
       "projected_yards": null,
       "expected_opportunities": 38.51,
       "reason": "5 recent games; expected 38.5 opportunities; opponent historical passing attempts allowed: 99% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -1540,7 +1560,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 38.5 passing attempts. Compared quote: Over 36.5 at -104 (DraftKings). Current roster team: DAL; current-team games: 5; Current team matches history. Expected workload: 38.51 passing attempts. Estimated win chance 56.8% versus 51.0% needed to break even; estimated gap 5.8 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 40.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 54.0,
+      "graded_utc": "2026-10-19T04:43:52.377779+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 15.5,
+      "opportunity_miss": 15.490000000000002
     },
     {
       "id": "6710b35b5e9b9beb0a56",
@@ -1690,9 +1715,9 @@
       "published_utc": "2026-10-16T23:11:46.653051+00:00",
       "starts_utc": "2026-10-19T00:20:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 41.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 32.31,
       "reason": "5 recent games; expected 32.3 opportunities; opponent historical passing attempts allowed: 83% of league average (context, not a standalone direction signal). Availability: Active. Confirm lineup/weather.",
@@ -1710,7 +1735,12 @@
         "Game-script risk": "Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.",
         "Evidence explanation": "Forecast: 32.3 passing attempts. Compared quote: Under 34.5 at -115 (DraftKings). Current roster team: GB; current-team games: 5; Current team matches history. Expected workload: 32.31 passing attempts. Estimated win chance 59.0% versus 53.5% needed to break even; estimated gap 5.5 percentage points. Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities. Historical high-volume workload: 37.0 attempts. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Snap participation and role trends inform expected opportunities. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 41.0,
+      "graded_utc": "2026-10-19T04:43:52.377797+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 8.700000000000003,
+      "opportunity_miss": 8.689999999999998
     },
     {
       "id": "2e5b272b703ea95f5399",
