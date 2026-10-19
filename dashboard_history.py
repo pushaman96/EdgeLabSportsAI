@@ -36,3 +36,6 @@ def render_public_history(sport,path='published_picks.json'):
 
     from slate_review import render_review
     render_review(sport,records)
+
+    from pick_learning import render_feedback
+    render_feedback(records,sport)
