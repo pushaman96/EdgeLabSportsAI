@@ -11,7 +11,7 @@ from urllib.request import urlopen
 from zoneinfo import ZoneInfo
 
 PACIFIC=ZoneInfo('America/Los_Angeles')
-NFL_FIELDS={'Passing yards':('passing','YDS'),'Passing attempts':('passing','C/ATT'),'Passing interceptions':('passing','INT'),'Rushing yards':('rushing','YDS'),'Rushing attempts':('rushing','CAR'),'Receiving yards':('receiving','YDS'),'Receptions':('receiving','REC')}
+NFL_FIELDS={'Passing yards':('passing','YDS'),'Passing attempts':('passing','C/ATT'),'Passing completions':('passing','C/ATT'),'Passing touchdowns':('passing','TD'),'Passing interceptions':('passing','INT'),'Rushing yards':('rushing','YDS'),'Rushing attempts':('rushing','CAR'),'Receiving yards':('receiving','YDS'),'Receptions':('receiving','REC')}
 NBA_FIELDS={'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}
 def utc(v):return datetime.fromisoformat(str(v).replace('Z','+00:00'))
 def number(v):
@@ -35,7 +35,7 @@ def current_stat(record,data):
                 if identity(entry.get('athlete',{}).get('displayName'))!=identity(record['player']):continue
                 raw=dict(zip(group.get('labels',[]),entry.get('stats',[]))).get(label)
                 if raw is None:continue
-                if label=='C/ATT':raw=str(raw).split('/')[-1]
+                if label=='C/ATT':raw=str(raw).split('/')[0 if category=='Passing completions' else -1]
                 if label=='3PT':raw=str(raw).replace('/','-').split('-')[0]
                 parsed=number(raw)
                 if parsed is not None:values.append(parsed)

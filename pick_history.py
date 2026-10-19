@@ -18,7 +18,7 @@ def restore_records(payload):
     clean=[];seen=set()
     for original in imported:
         r=dict(original)
-        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
+        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
         if r['strategy'] not in ('Original','Cushion','Manual'):raise ValueError('Invalid strategy.')
         r['odds']=float(r['odds'])
         if not math.isfinite(r['odds']) or abs(r['odds'])<100:raise ValueError('Invalid price.')
@@ -43,7 +43,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if now>=utc(start):raise ValueError('Publish before kickoff.')
     if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900:raise ValueError('Refresh the quote before publishing.')
     category=row['Category']
-    if (row['Decision']=='Pass' and strategy!='Analysis') or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
+    if (row['Decision']=='Pass' and strategy!='Analysis') or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
     line=None if category=='Moneyline' else float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100 if row.get('Estimated win %') is not None else None
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
@@ -62,7 +62,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability'),('Candidate win %','candidate_probability')):
         if row.get(source) is not None:record[destination]=float(row[source])/100
 
-    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status') if k in row}
+    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status','Conversion rate %','QB historical conversion %','Opponent conversion %','Range method','Historical error range low','Historical error range high','Validation details','Probability method','Target breakdown','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Passing conversion breakdown','Supporting completions forecast','Supporting passing TD forecast') if k in row}
     record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through') if row.get(k) is not None}
     return record
 
@@ -85,17 +85,17 @@ def grade_record(record,data):
     for team in data.get('boxscore',{}).get('players',[]):
         for group in team.get('statistics',[]):
             nba=r.get('sport')=='NBA'
-            if not nba and group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving','Receptions':'receiving','Passing attempts':'passing','Passing interceptions':'passing','Rushing attempts':'rushing'}.get(r['category']):continue
+            if not nba and group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving','Receptions':'receiving','Passing attempts':'passing','Passing interceptions':'passing','Passing completions':'passing','Passing touchdowns':'passing','Rushing attempts':'rushing'}.get(r['category']):continue
             labels=group.get('labels',[])
             for entry in group.get('athletes',[]):
                 if entry.get('athlete',{}).get('displayName')==r['player']:
                     stats=dict(zip(labels,entry.get('stats',[])))
                     label={'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}.get(r['category'],'YDS')
                     if not nba:
-                        label={'Receptions':'REC','Passing attempts':'C/ATT','Passing interceptions':'INT','Rushing attempts':'CAR'}.get(r['category'],label)
+                        label={'Receptions':'REC','Passing attempts':'C/ATT','Passing interceptions':'INT','Passing completions':'C/ATT','Passing touchdowns':'TD','Rushing attempts':'CAR'}.get(r['category'],label)
                     if label in stats:
                         value=str(stats[label])
-                        if label=='C/ATT':value=value.split('/')[-1]
+                        if label=='C/ATT':value=value.split('/')[0 if r['category']=='Passing completions' else -1]
                         if label=='3PT':value=value.replace('/','-').split('-')[0]
                         values.append(float(value))
                         if nba and 'MIN' in stats:
@@ -104,7 +104,7 @@ def grade_record(record,data):
                                 parts=minute_text.split(':')
                                 r['actual_opportunities']=float(parts[0])+float(parts[1])/60 if len(parts)==2 else float(minute_text)
                             except (ValueError,TypeError):pass
-                        workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS','Passing attempts':'C/ATT','Passing interceptions':'C/ATT','Rushing attempts':'CAR','Receptions':'TGTS'}.get(r['category'])
+                        workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS','Passing attempts':'C/ATT','Passing interceptions':'C/ATT','Passing completions':'C/ATT','Passing touchdowns':'C/ATT','Rushing attempts':'CAR','Receptions':'TGTS'}.get(r['category'])
                         if workload_label in stats:
                             raw=str(stats[workload_label]);r['actual_opportunities']=float(raw.split('/')[-1])
     if len(values)!=1:

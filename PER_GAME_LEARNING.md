@@ -143,3 +143,65 @@ threes 0.921 vs 0.935. These are small historical gains in the base forecast,
 not evidence that the new injury adjustment, probabilities or bets are profitable.
 The source endpoints may be unavailable; the UI then reports the issue and
 creates no substitute picks. No new paid service or dependency is required.
+
+
+## NFL passing counts and clearer explanations
+
+Passing completions and passing touchdowns now have separate experimental count
+forecasts. Required nflverse columns are retained as optional numeric inputs;
+missing completions/TDs are never treated as zero. Each forecast needs 8 prior
+QB starts, coverage of the latest 4 current-team games, current-season league
+conversion coverage and at least 4 opponent games, plus the existing unique
+roster, fresh injury, schedule, kickoff, quote and source-coverage checks.
+
+Expected attempts blend the last 2 and 4 current-team starts. Historical attempt
+variation produces a discrete mixture of attempt counts. QB completion/TD rates
+shrink toward the prior-week league rate with 100 attempt-equivalents of prior
+weight. Opponent conversion rates use 150 attempt-equivalents and a factor bounded
+to .8–1.2. Each attempt count has a beta-binomial conversion distribution, with
+fixed concentration 80 for completions and 40 for TDs. These are engineering
+defaults, not proven optimal parameters. Counts stay physically bounded by attempts.
+The 10th–90th percentile range describes this count distribution, not a guarantee.
+
+The probability blends the conversion-distribution tail with a smoothed prior-game
+threshold frequency. Blend weights are selected using 2024 data only and frozen
+for the 2025 check. Live estimates are capped to 5%–95%. Benchmarks use fixed
+pregame half-count thresholds computed from prior statistics; no past sportsbook
+odds are reconstructed. The recommendation gate needs at least 100 forecasts and
+50 distinct games, improved game-weighted MAE, and Brier below both .25 and the
+historical-frequency benchmark, followed by a five-percentage-point quoted price
+edge. Failing categories remain visible research forecasts and usable analysis
+records, without entering recommended-pick results.
+
+Live-source checks of 12,043 offensive player rows and 1,088 team rows produced
+253 eligible 2025 forecasts across 179 games per category. The weight selected
+from 174 eligible 2024 examples was .75 on prior threshold frequency:
+
+| Category | Count MAE | Recent-average MAE | Benchmark Brier | Frequency Brier | Gate |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Completions | 4.767 | 4.791 | .22509 | .22777 | Passed |
+| Passing TDs | 1.036 | 1.048 | .23244 | .23204 | Research only |
+
+These small development gains do not establish future hit rate or profitability.
+The TD gate was not weakened to force a recommendation. Additional probability
+work or prospective evidence is required. Per-game learning saves base/candidate
+count forecasts and probabilities; new categories use the existing comparison
+and rollback system. Final/live ESPN passing stats read completions from the
+numerator of C/ATT, attempts from the denominator and passing TDs from TD.
+
+Receiver targets now have an explicit supporting chain: prior team attempts
+and opponent passing volume -> player target share -> targets -> shrunk catch
+rate -> receptions -> historical yards per catch. At least 4 matched recent
+current-team player/team games are required. This supports explanations of
+receiving/reception forecasts; it does not replace an existing validated selected
+model or invent a target betting market. Supporting QB completion/TD forecasts
+also appear alongside already analyzed passing-yard/attempt quotes, without an
+extra odds request. To compare actual completion/TD quotes, explicitly select
+those existing provider market categories; the default market preset is unchanged.
+
+The current-analysis and frozen-pick explanation panels now show equations,
+forecast-versus-line distance, uncertainty ranges, numerical adjustments when
+saved, validation scope and Take/Pass reasons. Missing inputs stay missing.
+Target forecasts and count conversion inputs are frozen with new records for
+postgame review. These deterministic explanations require no paid AI service and
+make no additional odds call. Opening an old pick does not fabricate new inputs.

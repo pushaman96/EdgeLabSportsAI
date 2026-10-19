@@ -110,7 +110,7 @@ def archive_completed_usage(records,fetch=None,path='game_usage_history.json'):
             snap=usage_snapshot(data)
             if snap['event_id']!=eid or not snap['completed']:continue
             reviews=[]
-            fields={'Passing yards':'Passing attempts','Passing attempts':'Passing attempts','Rushing yards':'Carries','Rushing attempts':'Carries','Receiving yards':'Targets','Receptions':'Targets'}
+            fields={'Passing yards':'Passing attempts','Passing attempts':'Passing attempts','Passing completions':'Passing attempts','Passing touchdowns':'Passing attempts','Rushing yards':'Carries','Rushing attempts':'Carries','Receiving yards':'Targets','Receptions':'Targets'}
             for record in records:
                 if str(record.get('event_id'))!=eid or record.get('sport','NFL')!='NFL':continue
                 field=fields.get(record.get('category'));expected=number(record.get('expected_opportunities'))
