@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-19T08:23:51.972836+00:00",
+  "generated_utc": "2026-10-19T09:13:10.900757+00:00",
   "groups": {
     "[\"NFL\",\"Adjusted NFL Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
       "games": 5,
@@ -13,8 +13,13 @@
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
+      "comparison_games": 0,
+      "candidate_loss_delta": 0.0,
+      "comparison_lower_bound": -1.0,
+      "application_weight": 1.0,
+      "guard_status": "Experimental learning active",
       "trained_through": "2026-10-19T04:43:52.334087+00:00",
-      "version": "7c02a60bbd5d"
+      "version": "b4b2b32df1b6"
     },
     "[\"NFL\",\"NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration\",\"Passing attempts\",\"Regular season\"]": {
       "games": 10,
@@ -26,8 +31,13 @@
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
+      "comparison_games": 0,
+      "candidate_loss_delta": 0.0,
+      "comparison_lower_bound": -1.0,
+      "application_weight": 1.0,
+      "guard_status": "Experimental learning active",
       "trained_through": "2026-10-19T04:43:52.377797+00:00",
-      "version": "25cce4ef7be7"
+      "version": "ea52f2081780"
     },
     "[\"NFL\",\"NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration\",\"Passing yards\",\"Regular season\"]": {
       "games": 7,
@@ -39,8 +49,13 @@
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
+      "comparison_games": 0,
+      "candidate_loss_delta": 0.0,
+      "comparison_lower_bound": -1.0,
+      "application_weight": 1.0,
+      "guard_status": "Experimental learning active",
       "trained_through": "2026-10-19T04:43:52.334158+00:00",
-      "version": "a9284b581512"
+      "version": "53a4d89ab315"
     },
     "[\"NFL\",\"NFL count workload v1 / 2024 fit / 2025 development\",\"Rushing attempts\",\"Regular season\"]": {
       "games": 1,
@@ -52,8 +67,13 @@
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
+      "comparison_games": 0,
+      "candidate_loss_delta": 0.0,
+      "comparison_lower_bound": -1.0,
+      "application_weight": 1.0,
+      "guard_status": "Experimental learning active",
       "trained_through": "2026-10-16T03:36:06.378314+00:00",
-      "version": "2ff1b1a7f094"
+      "version": "c7a3232051a8"
     },
     "[\"NFL\",\"NFL opportunity experiment v2 / 2024 fit / 2025 development\",\"Rushing yards\",\"Regular season\"]": {
       "games": 7,
@@ -65,8 +85,13 @@
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
+      "comparison_games": 0,
+      "candidate_loss_delta": 0.0,
+      "comparison_lower_bound": -1.0,
+      "application_weight": 1.0,
+      "guard_status": "Experimental learning active",
       "trained_through": "2026-10-19T04:43:52.377748+00:00",
-      "version": "5c95d14ea932"
+      "version": "2ddcd06ce5c5"
     }
   },
   "status": "Experimental per-game updates; improvement is not yet established"
