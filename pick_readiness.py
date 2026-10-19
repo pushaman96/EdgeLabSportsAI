@@ -41,7 +41,7 @@ def audit_records(records):
 
 def risk_notes(record):
     category=record.get('category','');context=record.get('forecast_context') or {};notes=[]
-    if category in ('Passing yards','Passing attempts','Receiving yards','Receptions'):notes.append('Trailing can increase passing volume; a lead can reduce it. The model does not assign probabilities to those game scripts.')
+    if category in ('Passing yards','Passing attempts','Passing completions','Passing touchdowns','Receiving yards','Receptions'):notes.append('Trailing can increase passing volume; a lead can reduce it. The model does not assign probabilities to those game scripts.')
     elif category in ('Rushing yards','Rushing attempts'):notes.append('Trailing can reduce rushing volume; a lead can increase it. Carries also depend on role and availability.')
     elif category=='Moneyline':notes.append('Historical Elo does not numerically adjust for injuries, replacement players or offensive-line changes.')
     if context.get('Current-team games') is not None:notes.append(f"Saved current-team sample: {context['Current-team games']} games.")

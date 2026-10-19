@@ -52,7 +52,7 @@ def csv_url(url):
     return list(csv.DictReader(io.StringIO(response.text.lstrip('\ufeff'))))
 
 @st.cache_data(ttl=21600)
-def load_season_stats(kind, season):
+def load_season_stats(kind, season, schema_version=3):
     rows = csv_url(f'https://github.com/nflverse/nflverse-data/releases/download/stats_{kind}/stats_{kind}_week_{season}.csv')
     required = {'season', 'week', 'season_type', 'team', 'opponent_team', 'game_id', 'passing_yards', 'rushing_yards', 'receiving_yards'}
     if kind == 'player':
@@ -71,7 +71,7 @@ def normalize_stats(rows, kind):
             continue
         converted = {k: row.get(k) for k in ['player_id', 'player_display_name', 'position', 'game_id']}
         converted.update(season=int(row['season']), week=int(row['week']), team=ALIASES.get(row['team'], row['team']), opponent_team=ALIASES.get(row['opponent_team'], row['opponent_team']))
-        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions', 'passing_interceptions']:
+        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions', 'passing_interceptions', 'completions', 'passing_tds']:
             converted[key] = num(row.get(key))
         identity = (converted['game_id'], converted.get('player_id') if kind == 'player' else converted['team'])
         if identity in seen:
@@ -181,7 +181,7 @@ def fit_and_test(players, teams):
 @st.cache_data(ttl=21600)
 def load_prop_research(season):
     with ThreadPoolExecutor(max_workers=6) as pool:
-        tasks = {(kind,y): pool.submit(load_season_stats,kind,y) for kind in ('player','team') for y in sorted({2024,2025,season})}
+        tasks = {(kind,y): pool.submit(load_season_stats,kind,y) for kind in ('player','team') for y in sorted({2024,2025,season-1,season})}
         values = {key: task.result() for key,task in tasks.items()}
     players = [r for (kind,_),rows in values.items() if kind == 'player' for r in rows]
     teams = [r for (kind,_),rows in values.items() if kind == 'team' for r in rows]
@@ -189,7 +189,9 @@ def load_prop_research(season):
     models, reports = fit_and_test(players,teams)
     if len(models) != len(MARKETS):
         raise ValueError('Insufficient NFL historical model data.')
-    return {'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    from nfl_passing_forecasts import validate as validate_passing_counts
+    passing_reports=validate_passing_counts(players,teams)
+    return {'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -247,9 +249,16 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
     matching = [g for g in research['schedule'] if context and int(g['season']) == context['season'] and g['game_type'] == 'REG' and {g['home_team'],g['away_team']} == {ALIASES.get(context[s].get('abbreviation'),context[s].get('abbreviation')) for s in ('home','away')} and g['gameday'] == context['date'].isoformat()]
     schedule = matching[0] if len(matching) == 1 else None
     arrival_cache={}
+    passing_cache={}
     from interception_model import estimate as interception_estimate, validation as interception_validation
     interception_report = interception_validation(research['players'],research['teams'])
-    supported = dict(MARKETS, player_pass_interceptions=('Passing interceptions',))
+    from nfl_passing_forecasts import MARKETS as PASSING_MARKETS,estimate as passing_estimate,evaluated_row,targets as target_forecast
+    supported = dict(MARKETS, player_pass_interceptions=('Passing interceptions',), **PASSING_MARKETS)
+    def cached_passing(pid,season,week,team,opponent,field):
+        key=(pid,season,week,team,opponent,field)
+        if key not in passing_cache:passing_cache[key]=passing_estimate(pid,season,week,team,opponent,idx,field)
+        return passing_cache[key]
+
     for book in event.get('bookmakers',[]):
         for market in book.get('markets',[]):
             for outcome in market.get('outcomes',[]):
@@ -318,9 +327,10 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if trade_error:
                     row['Reason']=trade_error;continue
                 interception = market['key']=='player_pass_interceptions'
+                passing_count = market['key'] in PASSING_MARKETS
                 if interception and line != .5:
                     row['Reason']='Interception model supports only Over/Under 0.5; other thresholds not validated.';continue
-                if interception:
+                if interception or passing_count:
                     from boosted_yardage import base_feature
                     feature,reason=base_feature({'player_id':next(iter(ids)),'season':context['season'],'week':int(schedule['week']),'team':team,'opponent_team':opponent},'player_pass_attempts',idx)
                 elif research['models'].get(market['key'],{}).get('boosted'):
@@ -341,6 +351,13 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 last_games = [g for g in research['schedule'] if int(g['season']) == context['season'] and int(g['week']) == feature['latest_week'] and team in (g['home_team'],g['away_team']) and g['game_type']=='REG']
                 if not last_games or not 0 <= (context['date']-datetime.fromisoformat(last_games[0]['gameday']).date()).days <= 21:
                     row['Reason'] = 'Player history too old for this game.';continue
+                if passing_count:
+                    field=PASSING_MARKETS[market['key']][1]
+                    forecast,reason=cached_passing(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,field)
+                    if not forecast:row['Reason']=reason;continue
+                    report=research.get('passing_count_reports',{}).get(field,{'passed':False})
+                    row.update(evaluated_row(row,forecast,report,now))
+                    continue
                 if interception:
                     forecast,reason=interception_estimate(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,idx)
                     if not forecast:row['Reason']=reason;continue
@@ -353,6 +370,16 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row['Decision']='Watch — experimental'
                     row['Reason']=f"{forecast['games']} prior starter games; interception-game frequency {100*forecast['frequency']:.0f}%; passing attempts, QB interception rate and opponent interception rate included. Average interceptions is not probability of an interception."
                     continue
+                if market['key'] in ('player_pass_yds','player_pass_attempts'):
+                    counts={}
+                    for _,(label,field) in PASSING_MARKETS.items():
+                        count,missing=cached_passing(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,field)
+                        if count:
+                            counts[label]={'Forecast':round(count['expected'],2),'Expected attempts':round(count['attempts'],2),'Conversion rate %':round(100*count['rate'],2),'Range low':count['low'],'Range high':count['high'],'Recommendation gate passed':research.get('passing_count_reports',{}).get(field,{}).get('passed',False)}
+                    if counts:
+                        row['Passing conversion breakdown']=counts
+                        row['Supporting completions forecast']=counts.get('Passing completions',{}).get('Forecast')
+                        row['Supporting passing TD forecast']=counts.get('Passing touchdowns',{}).get('Forecast')
                 model = research['models'][market['key']]
                 projected = projection(feature,model['blend'],model['defense_weight'])
                 if research.get('experiment'):
@@ -457,6 +484,16 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if market['key'] in COUNT_MARKETS:
                     row['Projection (count)']=row.pop('Projection (yards)')
                     row['Forecast units']=row['Category']
+                if market['key'] in ('player_receptions','player_reception_yds'):
+                    target=target_forecast(next(iter(ids)),context['season'],int(schedule['week']),team,opponent,idx)
+                    if target:
+                        row['Target breakdown']=target
+                        row['Player targets forecast']=round(target['targets'],2)
+                        row['Target share forecast %']=round(100*target['target_share'],2)
+                        row['Supporting team attempts']=round(target['team_attempts'],2)
+                        row['Supporting catch probability %']=round(100*target['catch_rate'],2)
+                        row['Supporting receptions forecast']=round(target['receptions'],2)
+                        row['Supporting receiving yards forecast']=round(target['receiving_yards'],2) if target['receiving_yards'] is not None else None
                 if 'receiver_role_snaps' in research and market['key'] in ('player_receptions','player_reception_yds'):
                     from receiver_role import role_inputs
                     context_role=role_inputs(sample,market['key'],idx,research['receiver_role_snaps'])
@@ -491,6 +528,10 @@ def evidence_explanation(row):
     probability=num(row.get('Estimated win %'));breakeven=num(row.get('Break-even %'))
     text=f"Forecast: {projected:g} {row.get('Category','').lower()}. Compared quote: {row.get('Selection')} {row.get('Line')} at {row.get('Odds')} ({row.get('Sportsbook')}). "
     if row.get('Roster/history status'):text+=f"Current roster team: {row['Current roster team']}; current-team games: {row['Current-team games']}; {row['Roster/history status']}. "
+    from saved_pick_explanation import from_row
+    explained=from_row({k:v for k,v in row.items() if k!='Evidence explanation'})
+    if row.get('Conversion rate %') is not None or row.get('Target breakdown'):
+        text+=explained['calculation']+' '+explained['uncertainty']+' '
     volume=num(row.get('Expected opportunities'))
     if volume is not None:text+=f"Expected workload: {volume:g} {row.get('Opportunity type','opportunities').lower()}. "
     if probability is not None and breakeven is not None:
@@ -728,7 +769,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
-    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts and RB rushing attempts. Interceptions at 0.5 now show research estimates; picks remain blocked until their probability model beats both validation baselines. New count markets remain experimental and must beat their baseline. QB rushing, touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
+    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts, completions, passing touchdowns and RB rushing attempts. Completions and passing touchdowns use attempts × conversion distributions; picks require stat and probability benchmark passes. Interceptions at 0.5 remain gated separately. New count markets remain experimental and must beat their baseline. QB rushing, rushing/receiving touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
     mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing','Team targets and receptions — paper testing','Receiving participation — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
@@ -827,6 +868,18 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     present={r.get('Category') for r in saved['rows']}
     missing=[label for label,*_ in MARKETS.values() if label not in present]
     if missing:st.info('No analyzed quotes for: '+', '.join(missing)+'. Select these in the prop REQUEST categories and load again if offered by your books. Market-board filters only filter already loaded prices.')
+    breakdown=[];seen_breakdown=set()
+    for row in saved['rows']:
+        identity=(row['Game'],row['Player'],row['Category'])
+        if identity in seen_breakdown or not (row.get('Target breakdown') or row.get('Passing conversion breakdown') or row.get('Conversion rate %') is not None):continue
+        seen_breakdown.add(identity)
+        breakdown.append({key:row.get(key) for key in ('Game','Player','Category','Projection (count)','Expected opportunities','Conversion rate %','Historical error range low','Historical error range high','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Supporting completions forecast','Supporting passing TD forecast')})
+    if breakdown:
+        with st.expander('Passing and receiving forecast calculations',expanded=False):
+            st.dataframe(breakdown,hide_index=True,use_container_width=True)
+            st.caption('Completion/TD counts combine expected attempts and conversion uncertainty. Target breakdowns explain receiving workload; supporting reception/yardage forecasts do not replace the selected model or create a target bet. Add Passing completions or Passing touchdowns to requested prop categories to compare actual quotes; extra requested markets can spend credits.')
+    from saved_pick_explanation import render_current_explanations
+    render_current_explanations(saved['rows'],'nfl_current')
     display=highest_probability(display,'Estimated win %',decision_key='Decision')
     watch = [r for r in display if r['Decision'] != 'Pass']
     st.caption('Qualifying picks are sorted by estimated win probability, highest first. Pass rows follow when included; missing probabilities are last.')

@@ -60,10 +60,13 @@ def diagnostics(records):
             else:notes.append('Workload near forecast')
         else:notes.append('Workload comparison unavailable')
         workload_effect=efficiency_effect=None
-        if actual is not None and projected is not None and expected is not None and expected>0 and observed is not None and observed>0 and r.get('category') in ('Passing yards','Rushing yards','Receiving yards','Receptions'):
+        if actual is not None and projected is not None and expected is not None and expected>0 and observed is not None and observed>0 and r.get('category') in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing completions','Passing touchdowns'):
             workload_effect=(observed-expected)*projected/expected
             efficiency_effect=actual-observed*projected/expected
             notes.append(f'Measured decomposition: workload {workload_effect:+.1f}, efficiency {efficiency_effect:+.1f} {r["category"].lower()}; these sum to the forecast miss, not a causal explanation')
+        target_forecast=finite((r.get('forecast_context') or {}).get('Player targets forecast'))
+        if target_forecast is not None and observed is not None and r.get('category') in ('Receiving yards','Receptions'):
+            notes.append(f'Supporting target forecast {target_forecast:.1f} versus {observed:.0f} actual targets; difference {observed-target_forecast:+.1f}')
         if r.get('category')=='Moneyline' and isinstance(r.get('actual'),dict):
             selected=finite(r['actual'].get(r.get('player')))
             opponents=[finite(v) for team,v in r['actual'].items() if team!=r.get('player')]
