@@ -7,7 +7,7 @@ tracked game, without claiming that the update has already improved accuracy.
 
 ## What changes
 
-- NFL prop projections and expected opportunities receive separate relative
+- NFL and supported NBA prop projections and expected opportunities receive separate relative
   error adjustments. Each game contributes one averaged update per model/category.
 - NFL and NBA moneylines, and supported NFL props, receive a bounded probability
   strength adjustment. Opposite-side probabilities remain complementary.
@@ -16,9 +16,9 @@ tracked game, without claiming that the update has already improved accuracy.
 - The scheduled grader runs at minutes 2, 17, 32 and 47. GitHub scheduling and
   upstream statistics can be delayed. The saved state becomes usable when the
   deployed app picks up the new commit; this is not instantaneous online service.
-- Only prospective, graded original recommendations train this layer. Historical
+- Prospective, graded original recommendations and the separate analyzed-forecast log train this layer. Historical
   imports, manual selections, cushions, pending/unverified results and preseason
-  games do not. Untracked games and NBA manual prop quotes cannot train a model.
+  games do not. Unanalyzed games and NBA manual prop quotes cannot train a model. Supported NBA analyzed props can train the new minutes-rate model.
 
 ## How large is an update?
 
@@ -63,3 +63,83 @@ No automatic win-rate or profit improvement is promised. Full tree retraining,
 player-specific effects and numerical injury/weather features remain separate.
 
 Run checks with `python -m unittest discover -s tests -p 'test_*.py'`.
+
+
+## Forecast learning expansion
+
+Every usable analyzed NFL/NBA prop quote and moneyline is frozen before kickoff
+in `analyzed_forecasts.json`, including forecasts rejected for insufficient edge
+or a failed baseline gate. Missing forecasts, late quotes and unverified matchups
+cannot be recorded. This ledger is separate from `published_picks.json`; analysis
+records never enter the official pick win/loss record. Same player/game/model
+forecasts train once, regardless of quote/direction/threshold count. Publication
+requires the same private permanent-storage token as pick saving. Viewing an
+unanalyzed game does not create a prediction. NBA preseason is excluded.
+
+### Automatic comparison and rollback
+
+For each model/category, compare baseline versus candidate predictions saved
+before outcomes, with each game's mean loss difference counted once. The guard
+uses up to 20 recent comparison games. It halves the adjustment after 5 games
+with mean candidate degradation above .01; it rolls back to the base forecast
+after 10 games when mean degradation exceeds .01 and its approximate 95% lower
+bound is positive. Probability comparisons use Brier differences, while count/
+yardage comparisons use normalized squared-error differences, clipped to +/-1.
+This is an engineering heuristic, not a statistical guarantee. Frozen shadow
+candidates continue to be scored during rollback; later recovery can restore
+weight. Base/candidate Brier scores, game count, status and applied weight appear
+in the learning panel on the main dashboard.
+
+### Numerical NFL context adjustments
+
+Confirmed absent offensive teammates' recent carries/targets are partially
+redistributed across active players in proportion to their observed usage.
+Half the missing workload is available for redistribution, with a 15% per-player
+cap. Questionable/Doubtful teammates are not presumed absent. Where a confirmed
+absent primary QB and one active replacement each have 30 recent prior attempts,
+the observed yards-per-attempt ratio produces an efficiency adjustment bounded
+to .85–1.10 for passing/receiving yards. Missing replacement evidence stays neutral.
+These coefficients are conservative engineering defaults, not fitted causal effects.
+
+Predicted final-margin scenarios use strictly older team point margins, empirical
+margin variation and smoothed scenario frequencies. Prior team attempts/carries
+by final-margin context yield shrunk workload adjustments capped at +/-10%.
+The model distinguishes win by 8+, within 7 and lose by 8+. Those are final-margin
+scenarios, not estimates of time spent leading/trailing. Missing history stays
+neutral. The existing descriptive live score-state review remains separate.
+Each new NFL forecast saves its original projection and numerical context factors.
+The underlying historical baseline test does not validate these added context
+adjustments; they require prospective evaluation. Moneylines still have no
+numerical injury/line/defense effect, and weather remains unquantified.
+
+### NBA prop model
+
+Supports points, rebounds, assists and made threes. Uses verified NBA.com
+regular-season player game logs from the prior and current seasons, current ESPN
+rosters, a unique team/name mapping between providers, and fresh injury coverage.
+Player/team IDs are never joined across provider namespaces. Requires at least
+8 prior current-team appearances within 240 days. Expected minutes blend the last
+5 and 12 appearances, capped at 40. Production per minute is estimated from the
+last 12 appearances; expected output equals minutes times that rate.
+Confirmed absent teammates' observed minutes are partially redistributed by active
+minute share, capped at a 10% increment and 40 total minutes. If recent team
+history is missing (including the offseason), the absence adjustment stays neutral.
+Rookies, trades with insufficient current-team history, uncertain player status,
+missing source data and preseason stay on Pass with a reason.
+
+Calibration errors come from the older 65% of historical game dates. A later
+35% date window compares the minutes-rate forecast with an 8-game mean baseline,
+using game-weighted mean absolute error. No same-day or future player rows enter
+an earlier forecast. A category needs 20 later games, 50 calibration examples and
+a lower validation error before it can recommend a paper selection. This is a
+stat-forecast gate, not a historical odds profitability test. Empirical forecast
+errors yield experimental Over/Under probabilities; a recommendation additionally
+needs a fresh valid quote and at least a five-percentage-point price edge.
+
+A live-source smoke test retrieved 26,568 player logs and tested 456 later games
+(split date 2026-02-07). Mean absolute errors, candidate versus baseline:
+points 4.832 vs 4.888; rebounds 1.961 vs 1.995; assists 1.431 vs 1.444;
+threes 0.921 vs 0.935. These are small historical gains in the base forecast,
+not evidence that the new injury adjustment, probabilities or bets are profitable.
+The source endpoints may be unavailable; the UI then reports the issue and
+creates no substitute picks. No new paid service or dependency is required.

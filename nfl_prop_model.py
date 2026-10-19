@@ -411,6 +411,23 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                         row['Game-script stress scenarios']=str(risk['Scenarios'])
                         row['Game-script risk']='Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.'
                         row['Prior attempts above quoted line %']=risk['Prior attempts above quoted line %']
+                from contextual_forecasts import nfl_availability, nfl_situation
+                before_context=projected
+                availability=nfl_availability(row['Player'],row['Category'],team,team_name,context['season'],int(schedule['week']),research['players'],rosters.get(team_name,[]),injuries)
+                situation=nfl_situation(team,opponent,context['date'],research['schedule'],research['teams'])
+                situation_factor=1.
+                if situation:
+                    situation_factor=situation['rushing_factor'] if market['key'] in ('player_rush_yds','player_rush_attempts') else situation['passing_factor']
+                    row['Situation forecast']=situation
+                    row['Situation adjustment %']=round(100*(situation_factor-1),2)
+                factor=availability['workload_factor']*situation_factor
+                projected*=factor*availability['efficiency_factor']
+                feature=dict(feature,volume_forecast=feature['volume_forecast']*factor)
+                row['Injury adjustment %']=round(100*(availability['workload_factor']*availability['efficiency_factor']-1),2)
+                row['Injury adjustment reason']=availability['reason']
+                row['Unadjusted projection']=before_context
+                row['Context validation status']='Availability and situation adjustments are experimental; the historical baseline gate applies to the underlying model only'
+                row['Model']+=' / availability-situations-v1'
                 from online_learning import adjust_forecast, adjust_probability
                 base_p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':base_p = 1-base_p
@@ -426,6 +443,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':p = 1-p
                 from pick_learning import adjust_row
+                if row.get('Candidate projection') is not None:
+                    candidate_p=over_probability(row['Candidate projection'],line,model['residuals'],model.get('probability_strength',.8))
+                    row['Candidate input win %']=100*(1-candidate_p if row['Selection']=='Under' else candidate_p)
                 online_p=adjust_probability(row,p,now)
                 if row.get('Online version'):
                     row['Raw estimated win %']=100*p
@@ -453,7 +473,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if p-break_even < .05:
                     row['Reason'] = 'Estimated edge below five percentage points.';continue
                 row['Decision'] = 'Watch — experimental'
-                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Confirm lineup/weather."
+                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. {availability['reason']}. Situation workload factor {situation_factor:.3f} (experimental). Confirm lineup/weather."
     for row in rows:
         if row.get('New teammates — role uncertainty'):
             row['Reason']+=' New teammates with limited team history: '+row['New teammates — role uncertainty']+'. Target/carry redistribution is not quantified; previous shares may change.'
@@ -483,7 +503,7 @@ def evidence_explanation(row):
     if row.get('Feedback status'):text+=row['Feedback status']+'. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
     if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
-    text+='Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast.'
+    text+='Confirmed offensive absences and predicted margin scenarios receive capped experimental adjustments when inputs are sufficient; uncertain roles, defensive/line injuries and weather remain unquantified.'
     return text
 
 def estimated_risk(probability):
@@ -786,6 +806,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         except (ValueError,TypeError,AttributeError):
             row.update(Decision='Pass',Reason='Quote timestamp unavailable.')
         display.append(row)
+    from forecast_tracking import archive as archive_forecasts
+    archive_forecasts(saved['rows'], events, scoreboard, 'NFL')
     cushion_inputs=cushion_sources(display)
     display=clear_prop_shortlist(display)
     for row in display:

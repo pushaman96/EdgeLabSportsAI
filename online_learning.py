@@ -35,7 +35,7 @@ def key(record):
 
 def eligible(record, asof):
     try:
-        return (record.get('strategy') == 'Original'
+        return (record.get('strategy') in ('Original', 'Analysis')
                 and record.get('evidence') in ('Personal paper record', 'Published before kickoff')
                 and record.get('season_type') == 'Regular season'
                 and record.get('result') in ('Win', 'Loss', 'Push')
@@ -74,13 +74,14 @@ def build_state(records, asof=None):
         for row in rows:
             events[str(row['event_id'])].append(row)
         state = dict(games=0, forecast_games=0, probability_games=0, bias=0., workload_bias=0., temperature=1., issued_comparisons=0, base_brier_sum=0., issued_brier_sum=0.)
+        comparisons = []
         for event, batch in sorted(events.items(), key=lambda item: (max(utc(r['graded_utc']) for r in item[1]), item[0])):
             # Keep the earliest frozen original forecast per player. Extra books,
             # lines and directions do not create extra training observations.
             players = {}
             for row in sorted(batch, key=lambda r: (utc(r['published_utc']), str(r.get('id', '')))):
                 players.setdefault(row['player'], row)
-            residuals, workloads, gradients = [], [], []
+            residuals, workloads, gradients, game_deltas = [], [], [], []
             for row in players.values():
                 baseline, actual = forecast_value(row), number(row.get('actual'))
                 if baseline is not None and baseline > 0 and actual is not None and actual >= 0:
@@ -95,12 +96,20 @@ def build_state(records, asof=None):
                     gradients.append(clip((scale_probability(p, state['temperature']) - y) * math.log(p / (1 - p)), 1.))
                 # Compare forecasts actually frozen before this game's outcome,
                 # never a retrospective score using the newly fitted state.
-                base_p, issued = number(row.get('base_probability')), number(row.get('probability'))
+                base_p = number(row.get('base_probability'))
+                issued = number(row.get('candidate_probability', row.get('probability')))
+                base_projection = number(row.get('base_projection'))
+                candidate_projection = number(row.get('candidate_projection'))
+                if row.get('online_version') and base_projection is not None and candidate_projection is not None and actual is not None:
+                    scale = max(1., abs(base_projection))
+                    game_deltas.append(clip(((candidate_projection-actual)/scale)**2 - ((base_projection-actual)/scale)**2, 1.))
                 if row.get('online_version') and base_p is not None and issued is not None and row['result'] in ('Win', 'Loss'):
                     y = int(row['result'] == 'Win')
                     state['issued_comparisons'] += 1
                     state['base_brier_sum'] += (base_p - y) ** 2
                     state['issued_brier_sum'] += (issued - y) ** 2
+                    game_deltas.append((issued-y)**2-(base_p-y)**2)
+            if game_deltas:comparisons.append(statistics.mean(game_deltas))
             if residuals:
                 state['bias'] = clip((1 - RATE) * state['bias'] + RATE * statistics.mean(residuals), MAX_BIAS)
                 state['forecast_games'] += 1
@@ -110,6 +119,13 @@ def build_state(records, asof=None):
                 state['temperature'] = max(.5, min(1.5, state['temperature'] - .1 * statistics.mean(gradients)))
                 state['probability_games'] += 1
             state['games'] += 1
+        # Each game's frozen candidate versus baseline contributes once. A
+        # recently harmful candidate is damped, then rolled back if sustained.
+        recent=comparisons[-20:]
+        mean_delta=statistics.mean(recent) if recent else 0.
+        lower=mean_delta-1.96*statistics.stdev(recent)/math.sqrt(len(recent)) if len(recent)>1 else -1.
+        factor=0. if len(recent)>=10 and mean_delta>.01 and lower>0 else .5 if len(recent)>=5 and mean_delta>.01 else 1.
+        state.update(comparison_games=len(recent),candidate_loss_delta=mean_delta,comparison_lower_bound=lower,application_weight=factor,guard_status='Rolled back to base forecast' if factor==0 else 'Reduced learning weight' if factor==.5 else 'Experimental learning active')
         state['trained_through'] = max(utc(r['graded_utc']) for r in rows).isoformat()
         state['version'] = hashlib.sha256(json.dumps([group, state], sort_keys=True).encode()).hexdigest()[:12]
         fitted[group] = state
@@ -140,6 +156,7 @@ def fitted_state(row, now=None, state=None, sport='NFL'):
             return {}
         if not all(number(fitted.get(k)) is not None for k in ('bias', 'workload_bias', 'temperature')):
             return {}
+        if number(fitted.get('application_weight',1.)) not in (0.,.5,1.):return {}
         if abs(fitted['bias']) > MAX_BIAS or abs(fitted['workload_bias']) > MAX_BIAS or not .5 <= fitted['temperature'] <= 1.5:
             return {}
         return fitted
@@ -154,8 +171,10 @@ def adjust_forecast(row, projected, workload, now=None, state=None, sport='NFL')
     if not fitted:
         return projected, workload
     row['Online version'] = fitted['version']
-    row['Online learning status'] = f"Experimental update from {fitted['games']} completed games"
-    return max(0., projected * (1 + fitted['bias'])), max(0., workload * (1 + fitted['workload_bias']))
+    row['Online learning status'] = fitted.get('guard_status','Experimental learning active') + f"; {fitted['games']} completed games"
+    row['Candidate projection'] = max(0., projected * (1 + fitted['bias']))
+    weight=fitted.get('application_weight',1.)
+    return max(0., projected * (1 + weight*fitted['bias'])), max(0., workload * (1 + weight*fitted['workload_bias']))
 
 
 def adjust_probability(row, probability, now=None, state=None, sport='NFL'):
@@ -165,5 +184,8 @@ def adjust_probability(row, probability, now=None, state=None, sport='NFL'):
     if not fitted:
         return probability
     row['Online version'] = fitted['version']
-    row['Online learning status'] = f"Experimental update from {fitted['games']} completed games"
-    return scale_probability(probability, fitted['temperature'])
+    row['Online learning status'] = fitted.get('guard_status','Experimental learning active') + f"; {fitted['games']} completed games"
+    weight=fitted.get('application_weight',1.)
+    candidate_input=number(row.get('Candidate input win %'))
+    row['Candidate win %'] = 100*scale_probability(candidate_input/100 if candidate_input is not None else probability, fitted['temperature'])
+    return probability if weight==0 else scale_probability(probability, 1+weight*(fitted['temperature']-1))

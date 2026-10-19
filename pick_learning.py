@@ -144,15 +144,16 @@ def render_feedback(records,sport):
     import streamlit as st
     with st.expander('Learning from saved predictions and mistakes'):
         from online_learning import build_state
-        online=build_state([r for r in records if r.get('sport','NFL')==sport])
+        from forecast_tracking import records as analyzed_records
+        online=build_state([r for r in records+analyzed_records() if r.get('sport','NFL')==sport])
         st.write('**Learning after each completed game — experimental**')
-        st.caption('Every eligible graded game updates a small forecast bias, workload bias and probability adjustment. Updates start after game one, with neutral prior weight, clipped errors and a 15% forecast adjustment limit. Original forecasts stay frozen. NFL props and NFL/NBA moneylines use this layer; NBA manual prop quotes have no model to train.')
+        st.caption('Every eligible graded game updates a small forecast bias, workload bias and probability adjustment. Updates start after game one, with neutral prior weight, clipped errors and a 15% forecast adjustment limit. Original forecasts stay frozen. Usable analyzed Pass forecasts train in a separate log and never enter the official pick results. NFL props and NFL/NBA moneylines use this layer; NBA manual prop quotes have no model to train.')
         summaries=[]
         for group, fitted in online['groups'].items():
             descriptor=json.loads(group);n=fitted['issued_comparisons']
-            summaries.append({'Sport':descriptor[0],'Model':descriptor[1],'Category':descriptor[2],'Games learned':fitted['games'],'Forecast adjustment %':round(100*fitted['bias'],2),'Workload adjustment %':round(100*fitted['workload_bias'],2),'Probability strength':round(fitted['temperature'],3),'Later issued comparisons':n,'Original Brier':round(fitted['base_brier_sum']/n,4) if n else None,'Issued Brier':round(fitted['issued_brier_sum']/n,4) if n else None})
+            summaries.append({'Sport':descriptor[0],'Model':descriptor[1],'Category':descriptor[2],'Games learned':fitted['games'],'Learning status':fitted.get('guard_status'),'Comparison games':fitted.get('comparison_games',0),'Applied learning weight':fitted.get('application_weight',1),'Forecast adjustment %':round(100*fitted['bias'],2),'Workload adjustment %':round(100*fitted['workload_bias'],2),'Probability strength':round(fitted['temperature'],3),'Frozen candidate comparisons':n,'Original Brier':round(fitted['base_brier_sum']/n,4) if n else None,'Candidate Brier':round(fitted['issued_brier_sum']/n,4) if n else None})
         if summaries:st.dataframe(summaries,hide_index=True,use_container_width=True)
-        st.caption('Lower Brier is better. Comparisons use predictions actually issued before the result, not a refit on that same result. Updated files become available to forecasts after the grading job saves and the app reloads. Improvements are not established yet.')
+        st.caption('Lower Brier is better. Comparisons use candidate and original forecasts frozen before the result, including shadow forecasts during rollback. Positive candidate loss differences are worse. Learning weight is reduced after 5 recent harmful comparison games and rolled back after at least 10 with a positive lower bound. Shadow comparisons can restore it after recovery. Updated files become available to forecasts after the grading job saves and the app reloads. Improvements are not established yet.')
         state=build_feedback([r for r in records if r.get('sport','NFL')==sport])
         st.write(f"{state['eligible_picks']} eligible settled predictions; {state['active_corrections']} validated probability corrections.")
         st.caption('The separate validation report still tests larger probability corrections. Each sport/model/category/direction/strategy is evaluated separately. This validation report requires at least 100 settled prospective picks and 30 distinct games in a group, then older-game fitting and later-game validation. Historical imports, manual picks, pending results and missing publication/grading times cannot train corrections. A statistical pass does not establish profit.')

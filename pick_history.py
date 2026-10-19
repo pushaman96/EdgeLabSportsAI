@@ -43,12 +43,13 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if now>=utc(start):raise ValueError('Publish before kickoff.')
     if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900:raise ValueError('Refresh the quote before publishing.')
     category=row['Category']
-    if row['Decision']=='Pass' or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
+    if (row['Decision']=='Pass' and strategy!='Analysis') or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
     line=None if category=='Moneyline' else float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100 if row.get('Estimated win %') is not None else None
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
     if line is not None and (not math.isfinite(line) or line<0 or (strategy!='Manual' and line%1!=.5)):raise ValueError('Invalid prop line.')
     identity='|'.join([str(event_id),row['Player'],category,strategy,row.get('Base model') or row.get('Model','Experimental')])
+    if strategy=='Analysis':identity+='|'+str(line)+'|'+str(row['Selection'])
     record={'id':hashlib.sha256(identity.encode()).hexdigest()[:20],'sport':row.get('Sport','NFL'),'event_id':str(event_id),'game':row['Game'],'player':row['Player'],'category':category,'direction':row['Selection'],'line':line,'odds':odds,'probability':prob,'sportsbook':row['Sportsbook'],'model':row.get('Model','Experimental'),'strategy':strategy,'published_utc':now.isoformat(),'starts_utc':start,'evidence':'Published before kickoff','result':'Pending','actual':None,'profit_per_1':None}
     record['projected_yards']=row.get('Projection (yards)');record['expected_opportunities']=row.get('Expected opportunities');record['reason']=row.get('Reason','')
     record['projected_count']=row.get('Projection (count)')
@@ -56,12 +57,12 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     record['raw_probability']=float(row['Raw estimated win %'])/100 if row.get('Raw estimated win %') is not None else prob
     record['feedback_version']=row.get('Feedback version')
     record['feedback_status']=row.get('Feedback status')
-    for source, destination in (('Base projection','base_projection'),('Base expected opportunities','base_expected_opportunities'),('Online version','online_version'),('Online learning status','online_status')):
+    for source, destination in (('Base projection','base_projection'),('Base expected opportunities','base_expected_opportunities'),('Online version','online_version'),('Online learning status','online_status'),('Candidate projection','candidate_projection'),('Unadjusted projection','unadjusted_projection')):
         if source in row:record[destination]=row[source]
-    for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability')):
+    for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability'),('Candidate win %','candidate_probability')):
         if row.get(source) is not None:record[destination]=float(row[source])/100
 
-    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation') if k in row}
+    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status') if k in row}
     record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through') if row.get(k) is not None}
     return record
 
@@ -97,6 +98,12 @@ def grade_record(record,data):
                         if label=='C/ATT':value=value.split('/')[-1]
                         if label=='3PT':value=value.replace('/','-').split('-')[0]
                         values.append(float(value))
+                        if nba and 'MIN' in stats:
+                            minute_text=str(stats['MIN'])
+                            try:
+                                parts=minute_text.split(':')
+                                r['actual_opportunities']=float(parts[0])+float(parts[1])/60 if len(parts)==2 else float(minute_text)
+                            except (ValueError,TypeError):pass
                         workload_label={'Passing yards':'C/ATT','Rushing yards':'CAR','Receiving yards':'TGTS','Passing attempts':'C/ATT','Passing interceptions':'C/ATT','Rushing attempts':'CAR','Receptions':'TGTS'}.get(r['category'])
                         if workload_label in stats:
                             raw=str(stats[workload_label]);r['actual_opportunities']=float(raw.split('/')[-1])
@@ -202,12 +209,12 @@ def render_history(sport='NFL'):
         st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Per-game feedback now updates bounded forecast and probability adjustments after grading. The original forecasts remain saved for comparison; full model retraining remains separate.')
     None
 
-def persist_records(records,token,client=None):
+def persist_records(records,token,client=None,ledger=LEDGER):
     """Append frozen records; retry SHA conflicts without replacing existing picks."""
     if client is None:
         import requests as client
     headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
-    url=f'https://api.github.com/repos/{REPO}/contents/{LEDGER}'
+    url=f'https://api.github.com/repos/{REPO}/contents/{ledger}'
     for attempt in range(3):
         response=client.get(url,headers=headers,params={'ref':'main'},timeout=15)
         response.raise_for_status();payload=response.json()
@@ -297,8 +304,10 @@ if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
     from pick_learning import write_feedback
     write_feedback(data['records'])
+    from forecast_tracking import grade as grade_forecasts
+    forecasts=grade_forecasts()
     from online_learning import write_state
-    write_state(data['records'])
+    write_state(data['records']+forecasts)
     from live_usage import archive_completed_usage
     archive_completed_usage(data['records'])
     from slate_review import write_reviews
