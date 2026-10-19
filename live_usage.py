@@ -95,7 +95,7 @@ def render_live_usage(data):
             st.write('Saved pregame workload versus final usage')
             st.dataframe(reviews,hide_index=True,use_container_width=True)
         else:st.info('Final usage is visible now. Tracked-game forecast comparisons appear after the scheduled archive job runs.')
-    st.caption('Completed-game usage for tracked NFL games is archived by the scheduled grading job. Future forecasts use completed weekly histories as those feeds update. Live stats do not automatically retrain or promote model settings.')
+    st.caption('Completed-game usage for tracked NFL games is archived by the scheduled grading job. After grading, eligible frozen forecasts update experimental per-game forecast and probability adjustments. Completed weekly histories also update the base models as feeds arrive. The underlying trees are not automatically retrained.')
 
 def archive_completed_usage(records,fetch=None,path='game_usage_history.json'):
     fetch=fetch or (lambda eid:json.load(urlopen('https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event='+eid,timeout=20)))
