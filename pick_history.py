@@ -294,5 +294,8 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from pick_learning import write_feedback
     write_feedback(data['records'])
+    from slate_review import write_reviews
+    write_reviews(data['records'])
+
 
 
