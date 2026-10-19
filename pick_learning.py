@@ -59,7 +59,17 @@ def diagnostics(records):
             if abs(observed-expected)>=max(3,.2*expected):notes.append('Workload underestimated' if observed>expected else 'Workload overestimated')
             else:notes.append('Workload near forecast')
         else:notes.append('Workload comparison unavailable')
-        output.append({'Pick ID':r.get('id'),'Player':r.get('player'),'Category':r.get('category'),'Model':r.get('model'),'Evidence':r.get('evidence'),'Result':r['result'],'Forecast':projected,'Actual':actual,'Forecast miss':actual-projected if actual is not None and projected is not None else None,'Expected opportunities':expected,'Actual opportunities':observed,'Review':'; '.join(notes)})
+        workload_effect=efficiency_effect=None
+        if actual is not None and projected is not None and expected is not None and expected>0 and observed is not None and observed>0 and r.get('category') in ('Passing yards','Rushing yards','Receiving yards','Receptions'):
+            workload_effect=(observed-expected)*projected/expected
+            efficiency_effect=actual-observed*projected/expected
+            notes.append(f'Measured decomposition: workload {workload_effect:+.1f}, efficiency {efficiency_effect:+.1f} {r["category"].lower()}; these sum to the forecast miss, not a causal explanation')
+        if r.get('category')=='Moneyline' and isinstance(r.get('actual'),dict):
+            selected=finite(r['actual'].get(r.get('player')))
+            opponents=[finite(v) for team,v in r['actual'].items() if team!=r.get('player')]
+            if selected is not None and len(opponents)==1 and opponents[0] is not None:
+                notes=[f'Selected team score margin {selected-opponents[0]:+.0f}; no saved team scoring/possession forecast to attribute the result']
+        output.append({'Pick ID':r.get('id'),'Player':r.get('player'),'Category':r.get('category'),'Model':r.get('model'),'Evidence':r.get('evidence'),'Result':r['result'],'Forecast':projected,'Actual':actual,'Forecast miss':actual-projected if actual is not None and projected is not None else None,'Workload contribution':workload_effect,'Efficiency contribution':efficiency_effect,'Expected opportunities':expected,'Actual opportunities':observed,'Review':'; '.join(notes)})
     return output
 
 def build_feedback(records,asof=None):
@@ -133,10 +143,20 @@ def adjust_row(row,probability,now=None,state=None,strategy='Original',sport='NF
 def render_feedback(records,sport):
     import streamlit as st
     with st.expander('Learning from saved predictions and mistakes'):
+        from online_learning import build_state
+        online=build_state([r for r in records if r.get('sport','NFL')==sport])
+        st.write('**Learning after each completed game — experimental**')
+        st.caption('Every eligible graded game updates a small forecast bias, workload bias and probability adjustment. Updates start after game one, with neutral prior weight, clipped errors and a 15% forecast adjustment limit. Original forecasts stay frozen. NFL props and NFL/NBA moneylines use this layer; NBA manual prop quotes have no model to train.')
+        summaries=[]
+        for group, fitted in online['groups'].items():
+            descriptor=json.loads(group);n=fitted['issued_comparisons']
+            summaries.append({'Sport':descriptor[0],'Model':descriptor[1],'Category':descriptor[2],'Games learned':fitted['games'],'Forecast adjustment %':round(100*fitted['bias'],2),'Workload adjustment %':round(100*fitted['workload_bias'],2),'Probability strength':round(fitted['temperature'],3),'Later issued comparisons':n,'Original Brier':round(fitted['base_brier_sum']/n,4) if n else None,'Issued Brier':round(fitted['issued_brier_sum']/n,4) if n else None})
+        if summaries:st.dataframe(summaries,hide_index=True,use_container_width=True)
+        st.caption('Lower Brier is better. Comparisons use predictions actually issued before the result, not a refit on that same result. Updated files become available to forecasts after the grading job saves and the app reloads. Improvements are not established yet.')
         state=build_feedback([r for r in records if r.get('sport','NFL')==sport])
         st.write(f"{state['eligible_picks']} eligible settled predictions; {state['active_corrections']} validated probability corrections.")
-        st.caption('Scheduled grading rebuilds feedback automatically. Each sport/model/category/direction/strategy learns separately. Requires at least 100 settled prospective picks and 30 distinct games in a group, then older-game fitting and later-game validation. Historical imports, manual picks, pending results and missing publication/grading times cannot train corrections. A statistical pass does not establish profit.')
+        st.caption('The separate validation report still tests larger probability corrections. Each sport/model/category/direction/strategy is evaluated separately. This validation report requires at least 100 settled prospective picks and 30 distinct games in a group, then older-game fitting and later-game validation. Historical imports, manual picks, pending results and missing publication/grading times cannot train corrections. A statistical pass does not establish profit.')
         if state['summary']:st.dataframe(state['summary'],hide_index=True,use_container_width=True)
         if state['diagnostics']:st.dataframe(state['diagnostics'],hide_index=True,use_container_width=True)
-        st.caption('The table is a current evidence review; approved corrections are used after the scheduled feedback file refresh. Corrections apply only near the probability range observed in training.')
-        st.caption('Review labels identify forecast discrepancies, not proven causes. The current version learns probability calibration; it does not automatically retrain workload models, injury effects or game-script forecasts. Only NFL original prop/moneyline forecasts currently apply approved corrections; NBA and cushions collect separate evidence.')
+        st.caption('Per-game adjustments above take priority when available. The larger-sample validation report is retained for research and fallback corrections.')
+        st.caption('Review labels and workload/efficiency contributions describe measured errors, not proven causes. Per-game feedback adjusts forecasts and probabilities; it does not retrain the underlying trees or quantify injury, coaching or weather effects. Cushions and manual picks do not train this layer.')

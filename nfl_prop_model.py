@@ -411,6 +411,13 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                         row['Game-script stress scenarios']=str(risk['Scenarios'])
                         row['Game-script risk']='Passing volume can rise when trailing; historical outcome scenarios are context only, not scenario probabilities.'
                         row['Prior attempts above quoted line %']=risk['Prior attempts above quoted line %']
+                from online_learning import adjust_forecast, adjust_probability
+                base_p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
+                if row['Selection'] == 'Under':base_p = 1-base_p
+                row['Base estimated win %'] = 100*base_p
+                row['Base model'] = row['Model']
+                projected, learned_volume = adjust_forecast(row, projected, feature['volume_forecast'], now)
+                feature = dict(feature, volume_forecast=learned_volume)
                 residuals=model['residuals']
                 lower=projected+residuals[int(.1*(len(residuals)-1))]*error_scale(projected)
                 upper=projected+residuals[math.ceil(.9*(len(residuals)-1))]*error_scale(projected)
@@ -419,7 +426,12 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':p = 1-p
                 from pick_learning import adjust_row
-                p=adjust_row(row,p,now)
+                online_p=adjust_probability(row,p,now)
+                if row.get('Online version'):
+                    row['Raw estimated win %']=100*p
+                    row['Feedback status']=row['Online learning status']
+                    p=online_p
+                else:p=adjust_row(row,p,now)
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
                 if market['key'] in COUNT_MARKETS:

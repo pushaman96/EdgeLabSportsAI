@@ -217,7 +217,14 @@ def moneyline_reviews(events,models,now=None,sport='NFL'):
                     p=model['probability'] if outcome['name']==event['home_team'] else 1-model['probability']
                     from pick_learning import adjust_row
                     feedback={'Model':'Adjusted NFL Elo moneyline' if sport=='NFL' else 'Adjusted NBA Elo moneyline','Category':'Moneyline','Selection':'Win','Injury verification passed':sport=='NFL' and model.get('injury_verified',False),'Injury verification reason':model.get('injury_reason'),'Injury checked UTC':model.get('injury_checked_utc')}
-                    if sport=='NFL':p=adjust_row(feedback,p,now)
+                    from online_learning import adjust_probability
+                    feedback['Base model']=feedback['Model']
+                    online_p=adjust_probability(feedback,p,now,sport=sport)
+                    if feedback.get('Online version'):
+                        feedback['Raw estimated win %']=100*p
+                        feedback['Feedback status']=feedback['Online learning status']
+                        p=online_p
+                    else:p=adjust_row(feedback,p,now,sport=sport)
                     odds=numeric(outcome['price']);decimal=1+odds/100 if odds>0 else 1+100/abs(odds)
                     ev=p*decimal-1
                     if ev<=0 or p-market_p<.05:continue
@@ -412,7 +419,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
                 st.caption("Sorted by estimated win probability, highest first. Probability and payout value are different measures.")
                 render_team_table(reviews,hide_index=True,use_container_width=True, sport=sport)
-                records=[{'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
+                records=[{**{k:r[k] for k in ('Base estimated win %','Online input win %','Online version','Online learning status') if k in r},'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
             else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
     except OddsSourceError as exc:

@@ -56,6 +56,11 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     record['raw_probability']=float(row['Raw estimated win %'])/100 if row.get('Raw estimated win %') is not None else prob
     record['feedback_version']=row.get('Feedback version')
     record['feedback_status']=row.get('Feedback status')
+    for source, destination in (('Base projection','base_projection'),('Base expected opportunities','base_expected_opportunities'),('Online version','online_version'),('Online learning status','online_status')):
+        if source in row:record[destination]=row[source]
+    for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability')):
+        if row.get(source) is not None:record[destination]=float(row[source])/100
+
     record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation') if k in row}
     record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through') if row.get(k) is not None}
     return record
@@ -194,7 +199,7 @@ def render_history(sport='NFL'):
                 'Yards above/below forecast':r['yardage_miss'],'Expected opportunities':r.get('expected_opportunities'),
                 'Actual opportunities':r.get('actual_opportunities'),'Opportunity miss':r.get('opportunity_miss')} for r in reviewed],hide_index=True,use_container_width=True)
         else:st.info('No graded records with saved forecast inputs yet. New saves include yardage and workload estimates; older files may lack them.')
-        st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Scheduled outcome feedback now tests probability corrections on later games before applying them. Workload-model retraining remains separate.')
+        st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Per-game feedback now updates bounded forecast and probability adjustments after grading. The original forecasts remain saved for comparison; full model retraining remains separate.')
     None
 
 def persist_records(records,token,client=None):
@@ -290,10 +295,12 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
 
 if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
-    from live_usage import archive_completed_usage
-    archive_completed_usage(data['records'])
     from pick_learning import write_feedback
     write_feedback(data['records'])
+    from online_learning import write_state
+    write_state(data['records'])
+    from live_usage import archive_completed_usage
+    archive_completed_usage(data['records'])
     from slate_review import write_reviews
     write_reviews(data['records'])
 

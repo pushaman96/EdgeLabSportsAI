@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "method": "per-game-feedback-v1",
+  "generated_utc": "2026-10-19T04:40:12.580329+00:00",
+  "groups": {
+    "[\"NFL\",\"Adjusted NFL Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
+      "games": 4,
+      "forecast_games": 0,
+      "probability_games": 4,
+      "bias": 0.0,
+      "workload_bias": 0.0,
+      "temperature": 0.860335364654711,
+      "issued_comparisons": 0,
+      "base_brier_sum": 0.0,
+      "issued_brier_sum": 0.0,
+      "trained_through": "2026-10-19T01:42:17.859585+00:00",
+      "version": "d8f0dff62f50"
+    },
+    "[\"NFL\",\"NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration\",\"Passing attempts\",\"Regular season\"]": {
+      "games": 9,
+      "forecast_games": 9,
+      "probability_games": 9,
+      "bias": 0.03565520311784623,
+      "workload_bias": 0.01571773688763524,
+      "temperature": 0.8840812429562906,
+      "issued_comparisons": 0,
+      "base_brier_sum": 0.0,
+      "issued_brier_sum": 0.0,
+      "trained_through": "2026-10-19T01:42:19.141227+00:00",
+      "version": "97a0ef719ff6"
+    },
+    "[\"NFL\",\"NFL boosted opportunities v1 / 2023-24 fit / late-2024 calibration\",\"Passing yards\",\"Regular season\"]": {
+      "games": 6,
+      "forecast_games": 6,
+      "probability_games": 6,
+      "bias": -0.00531358034677366,
+      "workload_bias": 0.018998902835633928,
+      "temperature": 0.992737167058655,
+      "issued_comparisons": 0,
+      "base_brier_sum": 0.0,
+      "issued_brier_sum": 0.0,
+      "trained_through": "2026-10-19T01:42:18.994939+00:00",
+      "version": "0350c748ece9"
+    },
+    "[\"NFL\",\"NFL count workload v1 / 2024 fit / 2025 development\",\"Rushing attempts\",\"Regular season\"]": {
+      "games": 1,
+      "forecast_games": 1,
+      "probability_games": 1,
+      "bias": -0.011655011655011656,
+      "workload_bias": 0.0,
+      "temperature": 1.020312826923603,
+      "issued_comparisons": 0,
+      "base_brier_sum": 0.0,
+      "issued_brier_sum": 0.0,
+      "trained_through": "2026-10-16T03:36:06.378314+00:00",
+      "version": "2ff1b1a7f094"
+    },
+    "[\"NFL\",\"NFL opportunity experiment v2 / 2024 fit / 2025 development\",\"Rushing yards\",\"Regular season\"]": {
+      "games": 6,
+      "forecast_games": 6,
+      "probability_games": 6,
+      "bias": 0.02335308269018098,
+      "workload_bias": 0.046513088204311194,
+      "temperature": 0.9123621748863744,
+      "issued_comparisons": 0,
+      "base_brier_sum": 0.0,
+      "issued_brier_sum": 0.0,
+      "trained_through": "2026-10-19T01:42:19.141156+00:00",
+      "version": "b1a250e2091f"
+    }
+  },
+  "status": "Experimental per-game updates; improvement is not yet established"
+}
