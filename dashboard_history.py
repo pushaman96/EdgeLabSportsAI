@@ -32,3 +32,7 @@ def render_public_history(sport,path='published_picks.json'):
     columns[1].metric('Winner accuracy',f"{summary['accuracy']:.1%}" if summary['accuracy'] is not None else 'Not enough results')
     columns[2].metric('Brier score',f"{summary['brier']:.4f}" if summary['brier'] is not None else 'Not available')
     st.caption(f"{summary['wins']} wins · {summary['losses']} losses. Original regular-season picks saved before games; historical imports, cushions and manual entries are kept separate. Lower Brier is better. Historical model accuracy appears with matchup predictions below.")
+
+
+    from slate_review import render_review
+    render_review(sport,records)
