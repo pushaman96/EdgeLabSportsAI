@@ -138,7 +138,7 @@
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
       "active_corrections": 0,
-      "learning_status": "Results enter existing outcome-feedback tests. Corrections require at least 100 eligible picks and 30 distinct games per model/category/direction/strategy, plus later-game validation. Workload retraining and causal diagnosis are not automatic."
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
     },
     "NFL:2026-10-18": {
       "sport": "NFL",
@@ -282,8 +282,8 @@
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
       "active_corrections": 0,
-      "learning_status": "Results enter existing outcome-feedback tests. Corrections require at least 100 eligible picks and 30 distinct games per model/category/direction/strategy, plus later-game validation. Workload retraining and causal diagnosis are not automatic."
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
     }
   },
-  "updated_utc": "2026-10-19T04:43:52.491289+00:00"
+  "updated_utc": "2026-10-19T06:44:59.054789+00:00"
 }
