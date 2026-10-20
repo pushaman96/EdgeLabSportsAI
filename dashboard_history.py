@@ -24,6 +24,8 @@ def render_public_history(sport,path='published_picks.json'):
     from live_pick_board import render_live_board
     records=tracked_records(path,st.session_state.get('personal_paper_records',[]),st.session_state.get('ledger_live_grades',[]))
     st.divider()
+    from pick_history import sync_session_records
+    sync_session_records(key_prefix='dashboard_storage_'+sport,show_success=False)
     render_live_board(records,sport)
     st.subheader('Saved-pick probability accuracy')
     summary=accuracy_summary(records,sport)
@@ -39,3 +41,4 @@ def render_public_history(sport,path='published_picks.json'):
 
     from pick_learning import render_feedback
     render_feedback(records,sport)
+
