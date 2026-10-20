@@ -11,6 +11,10 @@ import app_view
 
 class OwnerAccessTests(unittest.TestCase):
     def setUp(self):
+        # These tests exercise locked mode regardless of the deployment switch.
+        lock = patch.object(app_view, "ADMIN_LOCK_ENABLED", True)
+        lock.start()
+        self.addCleanup(lock.stop)
         self.st = SimpleNamespace(session_state={}, secrets={"admin": {"password": "test-only-owner-password-123"}})
         self.streamlit = patch.dict(sys.modules, {"streamlit": self.st})
         self.streamlit.start()
@@ -68,6 +72,26 @@ class OwnerAccessTests(unittest.TestCase):
             self.assertFalse(app_view.is_research())
         self.st.session_state["_owner_proof"] = "forged"
         self.assertFalse(app_view.is_admin())
+
+
+
+class UnlockedAccessTests(unittest.TestCase):
+    def test_research_is_available_without_password_when_lock_disabled(self):
+        st = SimpleNamespace(session_state={"app_view_mode": app_view.RESEARCH}, secrets={})
+        with patch.dict(sys.modules, {"streamlit": st}), patch.object(app_view, "ADMIN_LOCK_ENABLED", False):
+            self.assertTrue(app_view.is_admin())
+            self.assertTrue(app_view.is_research())
+            st.session_state["app_view_mode"] = app_view.MAIN
+            self.assertFalse(app_view.is_research())
+
+    def test_unlocked_navigation_offers_both_views_without_login(self):
+        calls = []
+        def radio(label, options, key):
+            calls.append((label, options, key))
+        st = SimpleNamespace(session_state={}, secrets={}, sidebar=SimpleNamespace(radio=radio))
+        with patch.dict(sys.modules, {"streamlit": st}), patch.object(app_view, "ADMIN_LOCK_ENABLED", False):
+            app_view.render_owner_navigation()
+        self.assertEqual(calls, [("View", [app_view.MAIN, app_view.RESEARCH], "app_view_mode")])
 
 
 if __name__ == "__main__":
