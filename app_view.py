@@ -1,7 +1,8 @@
 """Owner authorization shared by every Admin / Research section.
 
 Configure [admin] password in Streamlit Secrets (at least 16 characters).
-No configured password means no admin access. Never cache authorization.
+The owner has temporarily disabled the lock with ADMIN_LOCK_ENABLED.
+When enabled, no configured password means no admin access.
 """
 import hashlib
 import hmac
@@ -10,6 +11,7 @@ import time
 MAIN = "Main dashboard"
 RESEARCH = "Admin / Research"
 SESSION_SECONDS = 8 * 60 * 60
+ADMIN_LOCK_ENABLED = False
 
 
 def _password():
@@ -29,6 +31,8 @@ def _proof(password, issued):
 
 def is_admin():
     """Validate this session, expiry and current secret on every protected render."""
+    if not ADMIN_LOCK_ENABLED:
+        return True
     import streamlit as st
     password = _password()
     issued = st.session_state.get("_owner_issued")
@@ -74,6 +78,9 @@ def _logout():
 
 def render_owner_navigation():
     import streamlit as st
+    if not ADMIN_LOCK_ENABLED:
+        st.sidebar.radio("View", [MAIN, RESEARCH], key="app_view_mode")
+        return
     if is_admin():
         st.sidebar.caption("Owner signed in")
         st.sidebar.radio("View", [MAIN, RESEARCH], key="app_view_mode")
