@@ -181,7 +181,7 @@ def fit_and_test(players, teams):
 @st.cache_data(ttl=21600)
 def load_prop_research(season):
     with ThreadPoolExecutor(max_workers=6) as pool:
-        tasks = {(kind,y): pool.submit(load_season_stats,kind,y) for kind in ('player','team') for y in sorted({2024,2025,season-1,season})}
+        tasks = {(kind,y): pool.submit(load_season_stats,kind,y) for kind in ('player','team') for y in sorted({2023,2024,2025,season-1,season})}
         values = {key: task.result() for key,task in tasks.items()}
     players = [r for (kind,_),rows in values.items() if kind == 'player' for r in rows]
     teams = [r for (kind,_),rows in values.items() if kind == 'team' for r in rows]
@@ -191,7 +191,9 @@ def load_prop_research(season):
         raise ValueError('Insufficient NFL historical model data.')
     from nfl_passing_forecasts import validate as validate_passing_counts
     passing_reports=validate_passing_counts(players,teams)
-    return {'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    from nfl_season_prior import validate as validate_season_prior
+    season_prior_reports=validate_season_prior(players,teams)
+    return {'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -323,6 +325,21 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     arrival_cache[team]=new_teammates(rosters.get(team_name,[]),team,context['season'],int(schedule['week']),research['players'])
                 arrivals=[n for n in arrival_cache[team] if name_key(n)!=key]
                 if arrivals:row['New teammates — role uncertainty']=', '.join(arrivals)
+                # Season priors have their own chronological category/stage gate.
+                from nfl_season_prior import estimate as prior_estimate,evaluated_row as prior_row
+                candidate=prior_estimate(trade['player_id'],context['season'],int(schedule['week']),team,opponent,market['key'],idx)
+                if market['key']=='player_pass_interceptions' and line!=.5:candidate=None
+                if candidate:
+                    prior_report=research.get('season_prior_reports',{}).get((market['key'],candidate['cohort']),{'passed':False,'residuals':[]})
+                    row['Last-season blend candidate projection']=round(candidate['projected'],2)
+                    if candidate['current_games']<4 or prior_report.get('passed'):
+                        for code,values in ((team,idx[1].get((context['season'],team),[])),(opponent,idx[2].get((context['season'],opponent),[]))):
+                            completed=[g for g in research['schedule'] if int(g['season'])==context['season'] and g['game_type']=='REG' and code in (g['home_team'],g['away_team']) and int(g['week'])<int(schedule['week']) and num(g.get('home_score')) is not None and num(g.get('away_score')) is not None]
+                            expected={g['game_id'] for g in sorted(completed,key=lambda g:int(g['week']))[-4:]}
+                            observed={r['game_id'] for r in values if r['week']<int(schedule['week'])}
+                            if not expected.issubset(observed):candidate=dict(candidate,coverage_gap=True)
+                        row.update(prior_row(row,candidate,prior_report))
+                        continue
                 trade_error=transition_reason(trade)
                 if trade_error:
                     row['Reason']=trade_error;continue
@@ -527,6 +544,7 @@ def evidence_explanation(row):
         return 'Not evaluated: '+reason+' This does not predict an Over or Under.'
     probability=num(row.get('Estimated win %'));breakeven=num(row.get('Break-even %'))
     text=f"Forecast: {projected:g} {row.get('Category','').lower()}. Compared quote: {row.get('Selection')} {row.get('Line')} at {row.get('Odds')} ({row.get('Sportsbook')}). "
+    if row.get('Last-season games') is not None:text+=f"Last-season history: {row['Last-season games']} games; current-season appearances: {row['Current-season appearances']}; current-season weight: {row['Current-season weight %']:.1f}%. {row.get('Role uncertainty','')} "
     if row.get('Roster/history status'):text+=f"Current roster team: {row['Current roster team']}; current-team games: {row['Current-team games']}; {row['Roster/history status']}. "
     from saved_pick_explanation import from_row
     explained=from_row({k:v for k,v in row.items() if k!='Evidence explanation'})
@@ -631,12 +649,14 @@ def cushion_sources(rows):
         if direction_key not in grouped or (score if score is not None else -999)>(prior if prior is not None else -999):grouped[direction_key]=row
     return list(grouped.values())
 
-def analyzed_cushions(watch, events, books, models, now=None):
+def analyzed_cushions(watch, events, books, models, now=None, season_priors=None):
     now=now or datetime.now(timezone.utc)
     results=[]
     for original in watch:
         receiving=original.get('Category')=='Receiving yards'
         model=models.get('player_reception_yds' if receiving else 'player_pass_yds',{})
+        prior_model=(season_priors or {}).get(('player_reception_yds' if receiving else 'player_pass_yds',original.get('Season stage')), {}) if original.get('Model','').startswith('NFL season-prior workload') else {}
+        if original.get('Model','').startswith('NFL season-prior workload'):model=dict(prior_model,forecast_passed=prior_model.get('passed',False))
         desired=25 if receiving else 30
         minimum,maximum=(20,25) if receiving else (25,40)
         target=cushion_target(original)
@@ -670,7 +690,11 @@ def analyzed_cushions(watch, events, books, models, now=None):
         if candidates and model.get('residuals') and num(original.get('Projection (yards)')) is not None:
             evaluated=[]
             for distance,book,line,odds,cushion,updated in candidates:
-                p=over_probability(float(original['Projection (yards)']),line,model['residuals'],model.get('probability_strength',.8))
+                if prior_model:
+                    from nfl_season_prior import over_probability as prior_probability
+                    p=prior_probability(float(original['Projection (yards)']),line,prior_model,float(original.get('Uncertainty multiplier',1)))
+                else:
+                    p=over_probability(float(original['Projection (yards)']),line,model['residuals'],model.get('probability_strength',.8))
                 if original['Selection']=='Under':p=1-p
                 breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 ev=p*(odds/100 if odds>0 else 100/abs(odds))-(1-p)
@@ -826,7 +850,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
-                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
+                st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'season_prior_reports':research.get('season_prior_reports',{}),'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):
             st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
     saved = st.session_state.get('nfl_prop_analysis')
@@ -878,6 +902,14 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         with st.expander('Passing and receiving forecast calculations',expanded=False):
             st.dataframe(breakdown,hide_index=True,use_container_width=True)
             st.caption('Completion/TD counts combine expected attempts and conversion uncertainty. Target breakdowns explain receiving workload; supporting reception/yardage forecasts do not replace the selected model or create a target bet. Add Passing completions or Passing touchdowns to requested prop categories to compare actual quotes; extra requested markets can spend credits.')
+    priors={}
+    for row in saved['rows']:
+        if row.get('Last-season games') is not None:priors.setdefault((row['Game'],row['Player'],row['Category']),row)
+    if priors:
+        with st.expander('NFL projections — last-season starting point and new-season blend'):
+            fields=('Game','Player','Category','Projection (yards)','Projection (count)','Expected opportunities','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Reason')
+            render_team_table([{k:r.get(k) for k in fields} for r in priors.values()],hide_index=True,use_container_width=True,sport='NFL')
+            st.caption('New-season weight is n/(n+4): 0 games = 0%, 1 = 20%, 4 = 50%, 8 = 67%. Fresh availability and verified coverage are still required. Stat forecasts can appear before they qualify as picks; new-team roles and teammate injury impacts remain uncertain.')
     from saved_pick_explanation import render_current_explanations
     render_current_explanations(saved['rows'],'nfl_current')
     display=highest_probability(display,'Estimated win %',decision_key='Decision')
@@ -894,7 +926,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             render_team_table(rejected,hide_index=True,use_container_width=True, sport='NFL')
             st.caption('Forecast lean compares the central projection with the displayed line. The win probability belongs to the compared Over/Under direction and can differ from that central lean because of the forecast distribution. PASS rows are research only and are not saved as recommended picks. Missing data produces no reliable lean.')
     st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
-    cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}))
+    cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}),season_priors=saved.get('season_prior_reports',{}))
     grouped_cushions=defaultdict(list)
     for c in cushions:grouped_cushions[(c['Game'],c['Player'],c['Category'])].append(c)
     cushions=[]
@@ -934,6 +966,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
 
 
 
