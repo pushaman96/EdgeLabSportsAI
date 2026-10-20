@@ -1225,8 +1225,8 @@ def current_nba_season_end():
 # -------------------------
 
 sport = st.sidebar.selectbox("Choose a sport", list(SPORTS))
-st.sidebar.radio("View", ["Main dashboard", "Admin / Research"], key="app_view_mode")
-from app_view import is_research
+from app_view import is_research, render_owner_navigation
+render_owner_navigation()
 research_view = is_research()
 
 pacific_today = datetime.now(ZoneInfo("America/Los_Angeles")).date()
@@ -1994,5 +1994,6 @@ st.caption(
 from pick_readiness import render_overview
 with dashboard_status:
     render_overview(sport, selected_date)
+
 
 
