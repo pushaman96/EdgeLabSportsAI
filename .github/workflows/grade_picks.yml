@@ -1,5 +1,9 @@
 name: Grade published paper picks
 on:
+  push:
+    paths:
+      - 'app_view.py'
+      - 'tests/test_owner_access.py'
   workflow_dispatch:
   schedule:
     - cron: '2,17,32,47 * * * *'
