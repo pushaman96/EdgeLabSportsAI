@@ -167,7 +167,10 @@ class NbaModelTests(unittest.TestCase):
         self.assertEqual(len(output),1)
         row=output[0]
         self.assertIsNotNone(row['Estimated win %'])
-        self.assertEqual(row['Decision'],'Watch — experimental',row['Reason'])
+        self.assertIn(row['Decision'],('Watch — experimental','Pass'))
+        self.assertIn('Validation',row)
+        self.assertEqual(row['Decision']=='Watch — experimental',row['Validation']['passed'] and row['Model edge (pp)']>=5)
+        self.assertGreater(row['Projection (count)'],0)
         self.assertIn('Minutes forecast',row)
         saved=freeze(output,[event],board,sport='NBA',now=now)
         self.assertEqual(len(saved),1)
@@ -186,3 +189,4 @@ class NbaModelTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
