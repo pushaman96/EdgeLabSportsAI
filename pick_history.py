@@ -209,24 +209,100 @@ def render_history(sport='NFL'):
         st.write('1. Freeze every selection before kickoff and grade wins, losses and unresolved records.\n2. Review workload, efficiency and availability errors across multiple games.\n3. Fit candidate changes on older data and evaluate later games separately.\n4. Promote only after prospective accuracy, calibration and actual-price returns support the change. Per-game feedback now updates bounded forecast and probability adjustments after grading. The original forecasts remain saved for comparison; full model retraining remains separate.')
     None
 
+class StorageError(ValueError):
+    """Safe storage diagnosis: never include response bodies, headers or tokens."""
+
+
+def storage_status(response,operation):
+    code=response.status_code
+    if 200<=code<300:return
+    if code==401:reason='GitHub rejected the token (HTTP 401). Check that the saved value is the current GitHub token, not an Odds API key, and that it has not been revoked.'
+    elif code==403:
+        limited=response.headers.get('x-ratelimit-remaining')=='0'
+        reason='GitHub API rate limit reached (HTTP 403). Wait and retry.' if limited else 'GitHub denied access (HTTP 403). Check Contents: Read and write, repository access, and any organization approval requirements.'
+    elif code==404:reason='GitHub could not access the repository or pick-history file (HTTP 404). Check that the token can access pushaman96/EdgeLabSportsAI and that published_picks.json exists on main.'
+    elif code in (409,422):reason='GitHub rejected the update (HTTP '+str(code)+'). The file changed concurrently, or repository rules prevent direct writes to main.'
+    elif code==429:reason='GitHub is rate limiting requests (HTTP 429). Wait and retry.'
+    elif code>=500:reason='GitHub is temporarily unavailable (HTTP '+str(code)+'). Retry later.'
+    else:reason='GitHub storage request failed (HTTP '+str(code)+').'
+    raise StorageError(operation+': '+reason)
+
+
 def persist_records(records,token,client=None,ledger=LEDGER):
-    """Append frozen records; retry SHA conflicts without replacing existing picks."""
+    """Append frozen records; verify durable IDs without overwriting old picks."""
     if client is None:
         import requests as client
     headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
     url=f'https://api.github.com/repos/{REPO}/contents/{ledger}'
-    for attempt in range(3):
+    def read():
         response=client.get(url,headers=headers,params={'ref':'main'},timeout=15)
-        response.raise_for_status();payload=response.json()
-        data=json.loads(base64.b64decode(payload['content']))
+        storage_status(response,'Reading pick history')
+        payload=response.json()
+        if payload.get('encoding')=='none':
+            # Contents API omits base64 for larger ledgers; raw media is authenticated.
+            raw=client.get(url,headers=dict(headers,Accept='application/vnd.github.raw+json'),params={'ref':'main'},timeout=15)
+            storage_status(raw,'Reading large pick history');data=raw.json()
+        else:data=json.loads(base64.b64decode(payload['content']))
+        if not isinstance(data.get('records'),list):raise StorageError('Saved history format is invalid; existing history was not replaced.')
+        return payload,data
+    for attempt in range(3):
+        payload,data=read()
         existing={r['id'] for r in data['records']}
-        new=[r for r in records if r['id'] not in existing]
+        new=[];seen=set(existing)
+        for record in records:
+            if record['id'] not in seen:new.append(record);seen.add(record['id'])
         if not new:return 0
         data['records'].extend(new)
         response=client.put(url,headers=headers,json={'message':'Automatically save frozen pregame paper picks','branch':'main','sha':payload['sha'],'content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()},timeout=20)
-        if response.status_code in (409,422):continue
-        response.raise_for_status();return len(new)
-    raise ValueError('Ledger changed concurrently; retry required.')
+        if response.status_code in (409,422) and attempt<2:continue
+        storage_status(response,'Writing pick history')
+        _,verified=read()
+        ids={r['id'] for r in verified['records']}
+        if all(r['id'] in ids for r in records):return len(new)
+    raise StorageError('Permanent save could not be verified after concurrent updates. Picks remain queued; retry saving.')
+
+
+def sync_session_records(key_prefix='history_storage',show_success=True):
+    """Retry frozen session records without new odds, analysis or publication times."""
+    import streamlit as st
+    import requests
+    saved=st.session_state.get('personal_paper_records',[])
+    if not saved:return
+    confirmed=st.session_state.setdefault('autosave_permanent_ids',set())
+    pending=[r for r in saved if r['id'] not in confirmed]
+    if not pending:
+        if show_success:st.success('Automatic permanent save confirmed for this session. Original picks stay frozen.')
+        return
+    try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
+    except Exception:token=''
+    if not isinstance(token,str) or not token.strip():
+        st.warning('Session-only save: missing top-level PICK_HISTORY_GITHUB_TOKEN in Streamlit Secrets. Keep this session open until permanent saving is confirmed.')
+        return
+    retry=st.button('Retry saving existing picks — 0 odds credits',key=key_prefix+'_retry')
+    # Back off failed retries on ordinary reruns; the explicit button retries immediately.
+    import time
+    last=st.session_state.get('_pick_save_last_attempt',0)
+    if not retry and time.time()-last<60:
+        message=st.session_state.get('_pick_save_error')
+        if message:st.warning(message)
+        return
+    st.session_state['_pick_save_last_attempt']=time.time()
+    try:
+        persist_records(pending,token.strip(),requests)
+    except StorageError as exc:reason=str(exc)
+    except requests.exceptions.Timeout:reason='GitHub storage request timed out. Retry; already-frozen picks will not be duplicated.'
+    except requests.exceptions.RequestException:reason='Network connection to GitHub failed. Retry when the connection recovers.'
+    except (ValueError,KeyError,TypeError):reason='GitHub returned an unexpected history response. Existing history was not replaced.'
+    else:
+        confirmed.update(r['id'] for r in pending)
+        st.session_state.pop('_pick_save_error',None)
+        st.session_state['_pick_save_last_attempt']=0
+        st.success('Automatic permanent save confirmed. GitHub was read back to verify the saved pick IDs. Original picks remain frozen.')
+        return
+    message='Permanent autosave failed. '+reason+' Keep this session open; '+str(len(pending))+' frozen picks remain queued.'
+    st.session_state['_pick_save_error']=message
+    st.warning(message)
+
 
 def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=False):
     import streamlit as st
@@ -270,35 +346,9 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
             seen.add(identity)
         except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):failed+=1
     if failed:st.warning(f'{failed} recommendations could not be frozen. Refresh prices and analysis; no late or unverifiable pick is recorded.')
-    confirmed=st.session_state.setdefault('autosave_permanent_ids',set())
-    pending=[r for r in saved if r['id'] not in confirmed]
-    secret_issue=''
-    try:
-        token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
-        if not isinstance(token,str) or not token.strip():
-            token=''
-            secret_issue='The running app has no nonempty top-level PICK_HISTORY_GITHUB_TOKEN setting.'
-        else:token=token.strip()
-    except Exception:
-        token=''
-        secret_issue='The running app could not load Streamlit Secrets.' 
     from pick_explanations import render_explanations
     render_explanations(rows,key_prefix)
-    if not token:
-        if saved:
-            st.warning('Session-only save. '+secret_issue+' This is a configuration/read problem, not a GitHub permission rejection. Permanent saving has not been tested.')
-            with st.expander('Fix permanent storage configuration'):
-                st.write('Open Manage app → Settings → Secrets for THIS deployed app. Put the exact setting below at the top of the box, above any [section] heading, replacing the placeholder privately. Save, then reboot the app from Manage app and rerun analysis. Do not create another token yet.')
-                st.code('PICK_HISTORY_GITHUB_TOKEN = "your-actual-github-token"',language='toml')
-                st.caption('Never share the token or screenshot its value. Picks are not permanently saved until the app confirms automatic permanent saving.')
-        return
-    if pending:
-        try:
-            persist_records(pending,token,requests)
-            confirmed.update(r['id'] for r in pending)
-        except (requests.exceptions.RequestException,ValueError,KeyError,TypeError):
-            st.warning('Permanent autosave failed. Picks remain in this session and will retry on the next analysis/rerun. Check the private token permissions; no manual download is required after storage is working.');return
-    if saved:st.success('Automatic permanent save confirmed. Original picks stay frozen; duplicates are skipped. Results are graded by the scheduled ledger job.')
+    sync_session_records(key_prefix=key_prefix+'_storage')
 
 if __name__=='__main__':
     path=Path(LEDGER);data=json.loads(path.read_text());data['records']=grade_all(data['records']);path.write_text(json.dumps(data,indent=2)+'\n')
@@ -312,6 +362,7 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from slate_review import write_reviews
     write_reviews(data['records'])
+
 
 
 
