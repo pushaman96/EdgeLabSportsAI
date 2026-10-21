@@ -1,0 +1,78 @@
+name: Background research and preset forecasts
+on:
+  push:
+    paths:
+      - 'background_research.py'
+      - 'background_moneyline.py'
+      - 'tests/test_background_research.py'
+      - '.github/workflows/background_research.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '8 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: published-pick-grading
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: .research_cache
+          key: research-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: research-v1-${{ runner.os }}-
+      - name: Free connectivity check
+        run: python background_research.py smoke
+      - name: Refresh free research and prepare models
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python background_research.py prepare
+      - name: Reserve daily automatic credit budget
+        if: github.event_name != 'push'
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python background_research.py reserve
+      - name: Persist research and reservations before any odds request
+        run: |
+          git config user.name "Kamikaze Picks research"
+          git config user.email "actions@users.noreply.github.com"
+          for file in background_research.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
+            if [ -f "$file" ]; then git add "$file"; fi
+          done
+          if ! git diff --cached --quiet; then
+            git commit -m "Prepare background research and reserve automatic odds budget"
+            git pull --rebase origin main
+            git push
+          fi
+      - name: Fetch reserved prices and freeze eligible forecasts
+        if: github.event_name != 'push'
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python background_research.py execute
+      - name: Grade finished games and evaluate frozen comparisons
+        run: |
+          python pick_history.py
+          python background_research.py review
+      - name: Save forecasts, grades and measured comparisons
+        if: always()
+        run: |
+          git config user.name "Kamikaze Picks research"
+          git config user.email "actions@users.noreply.github.com"
+          for file in background_research.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
+            if [ -f "$file" ]; then git add "$file"; fi
+          done
+          if ! git diff --cached --quiet; then
+            git commit -m "Save background forecasts and postgame validation"
+            git pull --rebase origin main
+            git push
+          fi

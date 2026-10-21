@@ -271,9 +271,9 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     auto_id=(sport,str(selected_date),fingerprint,'rotation-v2')
     attempts=st.session_state.setdefault('preset_rotation_attempts',set())
     plan=automatic_plan(sport,selected_date,today,budget,mode,auto_id in attempts)
-    automatic=plan['enabled']
+    automatic=False  # Durable background job owns automatic requests; add-ons remain explicit.
     if automatic:attempts.add(auto_id)
-    st.caption('Presets load automatically once per sport/date in this session on NFL Sunday/Monday/Thursday and NBA game days, within 8 total credits. The first upcoming games fitting that cap are used; this is not a ranking of the strongest picks. Saved-data mode disables automatic requests. Extra games and categories use the add-on controls. This runs while this page is open, not in the background when the app is closed.')
+    st.caption('Background preset preparation now runs in GitHub Actions while the app is closed. See Background research for status and its shared eight-credit daily automated budget. This page does not automatically spend credits on each new session. Load buttons and add-ons below are explicit extra requests outside that background budget.')
     try:
         quick_nfl=False
         quick_nba=False
