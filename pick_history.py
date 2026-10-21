@@ -62,7 +62,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability'),('Candidate win %','candidate_probability')):
         if row.get(source) is not None:record[destination]=float(row[source])/100
 
-    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status','Conversion rate %','QB historical conversion %','Opponent conversion %','Range method','Historical error range low','Historical error range high','Validation details','Probability method','Target breakdown','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Passing conversion breakdown','Supporting completions forecast','Supporting passing TD forecast','History source','Season stage','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Uncertainty multiplier') if k in row}
+    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status','Conversion rate %','QB historical conversion %','Opponent conversion %','Range method','Historical error range low','Historical error range high','Validation details','Probability method','Target breakdown','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Passing conversion breakdown','Supporting completions forecast','Supporting passing TD forecast','History source','Season stage','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Uncertainty multiplier','Workload candidate opportunities','Workload candidate projection','Workload candidate status','Workload candidate benchmark','Workload sensitivity scenarios','Confirmed unavailable teammates','Lineup scenario limitation','Supporting team workload','Supporting player workload share %','Schedule and rest context','Game context scenarios','Workload candidate version','Workload candidate baseline opportunities','Workload candidate baseline projection') if k in row}
     record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through') if row.get(k) is not None}
     return record
 
@@ -356,12 +356,15 @@ if __name__=='__main__':
     write_feedback(data['records'])
     from forecast_tracking import grade as grade_forecasts
     forecasts=grade_forecasts()
+    from workload_candidates import write_saved_reviews
+    write_saved_reviews(data['records']+forecasts)
     from online_learning import write_state
     write_state(data['records']+forecasts)
     from live_usage import archive_completed_usage
     archive_completed_usage(data['records'])
     from slate_review import write_reviews
     write_reviews(data['records'])
+
 
 
 
