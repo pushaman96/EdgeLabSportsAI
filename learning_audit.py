@@ -44,3 +44,6 @@ def render(sport,records):
         frozen=[r for r in records if r.get('sport','NFL')==sport and r.get('online_version') and r.get('strategy')=='Original' and r.get('evidence')in ('Personal paper record','Published before kickoff')]
         st.write('Original picks carrying a saved learning version: '+str(len(frozen)))
         st.caption('A trained state alone does not prove that a subsequent pick used it. Saved learning versions and frozen base/candidate forecasts establish application; completed later games establish comparison. Missing statistics remain unresolved. Smaller Brier is better; correlated props are not independent games. No automatic claim of improved accuracy or profit.')
+
+    from paired_forecasts import render as render_paired_comparison
+    render_paired_comparison(records,sport)
