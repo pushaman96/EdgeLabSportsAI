@@ -80,7 +80,7 @@ def nfl_data(year):
     return {'players':players,'teams':teams,'schedule':csv_url(SCHEDULE_URL),'season':year,'retrieved':datetime.now(timezone.utc).isoformat()}
 def prepare(now=None):
     now=now or datetime.now(timezone.utc)
-    report={'schema':1,'generated_utc':now.isoformat(),'status':'Free research; projections are not betting recommendations','odds_setup':'GitHub Actions ODDS_API_KEY secret required for background prices; Streamlit secrets are separate','sports':{},'issues':[]}
+    report={'schema':1,'generated_utc':now.isoformat(),'status':'Free research; projections are not betting recommendations','odds_setup':('GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds'if os.environ.get('ODDS_API_KEY')else'GitHub Actions ODDS_API_KEY secret required for background prices; Streamlit secrets are separate'),'sports':{},'issues':[]}
     history=read(LEDGER,{'schema':1,'records':[]});known={r['id']for r in history['records']}
     for sport in SPORTS:
         item={'status':'Pending','projections':[],'issues':[]};report['sports'][sport]=item

@@ -1,5 +1,8 @@
 import copy
+import sys
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 from datetime import date,timedelta
 from extended_stats import current_value
 from nfl_scoring_models import td_index,td_estimate,td_validate,total_estimate,total_validate,score_games
@@ -12,6 +15,7 @@ def player(season=2024,week=1,**kw):
 def summary():
     return {'header':{'id':'g','competitions':[{'status':{'type':{'completed':True}},'competitors':[{'homeAway':'home','score':'7'},{'homeAway':'away','score':'0'}]}]},'boxscore':{'players':[{'statistics':[{'name':'receiving','labels':['REC','YDS','TD'],'athletes':[{'athlete':{'id':'p','displayName':'Receiver'},'stats':['2','20','0']}]},{'name':'passing','labels':['C/ATT','YDS','TD'],'athletes':[{'athlete':{'id':'q','displayName':'Quarterback'},'stats':['10/20','100','1']}]}]}]},'scoringPlays':[{'scoringType':{'name':'touchdown'},'text':'Receiver 9 Yd pass from Quarterback (Kick)','homeScore':7,'awayScore':0}]}
 class ScoringTests(unittest.TestCase):
+    @patch.dict(sys.modules,{'requests':SimpleNamespace(),'streamlit':SimpleNamespace(cache_data=lambda **kwargs:lambda fn:fn)})
     def test_touchdown_quote_gate_and_frozen_final_grade(self):
         from datetime import datetime,timezone
         from nfl_scoring_models import reviews
