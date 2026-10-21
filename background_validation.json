@@ -1,13 +1,13 @@
 {
-  "generated_utc": "2026-10-21T22:57:00.919393+00:00",
+  "generated_utc": "2026-10-21T23:23:50.250687+00:00",
   "paired": {
     "NFL": [],
     "NBA": [
       {
         "Category": "Assists",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 12,
-        "Distinct games": 1,
+        "Frozen forecasts": 35,
+        "Distinct games": 4,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
         "Base Projection MAE": null,
@@ -27,8 +27,8 @@
       {
         "Category": "PRA",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit / joint PRA v1",
-        "Frozen forecasts": 12,
-        "Distinct games": 1,
+        "Frozen forecasts": 35,
+        "Distinct games": 4,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
         "Base Projection MAE": null,
@@ -48,8 +48,8 @@
       {
         "Category": "Points",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 13,
-        "Distinct games": 1,
+        "Frozen forecasts": 41,
+        "Distinct games": 4,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
         "Base Projection MAE": null,
@@ -69,8 +69,8 @@
       {
         "Category": "Rebounds",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 13,
-        "Distinct games": 1,
+        "Frozen forecasts": 41,
+        "Distinct games": 4,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
         "Base Projection MAE": null,
@@ -90,8 +90,8 @@
       {
         "Category": "Three-pointers made",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 13,
-        "Distinct games": 1,
+        "Frozen forecasts": 36,
+        "Distinct games": 4,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
         "Base Projection MAE": null,
