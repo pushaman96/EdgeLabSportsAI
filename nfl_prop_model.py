@@ -193,7 +193,9 @@ def load_prop_research(season):
     passing_reports=validate_passing_counts(players,teams)
     from nfl_season_prior import validate as validate_season_prior
     season_prior_reports=validate_season_prior(players,teams)
-    return {'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    from workload_candidates import validate_nfl
+    workload_reports=validate_nfl(players,teams)
+    return {'workload_reports':workload_reports,'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -339,6 +341,13 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                             observed={r['game_id'] for r in values if r['week']<int(schedule['week'])}
                             if not expected.issubset(observed):candidate=dict(candidate,coverage_gap=True)
                         row.update(prior_row(row,candidate,prior_report))
+                        from workload_candidates import nfl_sample,attach
+                        sample=nfl_sample(dict(player_id=trade['player_id'],season=context['season'],week=int(schedule['week']),team=team,opponent_team=opponent),market['key'],idx)
+                        absent=[p['name'] for p in rosters.get(team_name,[]) if str(injuries['statuses'].get((team_name,name_key(p['name'])),p.get('status',''))).lower() in ('out','injured reserve','ir','suspended','inactive')]
+                        attach(row,sample,research.get('workload_reports',{}).get((market['key'],candidate['cohort'])),absent)
+                        from contextual_forecasts import nfl_situation
+                        situations=nfl_situation(team,opponent,context['date'],research['schedule'],research['teams'])
+                        if situations:row['Game context scenarios']={'Forecast':situations,'Use':'Historical margin scenarios only; no extra adjustment to this candidate or evidence of causation'}
                         continue
                 trade_error=transition_reason(trade)
                 if trade_error:
@@ -910,6 +919,19 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             fields=('Game','Player','Category','Projection (yards)','Projection (count)','Expected opportunities','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Reason')
             render_team_table([{k:r.get(k) for k in fields} for r in priors.values()],hide_index=True,use_container_width=True,sport='NFL')
             st.caption('New-season weight is n/(n+4): 0 games = 0%, 1 = 20%, 4 = 50%, 8 = 67%. Fresh availability and verified coverage are still required. Stat forecasts can appear before they qualify as picks; new-team roles and teammate injury impacts remain uncertain.')
+    workload_rows={}
+    for row in saved['rows']:
+        if row.get('Workload candidate opportunities') is not None:workload_rows.setdefault((row['Game'],row['Player'],row['Category']),row)
+    if workload_rows:
+        with st.expander('Workload and lineup scenarios — research comparisons'):
+            st.caption('Candidate workload changes are tracked separately and do not change the recommended direction or saved probability. Low/high scenarios are observed-workload sensitivity examples, not picks or probabilities.')
+            fields=('Game','Player','Category','Expected opportunities','Workload candidate opportunities','Workload candidate projection','Workload candidate status','Supporting team workload','Supporting player workload share %','Confirmed unavailable teammates','Lineup scenario limitation')
+            render_team_table([{k:r.get(k) for k in fields}for r in workload_rows.values()],hide_index=True,use_container_width=True,sport='NFL')
+            labels=list(workload_rows)
+            chosen=st.selectbox('Inspect workload sensitivity',labels,format_func=lambda k:' · '.join(k),key='nfl_workload_sensitivity')
+            st.dataframe(workload_rows[chosen]['Workload sensitivity scenarios'],hide_index=True,use_container_width=True)
+            st.write(workload_rows[chosen].get('Workload candidate benchmark',{}))
+            if workload_rows[chosen].get('Game context scenarios'):st.write(workload_rows[chosen]['Game context scenarios'])
     from saved_pick_explanation import render_current_explanations
     render_current_explanations(saved['rows'],'nfl_current')
     display=highest_probability(display,'Estimated win %',decision_key='Decision')
@@ -966,6 +988,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
 
 
 
