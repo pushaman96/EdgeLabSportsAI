@@ -22,6 +22,9 @@ def number(v):
 def identity(v):return re.sub(r'[^a-z0-9]','',str(v).lower())
 
 def current_stat(record,data):
+    if record['category']in ('PRA','Anytime touchdown','Game total points'):
+        from extended_stats import current_value
+        return current_value(record['category'],record['player'],data)
     if record['category']=='Moneyline':return None
     nba=record.get('sport','NFL')=='NBA';category=record['category']
     if not nba and category not in NFL_FIELDS:return None
@@ -173,13 +176,3 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
-
-
-
-
-
-
-
-
-
-

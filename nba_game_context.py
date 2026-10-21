@@ -91,6 +91,7 @@ def athlete_rows(summary):
                     except (ValueError,IndexError):minutes=None
                 row={'team':tid,'name':name,'starter':athlete.get('starter') if isinstance(athlete.get('starter'),bool)else None,'didNotPlay':athlete.get('didNotPlay') if isinstance(athlete.get('didNotPlay'),bool)else None,'minutes':num(minutes)}
                 for field in ('PTS','REB','AST'):row[field]=num(stats.get(field))
+                row['PRA']=sum(row[f]for f in ('PTS','REB','AST'))if all(row[f]is not None for f in ('PTS','REB','AST'))else None
                 for field,label in (('FG3M','3PT'),('FGA','FG'),('FG3A','3PT'),('FTA','FT')):
                     parts=str(stats.get(label,'')).replace('/','-').split('-')
                     row[field]=num(parts[0] if field=='FG3M' else parts[1]) if len(parts)==2 else None
@@ -264,4 +265,3 @@ def attach_context(row,context,event_id,team,team_id,player,start,field,injuries
     absent=[r['Player']for r in injuries.get('rows',[])if r.get('Team')==team and str(r.get('Status','')).lower()in ('out','injured reserve','suspended')]
     row.update({'NBA context version':VERSION,'NBA context checked UTC':context.get('retrieved'),'Starting lineup check':lineup_context(context.get('upcoming',{}).get(str(event_id),{}),event_id,start,team_id,player,now),'Minutes restriction check':restriction_context(injuries,team,player,now),'Verified schedule context':rest_context(context.get('schedules',[]),event_id,start,team_id),'Teammate absence usage':teammate_context(context.get('history',[]),start,team_id,player,absent,field),'Opponent and pace context':opponent_context(context.get('history',[]),start,team_id,opponent,field),'NBA context limitation':'Historical associations and estimated pace are not validated causal/player multipliers; they do not change the base projection or probability.'})
     return row
-

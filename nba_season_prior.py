@@ -10,6 +10,7 @@ def season_year(row):
 
 
 def season_projection(history,field,target_year,team,cutoff):
+    if field=='PRA':history=[dict(r,PRA=r['PTS']+r['REB']+r['AST'])for r in history if all(isinstance(r.get(k),(int,float))and math.isfinite(r[k])for k in ('PTS','REB','AST'))]
     before=[r for r in history if r['date']<str(cutoff)]
     prior=[r for r in before if season_year(r)==target_year-1]
     season=[r for r in before if season_year(r)==target_year]
@@ -80,4 +81,3 @@ def fetch_espn_logs(year,athlete_id,player_name):
     url=f'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/{athlete_id}/gamelog?season={year}&seasontype=2'
     with urlopen(url,timeout=15) as response:data=json.load(response)
     return normalize_espn_logs(data,year,athlete_id,player_name)
-

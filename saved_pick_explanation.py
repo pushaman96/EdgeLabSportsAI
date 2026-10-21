@@ -18,7 +18,7 @@ def explanation(record):
     projection=number(record.get('projected_yards'))
     units='yards'
     if projection is None:
-        projection=number(record.get('projected_count'));units={'Passing completions':'completions','Passing touchdowns':'passing touchdowns','Receptions':'receptions','Points':'points','Rebounds':'rebounds','Assists':'assists','Three-pointers made':'made threes'}.get(record.get('category'),'count')
+        projection=number(record.get('projected_count'));units={'Passing completions':'completions','Passing touchdowns':'passing touchdowns','Receptions':'receptions','Points':'points','Rebounds':'rebounds','Assists':'assists','Three-pointers made':'made threes','PRA':'points + rebounds + assists','Game total points':'combined game points','Anytime touchdown':'touchdowns scored'}.get(record.get('category'),'count')
     if projection is None and record.get('category') in ('Passing attempts','Rushing attempts'):
         projection=number(record.get('expected_opportunities'));units='attempts'
     selection=f"{record.get('player','Unknown')} — {record.get('direction','')}"
@@ -156,5 +156,3 @@ def render_current_explanations(rows,prefix):
         for label,key in [('Forecast','forecast'),('Calculation','calculation'),('Forecast gap','comparison'),('Uncertainty','uncertainty'),('Adjustments','adjustments'),('Validation','validation'),('Probability and price','price'),('Take/Pass reason','reason'),('Risks','risks')]:
             st.write('**'+label+'**');st.write(e[key])
         st.caption('Explains the current saved analysis. No paid AI API call or fresh odds request is made. Reanalyze if prices or availability changed.')
-
-

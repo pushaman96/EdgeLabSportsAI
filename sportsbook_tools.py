@@ -11,6 +11,7 @@ from nfl_prop_model import render_prop_research
 from pick_history import publish_rows
 from odds_changes import estimated_credits, render_changes
 from sportsbook_presets import STANDARD_PRESETS, NBA_EXTRA_MARKETS, archive_market_board
+from scoring_quote_merge import with_game_totals
 
 class OddsSourceError(ValueError):
     pass
@@ -283,7 +284,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         if sport=='NBA':
-            st.caption('NBA preset: moneylines, points, assists, rebounds, PRA and three-pointers made. Fresh budget: up to 3 credits for game lines plus 5 per upcoming game. PRA is a market quote until a validated joint forecast is available.')
+            st.caption('NBA preset: moneylines, points, assists, rebounds, PRA and three-pointers made. Fresh budget: up to 3 credits for game lines plus 5 per upcoming game. PRA uses an experimental combined-stat forecast with its own historical baseline gate.')
             quick_nba=st.button('Load NBA slate & save board — up to 3 + 5/game credits',key='quick_nba_slate',disabled=mode!='Standard mode' or not allow_game)
             st.caption('Shooting categories are made shots unless explicitly labeled attempted. Field-goal attempts and three-point attempts are not included as unsupported market keys.')
         quick_load=quick_nfl or quick_nba or automatic
@@ -312,7 +313,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         if sport=='NBA':render_nba_paper_quotes(filtered,selected_books,'nba_moneyline_paper')
         st.caption('Bookmaker names and quote timestamps come from the provider. Refresh before acting; displayed prices can change. Compare prices only for the same market, selection and line.')
         st.subheader('Player props and additional game markets')
-        st.caption('Market prices are not recommendations. NFL yardage categories have experimental analysis; NBA points, rebounds, assists and threes have an experimental minutes-rate forecast with a chronological baseline gate. Spreads and totals are not modeled.')
+        st.caption('Market prices are not recommendations. NFL yardage categories have experimental analysis; NBA points, rebounds, assists, threes and PRA have an experimental minutes-rate forecast with a chronological baseline gate. NFL anytime touchdowns and game totals have separate scoring models; spreads remain prices only.')
         st.caption('NFL passing/rushing/receiving yards, receptions and attempts have experimental analysis. Sacks and other unsupported markets show prices only. Each requested category can consume credits per game. Viewing cached results and rerunning analysis do not fetch new prices.')
         render_changes(filtered,sport+'_game_lines',result['retrieved'])
         upcoming_count=sum(datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc) for e in events)
@@ -369,6 +370,9 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 batch = all_saved[1]
                 for failure in batch['failures']:st.warning(failure)
                 loaded_events = [r['data'] for r in batch['results'] if r['data']['id'] in selected_ids]
+                if sport=='NFL':
+                    from scoring_quote_merge import with_game_totals
+                    loaded_events=with_game_totals(loaded_events,filtered)
                 st.caption(f"Displaying {len(loaded_events)} saved game snapshots. Most recent provider-reported credits remaining: {batch['remaining']}.")
                 if loaded_events:
                     if sport=='NBA':archive_market_board(loaded_events,batch['loaded'],sport)
@@ -400,7 +404,10 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 st.caption(f"Prop request credits remaining: {prop_saved[4]['remaining']}. Request cost: {prop_saved[4]['cost']}.")
                 if props:
                     render_prop_market_board([prop_saved[4]['data']],selected_books,sport,'single_prop_board')
-                    if sport=='NFL':render_prop_research(prop_saved[4]['data'],scoreboard,selected_books,prop_saved[4]['retrieved'],auto_analyze=single_loaded)
+                    if sport=='NFL':
+                        from scoring_quote_merge import with_game_totals
+                        merged=with_game_totals([prop_saved[4]['data']],filtered)[0]
+                        render_prop_research(merged,scoreboard,selected_books,prop_saved[4]['retrieved'],auto_analyze=single_loaded)
                     else:
                         from nba_prop_model import render as render_nba_props
                         render_nba_props([prop_saved[4]['data']],scoreboard,selected_books,auto_analyze=single_loaded,key_prefix='nba_single_props')
@@ -452,9 +459,3 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
         st.warning('Sportsbook data could not be loaded. Check your API key, credits, market coverage and selected date. Your other app sections remain available.')
-
-
-
-
-
-

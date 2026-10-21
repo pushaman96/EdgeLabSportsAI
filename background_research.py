@@ -76,7 +76,7 @@ def nfl_data(year):
     players=[];teams=[]
     for season in sorted({2023,2024,2025,year-1,year}):
         for kind,target in (('player',players),('team',teams)):
-            target.extend(cached('nfl_'+kind+'_'+str(season),1800 if season==year else 86400,lambda k=kind,y=season:load_season_stats(k,y)))
+            target.extend(cached('nfl_scoring_v2_'+kind+'_'+str(season),1800 if season==year else 86400,lambda k=kind,y=season:load_season_stats(k,y)))
     return {'players':players,'teams':teams,'schedule':csv_url(SCHEDULE_URL),'season':year,'retrieved':datetime.now(timezone.utc).isoformat()}
 def prepare(now=None):
     now=now or datetime.now(timezone.utc)
@@ -104,10 +104,13 @@ def prepare(now=None):
                     data=nfl_data(year)
                     from nfl_season_prior import indexes,estimate
                     idx=indexes(data['players'],data['teams'])
+                    from nfl_scoring_models import td_index,td_estimate,total_estimate,score_games,td_validate,total_validate
+                    td_idx=td_index(data['players']);scored_games=score_games(data['schedule'])
+                    item['Scoring model validation']={'Anytime touchdown':td_validate(data['players']),'Game total points':{k:v for k,v in total_validate(data['schedule']).items()if k!='residuals'}}
                     if os.environ.get('ODDS_API_KEY'):
                         try:
                             from nfl_prop_model import load_prop_research
-                            cached('nfl_model_'+str(year),1800,lambda:load_prop_research(year))
+                            cached('nfl_model_scoring_v2_'+str(year),1800,lambda:load_prop_research(year))
                         except Exception:item['issues'].append('Full NFL validation unavailable; quote analysis may remain Pass')
                     aliases={'LAR':'LA','WSH':'WAS','JAC':'JAX'}
                 else:
@@ -135,10 +138,17 @@ def prepare(now=None):
                         games=[g for g in data['schedule']if g.get('game_type')=='REG'and int(g['season'])==year and g['home_team']==home and g['away_team']==away and g['gameday']==cutoff]
                         if len(games)!=1:item['issues'].append('Unique schedule unavailable: '+event['id']);continue
                         week=int(games[0]['week'])
+                        scoring=total_estimate(dict(games[0],season=year),scored_games)
+                        if scoring:
+                            identity='|'.join((sport,event['id'],'total','Game total points','NFL scoring total preparation v1'))
+                            row={'id':identity,'sport':sport,'event_id':event['id'],'game':event.get('name'),'player':event.get('name'),'category':'Game total points','model':'NFL scoring total preparation v1','published_utc':now.isoformat(),'starts_utc':event['date'],'projection':scoring['projected'],'simple_baseline':scoring['baseline'],'workload':None,'role_uncertain':True,'result':'Pending','status':'Scoring research; no injury/weather adjustment or betting line implied'}
+                            item['projections'].append(row)
+                            if identity not in known and now<start:history['records'].append(row);known.add(identity)
                     for side,team in sides.items():
                         for athlete in rosters.get(str(team['id']),[]):
                             if str(athlete.get('status')).lower()!='active':continue
-                            categories=[('Points','PTS'),('Assists','AST'),('Rebounds','REB'),('Three-pointers made','FG3M')]if sport=='NBA'else [('Passing yards','player_pass_yds')]if athlete['position']=='QB'else [('Rushing yards','player_rush_yds')]if athlete['position']in ('RB','HB','FB')else []
+                            categories=[('Points','PTS'),('Assists','AST'),('Rebounds','REB'),('Three-pointers made','FG3M'),('PRA','PRA')]if sport=='NBA'else [('Passing yards','player_pass_yds')]if athlete['position']=='QB'else [('Rushing yards','player_rush_yds')]if athlete['position']in ('RB','HB','FB')else []
+                            if sport=='NFL'and athlete['position']in ('QB','RB','HB','FB','WR','TE'):categories.append(('Anytime touchdown','anytime'))
                             for label,field in categories:
                                 if sport=='NBA':
                                     f=season_projection(logs.get(athlete['id'],[]),field,year,str(team['id']),cutoff)
@@ -146,8 +156,8 @@ def prepare(now=None):
                                 else:
                                     code=aliases.get(team['abbreviation'],team['abbreviation']);opp=away if side=='home'else home
                                     ids={r['player_id']for r in data['players']if key(r['player_display_name'])==key(athlete['name'])}
-                                    f=estimate(next(iter(ids)),year,week,code,opp,field,idx)if len(ids)==1 else None
-                                    model='NFL season-prior preparation v1';base=f['projected']if f else None;volume=f['opportunities']if f else None;uncertain=(f['role_uncertain']or f['coverage_gap'])if f else True
+                                    f=(td_estimate(next(iter(ids)),year,week,code,td_idx)if field=='anytime'else estimate(next(iter(ids)),year,week,code,opp,field,idx))if len(ids)==1 else None
+                                    model='NFL offensive TD preparation v1'if field=='anytime'else'NFL season-prior preparation v1';base=f['projected']if f else None;volume=f['opportunities']if f else None;uncertain=(f['role_uncertain']or f.get('coverage_gap',False))if f else True
                                 if base is None:continue
                                 identity='|'.join((sport,event['id'],athlete['id'],label,model))
                                 row={'id':identity,'sport':sport,'event_id':event['id'],'game':event.get('name'),'player':athlete['name'],'category':label,'model':model,'published_utc':now.isoformat(),'starts_utc':event['date'],'projection':base,'simple_baseline':f.get('baseline'),'workload':volume,'role_uncertain':uncertain,'result':'Pending','status':'Research projection only; no line, selection or win probability. Availability/validation gates still required.'}
@@ -223,7 +233,7 @@ def model_rows(sport,event,board,now):
         context=load_context([event],board,now=now)
         return reviews([event],board,data,load_nba_injuries(),roster,now=now,context=context)
     from nfl_prop_model import load_prop_research,injury_context,current_roster,prop_reviews
-    year=int(board['events'][0]['season']['year']);data=cached('nfl_model_'+str(year),1800,lambda:load_prop_research(year))
+    year=int(board['events'][0]['season']['year']);data=cached('nfl_model_scoring_v2_'+str(year),1800,lambda:load_prop_research(year))
     roster={t['displayName']:current_roster(t['id'])for e in board['events']for t in participants(e).values()}
     # Additional role sources are optional evidence; absent rows stay unknown.
     return prop_reviews(event,board,data,injury_context(),roster,now=now)

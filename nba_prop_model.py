@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 MODEL = 'NBA season-prior minutes-rate v5 / verified context and calibration audit'
 from nba_season_prior import season_projection, season_year, fetch_espn_logs
-MARKETS = {'player_points':('Points','PTS'),'player_rebounds':('Rebounds','REB'),'player_assists':('Assists','AST'),'player_threes':('Three-pointers made','FG3M')}
+MARKETS = {'player_points':('Points','PTS'),'player_rebounds':('Rebounds','REB'),'player_assists':('Assists','AST'),'player_threes':('Three-pointers made','FG3M'),'player_points_rebounds_assists':('PRA','PRA')}
 
 
 def number(value):
@@ -68,6 +68,7 @@ def projection(history, field):
 
 def research(logs, cutoff):
     """Earlier errors calibrate; later games validate each season-stage cohort."""
+    logs=[dict(r,PRA=r['PTS']+r['REB']+r['AST']) for r in logs]
     older=[r for r in logs if r['date']<str(cutoff)]
     dates=sorted({r['date'] for r in older})
     # Hold out a complete completed season. A percentile of calendar dates can
@@ -191,6 +192,7 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                 for quote in market.get('outcomes',[]):
                     row=dict(Game=event['away_team']+' at '+event['home_team'],Player=quote.get('description','Unknown'),Category=label,Selection=quote.get('name'),Line=quote.get('point'),Odds=quote.get('price'),Sportsbook=book['title'],Decision='Pass',Reason='',Model=MODEL,**{'Quote updated UTC':market.get('last_update') or book.get('last_update'),'Estimated win %':None})
                     output.append(row)
+                    if field=='PRA':row['Model']=MODEL+' / joint PRA v1'
                     line,odds=number(row['Line']),number(row['Odds'])
                     try:age=(now-datetime.fromisoformat(row['Quote updated UTC'].replace('Z','+00:00'))).total_seconds()
                     except (ValueError,TypeError,AttributeError):age=99999
@@ -228,7 +230,7 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     # does not prove who inherits minutes; retain redistribution
                     # as a labeled scenario until tested on historical lineups.
                     adjusted_minutes=minutes
-                    row.update({'Minutes forecast':round(adjusted_minutes,2),'Injury adjustment %':0.,'Injury adjustment reason':'Fresh availability checked; automatic minutes redistribution is unvalidated and remains a separate scenario','Absence scenario minutes':round(scenario_minutes,2),'Absence scenario projection':round(projected*scenario_minutes/minutes,2),'Absence scenario status':'Research only; not applied to the pick. Quoted-player/reference history may omit teammates.','Availability checked UTC':now.isoformat(),'Injury source updated UTC':injuries.get('source_timestamp'),'Injury retrieved UTC':injuries.get('retrieved'),'Statistics retrieved UTC':data['retrieved'],'Player history through':detail['history_through'] if detail else max(r['date'] for r in history),'Base model':MODEL})
+                    row.update({'Minutes forecast':round(adjusted_minutes,2),'Injury adjustment %':0.,'Injury adjustment reason':'Fresh availability checked; automatic minutes redistribution is unvalidated and remains a separate scenario','Absence scenario minutes':round(scenario_minutes,2),'Absence scenario projection':round(projected*scenario_minutes/minutes,2),'Absence scenario status':'Research only; not applied to the pick. Quoted-player/reference history may omit teammates.','Availability checked UTC':now.isoformat(),'Injury source updated UTC':injuries.get('source_timestamp'),'Injury retrieved UTC':injuries.get('retrieved'),'Statistics retrieved UTC':data['retrieved'],'Player history through':detail['history_through'] if detail else max(r['date'] for r in history),'Base model':row['Model']})
                     cohort=detail['cohort'] if detail else 'Established season'
                     calibration=model['cohort_errors'][field,cohort] if detail else model['errors'][field]
                     uncertainty=detail['uncertainty'] if detail else 1.
@@ -360,7 +362,7 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
     from pick_history import publish_rows
     from team_emblems import render_team_table
     st.subheader('NBA player forecasts — minutes and production')
-    st.caption('Points, rebounds, assists and threes. Experimental minutes × production forecasts use last-season minutes and season-long production, then blend new-season appearances with weight n/(n+8). At least 8 prior-season games or 8 recent current-team games are required. Current rosters, fresh injuries and separate early-season baseline tests remain required. New-team roles have greater uncertainty. Preseason stays on Pass. Loading statistics uses no Odds API credits.')
+    st.caption('Points, rebounds, assists, threes and PRA. PRA calibrates the same-game combined statistic directly. Experimental minutes × production forecasts use last-season minutes and season-long production, then blend new-season appearances with weight n/(n+8). At least 8 prior-season games or 8 recent current-team games are required. Current rosters, fresh injuries and separate early-season baseline tests remain required. New-team roles have greater uncertainty. Preseason stays on Pass. Loading statistics uses no Odds API credits.')
     if auto_analyze or st.button('Analyze saved NBA prop prices',key=key_prefix+'_analyze'):
         try:
             years={e.get('season',scoreboard.get('season',{})).get('year') for e in scoreboard.get('events',[]) if e.get('season',scoreboard.get('season',{})).get('type')==2}
@@ -524,7 +526,3 @@ def current_roster_nba(team_id):
         rows.append(dict(id=str(athlete.get('id','')),name=athlete.get('displayName'),status=status.get('name') if isinstance(status,dict) else str(status)))
     if not rows:raise ValueError('NBA roster empty')
     return rows
-
-
-
-

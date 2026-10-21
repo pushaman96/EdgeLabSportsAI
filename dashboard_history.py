@@ -62,7 +62,5 @@ def render_public_history(sport,path='published_picks.json'):
     render_learning_audit(sport,records)
     from background_research import render as render_background_research
     render_background_research(sport)
-
-
-
-
+    from nfl_scoring_models import render_validation as render_scoring_validation
+    render_scoring_validation(sport)

@@ -52,7 +52,7 @@ def csv_url(url):
     return list(csv.DictReader(io.StringIO(response.text.lstrip('\ufeff'))))
 
 @st.cache_data(ttl=21600)
-def load_season_stats(kind, season, schema_version=3):
+def load_season_stats(kind, season, schema_version=4):
     rows = csv_url(f'https://github.com/nflverse/nflverse-data/releases/download/stats_{kind}/stats_{kind}_week_{season}.csv')
     required = {'season', 'week', 'season_type', 'team', 'opponent_team', 'game_id', 'passing_yards', 'rushing_yards', 'receiving_yards'}
     if kind == 'player':
@@ -71,7 +71,7 @@ def normalize_stats(rows, kind):
             continue
         converted = {k: row.get(k) for k in ['player_id', 'player_display_name', 'position', 'game_id']}
         converted.update(season=int(row['season']), week=int(row['week']), team=ALIASES.get(row['team'], row['team']), opponent_team=ALIASES.get(row['opponent_team'], row['opponent_team']))
-        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions', 'passing_interceptions', 'completions', 'passing_tds']:
+        for key in ['passing_yards', 'rushing_yards', 'receiving_yards', 'attempts', 'carries', 'targets', 'receptions', 'passing_interceptions', 'completions', 'passing_tds', 'rushing_tds', 'receiving_tds']:
             converted[key] = num(row.get(key))
         identity = (converted['game_id'], converted.get('player_id') if kind == 'player' else converted['team'])
         if identity in seen:
@@ -195,7 +195,9 @@ def load_prop_research(season):
     season_prior_reports=validate_season_prior(players,teams)
     from workload_candidates import validate_nfl
     workload_reports=validate_nfl(players,teams)
-    return {'workload_reports':workload_reports,'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    from nfl_scoring_models import td_validate,total_validate
+    td_report=td_validate(players);total_report=total_validate(schedule)
+    return {'td_report':td_report,'total_report':total_report,'workload_reports':workload_reports,'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -560,6 +562,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
         if row.get('Snap coverage'):
             row['Reason']+=f" Expected targets {row.get('Expected opportunities')}; snap coverage {row['Snap coverage']}; selected snap effect weight {row['Snap effect weight']}. Routes unavailable."
         row['Evidence explanation']=evidence_explanation(row)
+    if any(m.get('key')in ('player_anytime_td','totals')for b in event.get('bookmakers',[])for m in b.get('markets',[])):
+        from nfl_scoring_models import reviews as scoring_reviews
+        rows.extend(scoring_reviews(event,scoreboard,research,injuries,rosters,now))
     return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
 
 def evidence_explanation(row):
@@ -819,7 +824,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     events = event if isinstance(event,list) else [event]
     starts = {e['away_team']+' at '+e['home_team']:e['commence_time'] for e in events}
     st.subheader('NFL prop shortlist — one direction or Pass')
-    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts, completions, passing touchdowns and RB rushing attempts. Completions and passing touchdowns use attempts × conversion distributions; picks require stat and probability benchmark passes. Interceptions at 0.5 remain gated separately. New count markets remain experimental and must beat their baseline. QB rushing, rushing/receiving touchdowns, defensive props and team scoring markets are not modeled. Probabilities and sportsbook returns are unverified.')
+    st.caption('Models: passing/rushing/receiving yards, receptions, passing attempts, completions, passing touchdowns and RB rushing attempts. Completions and passing touchdowns use attempts × conversion distributions; picks require stat and probability benchmark passes. Interceptions at 0.5 remain gated separately. New count markets remain experimental and must beat their baseline. Anytime offensive touchdowns and NFL game totals use separate chronological scoring models. Specific rushing/receiving TD counts, QB rushing yards and defensive props are not modeled. Probabilities and sportsbook returns are unverified.')
     mode=st.selectbox('Forecast model',['Original model','Experimental opportunity model — paper testing','Chronological calibration model — paper testing','Boosted opportunity model — paper testing','Team targets and receptions — paper testing','Receiving participation — paper testing'],index=1,key='nfl_workload_forecast_mode')
     experimental=mode!='Original model'
     chronological=mode.startswith('Chronological')
@@ -1017,9 +1022,3 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
-
-
-
-
-
-

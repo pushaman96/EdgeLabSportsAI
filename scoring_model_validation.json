@@ -1,0 +1,128 @@
+{
+  "generated_utc": "2026-10-21T21:36:03.981610+00:00",
+  "NFL_anytime_touchdown": {
+    "calibration_examples": 3282,
+    "validation_games": 272,
+    "validation_examples": 3282,
+    "temperature": 0.75,
+    "brier": 0.17097820167657504,
+    "baseline_brier": 0.18304794569525193,
+    "passed": true,
+    "scope": "Offensive scoring occurrence only; returns not modeled. 2025 development holdout, not historical odds profitability."
+  },
+  "NFL_game_total": {
+    "calibration_examples": 272,
+    "validation_games": 272,
+    "forecast_mae": 10.615144493626328,
+    "baseline_mae": 10.972967128027681,
+    "brier": 0.24004592013426393,
+    "baseline_brier": 0.25,
+    "passed": true,
+    "scope": "2024 residual calibration; 2025 stat and synthetic league-total threshold development test; not historical sportsbook returns"
+  },
+  "status": "Historical development evidence only; no historical sportsbook returns and no live accuracy guarantee",
+  "NBA_PRA": {
+    "reports": {
+      "Early season (0\u20137 appearances)": {
+        "category": "PRA",
+        "validation_games": 35,
+        "calibration_examples": 56,
+        "forecast_mae": 6.002082419537136,
+        "baseline_mae": 6.7260547875064,
+        "passed": true,
+        "split_date": "2025-10-22",
+        "validation_season": 2026,
+        "split_method": "Complete later season",
+        "empirical_band_validation_coverage": 0.7142857142857143,
+        "mean_actual_minus_forecast": -2.439049862930788
+      },
+      "Established season": {
+        "category": "PRA",
+        "validation_games": 343,
+        "calibration_examples": 578,
+        "forecast_mae": 6.075363061212695,
+        "baseline_mae": 6.2280126336248784,
+        "passed": true,
+        "split_date": "2025-10-22",
+        "validation_season": 2026,
+        "split_method": "Complete later season",
+        "empirical_band_validation_coverage": 0.7842565597667639,
+        "mean_actual_minus_forecast": 0.7201330845444682
+      }
+    },
+    "history_rows": 1284,
+    "reference_players": [
+      "Adou Thiero",
+      "Andrew Wiggins",
+      "Amari Williams",
+      "Carter Bryant",
+      "Caleb Martin",
+      "Al Horford",
+      "AK Okereke",
+      "Bam Adebayo",
+      "Baylor Scheierman",
+      "David Jones Garcia",
+      "Cooper Flagg",
+      "Brandin Podziemski"
+    ],
+    "missing_sources": [
+      {
+        "player": "Adou Thiero",
+        "season": 2024
+      },
+      {
+        "player": "Amari Williams",
+        "season": 2024
+      },
+      {
+        "player": "Carter Bryant",
+        "season": 2024
+      },
+      {
+        "player": "AK Okereke",
+        "season": 2024
+      },
+      {
+        "player": "Baylor Scheierman",
+        "season": 2024
+      },
+      {
+        "player": "David Jones Garcia",
+        "season": 2024
+      },
+      {
+        "player": "Cooper Flagg",
+        "season": 2024
+      },
+      {
+        "player": "Adou Thiero",
+        "season": 2025
+      },
+      {
+        "player": "Amari Williams",
+        "season": 2025
+      },
+      {
+        "player": "Carter Bryant",
+        "season": 2025
+      },
+      {
+        "player": "AK Okereke",
+        "season": 2025
+      },
+      {
+        "player": "David Jones Garcia",
+        "season": 2025
+      },
+      {
+        "player": "Cooper Flagg",
+        "season": 2025
+      },
+      {
+        "player": "AK Okereke",
+        "season": 2026
+      }
+    ],
+    "scope": "Current-roster-selected 12-player reference cohort across 6 fixed teams; limited development sample subject to selection bias, not whole-league or sportsbook validation. Production reviews validate their loaded history separately."
+  }
+}

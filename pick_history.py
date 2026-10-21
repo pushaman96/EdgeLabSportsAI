@@ -30,7 +30,7 @@ def restore_records(payload):
     clean=[];seen=set()
     for original in imported:
         r=dict(original)
-        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported category/sport.')
+        if r.get('sport','NFL') not in ('NFL','NBA') or r['category'] not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks','PRA','Anytime touchdown','Game total points'):raise ValueError('Unsupported category/sport.')
         if r['strategy'] not in ('Original','Cushion','Manual'):raise ValueError('Invalid strategy.')
         r['odds']=float(r['odds'])
         if not math.isfinite(r['odds']) or abs(r['odds'])<100:raise ValueError('Invalid price.')
@@ -55,7 +55,7 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     if now>=utc(start):raise ValueError('Publish before kickoff.')
     if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900:raise ValueError('Refresh the quote before publishing.')
     category=row['Category']
-    if (row['Decision']=='Pass' and strategy!='Analysis') or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks'):raise ValueError('Unsupported pick category.')
+    if (row['Decision']=='Pass' and strategy!='Analysis') or category not in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing attempts','Passing interceptions','Passing completions','Passing touchdowns','Rushing attempts','Moneyline','Points','Rebounds','Assists','Three-pointers made','Steals','Blocks','PRA','Anytime touchdown','Game total points'):raise ValueError('Unsupported pick category.')
     line=None if category=='Moneyline' else float(row['Line']);odds=float(row['Odds']);prob=float(row['Estimated win %'])/100 if row.get('Estimated win %') is not None else None
     if not math.isfinite(odds) or abs(odds)<100 or (prob is not None and (not math.isfinite(prob) or not 0<prob<1)):raise ValueError('Invalid price or probability.')
     if prob is None and strategy!='Manual':raise ValueError('Model picks need probabilities.')
@@ -86,6 +86,20 @@ def grade_record(record,data):
     competitions=data.get('header',{}).get('competitions',[])
     if not competitions or not competitions[0].get('status',{}).get('type',{}).get('completed'):return r
     if str(data.get('header',{}).get('id'))!=str(r['event_id']):raise ValueError('Game identity mismatch.')
+    if r['category']in ('PRA','Anytime touchdown','Game total points'):
+        from extended_stats import current_value
+        actual=current_value(r['category'],r['player'],data)
+        if actual is None:return dict(r,grading_note='Required combined/scoring evidence incomplete; remains unresolved, not zero or DNP.')
+        if r['category']=='PRA':
+            from extended_stats import nba_minutes
+            minutes=nba_minutes(r['player'],data)
+            if minutes is not None:r['actual_opportunities']=minutes
+        line=r['line'];win=actual<line if r['direction']=='Under'else actual>line
+        result='Push'if actual==line else'Win'if win else'Loss'
+        odds=r['odds'];profit=odds/100 if odds>0 else 100/abs(odds)
+        r.update(result=result,actual=actual,profit_per_1=profit if result=='Win'else -1 if result=='Loss'else 0,graded_utc=datetime.now(timezone.utc).isoformat(),grading_note='Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.')
+        if r.get('projected_count')is not None:r['count_miss']=actual-float(r['projected_count'])
+        return r
     if r['category']=='Moneyline':
         teams=competitions[0].get('competitors',[])
         selected=[t for t in teams if t.get('team',{}).get('displayName')==r['player']]
@@ -381,11 +395,3 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from slate_review import write_reviews
     write_reviews(data['records'])
-
-
-
-
-
-
-
-
