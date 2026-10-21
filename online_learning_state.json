@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-21T03:58:26.160046+00:00",
+  "generated_utc": "2026-10-21T04:06:01.680010+00:00",
   "groups": {
     "[\"NFL\",\"Adjusted NFL Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
       "games": 5,
