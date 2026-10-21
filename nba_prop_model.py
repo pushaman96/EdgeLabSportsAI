@@ -89,7 +89,9 @@ def research(logs, cutoff):
         return dict(category=label,validation_games=len(groups),calibration_examples=len(calibration),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(calibration)>=50 and fm<bm),split_date=split)
     reports={field:report(label,validation[field],errors[field]) for label,field in MARKETS.values()}
     cohort_reports={(field,cohort):report(label,cohort_validation[field,cohort],cohort_errors[field,cohort]) for label,field in MARKETS.values() for cohort in ('Early season (0–7 appearances)','Established season')}
-    return dict(history=history,players=players,errors=errors,reports=reports,cohort_errors=cohort_errors,cohort_reports=cohort_reports)
+    from workload_candidates import validate_nba
+    workload_reports=validate_nba(older)
+    return dict(workload_reports=workload_reports,history=history,players=players,errors=errors,reports=reports,cohort_errors=cohort_errors,cohort_reports=cohort_reports)
 
 
 def probability(projected, line, errors):
@@ -186,6 +188,12 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None):
                     uncertainty=detail['uncertainty'] if detail else 1.
                     calibration=[e*uncertainty for e in calibration]
                     row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','History source':data.get('source','NBA.com'),'Season stage':cohort,'Last-season games':detail['prior_games'] if detail else 0,'Current-season appearances':detail['current_games'] if detail else len(history),'Current-season weight %':round(100*detail['current_weight'],1) if detail else 100.,'Role uncertainty':'New team; fewer than 3 current-team games' if detail and detail['role_uncertain'] else 'Historical minutes assumption; lineup changes may differ','Uncertainty multiplier':round(uncertainty,3)})
+                    if detail:
+                        from workload_candidates import nba_sample,attach
+                        live=dict(player=next(iter(ids)),team=nba_team,date=game_day.isoformat(),season=data['season'])
+                        sample=nba_sample(live,player_history,field)
+                        absent=[r['Player']for r in injuries['rows']if r['Team']==team and normalized(r['Player']) in out_names]
+                        attach(row,sample,model.get('workload_reports',{}).get((field,cohort)),absent)
                     p=probability(projected,line,calibration)
                     if p is None:row['Reason']='Insufficient earlier calibration errors';continue
                     row['Base estimated win %']=100*(1-p if row['Selection']=='Under' else p)
@@ -319,6 +327,18 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
             st.caption('Stat estimates can be shown before a category qualifies for a recommendation. Role uncertainty and failed or insufficient validation remain explicit. These projections are not a promise of hitting a sportsbook line.')
             fields=('Game','Player','Category','Projection (count)','Minutes forecast','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','History source')
             render_team_table([{**{k:r.get(k) for k in fields},'Recommendation status':r['Decision'],'Reason':r['Reason']} for r in unique.values()],hide_index=True,use_container_width=True,sport='NBA')
+    scenarios={}
+    for row in current:
+        if row.get('Workload sensitivity scenarios'):scenarios.setdefault((row['Game'],row['Player'],row['Category']),row)
+    if scenarios:
+        with st.expander('NBA workload and lineup scenarios — research comparisons'):
+            st.caption('Minutes candidates are tested on an earlier season and checked on a later season. They are not applied to recommendations. Low/high scenarios assume unchanged production per minute and are not separate bets.')
+            fields=('Game','Player','Category','Minutes forecast','Workload candidate opportunities','Workload candidate projection','Workload candidate status','Confirmed unavailable teammates','Lineup scenario limitation')
+            render_team_table([{k:r.get(k) for k in fields}for r in scenarios.values()],hide_index=True,use_container_width=True,sport='NBA')
+            chosen=st.selectbox('Inspect NBA minutes sensitivity',list(scenarios),format_func=lambda k:' · '.join(k),key=key_prefix+'_minutes_sensitivity')
+            st.dataframe(scenarios[chosen]['Workload sensitivity scenarios'],hide_index=True,use_container_width=True)
+            st.write(scenarios[chosen].get('Workload candidate benchmark',{}))
+            if scenarios[chosen].get('Schedule and rest context'):st.write(scenarios[chosen]['Schedule and rest context'])
     with st.expander('All NBA forecasts and Pass reasons'):
         if current:render_team_table(current,hide_index=True,use_container_width=True,sport='NBA')
     publish_rows(picks,events,key_prefix=key_prefix+'_publish',sport='NBA')
@@ -340,4 +360,5 @@ def current_roster_nba(team_id):
         rows.append(dict(id=str(athlete.get('id','')),name=athlete.get('displayName'),status=status.get('name') if isinstance(status,dict) else str(status)))
     if not rows:raise ValueError('NBA roster empty')
     return rows
+
 
