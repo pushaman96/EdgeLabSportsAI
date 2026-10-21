@@ -1,17 +1,17 @@
 {
-  "generated_utc": "2026-10-21T21:11:47.985837+00:00",
-  "odds_setup": "GitHub Actions ODDS_API_KEY secret required for background prices; Streamlit secrets are separate",
+  "generated_utc": "2026-10-21T21:43:17.793734+00:00",
+  "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
       "status": "Prepared; review availability and category validation before any pick",
       "upcoming_games": 1,
-      "prepared_projections": 6,
+      "prepared_projections": 23,
       "issues": []
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
       "upcoming_games": 13,
-      "prepared_projections": 1328,
+      "prepared_projections": 1660,
       "issues": [
         "Player history incomplete: Anthony Black",
         "Player history incomplete: Jonathan Isaac",
