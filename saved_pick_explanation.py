@@ -31,6 +31,10 @@ def explanation(record):
     if context.get('Workload method'):workload+=' Workload method: '+str(context['Workload method'])+'.'
     if context.get('Efficiency method'):workload+=' Efficiency method: '+str(context['Efficiency method'])+'.'
     if context.get('Current-team games') is not None:workload+=f" Saved current-team sample: {context['Current-team games']} games."
+    averages=context.get('Player averages')or []
+    for sample in averages:
+        if sample.get('Sample')in ('Last season — all teams','This season — all teams','Last 5 appearances'):
+            workload+=' '+sample['Sample']+': '+display(sample.get('Average'))+' '+units+' across '+display(sample.get('Stat sample games'))+' recorded appearances; '+display(sample.get('Minutes average'))+' average minutes.'
     lineup=context.get('Starting lineup check')or {}
     if lineup:workload+=' Lineup: '+str(lineup.get('Status','Unconfirmed'))+'.'
     schedule=context.get('Verified schedule context')or {}
@@ -113,6 +117,10 @@ def render_saved_explanations(records,sport):
         if e['details']:
             st.write('**Full explanation saved with this pick**');st.write(e['details'])
         context=record.get('forecast_context')or {}
+        if context.get('Player averages'):
+            st.write('**Player averages and shooting percentages saved before the game**')
+            st.dataframe(context['Player averages'],hide_index=True,use_container_width=True)
+            st.caption(context.get('Player averages method','Observed historical averages, not guaranteed future results.'))
         for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
             if context.get(field):st.write('**'+label+'**');st.write(context[field])
         st.caption('Frozen at '+record.get('published_utc','unknown time')+' · Model: '+record.get('model','Not saved')+'. No paid AI service is used, and opening this explanation does not change the pick.')
@@ -120,7 +128,7 @@ def render_saved_explanations(records,sport):
 
 def from_row(row):
     """Explain a current analysis row without requiring an API or saving it."""
-    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation')
+    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average')
     context={key:row[key] for key in fields if key in row}
     return explanation(dict(player=row.get('Player'),category=row.get('Category'),direction=row.get('Selection'),line=row.get('Line'),odds=row.get('Odds'),probability=number(row.get('Estimated win %'))/100 if number(row.get('Estimated win %')) is not None else None,projected_yards=row.get('Projection (yards)'),projected_count=row.get('Projection (count)'),expected_opportunities=row.get('Expected opportunities'),reason=row.get('Reason'),forecast_context=context,online_status=row.get('Online learning status')))
 

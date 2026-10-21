@@ -41,6 +41,14 @@ def normalize_logs(rows, year):
         if minutes is None or minutes<=0:continue
         fields={k:number(r.get(k)) for k in ('PTS','REB','AST','FG3M')}
         if any(v is None or v<0 for v in fields.values()):continue
+        invalid_threes=False
+        for made,attempted in (('FGM','FGA'),('FG3M','FG3A'),('FTM','FTA')):
+            m,a=number(r.get(made)),number(r.get(attempted))
+            valid=m is not None and a is not None and 0<=m<=a
+            if made=='FG3M'and m is not None and a is not None and not valid:invalid_threes=True
+            if made!='FG3M':fields[made]=m if valid else None
+            fields[attempted]=a if valid else None
+        if invalid_threes:continue
         identity=(str(r['GAME_ID']),str(r['PLAYER_ID']))
         if identity in seen:raise ValueError('Duplicate NBA player/game')
         seen.add(identity)
@@ -202,6 +210,8 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     ids={r['player'] for r in data['logs'] if normalized(r['name'])==normalized(row['Player']) and r['date']<game_day.isoformat()}
                     if len(ids)!=1:row['Reason']='Current-team player history unavailable or ambiguous';continue
                     player_history=model['players'].get(next(iter(ids)),[])
+                    from nba_player_averages import attach_averages
+                    attach_averages(row,player_history,field,data['season'],nba_team,game_day,current_history_verified=next(iter(ids))not in data.get('missing_current',set()))
                     history=[r for r in model['history'].get((next(iter(ids)),nba_team),[]) if (game_day-day(r['date'])).days<=240]
                     detail=season_projection(player_history,field,data['season'],nba_team,game_day)
                     forecast=(detail['projected'],detail['minutes'],detail['baseline']) if detail else projection(history,field)
@@ -273,10 +283,14 @@ def reference_players(rosters, limit=12):
     return tuple(result)
 
 
-def completed_player_logs(year,pid,name):return fetch_espn_logs(year,pid,name)
+def completed_player_logs(year,pid,name):
+    """Completed history including optional paired shooting makes/attempts."""
+    return fetch_espn_logs(year,pid,name)
 
 
-def current_player_logs(year,pid,name):return fetch_espn_logs(year,pid,name)
+def current_player_logs(year,pid,name):
+    """Current history including optional paired shooting makes/attempts."""
+    return fetch_espn_logs(year,pid,name)
 
 
 def load_data(end_year, targets=(), references=()):
@@ -429,6 +443,28 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
                 bands.append({'Category':key[0],'Season stage':key[1],'Later validation games':report.get('validation_games'),'Measured range coverage %':round(coverage*100,1) if coverage is not None else None,'Average actual minus forecast':report.get('mean_actual_minus_forecast')})
             st.dataframe(bands,hide_index=True,use_container_width=True)
             st.caption('Positive average actual-minus-forecast means the model underestimated the statistic in those historical games. It is a diagnostic, not an automatically applied correction. Absence-related extra minutes are shown separately and are not applied to picks.')
+    average_rows={}
+    for row in current:
+        if row.get('Player averages'):average_rows.setdefault((row['Game'],row['Player'],row['Category']),row)
+    if average_rows:
+        with st.expander('NBA player averages and shooting percentages'):
+            selected=st.selectbox('Inspect player averages',list(average_rows),format_func=lambda k:' · '.join(k),key=key_prefix+'_averages')
+            row=average_rows[selected];profile=row['Player averages']
+            st.caption(row['Player averages method'])
+            st.write('**'+row['Player']+' · '+row['Category']+' · '+str(row['Selection'])+' '+str(row['Line'])+'**')
+            tabs=st.tabs(['Production and minutes','Shooting percentages and attempts','Historical line comparisons'])
+            with tabs[0]:
+                fields=('Sample','Games','Stat sample games','Average','Median','Stat standard deviation','Minutes average','Stat per minute','Includes prior season','Includes prior team','Latest game date')
+                st.dataframe([{k:r.get(k)for k in fields}for r in profile],hide_index=True,use_container_width=True)
+                st.caption('The forecast already blends last-season minutes and per-minute production with this-season appearances. Recent averages are supporting evidence; a hot or cold streak does not automatically override the tested forecast.')
+            with tabs[1]:
+                fields=('Sample','FG %','FG makes/game','FG attempts/game','FG shooting games','3PT %','3PT makes/game','3PT attempts/game','3PT shooting games','FT %','FT makes/game','FT attempts/game','FT shooting games')
+                st.dataframe([{k:round(r[k],2)if isinstance(r.get(k),float)else r.get(k)for k in fields}for r in profile],hide_index=True,use_container_width=True)
+                st.caption('Percentages = total makes ÷ total attempts × 100 for games with both values available. No attempts means no percentage. Mid-range shooting needs separate verified shot-location data and is not inferred from overall field-goal percentage.')
+            with tabs[2]:
+                fields=('Sample','Stat sample games','Compared line','Historical overs','Historical unders','Historical pushes','Historical over % (excluding pushes)')
+                st.dataframe([{k:r.get(k)for k in fields}for r in profile],hide_index=True,use_container_width=True)
+                st.caption('Past results against this line are descriptive. They are not the model’s estimated win chance or proof of future profitability; the offered line and player role may have changed.')
     context_rows={}
     for row in current:
         if row.get('NBA context version'):context_rows.setdefault((row['Game'],row['Player'],row['Category']),row)

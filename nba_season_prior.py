@@ -55,6 +55,21 @@ def normalize_espn_logs(data,year,athlete_id,player_name):
                     team=str(event['team']['id'])
                 except (KeyError,ValueError,TypeError,IndexError):continue
                 if not all(math.isfinite(v) and v>=0 for v in [minutes,*values.values()]) or minutes<=0:continue
+                # Optional shooting volume never turns a missing value into 0
+                # or discards an otherwise valid points/rebounds/assists row.
+                invalid_threes=False
+                for label,made,attempted in (('FG','FGM','FGA'),('3PT','FG3M','FG3A'),('FT','FTM','FTA')):
+                    try:
+                        pair=str(stats[label]).replace('/','-').split('-')
+                        m,a=map(float,pair)
+                        if not all(math.isfinite(v)and v>=0 for v in (m,a))or m>a:
+                            if label=='3PT':invalid_threes=True
+                            raise ValueError('Invalid shooting pair')
+                    except (KeyError,ValueError,TypeError):
+                        if made!='FG3M':values[made]=None
+                        values[attempted]=None
+                    else:values[made]=m;values[attempted]=a
+                if invalid_threes:continue
                 rows.append(dict(player='espn:'+str(athlete_id),name=player_name,team=team,date=when,game=eid,minutes=minutes,season=year,source='ESPN regular-season game logs',**values))
     return sorted(rows,key=lambda r:(r['date'],r['game']))
 
