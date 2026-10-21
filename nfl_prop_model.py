@@ -510,6 +510,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Raw estimated win %']=100*p
                 row['Feedback status']=row.get('Online learning status','Collecting prospective per-game evidence')
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
+                row['Validation details']={'passed':bool(model.get('forecast_passed')),'calibration_examples':len(model.get('residuals',[])),'test_count':model.get('test_count'),'scope':'Existing chronological NFL model baseline test; calibration examples and later test cases are separate'}
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
                 if market['key'] in COUNT_MARKETS:
                     row['Projection (count)']=row.pop('Projection (yards)')
@@ -890,6 +891,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 for loaded in events:
                     filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
+                from game_day_diagnostics import apply as apply_game_day_diagnostic
+                rows=apply_game_day_diagnostic(rows,'NFL')
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
                 st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'season_prior_reports':research.get('season_prior_reports',{}),'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):

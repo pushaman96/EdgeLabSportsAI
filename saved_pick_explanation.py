@@ -133,10 +133,12 @@ def render_saved_explanations(records,sport):
             st.write('**NFL observed averages and conversion rates saved before the game**')
             st.dataframe(context['NFL player averages'],hide_index=True,use_container_width=True)
             st.caption(context.get('NFL averages method',''))
-            for label,field in (('Role and participation','NFL snap trend'),('Depth listing','NFL depth check'),('Workload-limit report','NFL restriction check'),('Rest and schedule','NFL verified schedule context'),('Matchup context','NFL opponent workload context'),('Teammate involvement comparisons','NFL teammate involvement'),('Unvalidated context scenario','NFL context scenario')):
+            for label,field in (('Role and participation','NFL snap trend'),('Depth listing','NFL depth check'),('Workload-limit report','NFL restriction check'),('Rest and schedule','NFL verified schedule context'),('Matchup context','NFL opponent workload context'),('Teammate involvement comparisons','NFL teammate involvement'),('Unvalidated context scenario','NFL context scenario','Game-day diagnostic')):
                 if context.get(field):st.write('**'+label+'**');st.write(context[field])
         for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
             if context.get(field):st.write('**'+label+'**');st.write(context[field])
+        if (record.get('forecast_context')or{}).get('Game-day diagnostic'):
+            st.write('**Game-day diagnostic at publication**');st.write(record['forecast_context']['Game-day diagnostic'])
         st.caption('Frozen at '+record.get('published_utc','unknown time')+' · Model: '+record.get('model','Not saved')+'. No paid AI service is used, and opening this explanation does not change the pick.')
 
 

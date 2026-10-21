@@ -230,6 +230,7 @@ def moneyline_reviews(events,models,now=None,sport='NFL',include_passes=False):
                     ev=p*decimal-1
                     qualifies=ev>0 and p-market_p>=.05
                     if not qualifies and not include_passes:continue
+                    feedback['Validation']=model.get('validation',{})
                     rows.append(dict(feedback,Player=outcome['name'],Selection='Win',Category='Moneyline',Line=None,Odds=odds,Decision='Watch — experimental' if qualifies else 'Pass',**{'Estimated win %':round(p*100,1),'Game':event['away_team']+' at '+event['home_team'],'Team to research':outcome['name'],'Sportsbook':book['title'],'Moneyline':odds_text(odds),'Model win %':round(p*100,1),'Break-even %':round(market_p*100,1),'Market win % without margin':round(market_p/sum(probs)*100,1),'Model minus break-even (pp)':round((p-market_p)*100,1),'Model history through':model['cutoff'],'Quote updated UTC':updated,'Estimated return per $1':round(ev,3)}))
     return sorted(rows,key=lambda row:row['Model minus break-even (pp)'],reverse=True)
 
@@ -428,6 +429,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             injury_notes=[{'Game':away+' at '+home,'Status':'Availability screen passed' if context.get('injury_verified') else 'Injury warning — not numerically adjusted','Reason':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc')} for (home,away),context in models.items()] if sport=='NFL' else []
             st.session_state['moneyline_injury_notes']=injury_notes
             analyzed=moneyline_reviews(filtered,models,sport=sport,include_passes=True)
+            from game_day_diagnostics import apply as apply_game_day_diagnostic
+            analyzed=apply_game_day_diagnostic(analyzed,sport)
             from forecast_tracking import archive as archive_forecasts
             archive_forecasts(analyzed,filtered,scoreboard,sport)
             reviews=[r for r in analyzed if r['Decision']!='Pass']
@@ -452,7 +455,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
                 st.caption("Sorted by estimated win probability, highest first. Probability and payout value are different measures.")
                 render_team_table(reviews,hide_index=True,use_container_width=True, sport=sport)
-                records=[{**{k:r[k] for k in ('Base estimated win %','Online input win %','Online version','Online learning status','Candidate win %') if k in r},'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
+                records=[{**{k:r[k] for k in ('Base estimated win %','Online input win %','Online version','Online learning status','Candidate win %','Game-day diagnostic','Validation') if k in r},'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
                 publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
             else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
     except OddsSourceError as exc:

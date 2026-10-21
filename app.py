@@ -1244,6 +1244,7 @@ def sportsbook_model_context(sport_name, scoreboard_data):
         output[(home.get("displayName"), away.get("displayName"))] = {
             "probability":probability, "cutoff":cutoff.isoformat(),
             "eligible":type_id == 2 and 0 <= age <= 30,
+            "validation":{"passed":bool(adjustment and adjustment["improvement"]>=0),"calibration_examples":adjustment["calibration_games"] if adjustment else 0,"validation_games":adjustment["evaluation_games"] if adjustment else 0,"scope":"Chronological Elo shrinkage against unadjusted Elo; not sportsbook returns"},
             "injury_verified":sport_name == "NFL" and injury.get("eligible",False),
             "injury_reason":injury.get("reason","Injury verification unavailable"),
             "injury_checked_utc":injury.get("checked_utc"),

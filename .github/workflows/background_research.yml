@@ -4,6 +4,8 @@ on:
     paths:
       - 'background_research.py'
       - 'background_moneyline.py'
+      - 'game_day_diagnostics.py'
+      - 'tests/test_game_day_diagnostics.py'
       - 'tests/test_background_research.py'
       - '.github/workflows/background_research.yml'
   workflow_dispatch:
@@ -26,7 +28,8 @@ jobs:
         with:
           python-version: '3.13'
           cache: pip
-      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Run complete daily software diagnostic
+        run: python game_day_diagnostics.py
       - run: pip install -r requirements.txt
       - uses: actions/cache@v4
         with:
@@ -48,7 +51,7 @@ jobs:
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
-          for file in background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
+          for file in game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if ! git diff --cached --quiet; then
@@ -70,7 +73,7 @@ jobs:
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
-          for file in background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
+          for file in game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if ! git diff --cached --quiet; then

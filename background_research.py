@@ -265,7 +265,7 @@ def moneyline_rows(sport,event,board,now):
         hc=aliases.get(home['abbreviation'],home['abbreviation']);ac=aliases.get(away['abbreviation'],away['abbreviation'])
         cutoff=max(g['date']for g in games)
         if hc not in ratings or ac not in ratings:continue
-        models[home['displayName'],away['displayName']]={'probability':shrink_probability(expected_home_win(ratings[hc],ratings[ac]),strength),'eligible':0<=(day(now)-cutoff).days<=30,'cutoff':cutoff.isoformat(),'injury_verified':False,'injury_reason':'Background Elo has no numerical injury adjustment; review current availability'}
+        models[home['displayName'],away['displayName']]={'probability':shrink_probability(expected_home_win(ratings[hc],ratings[ac]),strength),'eligible':0<=(day(now)-cutoff).days<=30,'cutoff':cutoff.isoformat(),'validation':{'passed':bool(validation and validation['improvement']>=0),'calibration_examples':validation['calibration_games']if validation else 0,'validation_games':validation['evaluation_games']if validation else 0,'scope':'Chronological Elo shrinkage comparison against the unadjusted model; not sportsbook returns'},'injury_verified':False,'injury_reason':'Background Elo has no numerical injury adjustment; review current availability'}
     from sportsbook_tools import moneyline_reviews
     rows=moneyline_reviews([event],models,now=now,sport=sport,include_passes=True)
     for row in rows:row['Reason']='Historical Elo price comparison. Availability/replacement effects are not numerically modeled; experimental.'
@@ -302,6 +302,8 @@ def execute(now=None):
             except Exception:request['forecast_status']='Player model source/validation unavailable; prices saved without fabricated picks'
             try:rows.extend(moneyline_rows(sport,event,board,datetime.now(timezone.utc)))
             except Exception:request['moneyline_status']='Moneyline source unavailable'
+            from game_day_diagnostics import apply as apply_game_day_diagnostic
+            rows=apply_game_day_diagnostic(rows,sport)
             frozen=[];recommendations={};now_freeze=datetime.now(timezone.utc)
             # Recheck the actual current time after slow history/model work.
             verified_pregame_start(source,event['commence_time'],now_freeze)

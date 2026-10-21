@@ -23,6 +23,8 @@ def render_public_history(sport,path='published_picks.json'):
     import streamlit as st
     from live_pick_board import render_live_board
     records=tracked_records(path,st.session_state.get('personal_paper_records',[]),st.session_state.get('ledger_live_grades',[]))
+    from game_day_diagnostics import render as render_day_diagnostic
+    render_day_diagnostic(sport)
     st.divider()
     from pick_history import sync_session_records
     sync_session_records(key_prefix='dashboard_storage_'+sport,show_success=False)

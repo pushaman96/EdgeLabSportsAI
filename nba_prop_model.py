@@ -393,6 +393,8 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
                     context={}
                     st.info('Additional lineup, schedule and matchup sources are unavailable. These fields remain unconfirmed; no substitute values are invented.')
                 rows=reviews(filtered,scoreboard,data,injuries,roster,context=context)
+                from game_day_diagnostics import apply as apply_game_day_diagnostic
+                rows=apply_game_day_diagnostic(rows,'NBA')
                 st.session_state[key_prefix+'_results']=(rows,datetime.now(timezone.utc).isoformat())
         except Exception as exc:
             st.warning('NBA forecast data unavailable; no substitute statistics or picks invented. '+str(exc)[:180]);return
