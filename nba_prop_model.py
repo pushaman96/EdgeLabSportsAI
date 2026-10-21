@@ -8,7 +8,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-MODEL = 'NBA season-prior minutes-rate v2'
+MODEL = 'NBA season-prior minutes-rate v3 / complete-season validation'
 from nba_season_prior import season_projection, season_year, fetch_espn_logs
 MARKETS = {'player_points':('Points','PTS'),'player_rebounds':('Rebounds','REB'),'player_assists':('Assists','AST'),'player_threes':('Three-pointers made','FG3M')}
 
@@ -62,7 +62,15 @@ def research(logs, cutoff):
     """Earlier errors calibrate; later games validate each season-stage cohort."""
     older=[r for r in logs if r['date']<str(cutoff)]
     dates=sorted({r['date'] for r in older})
-    split=dates[int(.65*len(dates))] if dates else str(cutoff)
+    # Hold out a complete completed season. A percentile of calendar dates can
+    # land after opening week and leave early-season validation empty even
+    # when several complete historical seasons were successfully loaded.
+    target_year=season_year({'date':str(cutoff)})
+    validation_year=max((season_year(r) for r in older if season_year(r)<target_year),default=None)
+    validation_dates=[r['date'] for r in older if season_year(r)==validation_year]
+    earlier=[r for r in older if validation_year is not None and season_year(r)<validation_year]
+    full_season_split=bool(validation_dates and earlier)
+    split=min(validation_dates) if full_season_split else dates[int(.65*len(dates))] if dates else str(cutoff)
     history=defaultdict(list);players=defaultdict(list);errors=defaultdict(list);validation=defaultdict(lambda:defaultdict(list))
     cohort_errors=defaultdict(list);cohort_validation=defaultdict(lambda:defaultdict(list))
     for r in sorted(older,key=lambda r:(r['date'],r['game'],r['player'])):
@@ -78,7 +86,7 @@ def research(logs, cutoff):
             error=(r[field]-forecast)/max(1.,math.sqrt(forecast))/scale
             if r['date']<split:
                 errors[field].append(error);cohort_errors[field,cohort].append(error)
-            else:
+            elif not full_season_split or season_year(r)==validation_year:
                 pair=(abs(r[field]-forecast),abs(r[field]-baseline))
                 validation[field][r['game']].append(pair)
                 if not detail or not detail['role_uncertain']:cohort_validation[field,cohort][r['game']].append(pair)
@@ -86,7 +94,7 @@ def research(logs, cutoff):
     def report(label,groups,calibration):
         fm=statistics.mean(statistics.mean(v[0] for v in values) for values in groups.values()) if groups else None
         bm=statistics.mean(statistics.mean(v[1] for v in values) for values in groups.values()) if groups else None
-        return dict(category=label,validation_games=len(groups),calibration_examples=len(calibration),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(calibration)>=50 and fm<bm),split_date=split)
+        return dict(category=label,validation_games=len(groups),calibration_examples=len(calibration),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(calibration)>=50 and fm<bm),split_date=split,validation_season=validation_year if full_season_split else None,split_method='Complete later season' if full_season_split else 'Chronological date split; incomplete historical coverage')
     reports={field:report(label,validation[field],errors[field]) for label,field in MARKETS.values()}
     cohort_reports={(field,cohort):report(label,cohort_validation[field,cohort],cohort_errors[field,cohort]) for label,field in MARKETS.values() for cohort in ('Early season (0–7 appearances)','Established season')}
     from workload_candidates import validate_nba
@@ -99,6 +107,24 @@ def probability(projected, line, errors):
     cutoff=(line-projected)/max(1.,math.sqrt(projected))
     empirical=(1+sum(error>cutoff for error in errors))/(len(errors)+2)
     return max(.05,min(.95,.5+.8*(empirical-.5)))
+
+
+def readiness_summary(rows):
+    """Count player/game/category groups, not duplicate books or both sides."""
+    groups=defaultdict(list)
+    for row in rows:groups[row['Game'],row['Player'],row['Category']].append(row)
+    counts=defaultdict(int)
+    for group in groups.values():
+        ready=[r for r in group if r['Decision']!='Pass']
+        if ready:
+            reason='Conflicting qualifying directions; no pick' if len({r['Selection'] for r in ready})>1 else 'Qualified experimental pick'
+        else:
+            # A qualifying edge on either side is sufficient; show the most
+            # promising evaluated quote, without counting both directions.
+            best=max(group,key=lambda r:r.get('Model edge (pp)') if r.get('Model edge (pp)') is not None else -999)
+            reason=best.get('Reason') or 'No usable forecast'
+        counts[reason]+=1
+    return [{'Status / reason':reason,'Unique player props':count} for reason,count in sorted(counts.items())]
 
 
 def nba_availability(injuries, team, player, now):
@@ -216,7 +242,21 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None):
     return output
 
 
-def load_data(end_year, targets=()):
+def reference_players(rosters, limit=12):
+    """Small roster-based reference cohort; never selected by model results."""
+    teams=[sorted((p for p in players if p.get('id') and p.get('name')),key=lambda p:normalized(p['name'])) for _,players in sorted(rosters.items())]
+    result=[];seen=set()
+    for depth in range(max((len(players) for players in teams),default=0)):
+        for players in teams:
+            if depth>=len(players):continue
+            p=players[depth];pid=str(p['id'])
+            if pid in seen:continue
+            result.append((pid,p['name']));seen.add(pid)
+            if len(result)>=limit:return tuple(result)
+    return tuple(result)
+
+
+def load_data(end_year, targets=(), references=()):
     import streamlit as st
     data=st.cache_data(ttl=3600)(_try_load_data)(end_year)
     if data is not None:return data
@@ -230,7 +270,11 @@ def load_data(end_year, targets=()):
     def fetch(job):
         year,pid,name=job
         return (current if year==end_year else completed)(year,pid,name)
-    jobs=[(year,pid,name) for pid,name in targets for year in range(end_year-3,end_year+1)]
+    # A single quoted player's opening games cannot supply 20 distinct heldout
+    # games. Add a bounded, roster-selected reference cohort rather than relax
+    # sample requirements or wait for this season to accumulate games.
+    players={str(pid):name for pid,name in (*references,*targets)}
+    jobs=[(year,pid,name) for pid,name in players.items() for year in range(end_year-3,end_year+1)]
     with ThreadPoolExecutor(max_workers=6) as pool:
         tasks={job:pool.submit(fetch,job) for job in jobs}
         for job,task in tasks.items():
@@ -290,7 +334,7 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
 
                 names={normalized(q.get('description','')) for e in events for b in e.get('bookmakers',[]) if b['title'] in books for m in b.get('markets',[]) if m.get('key') in MARKETS for q in m.get('outcomes',[])}
                 targets=tuple(sorted({(p['id'],p['name']) for players in roster.values() for p in players if p.get('id') and normalized(p['name']) in names}))
-                data=load_data(next(iter(years)),targets)
+                data=load_data(next(iter(years)),targets,reference_players(roster))
                 st.caption('Forecast history source: '+data.get('source','NBA.com'))
                 if data.get('issues'):st.info('; '.join(data['issues'][:8]))
                 filtered=[dict(e,bookmakers=[b for b in e.get('bookmakers',[]) if b['title'] in books]) for e in events]
@@ -318,6 +362,19 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
         if len({r['Selection'] for r in qualified})>1:continue
         if qualified:picks.append(max(qualified,key=lambda r:r['Estimated win %']/100*(1+float(r['Odds'])/100 if float(r['Odds'])>0 else 1+100/abs(float(r['Odds'])))-1))
     st.write(f'{len(picks)} experimental NBA paper picks; all usable analyzed forecasts are tracked separately.')
+    st.caption('Returning players can qualify with zero current-season appearances. There is no requirement to wait 10 games. Last-season history, verified availability, later-season validation and sufficient price edge are checked separately.')
+    if current:
+        with st.expander('Why NBA props qualify or pass',expanded=not bool(picks)):
+            st.dataframe(readiness_summary(current),hide_index=True,use_container_width=True)
+            reports={}
+            for row in current:
+                report=row.get('Validation')
+                if report:
+                    reports.setdefault((row['Category'],row.get('Season stage')),dict(Category=row['Category'],**{'Season stage':row.get('Season stage'),'Earlier calibration examples':report['calibration_examples'],'Later validation games':report['validation_games'],'Forecast average error':report['forecast_mae'],'Simple baseline average error':report['baseline_mae'],'Baseline passed':report['passed'],'Validation season ending':report.get('validation_season'),'Validation method':report.get('split_method')}))
+            if reports:st.dataframe(list(reports.values()),hide_index=True,use_container_width=True)
+            st.caption('Validation requires 50 earlier calibration examples and 20 later distinct games for the category and season stage, plus lower forecast error than the simple baseline. These are historical samples, not 20 new games this season. Passing the stat test does not prove profitable odds or calibrated probabilities.')
+    else:
+        st.info('No supported, matched, upcoming regular-season player quotes were analyzed. Check the selected date, game, sportsbook and supported categories: points, rebounds, assists and three-pointers made. Preseason and started games do not qualify.')
     if picks:render_team_table(picks,hide_index=True,use_container_width=True,sport='NBA')
     forecasts=[r for r in current if r.get('Projection (count)') is not None]
     if forecasts:
