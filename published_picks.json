@@ -1803,9 +1803,9 @@
       "published_utc": "2026-10-21T01:54:44.932445+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 3.0,
+      "profit_per_1": 1.24,
       "projected_yards": null,
       "expected_opportunities": 28.55,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -1888,7 +1888,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-11"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 34.0,
+      "graded_utc": "2026-10-21T04:49:57.096950+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.009999999999999787,
+      "opportunity_miss": 5.449999999999999
     },
     {
       "id": "e4e448e4f3b0e4473d54",
@@ -1907,9 +1912,9 @@
       "published_utc": "2026-10-21T01:54:44.932704+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 2.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 28.39,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -1992,7 +1997,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-21T04:49:57.096996+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -3.4800000000000004,
+      "opportunity_miss": 1.6099999999999994
     },
     {
       "id": "d0a8fd9698cfcffb3732",
@@ -2011,9 +2021,9 @@
       "published_utc": "2026-10-21T01:54:44.932868+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 2.0,
+      "profit_per_1": 1.0,
       "projected_yards": null,
       "expected_opportunities": 26.6,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2096,7 +2106,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-21T04:49:57.097008+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.6000000000000001,
+      "opportunity_miss": -7.600000000000001
     },
     {
       "id": "184623fa13f0db613398",
@@ -2115,9 +2130,9 @@
       "published_utc": "2026-10-21T01:54:44.932976+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 7.0,
+      "profit_per_1": 0.8,
       "projected_yards": null,
       "expected_opportunities": 29.97,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2200,7 +2215,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-21T04:49:57.097020+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.9900000000000002,
+      "opportunity_miss": 2.030000000000001
     },
     {
       "id": "40757ecb4cc138993cd8",
@@ -2219,9 +2239,9 @@
       "published_utc": "2026-10-21T01:54:44.933069+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 3.0,
+      "profit_per_1": 1.24,
       "projected_yards": null,
       "expected_opportunities": 24.3,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2304,7 +2324,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 17.0,
+      "graded_utc": "2026-10-21T04:49:57.097028+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.5299999999999998,
+      "opportunity_miss": -7.300000000000001
     },
     {
       "id": "e7b5146fb76a50c6ca0c",
@@ -2323,9 +2348,9 @@
       "published_utc": "2026-10-21T01:54:44.933153+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 5.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 22.67,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2408,7 +2433,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-21T04:49:57.097035+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 1.2000000000000002,
+      "opportunity_miss": 9.329999999999998
     },
     {
       "id": "b51ff6f368154a9e4b8c",
@@ -2427,9 +2457,9 @@
       "published_utc": "2026-10-21T01:54:44.933230+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 6.0,
+      "profit_per_1": 0.7692307692307693,
       "projected_yards": null,
       "expected_opportunities": 26.6,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2512,7 +2542,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-21T04:49:57.097043+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -2.5700000000000003,
+      "opportunity_miss": -7.600000000000001
     },
     {
       "id": "bc33f977146b22b23408",
@@ -2531,9 +2566,9 @@
       "published_utc": "2026-10-21T01:54:44.933305+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 9.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 18.25,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2616,7 +2651,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-21T04:49:57.097050+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 2.79,
+      "opportunity_miss": 6.75
     },
     {
       "id": "b8ab952b952d2048deb0",
@@ -2635,9 +2675,9 @@
       "published_utc": "2026-10-21T01:54:44.933379+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 20.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 17.36,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2720,7 +2760,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-21T04:49:57.097057+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 11.67,
+      "opportunity_miss": 4.640000000000001
     },
     {
       "id": "4236da3847fa2fbc6b1e",
@@ -2739,9 +2784,9 @@
       "published_utc": "2026-10-21T01:54:44.933452+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 12.0,
+      "profit_per_1": 0.9523809523809523,
       "projected_yards": null,
       "expected_opportunities": 28.39,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2824,7 +2869,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-09"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-21T04:49:57.097064+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -5.059999999999999,
+      "opportunity_miss": 1.6099999999999994
     },
     {
       "id": "e47f2d1009d372ca3c46",
@@ -2843,9 +2893,9 @@
       "published_utc": "2026-10-21T01:54:44.933538+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 12.0,
+      "profit_per_1": 0.8620689655172413,
       "projected_yards": null,
       "expected_opportunities": 28.55,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -2928,7 +2978,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-11"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 34.0,
+      "graded_utc": "2026-10-21T04:49:57.097071+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -12.64,
+      "opportunity_miss": 5.449999999999999
     },
     {
       "id": "9c57f24ce6996dc285f7",
@@ -2947,9 +3002,9 @@
       "published_utc": "2026-10-21T01:54:44.933610+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 14.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 29.97,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3032,7 +3087,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-21T04:49:57.097078+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -3.879999999999999,
+      "opportunity_miss": 2.030000000000001
     },
     {
       "id": "d09779b90c7aebfadf30",
@@ -3051,9 +3111,9 @@
       "published_utc": "2026-10-21T01:54:44.933692+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 10.0,
+      "profit_per_1": 0.970873786407767,
       "projected_yards": null,
       "expected_opportunities": 23.2,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3136,7 +3196,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-21T04:49:57.097085+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -3.0600000000000005,
+      "opportunity_miss": -3.1999999999999993
     },
     {
       "id": "5c64984281875aadc218",
@@ -3155,9 +3220,9 @@
       "published_utc": "2026-10-21T01:54:44.933774+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 18.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 22.67,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3240,7 +3305,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-21T04:49:57.097091+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 6.09,
+      "opportunity_miss": 9.329999999999998
     },
     {
       "id": "7fa0068eeb74b244b536",
@@ -3259,9 +3329,9 @@
       "published_utc": "2026-10-21T01:54:44.933881+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 7.0,
+      "profit_per_1": 0.8695652173913043,
       "projected_yards": null,
       "expected_opportunities": 30.56,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3344,7 +3414,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-21T04:49:57.097097+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -6.880000000000001,
+      "opportunity_miss": 0.4400000000000013
     },
     {
       "id": "b8d62cb9ce7bc0a0f887",
@@ -3363,9 +3438,9 @@
       "published_utc": "2026-10-21T01:54:44.933959+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 4.0,
+      "profit_per_1": 0.8771929824561403,
       "projected_yards": null,
       "expected_opportunities": 23.2,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3448,7 +3523,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-21T04:49:57.097104+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -1.3499999999999996,
+      "opportunity_miss": -3.1999999999999993
     },
     {
       "id": "0456e63c2af9f323671c",
@@ -3467,9 +3547,9 @@
       "published_utc": "2026-10-21T01:54:44.934034+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 7.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 22.67,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3552,7 +3632,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-21T04:49:57.097111+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 3.56,
+      "opportunity_miss": 9.329999999999998
     },
     {
       "id": "110ba10d4a5344ee2692",
@@ -3571,9 +3656,9 @@
       "published_utc": "2026-10-21T01:54:44.934103+00:00",
       "starts_utc": "2026-10-21T01:55:00Z",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 1.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 23.2,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
@@ -3656,7 +3741,12 @@
         "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
         "Player history through": "2026-04-13"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-21T04:49:57.097118+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.3400000000000001,
+      "opportunity_miss": -3.1999999999999993
     }
   ]
 }

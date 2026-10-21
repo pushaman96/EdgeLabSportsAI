@@ -4,69 +4,96 @@
     "NBA:2026-10-20": {
       "sport": "NBA",
       "date": "2026-10-20",
-      "stage": "Partial slate \u2014 games remain unfinished or unavailable",
-      "all_games_final": false,
+      "stage": "Completed slate review",
+      "all_games_final": true,
       "metrics": {
         "picks": 18,
-        "settled": 0,
-        "wins": 0,
-        "losses": 0,
-        "pending": 18,
+        "settled": 18,
+        "wins": 10,
+        "losses": 8,
+        "pending": 0,
         "pushes": 0,
         "distinct_games": 1,
-        "accuracy": null,
-        "brier": null,
-        "mean_estimated_probability": null,
-        "profit_per_1_each": null
+        "accuracy": 0.5555555555555556,
+        "brier": 0.23901,
+        "mean_estimated_probability": 0.599,
+        "profit_per_1_each": 1.5813126733841747
       },
       "categories": [
         {
           "category": "Assists",
           "picks": 7,
-          "settled": 0,
-          "wins": 0,
-          "losses": 0,
-          "pending": 7,
+          "settled": 7,
+          "wins": 4,
+          "losses": 3,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 1,
-          "accuracy": null,
-          "brier": null,
-          "mean_estimated_probability": null,
-          "profit_per_1_each": null
+          "accuracy": 0.5714285714285714,
+          "brier": 0.20616114285714285,
+          "mean_estimated_probability": 0.5511428571428572,
+          "profit_per_1_each": 1.28
         },
         {
           "category": "Points",
           "picks": 9,
-          "settled": 0,
-          "wins": 0,
-          "losses": 0,
-          "pending": 9,
+          "settled": 9,
+          "wins": 5,
+          "losses": 4,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 1,
-          "accuracy": null,
-          "brier": null,
-          "mean_estimated_probability": null,
-          "profit_per_1_each": null
+          "accuracy": 0.5555555555555556,
+          "brier": 0.2647523333333333,
+          "mean_estimated_probability": 0.6294444444444445,
+          "profit_per_1_each": 0.42411969092803425
         },
         {
           "category": "Rebounds",
           "picks": 2,
-          "settled": 0,
-          "wins": 0,
-          "losses": 0,
-          "pending": 2,
+          "settled": 2,
+          "wins": 1,
+          "losses": 1,
+          "pending": 0,
           "pushes": 0,
           "distinct_games": 1,
-          "accuracy": null,
-          "brier": null,
-          "mean_estimated_probability": null,
-          "profit_per_1_each": null
+          "accuracy": 0.5,
+          "brier": 0.23814049999999998,
+          "mean_estimated_probability": 0.6295,
+          "profit_per_1_each": -0.1228070175438597
         }
       ],
-      "calibration": [],
+      "calibration": [
+        {
+          "Probability band": "0%\u201350%",
+          "Settled picks": 1,
+          "Mean estimate %": 42.9,
+          "Actual win %": 0.0
+        },
+        {
+          "Probability band": "50%\u201360%",
+          "Settled picks": 5,
+          "Mean estimate %": 55.7,
+          "Actual win %": 40.0
+        },
+        {
+          "Probability band": "60%\u201370%",
+          "Settled picks": 11,
+          "Mean estimate %": 62.0,
+          "Actual win %": 72.7
+        },
+        {
+          "Probability band": "70%\u201380%",
+          "Settled picks": 1,
+          "Mean estimate %": 74.7,
+          "Actual win %": 0.0
+        }
+      ],
       "game_flow_context": [],
       "reconciled_team_games": 0,
       "observations": [
+        "Across 18 picks with saved workload and observed opportunities, average actual minus expected workload was +1.4. Correlated picks are included; this does not prove a cause.",
+        "Across 18 count forecasts, mean absolute count error was 3.7.",
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
       "active_corrections": 0,
@@ -357,5 +384,5 @@
       "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
     }
   },
-  "updated_utc": "2026-10-21T03:14:31.522343+00:00"
+  "updated_utc": "2026-10-21T04:49:57.492760+00:00"
 }

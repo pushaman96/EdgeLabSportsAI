@@ -1,6 +1,40 @@
 {
   "schema": 1,
   "version": "workload-candidates-v1",
-  "groups": [],
+  "groups": [
+    {
+      "sport": "NBA",
+      "category": "Assists",
+      "season_stage": "Early season (0\u20137 appearances)",
+      "forecasts": 15,
+      "distinct_games": 1,
+      "candidate_workload_mae": 3.9913333333333334,
+      "baseline_workload_mae": 4.086574005724285,
+      "candidate_stat_mae": 1.4833333333333334,
+      "baseline_stat_mae": 1.508587874423799
+    },
+    {
+      "sport": "NBA",
+      "category": "Points",
+      "season_stage": "Early season (0\u20137 appearances)",
+      "forecasts": 15,
+      "distinct_games": 1,
+      "candidate_workload_mae": 3.9913333333333334,
+      "baseline_workload_mae": 4.086574005724285,
+      "candidate_stat_mae": 5.468,
+      "baseline_stat_mae": 5.546345758709906
+    },
+    {
+      "sport": "NBA",
+      "category": "Rebounds",
+      "season_stage": "Early season (0\u20137 appearances)",
+      "forecasts": 15,
+      "distinct_games": 1,
+      "candidate_workload_mae": 3.9913333333333334,
+      "baseline_workload_mae": 4.086574005724285,
+      "candidate_stat_mae": 2.1193333333333335,
+      "baseline_stat_mae": 2.1758507517693766
+    }
+  ],
   "status": "Prospective research comparison only. No automatic promotion or causal diagnosis."
 }
