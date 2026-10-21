@@ -1,7 +1,7 @@
 """Saved market choices; these do not imply available or validated forecasts."""
 STANDARD_PRESETS={
-    'NFL':['Passing yards','Anytime touchdown scorer','Rushing yards','Receiving yards','Passing attempts','Rushing attempts','Receptions'],
-    'NBA':['Points','Assists','Rebounds','PRA — points + rebounds + assists','Three-pointers made','Field goals made','Free throws made','Free throws attempted','Team total points'],
+    'NFL':['Passing yards','Anytime touchdown scorer','Rushing yards'],
+    'NBA':['Points','Assists','Rebounds','PRA — points + rebounds + assists','Three-pointers made'],
 }
 NBA_EXTRA_MARKETS={
     'PRA — points + rebounds + assists':'player_points_rebounds_assists',
@@ -23,3 +23,11 @@ def archive_market_board(events,retrieved,sport):
         references.append(name)
     if references:
         autosave_report('Loaded market board index',json.dumps({'retrieved':retrieved,'reports':references,'status':'Market quotes, not model recommendations'},sort_keys=True),file_name=sport.lower()+'_loaded_market_board.json',mime='application/json')
+
+def automatic_plan(sport,selected_date,today,budget,mode,attempted):
+    """One automatic run per sport/day/session, within a total eight-credit cap."""
+    enabled=(selected_date==today and (sport=='NBA' or today.weekday()in (6,0,3))
+             and mode!='Saved data only — 0 credits' and not attempted)
+    cap=min(8,int(budget))
+    games=max(0,(cap-3)//len(STANDARD_PRESETS[sport])) if enabled else 0
+    return {'enabled':enabled and games>0,'max_games':games,'cap':cap}

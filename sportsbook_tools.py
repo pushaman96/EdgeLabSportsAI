@@ -265,19 +265,27 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     st.caption('Last reported credits remaining: '+str(remaining if remaining is not None else 'Unknown')+'. Cached prices may be outdated. Budget checks assume a fresh request; an available cache hit may cost 0.')
     allow_game,game_reason=spending_allowed(mode,3,budget,remaining)
     st.caption('Credit-saving mode: choose a few games and categories below. Full-slate preset buttons are available in Standard mode. Saved-data mode blocks new odds loads while keeping already loaded prices visible.')
+    from sportsbook_presets import automatic_plan
+    today=datetime.now(timezone.utc).astimezone(ZoneInfo('America/Los_Angeles')).date()
+    auto_id=(sport,str(selected_date),fingerprint,'rotation-v2')
+    attempts=st.session_state.setdefault('preset_rotation_attempts',set())
+    plan=automatic_plan(sport,selected_date,today,budget,mode,auto_id in attempts)
+    automatic=plan['enabled']
+    if automatic:attempts.add(auto_id)
+    st.caption('Presets load automatically once per sport/date in this session on NFL Sunday/Monday/Thursday and NBA game days, within 8 total credits. The first upcoming games fitting that cap are used; this is not a ranking of the strongest picks. Saved-data mode disables automatic requests. Extra games and categories use the add-on controls. This runs while this page is open, not in the background when the app is closed.')
     try:
         quick_nfl=False
         quick_nba=False
         if sport=='NFL':
-            st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns, rushing yards, receiving yards, passing/rushing attempts, and receptions. Fresh budget: up to 3 game-line credits plus 7 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
-            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 7/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
+            st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns and rushing yards. Fresh budget: up to 3 game-line credits plus 3 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
+            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 3/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         if sport=='NBA':
-            st.caption('NBA preset: moneylines, points, assists, rebounds, PRA, three-pointers made, field goals made, free throws made/attempted and team totals. Fresh budget: up to 3 credits for game lines plus 9 per upcoming game. NBA props remain market prices until a tested forecasting model is available.')
-            quick_nba=st.button('Load NBA slate & save board — up to 3 + 9/game credits',key='quick_nba_slate',disabled=mode!='Standard mode' or not allow_game)
+            st.caption('NBA preset: moneylines, points, assists, rebounds, PRA and three-pointers made. Fresh budget: up to 3 credits for game lines plus 5 per upcoming game. PRA is a market quote until a validated joint forecast is available.')
+            quick_nba=st.button('Load NBA slate & save board — up to 3 + 5/game credits',key='quick_nba_slate',disabled=mode!='Standard mode' or not allow_game)
             st.caption('Shooting categories are made shots unless explicitly labeled attempted. Field-goal attempts and three-point attempts are not included as unsupported market keys.')
-        quick_load=quick_nfl or quick_nba
+        quick_load=quick_nfl or quick_nba or automatic
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
         if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load',disabled=not allow_game) or quick_load:
             if not quick_load:odds_request.clear()
@@ -317,12 +325,19 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption('Unchecked: reuse the five-minute provider-response cache when available. Checked: next Load requests new prices. No free check can establish whether sportsbook lines changed; the snapshot comparison below only compares prices already loaded.')
         all_option = '__all_nfl_games__'
         event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],index=len(events),format_func=lambda value:f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
-        labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=compact_labels if mode=='Credit-saving mode' else preset_labels,key='sportsbook_props_categories_'+sport)
+        if st.button('Add on markets / customize',key='preset_add_on_'+sport):
+            st.session_state['preset_add_on_open_'+sport]=True
+        if st.session_state.get('preset_add_on_open_'+sport):
+            labels=st.multiselect('Prop categories',list(PROP_MARKETS[sport]),default=preset_labels,key='sportsbook_props_categories_'+sport)
+        else:
+            labels=preset_labels
+            st.caption('Permanent prop rotation: '+', '.join(labels)+'. Moneyline and game totals are loaded with game lines.')
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
         upcoming=[e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc)]
         selected_ids=[e['id'] for e in upcoming]
         if mode=='Credit-saving mode' and event_id==all_option:
             selected_ids=st.multiselect('Games to load — only these games consume credits',[e['id'] for e in upcoming],default=[e['id'] for e in upcoming[:1]],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in upcoming if e['id']==value),key='credit_saver_games_'+sport)
+        if automatic:selected_ids=selected_ids[:plan['max_games']]
         preview_games=len(selected_ids) if event_id==all_option else int(any(e['id']==event_id for e in upcoming))
         cost=estimated_credits(preview_games,markets)
         allowed,blocked_reason=spending_allowed(mode,cost,budget,remaining)
