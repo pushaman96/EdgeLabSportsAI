@@ -2,8 +2,9 @@ name: Grade published paper picks
 on:
   push:
     paths:
-      - 'app_view.py'
-      - 'tests/test_owner_access.py'
+      - '*.py'
+      - 'tests/**'
+      - '.github/workflows/grade_picks.yml'
   workflow_dispatch:
   schedule:
     - cron: '2,17,32,47 * * * *'
@@ -24,10 +25,10 @@ jobs:
       - run: python pick_history.py
       - name: Save completed grades
         run: |
-          if ! git diff --quiet -- published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json; then
+          if ! git diff --quiet -- published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; then
             git config user.name "Kamikaze Picks grading"
             git config user.email "actions@users.noreply.github.com"
-            git add published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json
+            git add published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json
             git commit -m "Grade picks, archive usage and update per-game feedback"
             git pull --rebase origin main
             git push
