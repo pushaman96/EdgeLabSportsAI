@@ -7,7 +7,7 @@ from pick_learning import eligible,build_feedback,utc
 
 def reliability(records,asof=None,sport='NBA'):
     asof=asof or datetime.now(timezone.utc);groups=defaultdict(list);seen=set()
-    for r in sorted(records,key=lambda r:r.get('published_utc','9999')):
+    for r in sorted(records,key=lambda r:str(r.get('published_utc') or '9999')):
         if r.get('sport','NFL')!=sport or r.get('strategy')!='Original' or r.get('evidence')not in ('Published before kickoff','Personal paper record')or r.get('season_type')!='Regular season':continue
         try:
             if utc(r['published_utc'])>=utc(r['starts_utc']):continue
@@ -44,4 +44,3 @@ def render(records,sport='NBA'):
         st.caption('Original pregame regular-season picks only, with earliest player/game/category selected once. Each game receives equal weight within a probability band. Missing, pending, manual and historical imports are excluded. Same-game picks are not independent evidence.')
         st.write(str(state['active_corrections'])+' probability corrections passed the separate chronological checks.')
         st.caption('Corrections require at least 100 eligible selections and 30 distinct games per model/category/direction, earlier-game fitting, later-game Brier improvement of at least 0.005, positive game-level uncertainty bound and no worse log loss. Until then, no larger-sample calibration correction is applied. This does not block early-season picks.')
-

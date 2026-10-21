@@ -59,10 +59,10 @@ def settled_quality(records):
     from datetime import datetime
     groups=defaultdict(list);seen=set()
     def finite(v):return isinstance(v,(int,float)) and math.isfinite(v)
-    for r in sorted(records,key=lambda r:r.get('published_utc','9999')):
+    for r in sorted(records,key=lambda r:str(r.get('published_utc') or '9999')):
         if r.get('sport')!='NBA' or r.get('strategy')!='Original' or r.get('evidence')not in ('Published before kickoff','Personal paper record') or r.get('season_type')!='Regular season':continue
         try:
-            if datetime.fromisoformat(r['published_utc'].replace('Z','+00:00'))>=datetime.fromisoformat(r['starts_utc'].replace('Z','+00:00')):continue
+            if datetime.fromisoformat(str(r['published_utc']).replace('Z','+00:00'))>=datetime.fromisoformat(str(r['starts_utc']).replace('Z','+00:00')):continue
         except (ValueError,TypeError,KeyError):continue
         key=(r.get('event_id'),r.get('player'),r.get('category'))
         if key in seen:continue
