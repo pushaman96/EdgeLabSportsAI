@@ -97,6 +97,7 @@ def explanation(record):
     restriction=context.get('Minutes restriction check')or {}
     if restriction.get('Review required'):risks='Current report mentions a minutes limit; verify before use. '+risks
     if context.get('NBA context limitation'):risks+=' '+str(context['NBA context limitation'])
+    if context.get('NBA role status'):risks+=' Role assessment: '+str(context['NBA role status'])+'.'
     return {'selection':selection,'forecast':forecast,'workload':workload,'price':price,'reason':record.get('reason') or 'A supporting reason was not saved for this record.','details':context.get('Evidence explanation'),'risks':risks,'calculation':calculation,'comparison':comparison,'uncertainty':uncertainty,'adjustments':adjustment,'validation':validation_text}
 
 def short_reason(record):
@@ -121,6 +122,8 @@ def render_saved_explanations(records,sport):
             st.write('**Player averages and shooting percentages saved before the game**')
             st.dataframe(context['Player averages'],hide_index=True,use_container_width=True)
             st.caption(context.get('Player averages method','Observed historical averages, not guaranteed future results.'))
+        if context.get('NBA role usage'):
+            st.write('**Starter/bench workload evidence saved before the game**');st.write(context['NBA role usage'])
         for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
             if context.get(field):st.write('**'+label+'**');st.write(context[field])
         st.caption('Frozen at '+record.get('published_utc','unknown time')+' · Model: '+record.get('model','Not saved')+'. No paid AI service is used, and opening this explanation does not change the pick.')
@@ -142,4 +145,5 @@ def render_current_explanations(rows,prefix):
         for label,key in [('Forecast','forecast'),('Calculation','calculation'),('Forecast gap','comparison'),('Uncertainty','uncertainty'),('Adjustments','adjustments'),('Validation','validation'),('Probability and price','price'),('Take/Pass reason','reason'),('Risks','risks')]:
             st.write('**'+label+'**');st.write(e[key])
         st.caption('Explains the current saved analysis. No paid AI API call or fresh odds request is made. Reanalyze if prices or availability changed.')
+
 

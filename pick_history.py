@@ -12,6 +12,18 @@ def utc(value):return datetime.fromisoformat(value.replace('Z','+00:00'))
 
 def scoreboard_day(value):return utc(value).astimezone(ZoneInfo('America/Los_Angeles')).strftime('%Y%m%d')
 
+def verified_pregame_start(event,provider_start,now=None):
+    """Use the earlier scheduled time and reject an officially started game."""
+    now=now or datetime.now(timezone.utc)
+    official=utc(event['date']);provider=utc(provider_start)
+    state=event.get('status',{}).get('type',{}).get('state')
+    if not state:
+        competitions=event.get('competitions',[])
+        state=competitions[0].get('status',{}).get('type',{}).get('state')if competitions else None
+    earliest=min(official,provider)
+    if state in ('in','post')or now>=earliest:raise ValueError('Game started or earliest verified scheduled time passed')
+    return earliest.isoformat()
+
 def restore_records(payload):
     imported=payload['records']
     if not isinstance(imported,list) or len(imported)>5000:raise ValueError('Invalid record list.')
@@ -62,8 +74,8 @@ def make_record(row,event_id,start,now=None,strategy='Original'):
     for source, destination in (('Base estimated win %','base_probability'),('Online input win %','online_input_probability'),('Candidate win %','candidate_probability')):
         if row.get(source) is not None:record[destination]=float(row[source])/100
 
-    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status','Conversion rate %','QB historical conversion %','Opponent conversion %','Range method','Historical error range low','Historical error range high','Validation details','Probability method','Target breakdown','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Passing conversion breakdown','Supporting completions forecast','Supporting passing TD forecast','History source','Season stage','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Uncertainty multiplier','Workload candidate opportunities','Workload candidate projection','Workload candidate status','Workload candidate benchmark','Workload sensitivity scenarios','Confirmed unavailable teammates','Lineup scenario limitation','Supporting team workload','Supporting player workload share %','Schedule and rest context','Game context scenarios','Workload candidate version','Workload candidate baseline opportunities','Workload candidate baseline projection','Minutes sample games','Minutes sample basis','Observed minutes low','Observed minutes high','Minutes risk','Minutes sensitivity','Minutes sensitivity scenarios','Range calibration examples','Absence scenario minutes','Absence scenario projection','Absence scenario status','NBA context version','NBA context checked UTC','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Probability calibration status','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average') if k in row}
-    record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through','NBA context checked UTC') if row.get(k) is not None}
+    record['forecast_context']={k:row[k] for k in ('Opportunity type','Workload method','Efficiency method','Expected team passing attempts','Catch probability %','Recent snap share %','Recent target share %','Current roster team','Current-team games','Game-script risk','Evidence explanation','Injury adjustment %','Injury adjustment reason','Situation adjustment %','Situation forecast','Minutes forecast','Availability checked UTC','Context validation status','Conversion rate %','QB historical conversion %','Opponent conversion %','Range method','Historical error range low','Historical error range high','Validation details','Probability method','Target breakdown','Player targets forecast','Target share forecast %','Supporting team attempts','Supporting catch probability %','Supporting receptions forecast','Supporting receiving yards forecast','Passing conversion breakdown','Supporting completions forecast','Supporting passing TD forecast','History source','Season stage','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','Uncertainty multiplier','Workload candidate opportunities','Workload candidate projection','Workload candidate status','Workload candidate benchmark','Workload sensitivity scenarios','Confirmed unavailable teammates','Lineup scenario limitation','Supporting team workload','Supporting player workload share %','Schedule and rest context','Game context scenarios','Workload candidate version','Workload candidate baseline opportunities','Workload candidate baseline projection','Minutes sample games','Minutes sample basis','Observed minutes low','Observed minutes high','Minutes risk','Minutes sensitivity','Minutes sensitivity scenarios','Range calibration examples','Absence scenario minutes','Absence scenario projection','Absence scenario status','NBA context version','NBA context checked UTC','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Probability calibration status','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average','NBA role usage','NBA role usage version','NBA role review required','NBA role status') if k in row}
+    record['source_audit']={k:row[k] for k in ('Quote updated UTC','Statistics retrieved UTC','Injury source updated UTC','Injury retrieved UTC','Roster checked UTC','Player history through','NBA context checked UTC','Odds scheduled start UTC','ESPN scheduled start UTC') if row.get(k) is not None}
     return record
 
 def grade_record(record,data):
@@ -339,7 +351,10 @@ def publish_rows(rows,events,cushions=(),key_prefix='ledger',sport='NFL',manual=
                 response.raise_for_status();boards[day]=response.json()
             espn=next((e for e in boards[day].get('events',[]) if e.get('name')==row['Game'] and abs((utc(e['date'])-utc(match['commence_time'])).total_seconds())<3600),None)
             if not espn:failed+=1;continue
-            record=make_record(row,espn['id'],match['commence_time'],strategy=strategy)
+            now=datetime.now(timezone.utc)
+            verified_start=verified_pregame_start(espn,match['commence_time'],now)
+            row=dict(row,**{'Odds scheduled start UTC':match['commence_time'],'ESPN scheduled start UTC':espn['date']})
+            record=make_record(row,espn['id'],verified_start,now=now,strategy=strategy)
             record['season_type']='Preseason' if espn.get('season',{}).get('type')==1 else 'Regular season' if espn.get('season',{}).get('type')==2 else 'Other/unknown'
             record['evidence']='Personal paper record'
             if record['id'] not in existing:saved.append(record);existing.add(record['id'])
@@ -364,6 +379,7 @@ if __name__=='__main__':
     archive_completed_usage(data['records'])
     from slate_review import write_reviews
     write_reviews(data['records'])
+
 
 
 

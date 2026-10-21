@@ -60,7 +60,7 @@ def diagnostics(records):
             else:notes.append('Workload near forecast')
         else:notes.append('Workload comparison unavailable')
         workload_effect=efficiency_effect=None
-        if actual is not None and projected is not None and expected is not None and expected>0 and observed is not None and observed>0 and r.get('category') in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing completions','Passing touchdowns'):
+        if actual is not None and projected is not None and expected is not None and expected>0 and observed is not None and observed>0 and r.get('category') in ('Passing yards','Rushing yards','Receiving yards','Receptions','Passing completions','Passing touchdowns','Points','Rebounds','Assists','Three-pointers made'):
             workload_effect=(observed-expected)*projected/expected
             efficiency_effect=actual-observed*projected/expected
             notes.append(f'Measured decomposition: workload {workload_effect:+.1f}, efficiency {efficiency_effect:+.1f} {r["category"].lower()}; these sum to the forecast miss, not a causal explanation')
@@ -164,3 +164,4 @@ def render_feedback(records,sport):
         if state['diagnostics']:st.dataframe(state['diagnostics'],hide_index=True,use_container_width=True)
         st.caption('Per-game adjustments above take priority when available. The larger-sample validation report is retained for research and fallback corrections.')
         st.caption('Review labels and workload/efficiency contributions describe measured errors, not proven causes. Per-game feedback adjusts forecasts and probabilities; it does not retrain the underlying trees or quantify injury, coaching or weather effects. Cushions and manual picks do not train this layer.')
+

@@ -2,7 +2,7 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from pick_history import make_record, persist_records, grade_all
+from pick_history import make_record, persist_records, grade_all,verified_pregame_start
 
 LEDGER = 'analyzed_forecasts.json'
 
@@ -28,7 +28,9 @@ def freeze(rows, events, scoreboard, sport='NFL', now=None):
         if len(matches) != 1:
             continue
         try:
-            record = make_record(dict(row, Sport=sport), matches[0]['id'], event['commence_time'], now=now, strategy='Analysis')
+            verified_start=verified_pregame_start(matches[0],event['commence_time'],now)
+            snapshot=dict(row,Sport=sport,**{'Odds scheduled start UTC':event['commence_time'],'ESPN scheduled start UTC':matches[0]['date']})
+            record = make_record(snapshot, matches[0]['id'], verified_start, now=now, strategy='Analysis')
             record.update(season_type='Regular season', evidence='Personal paper record', forecast_decision=row.get('Decision'), record_purpose='Analyzed forecast only; excluded from official pick results')
             # Keep both directions/thresholds for review; learner deduplicates per
             # player/game/category and uses the earliest saved forecast.
@@ -68,3 +70,4 @@ def grade(path=LEDGER):
     graded = grade_all(original)
     target.write_text(json.dumps({'schema':1,'purpose':'Analyzed forecasts, not recommended picks','records':graded}, indent=2)+'\n')
     return graded
+

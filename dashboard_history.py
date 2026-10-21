@@ -35,6 +35,9 @@ def render_public_history(sport,path='published_picks.json'):
         rows=[r for r in workload.get('groups',[]) if r['sport']==sport]
         if rows:st.dataframe(rows,hide_index=True,use_container_width=True)
         else:st.info('Candidate comparisons appear after new forecasts are frozen before games and graded. Older picks are not relabeled as prospective evidence.')
+        if sport=='NBA'and workload.get('nba_role_groups'):
+            st.write('**Starter/bench role forecast comparisons**')
+            st.dataframe(workload['nba_role_groups'],hide_index=True,use_container_width=True)
         st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
     st.subheader('Saved-pick probability accuracy')
     summary=accuracy_summary(records,sport)
@@ -53,6 +56,7 @@ def render_public_history(sport,path='published_picks.json'):
 
     from pick_learning import render_feedback
     render_feedback(records,sport)
+
 
 
 

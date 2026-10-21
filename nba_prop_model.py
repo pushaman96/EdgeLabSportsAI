@@ -173,6 +173,9 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
         matches=[e for e in scoreboard.get('events',[]) if e.get('name')==event['away_team']+' at '+event['home_team'] and abs((datetime.fromisoformat(e['date'].replace('Z','+00:00'))-start).total_seconds())<3600]
         if len(matches)!=1 or start<=now:continue
         source=matches[0];season=source.get('season',scoreboard.get('season',{}))
+        from pick_history import verified_pregame_start
+        try:verified_pregame_start(source,event['commence_time'],now)
+        except (ValueError,KeyError,TypeError):continue
         if season.get('type')!=2:continue
         # The dataset was loaded for the matching ESPN ending-year season.
         if int(season.get('year',0))!=data['season']:continue
@@ -257,11 +260,15 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Feedback status':row.get('Online learning status','Collecting prospective per-game evidence')+'; '+row['Probability calibration status'],'Validation':model['cohort_reports'][field,cohort] if detail else model['reports'][field]})
                     from nba_forecast_quality import attach_quality
                     attach_quality(row,player_history,game_day,nba_team,projected,adjusted_minutes,calibration)
+                    if context is not None:
+                        from nba_role_usage import attach_role_usage
+                        attach_role_usage(row,context,event['commence_time'],teams[team],row['Player'],adjusted_minutes,projected,field)
                     report=row['Validation']
                     row['Validation details']={'mae':report['forecast_mae'],'baseline_mae':report['baseline_mae'],'passed':report['passed'],'validation_games':report['validation_games'],'calibration_examples':report['calibration_examples'],'scope':'NBA '+cohort+'; historical stat error, not sportsbook profitability','empirical_band_validation_coverage':report.get('empirical_band_validation_coverage'),'mean_actual_minus_forecast':report.get('mean_actual_minus_forecast')}
                     if next(iter(ids)) in data.get('missing_current',set()):row['Reason']='Last-season forecast shown; current-season history could not be verified';continue
                     if detail and detail['role_uncertain']:row['Reason']='Last-season starting estimate shown; new-team minutes role unverified until 3 current-team appearances';continue
                     if row.get('Minutes restriction check',{}).get('Review required'):row['Reason']='Current injury report mentions a minutes limit; verify the restriction before use. No numeric cap is invented.';continue
+                    if row.get('NBA role review required'):row['Reason']=row['NBA role status'];continue
                     if not report['passed']:row['Reason']='Season-stage model has not beaten the prior-season/recent-average baseline on later games; forecast shown for research';continue
                     if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points';continue
                     row['Decision']='Watch — experimental'
@@ -479,6 +486,10 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
             if row.get('Teammate absence usage'):
                 for item in row['Teammate absence usage']:st.write(item)
             else:st.info('No currently unavailable teammates identified in the checked report, or no matched historical comparisons.')
+            if row.get('NBA role usage'):
+                st.write('**Starter/bench minutes and shot opportunities**')
+                st.write(row['NBA role usage'])
+                st.caption(row['NBA role status']+'. A role mismatch can require a Pass; a scenario is not automatically turned into an Over or Under pick.')
             st.caption(row.get('NBA context limitation',''))
     scenarios={}
     for row in current:
@@ -513,6 +524,7 @@ def current_roster_nba(team_id):
         rows.append(dict(id=str(athlete.get('id','')),name=athlete.get('displayName'),status=status.get('name') if isinstance(status,dict) else str(status)))
     if not rows:raise ValueError('NBA roster empty')
     return rows
+
 
 
 
