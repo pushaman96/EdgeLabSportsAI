@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-21T21:47:09.349109+00:00",
+  "generated_utc": "2026-10-21T22:37:24.346175+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -11,7 +11,7 @@
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
       "upcoming_games": 13,
-      "prepared_projections": 1660,
+      "prepared_projections": 1665,
       "issues": [
         "Player history incomplete: Anthony Black",
         "Player history incomplete: Jonathan Isaac",
