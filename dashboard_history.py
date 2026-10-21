@@ -58,6 +58,8 @@ def render_public_history(sport,path='published_picks.json'):
 
     from pick_learning import render_feedback
     render_feedback(records,sport)
+    from learning_audit import render as render_learning_audit
+    render_learning_audit(sport,records)
 
 
 
