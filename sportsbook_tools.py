@@ -320,7 +320,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         fresh_props=st.checkbox('Request fresh prop prices on next load (may spend credits)',value=False,key='force_fresh_props')
         st.caption('Unchecked: reuse the five-minute provider-response cache when available. Checked: next Load requests new prices. No free check can establish whether sportsbook lines changed; the snapshot comparison below only compares prices already loaded.')
         all_option = '__all_nfl_games__'
-        event_id=st.selectbox('Player props game',[e['id'] for e in events]+[all_option],index=len(events),format_func=lambda value:f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
+        multiple_option='__multiple_prop_games__'
+        event_id=st.selectbox('Player props games',[e['id'] for e in events]+[all_option,multiple_option],index=len(events)+1,format_func=lambda value:'Choose multiple games' if value==multiple_option else f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
         if st.button('Add on markets / customize',key='preset_add_on_'+sport):
             st.session_state['preset_add_on_open_'+sport]=True
         if st.session_state.get('preset_add_on_open_'+sport):
@@ -331,21 +332,21 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
         upcoming=[e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc)]
         selected_ids=[e['id'] for e in upcoming]
-        if mode=='Credit-saving mode' and event_id==all_option:
+        if event_id==multiple_option or (mode=='Credit-saving mode' and event_id==all_option):
             selected_ids=st.multiselect('Games to load — only these games consume credits',[e['id'] for e in upcoming],default=[e['id'] for e in upcoming[:1]],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in upcoming if e['id']==value),key='credit_saver_games_'+sport)
         if automatic:selected_ids=selected_ids[:plan['max_games']]
-        preview_games=len(selected_ids) if event_id==all_option else int(any(e['id']==event_id for e in upcoming))
+        preview_games=len(selected_ids) if event_id in (all_option,multiple_option) else int(any(e['id']==event_id for e in upcoming))
         cost=estimated_credits(preview_games,markets)
         allowed,blocked_reason=spending_allowed(mode,cost,budget,remaining)
         st.caption(f'This prop load: up to {cost} credits for {preview_games} games × {len(labels)} categories. Viewing the current board costs 0.')
         if not allowed:st.info(blocked_reason)
         if st.button('Preview prop credit cost — 0 credits',key='preview_prop_cost'):
             st.info(f'Fresh-request budget: up to {estimated_credits(preview_games,markets)} credits = {preview_games} games × {len(labels)} categories × 1 US region. Cache hits can cost 0; unavailable markets may reduce cost. The API response headers report the actual request cost. No API request was made by this preview.')
-        if event_id == all_option:
+        if event_id in (all_option,multiple_option):
             targets = choose_targets(events,selected_ids,datetime.now(timezone.utc))
-            st.caption(f'All games: {len(targets)} upcoming {sport} games × {len(labels)} categories = up to {len(targets)*len(labels)} credits for a fresh load. Cached responses may cost no new credits. Started games are skipped. Analysis adds no sportsbook credits.')
+            st.caption(f'Selected games: {len(targets)} upcoming {sport} games × {len(labels)} categories = up to {len(targets)*len(labels)} credits for a fresh load. Cached responses may cost no new credits. Started games are skipped. Analysis adds no sportsbook credits.')
             batch_key = (sport,key,str(selected_date),markets,tuple(e['id'] for e in targets))
-            action_label='Load all games & analyze' if sport=='NFL' else 'Load all game markets'
+            action_label='Load selected games & analyze' if sport=='NFL' else 'Load selected game markets'
             loaded_all = st.button(f'{action_label} — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets or not allowed) or use_preset
             if loaded_all and not allowed:
                 st.warning(blocked_reason)
@@ -355,7 +356,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 loaded_all=False
             if loaded_all and markets and targets:
                 if fresh_props:odds_request.clear()
-                with st.spinner(f'Loading selected prop categories for all upcoming {sport} games...'):
+                with st.spinner(f'Loading prop categories for the selected {sport} games...'):
                     batch = load_all_prop_lines(key,sport,targets,markets)
                 st.session_state['sportsbook_props_all_result'] = (batch_key,batch)
                 st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,batch.get('remaining'),batch['loaded'])

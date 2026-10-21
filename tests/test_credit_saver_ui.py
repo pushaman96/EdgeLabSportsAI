@@ -20,15 +20,15 @@ class UI:
     def text_input(self,*a,**k):return 'fixture'
     def selectbox(self,label,options,index=0,**k):return options[1] if k.get('key')=='sportsbook_source' else options[index]
     def multiselect(self,label,options,default=None,**k):
-        if k.get('key')=='credit_saver_games_NFL':return options[:1]
+        if k.get('key')=='credit_saver_games_NFL':return options[:self.game_limit]
         return self.session_state.get(k.get('key'),default)
     def checkbox(self,*a,**k):return False
     def expander(self,*a,**k):return Context()
     def spinner(self,*a,**k):return Context()
     def __getattr__(self,name):return lambda *a,**k:None
 class SaverUITests(unittest.TestCase):
-    def run_ui(self,mode,remaining):
-        ui=UI(mode,remaining);requests=[]
+    def run_ui(self,mode,remaining,games_to_select=1):
+        ui=UI(mode,remaining);ui.game_limit=games_to_select;requests=[]
         start=(datetime.now(timezone.utc)+timedelta(days=1)).replace(hour=18).isoformat()
         events=[dict(id=str(i),away_team='Away'+str(i),home_team='Home'+str(i),commence_time=start,bookmakers=[{'title':'Book'}]) for i in range(2)]
         ui.session_state['sportsbook_result']=('NFL','fixture',dict(data=events,remaining=remaining,cost='3',retrieved=datetime.now(timezone.utc).isoformat()))
@@ -50,6 +50,10 @@ class SaverUITests(unittest.TestCase):
         self.assertEqual(self.run_ui('Credit-saving mode','0'),[])
     def test_saver_requests_only_the_selected_game(self):
         self.assertEqual(self.run_ui('Credit-saving mode','100'),['0'])
+    def test_multiple_selection_loads_only_chosen_games_and_honors_budget(self):
+        self.assertEqual(self.run_ui('Standard mode','100',2),['0','1'])
+        self.assertEqual(self.run_ui('Credit-saving mode','100',2),[])
+        self.assertEqual(self.run_ui('Standard mode','100',0),[])
     def test_cached_presets_without_session_planner_does_not_crash(self):
         old=types.ModuleType('sportsbook_presets')
         old.STANDARD_PRESETS=STANDARD_PRESETS
