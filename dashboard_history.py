@@ -27,6 +27,15 @@ def render_public_history(sport,path='published_picks.json'):
     from pick_history import sync_session_records
     sync_session_records(key_prefix='dashboard_storage_'+sport,show_success=False)
     render_live_board(records,sport)
+    from automatic_reports import render_storage_status
+    render_storage_status(sport)
+    with st.expander('Workload candidate results — prospective comparison'):
+        try:workload=json.loads(Path('workload_reviews.json').read_text())
+        except (OSError,ValueError):workload={}
+        rows=[r for r in workload.get('groups',[]) if r['sport']==sport]
+        if rows:st.dataframe(rows,hide_index=True,use_container_width=True)
+        else:st.info('Candidate comparisons appear after new forecasts are frozen before games and graded. Older picks are not relabeled as prospective evidence.')
+        st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
     st.subheader('Saved-pick probability accuracy')
     summary=accuracy_summary(records,sport)
     columns=st.columns(3)
@@ -41,4 +50,5 @@ def render_public_history(sport,path='published_picks.json'):
 
     from pick_learning import render_feedback
     render_feedback(records,sport)
+
 
