@@ -150,7 +150,7 @@ def prepare(now=None):
                                     model='NFL season-prior preparation v1';base=f['projected']if f else None;volume=f['opportunities']if f else None;uncertain=(f['role_uncertain']or f['coverage_gap'])if f else True
                                 if base is None:continue
                                 identity='|'.join((sport,event['id'],athlete['id'],label,model))
-                                row={'id':identity,'sport':sport,'event_id':event['id'],'game':event.get('name'),'player':athlete['name'],'category':label,'model':model,'published_utc':now.isoformat(),'starts_utc':event['date'],'projection':base,'workload':volume,'role_uncertain':uncertain,'result':'Pending','status':'Research projection only; no line, selection or win probability. Availability/validation gates still required.'}
+                                row={'id':identity,'sport':sport,'event_id':event['id'],'game':event.get('name'),'player':athlete['name'],'category':label,'model':model,'published_utc':now.isoformat(),'starts_utc':event['date'],'projection':base,'simple_baseline':f.get('baseline'),'workload':volume,'role_uncertain':uncertain,'result':'Pending','status':'Research projection only; no line, selection or win probability. Availability/validation gates still required.'}
                                 item['projections'].append(row)
                                 if identity not in known and now<start:history['records'].append(row);known.add(identity)
                 item['status']='Prepared; review availability and category validation before any pick'
@@ -159,6 +159,7 @@ def prepare(now=None):
             item['status']='Research source/model unavailable; no substitute forecasts invented'
             item['issues'].append('Preparation incomplete; retry on next scheduled run')
     write(REPORT,report);write(LEDGER,history)
+    write('background_status.json',{'generated_utc':now.isoformat(),'odds_setup':report['odds_setup'],'sports':{sport:{'status':item['status'],'upcoming_games':len(item.get('scoreboard',{}).get('events',[])),'prepared_projections':len(item['projections']),'issues':item['issues']}for sport,item in report['sports'].items()}})
     return report
 
 def reserve(now=None,run_id=None,has_key=None):
@@ -267,7 +268,12 @@ def execute(now=None):
     for request in pending:
         if request.get('run_id')!=os.environ.get('GITHUB_RUN_ID','local'):continue
         try:
-            if utc(request['event']['commence_time'])<=datetime.now(timezone.utc):request['status']='Skipped: game started';continue
+            check_time=datetime.now(timezone.utc)
+            if utc(request['event']['commence_time'])<=check_time:request['status']='Skipped: game started';continue
+            from pick_history import verified_pregame_start
+            fresh_board=boards(request['sport'],check_time)
+            fresh_source=next(e for e in fresh_board['events']if e['id']==request['espn_id'])
+            verified_pregame_start(fresh_source,request['event']['commence_time'],check_time)
             # Exactly one request per durable reservation; no retry on ambiguous failure.
             params={'apiKey':os.environ['ODDS_API_KEY'],'regions':'us','markets':','.join(request['markets']),'oddsFormat':'american','dateFormat':'iso'}
             url='https://api.the-odds-api.com/v4/sports/'+SPORTS[request['sport']][1]+'/events/'+request['event_id']+'/odds?'+urlencode(params)
@@ -277,7 +283,7 @@ def execute(now=None):
             # Freeze after the HTTP response, not before it; do not backdate.
             quote_time=datetime.now(timezone.utc)
             quotes['events'].append({'sport':request['sport'],'retrieved_utc':quote_time.isoformat(),'event':event})
-            sport=request['sport'];board=report['sports'][sport]['scoreboard']
+            sport=request['sport'];board=fresh_board
             from pick_history import verified_pregame_start,make_record
             source=next(e for e in board['events']if e['id']==request['espn_id'])
             start=verified_pregame_start(source,event['commence_time'],quote_time)
@@ -313,6 +319,21 @@ def execute(now=None):
     # Latest snapshots only; frozen predictions live in their existing ledgers.
     quotes['events']=quotes['events'][-40:]
     write('background_quotes.json',quotes);write(BUDGET,budget)
+def projection_summary(records,sport):
+    groups={}
+    for r in records:
+        if r.get('sport')!=sport or r.get('result')!='Measured':continue
+        actual,base=r.get('actual'),r.get('simple_baseline')
+        projected=r.get('projection')
+        if not all(isinstance(v,(int,float))and math.isfinite(v)for v in (actual,base,projected)):continue
+        groups.setdefault(r['category'],{}).setdefault(r['event_id'],[]).append((abs(actual-projected),abs(actual-base)))
+    output=[]
+    for category,games in sorted(groups.items()):
+        def avg(i):return statistics.mean(statistics.mean(v[i]for v in values)for values in games.values())
+        forecast,base=avg(0),avg(1)
+        output.append({'Category':category,'Matched forecasts':sum(len(v)for v in games.values()),'Distinct games':len(games),'Projection MAE':forecast,'Simple baseline MAE':base,'Projection minus baseline MAE':forecast-base,'Status':'Descriptive prospective comparison; no automatic promotion'})
+    return output
+
 def review_projections(now=None):
     now=now or datetime.now(timezone.utc);data=read(LEDGER,{'schema':1,'records':[]});cache={}
     for row in data['records']:
@@ -327,12 +348,14 @@ def review_projections(now=None):
             actual=graded.get('actual')
             if not isinstance(actual,(int,float))or not math.isfinite(actual):continue
             row.update(result='Measured',actual=actual,actual_workload=graded.get('actual_opportunities'),absolute_error=abs(actual-row['projection']),graded_utc=now.isoformat())
+            baseline=row.get('simple_baseline')
+            if isinstance(baseline,(int,float))and math.isfinite(baseline):row['baseline_absolute_error']=abs(actual-baseline)
         except Exception:continue
     write(LEDGER,data)
     # Compare learning only where genuinely frozen paired forecasts exist.
     from paired_forecasts import summary
     records=read('published_picks.json',{'records':[]})['records']+read('analyzed_forecasts.json',{'records':[]})['records']
-    write('background_validation.json',{'generated_utc':now.isoformat(),'paired':{s:summary(records,s)for s in SPORTS},'promotion_status':'No automatic model promotion. Later chronological validation is required; existing experimental guards remain separate.'})
+    write('background_validation.json',{'generated_utc':now.isoformat(),'paired':{s:summary(records,s)for s in SPORTS},'projection_baselines':{s:projection_summary(data['records'],s)for s in SPORTS},'promotion_status':'No automatic model promotion. Later chronological validation is required; existing experimental guards remain separate.'})
 def render(sport):
     import streamlit as st
     report=read(REPORT,{})
@@ -343,13 +366,16 @@ def render(sport):
         if item.get('issues'):st.write(item['issues'])
         st.caption('Preparation uses free sources. Research projections have no sportsbook win probability and are not picks. The scheduled job runs even when this app is closed; GitHub schedules can be delayed.')
         if item.get('projections'):
-            st.dataframe([{k:r.get(k)for k in ('game','player','category','projection','workload','role_uncertain','published_utc')}for r in item['projections']],hide_index=True,use_container_width=True)
+            st.dataframe([{k:r.get(k)for k in ('game','player','category','projection','simple_baseline','workload','role_uncertain','published_utc')}for r in item['projections']],hide_index=True,use_container_width=True)
         budget=read(BUDGET,{'days':{}}).get('days',{}).get(str(day(datetime.now(timezone.utc))),{})
         st.write('Automated credits reserved today, shared NFL + NBA: '+str(budget.get('reserved',0))+' / '+str(CAP))
         st.write(budget.get('setup_status',report.get('odds_setup','Background prices not configured')))
         st.caption('Reservations are saved before requests and retained after failures. The cap covers background automation; manually requested add-ons spend extra. Eight credits generally cover one game with the full preset, not every game.')
         validation=read('background_validation.json',{})
         if validation.get('paired',{}).get(sport):st.dataframe(validation['paired'][sport],hide_index=True,use_container_width=True)
+        if validation.get('projection_baselines',{}).get(sport):
+            st.write('**Matched projection versus simple baseline**')
+            st.dataframe(validation['projection_baselines'][sport],hide_index=True,use_container_width=True)
         measured=[r for r in read(LEDGER,{'records':[]})['records']if r['sport']==sport and r.get('result')=='Measured']
         if measured:
             st.write('**Projection-only research results — separate from pick accuracy**')

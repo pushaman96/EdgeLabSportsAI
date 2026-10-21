@@ -52,6 +52,12 @@ class BackgroundTests(unittest.TestCase):
         games=[dict(date=date(2025,1,1),season=2024,home_team='A',away_team='B',home_score=20,away_score=0),dict(date=date(2025,1,1),season=2024,home_team='A',away_team='C',home_score=0,away_score=20)]
         ratings,pred=build_elo_model(games)
         self.assertEqual(pred[0]['Home Win Probability'],pred[1]['Home Win Probability'])
+    def test_projection_baseline_compares_same_games_only(self):
+        rows=[dict(sport='NFL',result='Measured',category='Passing yards',event_id='a',actual=100,projection=90,simple_baseline=80),dict(sport='NFL',result='Measured',category='Passing yards',event_id='b',actual=100,projection=90)]
+        result=bg.projection_summary(rows,'NFL')[0]
+        self.assertEqual(result['Matched forecasts'],1)
+        self.assertEqual(result['Projection minus baseline MAE'],-10)
+        self.assertEqual(bg.projection_summary(rows,'NBA'),[])
     def test_forecast_preserves_original_ledger(self):
         bg.write('history.json',{'records':[{'id':'old','projection':20}]})
         bg.append_records('history.json',[{'id':'old','projection':99},{'id':'new','projection':30}])
