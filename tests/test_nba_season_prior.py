@@ -42,7 +42,35 @@ class SeasonPriorTests(unittest.TestCase):
         self.assertIn(('PTS','Early season (0–7 appearances)'),a['cohort_reports'])
         self.assertGreater(a['cohort_reports']['PTS','Early season (0–7 appearances)']['validation_games'],0)
 
+    def test_complete_heldout_season_keeps_opening_games_and_excludes_live_season(self):
+        logs=[]
+        for year in (2024,2025,2026):
+            for player in range(8):
+                logs.extend(dict(r,player=str(player),game=r['game']+'-'+str(player)) for r in self.rows(year,n=60,start=str(year-1)+'-10-20'))
+        report=model.research(logs,'2026-10-20')['cohort_reports']['PTS','Early season (0–7 appearances)']
+        self.assertEqual(report['validation_season'],2026)
+        self.assertEqual(report['split_date'],'2025-10-20')
+        self.assertEqual(report['validation_games'],64)
+        self.assertEqual(report['calibration_examples'],64)
+        # Tying a baseline must not manufacture qualification.
+        self.assertFalse(report['passed'])
+        live=self.rows(2027,n=3,start='2026-10-20',points=999)
+        later=model.research(logs+live,'2026-10-25')['cohort_reports']['PTS','Early season (0–7 appearances)']
+        self.assertEqual(report,later)
+
+    def test_readiness_counts_one_prop_across_books_and_directions(self):
+        row=dict(Game='A at B',Player='Player',Category='Points',Selection='Over',Decision='Pass',Reason='Unavailable')
+        self.assertEqual(model.readiness_summary([row,dict(row,Selection='Under')]),[{'Status / reason':'Unavailable','Unique player props':1}])
+        ready=dict(row,Decision='Watch — experimental')
+        result=model.readiness_summary([ready,dict(ready,Selection='Under')])
+        self.assertEqual(result[0]['Status / reason'],'Conflicting qualifying directions; no pick')
+
 class EspnLogTests(unittest.TestCase):
+    def test_reference_cohort_is_bounded_balanced_and_not_result_selected(self):
+        rosters={'B':[dict(id='3',name='C'),dict(id='4',name='D')],'A':[dict(id='2',name='B'),dict(id='1',name='A')]}
+        self.assertEqual(model.reference_players(rosters,3),(('1','A'),('3','C'),('2','B')))
+        self.assertEqual(model.reference_players({}),())
+
     def payload(self):
         return dict(filters=[dict(name='season',value='2026')],labels=['MIN','PTS','REB','AST','3PT'],events={'g':dict(gameResult='W',gameDate='2026-01-01T03:00:00Z',team=dict(id='13'))},seasonTypes=[dict(displayName='2025-26 Regular Season',categories=[dict(type='event',events=[dict(eventId='g',stats=['30:30','20','6','4','2-5'])])]),dict(displayName='2025-26 Postseason',categories=[dict(type='event',events=[dict(eventId='g',stats=['40','99','99','99','9-9'])])])])
     def test_explicit_regular_season_and_source_ids(self):
@@ -64,5 +92,13 @@ class EspnLogTests(unittest.TestCase):
             data=model.load_data(2027,(('1966','Player'),))
         self.assertEqual(len(data['logs']),3);self.assertIn('espn:1966',data['missing_current'])
         self.assertEqual(data['id_namespace'],'ESPN')
+
+    def test_fallback_adds_reference_history_without_reloading_duplicate_player(self):
+        st=SimpleNamespace(cache_data=lambda **kwargs:lambda fn:fn)
+        def fetch(year,pid,name):return [dict(season=year,player='espn:'+pid)]
+        with patch.dict(sys.modules,{'streamlit':st}),patch.object(model,'_try_load_data',return_value=None),patch.object(model,'fetch_espn_logs',side_effect=fetch) as request:
+            data=model.load_data(2027,(('1','Quoted'),),(('1','Quoted'),('2','Reference')))
+        self.assertEqual(request.call_count,8)
+        self.assertEqual({r['player'] for r in data['logs']},{'espn:1','espn:2'})
 
 if __name__=='__main__':unittest.main()
