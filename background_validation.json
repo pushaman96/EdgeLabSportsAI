@@ -1,6 +1,10 @@
 {
-  "generated_utc": "2026-10-21T21:09:01.543241+00:00",
+  "generated_utc": "2026-10-21T21:11:52.580302+00:00",
   "paired": {
+    "NFL": [],
+    "NBA": []
+  },
+  "projection_baselines": {
     "NFL": [],
     "NBA": []
   },
