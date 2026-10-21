@@ -2,11 +2,8 @@ name: Background research and preset forecasts
 on:
   push:
     paths:
-      - 'background_research.py'
-      - 'background_moneyline.py'
-      - 'game_day_diagnostics.py'
-      - 'tests/test_game_day_diagnostics.py'
-      - 'tests/test_background_research.py'
+      - '*.py'
+      - 'tests/**'
       - '.github/workflows/background_research.yml'
   workflow_dispatch:
   schedule:

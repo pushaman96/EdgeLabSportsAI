@@ -1,5 +1,7 @@
 """Exercise request boundaries without contacting any odds provider."""
 import ast,types,unittest
+import sys
+from unittest.mock import patch
 from pathlib import Path
 from datetime import datetime,timezone,timedelta
 from zoneinfo import ZoneInfo
@@ -48,3 +50,9 @@ class SaverUITests(unittest.TestCase):
         self.assertEqual(self.run_ui('Credit-saving mode','0'),[])
     def test_saver_requests_only_the_selected_game(self):
         self.assertEqual(self.run_ui('Credit-saving mode','100'),['0'])
+    def test_cached_presets_without_session_planner_does_not_crash(self):
+        old=types.ModuleType('sportsbook_presets')
+        old.STANDARD_PRESETS=STANDARD_PRESETS
+        with patch.dict(sys.modules,{'sportsbook_presets':old}):
+            self.assertEqual(self.run_ui('Saved data only — 0 credits','100'),[])
+            self.assertEqual(self.run_ui('Credit-saving mode','100'),['0'])

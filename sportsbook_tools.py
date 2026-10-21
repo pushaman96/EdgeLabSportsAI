@@ -267,14 +267,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     st.caption('Last reported credits remaining: '+str(remaining if remaining is not None else 'Unknown')+'. Cached prices may be outdated. Budget checks assume a fresh request; an available cache hit may cost 0.')
     allow_game,game_reason=spending_allowed(mode,3,budget,remaining)
     st.caption('Credit-saving mode: choose a few games and categories below. Full-slate preset buttons are available in Standard mode. Saved-data mode blocks new odds loads while keeping already loaded prices visible.')
-    from zoneinfo import ZoneInfo
-    from sportsbook_presets import automatic_plan
-    today=datetime.now(timezone.utc).astimezone(ZoneInfo('America/Los_Angeles')).date()
-    auto_id=(sport,str(selected_date),fingerprint,'rotation-v2')
-    attempts=st.session_state.setdefault('preset_rotation_attempts',set())
-    plan=automatic_plan(sport,selected_date,today,budget,mode,auto_id in attempts)
-    automatic=False  # Durable background job owns automatic requests; add-ons remain explicit.
-    if automatic:attempts.add(auto_id)
+    automatic=False  # Background workflow owns autoload; no session-planner import.
     st.caption('Background preset preparation now runs in GitHub Actions while the app is closed. See Background research for status and its shared eight-credit daily automated budget. This page does not automatically spend credits on each new session. Load buttons and add-ons below are explicit extra requests outside that background budget.')
     try:
         quick_nfl=False
