@@ -402,6 +402,8 @@ def load_nba_injuries():
                 "Status": injury.get("status") or "Unknown",
                 "Injury": details.get("type") or "Not provided",
                 "Report updated (UTC)": injury.get("date") or "Not provided",
+                "Short comment": injury.get("shortComment") or "",
+                "Long comment": injury.get("longComment") or "",
             })
     return {
         "rows": rows, "teams": sorted(set(teams)),
@@ -1428,6 +1430,7 @@ def render_nba_tools(game_date, scoreboard, shared, statistics_tabs=None):
             show_nba_statistics(end_year, player_container=statistics_tabs[1])
     st.divider()
     show_nba_injuries()
+
 
 
 

@@ -31,6 +31,11 @@ def explanation(record):
     if context.get('Workload method'):workload+=' Workload method: '+str(context['Workload method'])+'.'
     if context.get('Efficiency method'):workload+=' Efficiency method: '+str(context['Efficiency method'])+'.'
     if context.get('Current-team games') is not None:workload+=f" Saved current-team sample: {context['Current-team games']} games."
+    lineup=context.get('Starting lineup check')or {}
+    if lineup:workload+=' Lineup: '+str(lineup.get('Status','Unconfirmed'))+'.'
+    schedule=context.get('Verified schedule context')or {}
+    if schedule.get('Status')=='Verified team schedule':
+        workload+=' Verified team-schedule back-to-back: '+('yes'if schedule.get('Back-to-back')else'no')+'. Scheduled off days: '+display(schedule.get('Scheduled off days'))+'. No automatic rest penalty is applied.'
     price='No model probability was saved; this record cannot establish a model price edge.'
     if probability is not None and 0<probability<1:
         price=f'Estimated selection win chance: {probability:.1%}.'
@@ -85,6 +90,9 @@ def explanation(record):
     risks='Game flow, unexpected player usage, efficiency changes and availability can change the outcome. Injury status checks do not quantify the effects of every absence. Weather and teammate-injury effects are not fully quantified. These are the inputs saved when the pick was made, not a fresh news or lineup check.'
     if context.get('Game-script risk'):risks=str(context['Game-script risk'])+' '+risks
     if record.get('strategy')=='Manual':risks='This is a manual selection, not a researched model recommendation. '+risks
+    restriction=context.get('Minutes restriction check')or {}
+    if restriction.get('Review required'):risks='Current report mentions a minutes limit; verify before use. '+risks
+    if context.get('NBA context limitation'):risks+=' '+str(context['NBA context limitation'])
     return {'selection':selection,'forecast':forecast,'workload':workload,'price':price,'reason':record.get('reason') or 'A supporting reason was not saved for this record.','details':context.get('Evidence explanation'),'risks':risks,'calculation':calculation,'comparison':comparison,'uncertainty':uncertainty,'adjustments':adjustment,'validation':validation_text}
 
 def short_reason(record):
@@ -104,12 +112,15 @@ def render_saved_explanations(records,sport):
             st.write('**'+title+'**');st.write(e[key])
         if e['details']:
             st.write('**Full explanation saved with this pick**');st.write(e['details'])
+        context=record.get('forecast_context')or {}
+        for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
+            if context.get(field):st.write('**'+label+'**');st.write(context[field])
         st.caption('Frozen at '+record.get('published_utc','unknown time')+' · Model: '+record.get('model','Not saved')+'. No paid AI service is used, and opening this explanation does not change the pick.')
 
 
 def from_row(row):
     """Explain a current analysis row without requiring an API or saving it."""
-    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status')
+    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation')
     context={key:row[key] for key in fields if key in row}
     return explanation(dict(player=row.get('Player'),category=row.get('Category'),direction=row.get('Selection'),line=row.get('Line'),odds=row.get('Odds'),probability=number(row.get('Estimated win %'))/100 if number(row.get('Estimated win %')) is not None else None,projected_yards=row.get('Projection (yards)'),projected_count=row.get('Projection (count)'),expected_opportunities=row.get('Expected opportunities'),reason=row.get('Reason'),forecast_context=context,online_status=row.get('Online learning status')))
 

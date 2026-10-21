@@ -8,7 +8,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-MODEL = 'NBA season-prior minutes-rate v4 / validated base and role ranges'
+MODEL = 'NBA season-prior minutes-rate v5 / verified context and calibration audit'
 from nba_season_prior import season_projection, season_year, fetch_espn_logs
 MARKETS = {'player_points':('Points','PTS'),'player_rebounds':('Rebounds','REB'),'player_assists':('Assists','AST'),'player_threes':('Three-pointers made','FG3M')}
 
@@ -155,7 +155,7 @@ def minutes_replacement(history, roster_names, out_names, current_minutes):
     return min(40.,current_minutes*factor),factor
 
 
-def reviews(events, scoreboard, data, injuries, rosters, now=None):
+def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None):
     from online_learning import adjust_forecast, adjust_probability
     now=now or datetime.now(timezone.utc)
     output=[]
@@ -221,6 +221,9 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None):
                     uncertainty=detail['uncertainty'] if detail else 1.
                     calibration=[e*uncertainty for e in calibration]
                     row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','History source':data.get('source','NBA.com'),'Season stage':cohort,'Last-season games':detail['prior_games'] if detail else 0,'Current-season appearances':detail['current_games'] if detail else len(history),'Current-season weight %':round(100*detail['current_weight'],1) if detail else 100.,'Role uncertainty':'New team; fewer than 3 current-team games' if detail and detail['role_uncertain'] else 'Historical minutes assumption; lineup changes may differ','Uncertainty multiplier':round(uncertainty,3)})
+                    if context is not None:
+                        from nba_game_context import attach_context
+                        attach_context(row,context,source['id'],team,teams[team],row['Player'],event['commence_time'],field,injuries,now)
                     if detail:
                         from workload_candidates import nba_sample,attach
                         live=dict(player=next(iter(ids)),team=nba_team,date=game_day.isoformat(),season=data['season'])
@@ -237,18 +240,22 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None):
                         candidate=probability(row['Candidate projection'],line,calibration)
                         row['Candidate input win %']=100*(1-candidate if row['Selection']=='Under' else candidate)
                     p=adjust_probability(row,p,now,sport='NBA')
+                    from pick_learning import adjust_row as validated_calibration
+                    p=validated_calibration(row,p,now=now,sport='NBA')
+                    row['Probability calibration status']=row['Feedback status']
                     breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
-                    row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Raw estimated win %':row['Online input win %'],'Feedback status':row.get('Online learning status','Collecting prospective evidence'),'Validation':model['cohort_reports'][field,cohort] if detail else model['reports'][field]})
+                    row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Feedback status':row.get('Online learning status','Collecting prospective per-game evidence')+'; '+row['Probability calibration status'],'Validation':model['cohort_reports'][field,cohort] if detail else model['reports'][field]})
                     from nba_forecast_quality import attach_quality
                     attach_quality(row,player_history,game_day,nba_team,projected,adjusted_minutes,calibration)
                     report=row['Validation']
                     row['Validation details']={'mae':report['forecast_mae'],'baseline_mae':report['baseline_mae'],'passed':report['passed'],'validation_games':report['validation_games'],'calibration_examples':report['calibration_examples'],'scope':'NBA '+cohort+'; historical stat error, not sportsbook profitability','empirical_band_validation_coverage':report.get('empirical_band_validation_coverage'),'mean_actual_minus_forecast':report.get('mean_actual_minus_forecast')}
                     if next(iter(ids)) in data.get('missing_current',set()):row['Reason']='Last-season forecast shown; current-season history could not be verified';continue
                     if detail and detail['role_uncertain']:row['Reason']='Last-season starting estimate shown; new-team minutes role unverified until 3 current-team appearances';continue
+                    if row.get('Minutes restriction check',{}).get('Review required'):row['Reason']='Current injury report mentions a minutes limit; verify the restriction before use. No numeric cap is invented.';continue
                     if not report['passed']:row['Reason']='Season-stage model has not beaten the prior-season/recent-average baseline on later games; forecast shown for research';continue
                     if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points';continue
                     row['Decision']='Watch — experimental'
-                    row['Reason']='Last-season minutes × production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. '+row['Minutes risk']+'. '+row['Minutes sensitivity']+'. Probability and actual-price profitability remain unverified.'
+                    row['Reason']='Last-season minutes × production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. '+row['Minutes risk']+'. '+row['Minutes sensitivity']+'. '+row.get('Starting lineup check',{}).get('Status','Starting lineup not checked')+'. Probability and actual-price profitability remain unverified.'
     return output
 
 
@@ -266,6 +273,12 @@ def reference_players(rosters, limit=12):
     return tuple(result)
 
 
+def completed_player_logs(year,pid,name):return fetch_espn_logs(year,pid,name)
+
+
+def current_player_logs(year,pid,name):return fetch_espn_logs(year,pid,name)
+
+
 def load_data(end_year, targets=(), references=()):
     import streamlit as st
     data=st.cache_data(ttl=3600)(_try_load_data)(end_year)
@@ -274,8 +287,8 @@ def load_data(end_year, targets=(), references=()):
     # Each player/season is cached independently; a single failed request does
     # not discard the other players or a completed prior season.
     from concurrent.futures import ThreadPoolExecutor
-    completed=st.cache_data(ttl=86400)(fetch_espn_logs)
-    current=st.cache_data(ttl=1800)(fetch_espn_logs)
+    completed=st.cache_data(ttl=86400)(completed_player_logs)
+    current=st.cache_data(ttl=1800)(current_player_logs)
     logs=[];issues=[];missing_current=set()
     def fetch(job):
         year,pid,name=job
@@ -348,7 +361,15 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
                 st.caption('Forecast history source: '+data.get('source','NBA.com'))
                 if data.get('issues'):st.info('; '.join(data['issues'][:8]))
                 filtered=[dict(e,bookmakers=[b for b in e.get('bookmakers',[]) if b['title'] in books]) for e in events]
-                rows=reviews(filtered,scoreboard,data,injuries,roster)
+                from nba_game_context import load_context
+                try:
+                    context=load_context(filtered,scoreboard)
+                    st.caption('Free ESPN context: '+str(context['history_loaded'])+' verified final game summaries loaded; historical fetch budget '+str(context['history_limit'])+'. Cached summaries use no Odds API credits.')
+                    if context['issues']:st.info('Some game context is unavailable: '+'; '.join(context['issues'][:5]))
+                except Exception:
+                    context={}
+                    st.info('Additional lineup, schedule and matchup sources are unavailable. These fields remain unconfirmed; no substitute values are invented.')
+                rows=reviews(filtered,scoreboard,data,injuries,roster,context=context)
                 st.session_state[key_prefix+'_results']=(rows,datetime.now(timezone.utc).isoformat())
         except Exception as exc:
             st.warning('NBA forecast data unavailable; no substitute statistics or picks invented. '+str(exc)[:180]);return
@@ -408,6 +429,21 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
                 bands.append({'Category':key[0],'Season stage':key[1],'Later validation games':report.get('validation_games'),'Measured range coverage %':round(coverage*100,1) if coverage is not None else None,'Average actual minus forecast':report.get('mean_actual_minus_forecast')})
             st.dataframe(bands,hide_index=True,use_container_width=True)
             st.caption('Positive average actual-minus-forecast means the model underestimated the statistic in those historical games. It is a diagnostic, not an automatically applied correction. Absence-related extra minutes are shown separately and are not applied to picks.')
+    context_rows={}
+    for row in current:
+        if row.get('NBA context version'):context_rows.setdefault((row['Game'],row['Player'],row['Category']),row)
+    if context_rows:
+        with st.expander('NBA lineup, rest and matchup evidence'):
+            st.caption('Verified team schedules, reported starting lineups, minutes-limit text flags and observed teammate usage. Statistical associations are research context; they do not automatically change a forecast.')
+            selected=st.selectbox('Inspect NBA game context',list(context_rows),format_func=lambda k:' · '.join(k),key=key_prefix+'_game_context')
+            row=context_rows[selected]
+            for label,field in (('Reported starting lineup','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Opponent and estimated possessions','Opponent and pace context')):
+                st.write('**'+label+'**');st.write(row.get(field,{}))
+            st.write('**Observed usage with and without currently unavailable teammates**')
+            if row.get('Teammate absence usage'):
+                for item in row['Teammate absence usage']:st.write(item)
+            else:st.info('No currently unavailable teammates identified in the checked report, or no matched historical comparisons.')
+            st.caption(row.get('NBA context limitation',''))
     scenarios={}
     for row in current:
         if row.get('Workload sensitivity scenarios'):scenarios.setdefault((row['Game'],row['Player'],row['Category']),row)
