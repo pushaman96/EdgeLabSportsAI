@@ -38,6 +38,9 @@ def render_public_history(sport,path='published_picks.json'):
         if sport=='NBA'and workload.get('nba_role_groups'):
             st.write('**Starter/bench role forecast comparisons**')
             st.dataframe(workload['nba_role_groups'],hide_index=True,use_container_width=True)
+        if sport=='NFL'and workload.get('nfl_role_groups'):
+            st.write('**NFL recent-role workload and range comparisons**')
+            st.dataframe(workload['nfl_role_groups'],hide_index=True,use_container_width=True)
         st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
     st.subheader('Saved-pick probability accuracy')
     summary=accuracy_summary(records,sport)
@@ -46,9 +49,8 @@ def render_public_history(sport,path='published_picks.json'):
     columns[1].metric('Winner accuracy',f"{summary['accuracy']:.1%}" if summary['accuracy'] is not None else 'Not enough results')
     columns[2].metric('Brier score',f"{summary['brier']:.4f}" if summary['brier'] is not None else 'Not available')
     st.caption(f"{summary['wins']} wins · {summary['losses']} losses. Original regular-season picks saved before games; historical imports, cushions and manual entries are kept separate. Lower Brier is better. Historical model accuracy appears with matchup predictions below.")
-    if sport=='NBA':
-        from nba_calibration import render as render_nba_calibration
-        render_nba_calibration(records)
+    from nba_calibration import render as render_probability_calibration
+    render_probability_calibration(records,sport=sport)
 
 
     from slate_review import render_review

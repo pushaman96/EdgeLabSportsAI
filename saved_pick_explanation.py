@@ -35,6 +35,9 @@ def explanation(record):
     for sample in averages:
         if sample.get('Sample')in ('Last season — all teams','This season — all teams','Last 5 appearances'):
             workload+=' '+sample['Sample']+': '+display(sample.get('Average'))+' '+units+' across '+display(sample.get('Stat sample games'))+' recorded appearances; '+display(sample.get('Minutes average'))+' average minutes.'
+    for sample in context.get('NFL player averages')or []:
+        if sample.get('Sample')in ('Last season — all teams','This season — all teams','Last 3 appearances'):
+            workload+=' '+sample['Sample']+': '+display(sample.get('Average'))+' '+units+' across '+display(sample.get('Stat sample games'))+' observed games; '+display(sample.get('Opportunities/game'))+' '+str(sample.get('Opportunity type','opportunities'))+' per game.'
     lineup=context.get('Starting lineup check')or {}
     if lineup:workload+=' Lineup: '+str(lineup.get('Status','Unconfirmed'))+'.'
     schedule=context.get('Verified schedule context')or {}
@@ -98,6 +101,8 @@ def explanation(record):
     if restriction.get('Review required'):risks='Current report mentions a minutes limit; verify before use. '+risks
     if context.get('NBA context limitation'):risks+=' '+str(context['NBA context limitation'])
     if context.get('NBA role status'):risks+=' Role assessment: '+str(context['NBA role status'])+'.'
+    if context.get('NFL restriction check',{}).get('Review required'):risks+=' Current NFL report mentions a limited game workload; verify before use.'
+    if context.get('NFL evidence version'):risks+=' NFL depth listings do not confirm game-day starters. Snap share is not routes run. Additional absence/game-flow scenarios are not validated causal adjustments.'
     return {'selection':selection,'forecast':forecast,'workload':workload,'price':price,'reason':record.get('reason') or 'A supporting reason was not saved for this record.','details':context.get('Evidence explanation'),'risks':risks,'calculation':calculation,'comparison':comparison,'uncertainty':uncertainty,'adjustments':adjustment,'validation':validation_text}
 
 def short_reason(record):
@@ -124,6 +129,12 @@ def render_saved_explanations(records,sport):
             st.caption(context.get('Player averages method','Observed historical averages, not guaranteed future results.'))
         if context.get('NBA role usage'):
             st.write('**Starter/bench workload evidence saved before the game**');st.write(context['NBA role usage'])
+        if context.get('NFL player averages'):
+            st.write('**NFL observed averages and conversion rates saved before the game**')
+            st.dataframe(context['NFL player averages'],hide_index=True,use_container_width=True)
+            st.caption(context.get('NFL averages method',''))
+            for label,field in (('Role and participation','NFL snap trend'),('Depth listing','NFL depth check'),('Workload-limit report','NFL restriction check'),('Rest and schedule','NFL verified schedule context'),('Matchup context','NFL opponent workload context'),('Teammate involvement comparisons','NFL teammate involvement'),('Unvalidated context scenario','NFL context scenario')):
+                if context.get(field):st.write('**'+label+'**');st.write(context[field])
         for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
             if context.get(field):st.write('**'+label+'**');st.write(context[field])
         st.caption('Frozen at '+record.get('published_utc','unknown time')+' · Model: '+record.get('model','Not saved')+'. No paid AI service is used, and opening this explanation does not change the pick.')
@@ -131,7 +142,7 @@ def render_saved_explanations(records,sport):
 
 def from_row(row):
     """Explain a current analysis row without requiring an API or saving it."""
-    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average')
+    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average','NFL evidence version','NFL player averages','NFL averages method','NFL verified schedule context','NFL opponent workload context','NFL depth check','NFL restriction check','NFL snap trend','NFL workload sensitivity','NFL recent-role candidate','NFL teammate involvement','NFL context scenario')
     context={key:row[key] for key in fields if key in row}
     return explanation(dict(player=row.get('Player'),category=row.get('Category'),direction=row.get('Selection'),line=row.get('Line'),odds=row.get('Odds'),probability=number(row.get('Estimated win %'))/100 if number(row.get('Estimated win %')) is not None else None,projected_yards=row.get('Projection (yards)'),projected_count=row.get('Projection (count)'),expected_opportunities=row.get('Expected opportunities'),reason=row.get('Reason'),forecast_context=context,online_status=row.get('Online learning status')))
 

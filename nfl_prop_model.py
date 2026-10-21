@@ -204,7 +204,7 @@ def injury_context():
     data = response.json()
     if not isinstance(data.get('injuries'),list):
         raise ValueError('Injury coverage unavailable.')
-    teams, statuses = set(), {}
+    teams, statuses, rows = set(), {}, []
     for group in data['injuries']:
         team = group.get('displayName')
         teams.add(team)
@@ -214,7 +214,8 @@ def injury_context():
             status = item.get('status') or 'Unknown'
             if key not in statuses or status.lower() != 'active':
                 statuses[key] = status
-    return {'teams':teams,'statuses':statuses,'retrieved':datetime.now(timezone.utc).isoformat(),'season':data.get('season',{}).get('year'),'source_updated':data.get('timestamp')}
+            rows.append({'Team':team,'Player':item.get('athlete',{}).get('displayName'),'Status':status,'Short comment':item.get('shortComment')or'','Report updated UTC':item.get('date')})
+    return {'teams':teams,'statuses':statuses,'rows':rows,'retrieved':datetime.now(timezone.utc).isoformat(),'season':data.get('season',{}).get('year'),'source_updated':data.get('timestamp')}
 
 @st.cache_data(ttl=300)
 def current_roster(team_id):
@@ -241,7 +242,7 @@ def event_context(event, scoreboard):
         if abs((source_start-odds_start).total_seconds()) > 3600:
             return None
         season = source.get('season',scoreboard.get('season',{}))
-        return {'season':int(season['year']), 'regular':int(season['type']) == 2,'home':home,'away':away,'date':source_start.astimezone(ZoneInfo('America/Los_Angeles')).date()}
+        return {'season':int(season['year']), 'regular':int(season['type']) == 2,'home':home,'away':away,'date':source_start.astimezone(ZoneInfo('America/Los_Angeles')).date(),'espn_event':source}
     return None
 
 def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
@@ -254,6 +255,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
     schedule = matching[0] if len(matching) == 1 else None
     arrival_cache={}
     passing_cache={}
+    evidence_inputs={}
     from interception_model import estimate as interception_estimate, validation as interception_validation
     interception_report = interception_validation(research['players'],research['teams'])
     from nfl_passing_forecasts import MARKETS as PASSING_MARKETS,estimate as passing_estimate,evaluated_row,targets as target_forecast
@@ -275,6 +277,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row['Reason'] = 'Game already started; pregame analysis closed.';continue
                 if not context:
                     row['Reason'] = 'ESPN matchup or kickoff time could not be matched.';continue
+                from pick_history import verified_pregame_start
+                try:verified_pregame_start(context['espn_event'],event['commence_time'],now)
+                except (ValueError,KeyError,TypeError):row['Reason']='ESPN or sportsbook indicates the pregame window is closed.';continue
                 if not context['regular']:
                     row['Reason'] = 'This game is not a regular-season matchup.';continue
                 if not schedule:
@@ -320,6 +325,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 history_ids={r.get('game_id') for r in prior}
                 history_dates=[g['gameday'] for g in research['schedule'] if g.get('game_id') in history_ids and g.get('gameday')]
                 row.update({'Statistics retrieved UTC':research.get('retrieved'),'Injury source updated UTC':injuries.get('source_updated'),'Injury retrieved UTC':injuries.get('retrieved'),'Roster checked UTC':now.isoformat(),'Player history through':max(history_dates) if history_dates else None})
+                evidence_inputs[row['Player'],row['Category']]={'history':prior,'team':team,'opponent':opponent,'team_name':team_name,'team_id':context[side].get('id'),'athlete_id':player.get('espn_id')}
 
                 ids={trade['player_id']}
                 if team not in arrival_cache:
@@ -469,18 +475,17 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 availability=nfl_availability(row['Player'],row['Category'],team,team_name,context['season'],int(schedule['week']),research['players'],rosters.get(team_name,[]),injuries)
                 situation=nfl_situation(team,opponent,context['date'],research['schedule'],research['teams'])
                 situation_factor=1.
+                scenario_factor=1.
                 if situation:
-                    situation_factor=situation['rushing_factor'] if market['key'] in ('player_rush_yds','player_rush_attempts') else situation['passing_factor']
+                    scenario_factor=situation['rushing_factor'] if market['key'] in ('player_rush_yds','player_rush_attempts') else situation['passing_factor']
                     row['Situation forecast']=situation
-                    row['Situation adjustment %']=round(100*(situation_factor-1),2)
-                factor=availability['workload_factor']*situation_factor
-                projected*=factor*availability['efficiency_factor']
-                feature=dict(feature,volume_forecast=feature['volume_forecast']*factor)
-                row['Injury adjustment %']=round(100*(availability['workload_factor']*availability['efficiency_factor']-1),2)
-                row['Injury adjustment reason']=availability['reason']
+                row['Situation adjustment %']=0.
+                row['NFL context scenario']={'Projected stat':projected*availability['workload_factor']*availability['efficiency_factor']*scenario_factor,'Expected opportunities':feature['volume_forecast']*availability['workload_factor']*scenario_factor,'Availability workload factor':availability['workload_factor'],'Availability efficiency factor':availability['efficiency_factor'],'Situation factor':scenario_factor,'Status':'Unvalidated scenario only; not applied to base forecast or probability','Reason':availability['reason']}
+                row['Injury adjustment %']=0.
+                row['Injury adjustment reason']='Fresh availability checked. Numerical absence effects remain a separate unvalidated scenario.'
                 row['Unadjusted projection']=before_context
-                row['Context validation status']='Availability and situation adjustments are experimental; the historical baseline gate applies to the underlying model only'
-                row['Model']+=' / availability-situations-v1'
+                row['Context validation status']='Base forecast matches the historically tested pipeline; extra absence/score-state multipliers remain separate research scenarios'
+                row['Model']+=' / context-audit-v2'
                 from online_learning import adjust_forecast, adjust_probability
                 base_p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':base_p = 1-base_p
@@ -495,16 +500,13 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 row['Historical error range high']=round(max(0,upper),1)
                 p = over_probability(projected,line,model['residuals'],model.get('probability_strength',.8))
                 if row['Selection'] == 'Under':p = 1-p
-                from pick_learning import adjust_row
                 if row.get('Candidate projection') is not None:
                     candidate_p=over_probability(row['Candidate projection'],line,model['residuals'],model.get('probability_strength',.8))
                     row['Candidate input win %']=100*(1-candidate_p if row['Selection']=='Under' else candidate_p)
                 online_p=adjust_probability(row,p,now)
-                if row.get('Online version'):
-                    row['Raw estimated win %']=100*p
-                    row['Feedback status']=row['Online learning status']
-                    p=online_p
-                else:p=adjust_row(row,p,now)
+                p=online_p
+                row['Raw estimated win %']=100*p
+                row['Feedback status']=row.get('Online learning status','Collecting prospective per-game evidence')
                 break_even = 100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
                 row.update({'Projection (yards)':round(projected,1),'Expected opportunities':round(feature['volume_forecast'],2),'Estimated win %':round(p*100,1),'Break-even %':round(break_even*100,1),'Model edge (pp)':round((p-break_even)*100,1)})
                 if market['key'] in COUNT_MARKETS:
@@ -536,8 +538,23 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if p-break_even < .05:
                     row['Reason'] = 'Estimated edge below five percentage points.';continue
                 row['Decision'] = 'Watch — experimental'
-                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. {availability['reason']}. Situation workload factor {situation_factor:.3f} (experimental). Confirm lineup/weather."
+                row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather."
     for row in rows:
+        meta=evidence_inputs.get((row['Player'],row['Category']))
+        if meta:
+            from nfl_forecast_evidence import attach as attach_nfl_evidence
+            attach_nfl_evidence(row,meta['history'],research,context['season'],int(schedule['week']),meta['team'],meta['opponent'],meta['team_name'],meta['team_id'],meta['athlete_id'],injuries,now,context['date'])
+        if row.get('Estimated win %')is not None:
+            from pick_learning import adjust_row
+            p=adjust_row(row,float(row['Estimated win %'])/100,now,sport='NFL')
+            row['Probability calibration status']=row['Feedback status']
+            price=float(row['Odds']);be=100/(price+100)if price>0 else abs(price)/(abs(price)+100)
+            row['Estimated win %']=round(100*p,1);row['Model edge (pp)']=round(100*(p-be),1)
+            if row.get('Online learning status'):row['Feedback status']=row['Online learning status']+'; '+row['Probability calibration status']
+            edge_reason='Estimated edge below five percentage points.'
+            if row['Decision']!='Pass'and p-be<.05:row['Decision']='Pass';row['Reason']=edge_reason
+            elif row['Decision']=='Pass'and edge_reason in row.get('Reason','')and p-be>=.05:
+                row['Decision']='Watch — experimental';row['Reason']=row['Reason'].replace(edge_reason,'Validated calibration meets the five-percentage-point edge threshold.')
         if row.get('New teammates — role uncertainty'):
             row['Reason']+=' New teammates with limited team history: '+row['New teammates — role uncertainty']+'. Target/carry redistribution is not quantified; previous shares may change.'
         if row.get('Snap coverage'):
@@ -571,7 +588,7 @@ def evidence_explanation(row):
     if row.get('Feedback status'):text+=row['Feedback status']+'. '
     text+='Experimental estimates, not independently verified confidence or profitability. '
     if row.get('Model','').startswith('NFL boosted'):text+='Snap participation and role trends inform expected opportunities. '
-    text+='Confirmed offensive absences and predicted margin scenarios receive capped experimental adjustments when inputs are sufficient; uncertain roles, defensive/line injuries and weather remain unquantified.'
+    text+='Extra absence and predicted-margin effects remain separate unvalidated scenarios; they do not boost the tested base forecast. Depth listings do not confirm game-day starters, and snap share is not routes run.'
     return text
 
 def estimated_risk(probability):
@@ -846,8 +863,18 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 injury_context.clear()
                 injuries = injury_context()
                 team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
+                research=dict(research)
+                from nfl_forecast_evidence import load_depths
+                research['parity_depths']=load_depths(team_ids.values())
+                from player_usage import load_snap_usage
+                from role_forecast_lab import snap_lookup
+                snap_rows=[];snap_issues=[]
+                for year in (usable[0]['season']-1,usable[0]['season']):
+                    try:snap_rows.extend(load_snap_usage(year))
+                    except Exception:snap_issues.append(str(year)+' NFL snap feed unavailable; missing participation stays unknown.')
+                research['parity_snaps']=snap_lookup(snap_rows)
                 rosters = {}
-                issues = []
+                issues = list(research['parity_depths']['issues'])+snap_issues
                 with ThreadPoolExecutor(max_workers=4) as pool:
                     tasks = {team:pool.submit(current_roster,tid) for team,tid in team_ids.items()}
                     for team,task in tasks.items():
@@ -933,6 +960,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             st.write(workload_rows[chosen].get('Workload candidate benchmark',{}))
             if workload_rows[chosen].get('Game context scenarios'):st.write(workload_rows[chosen]['Game context scenarios'])
     from saved_pick_explanation import render_current_explanations
+    from nfl_forecast_evidence import render_evidence
+    render_evidence(saved['rows'])
     render_current_explanations(saved['rows'],'nfl_current')
     display=highest_probability(display,'Estimated win %',decision_key='Decision')
     watch = [r for r in display if r['Decision'] != 'Pass']
@@ -988,6 +1017,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
 
 
 

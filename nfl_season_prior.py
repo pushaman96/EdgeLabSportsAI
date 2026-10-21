@@ -89,14 +89,19 @@ def validate(players,teams):
             if not f or f['coverage_gap'] or f['role_uncertain']:continue
             key=(market,f['cohort'])
             if r['season']==2024:errors[key].append((r[stat]-f['projected'])/error_scale(f['projected'])/f['uncertainty'])
-            else:samples[key][r['game_id']].append((abs(r[stat]-f['projected']),abs(r[stat]-f['baseline'])))
+            else:samples[key][r['game_id']].append((abs(r[stat]-f['projected']),abs(r[stat]-f['baseline']),(r[stat]-f['projected'])/error_scale(f['projected'])/f['uncertainty'],r[stat]-f['projected']))
     reports={}
     for market in SPECS:
         for cohort in ('Early season (0–3 appearances)','Established season'):
             key=(market,cohort);groups=samples[key];cal=errors[key]
             fm=statistics.mean(statistics.mean(x[0] for x in v)for v in groups.values()) if groups else None
             bm=statistics.mean(statistics.mean(x[1] for x in v)for v in groups.values()) if groups else None
-            reports[key]=dict(validation_games=len(groups),calibration_examples=len(cal),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(cal)>=50 and fm<bm),residuals=sorted(cal),training_season=2024,validation_season=2025)
+            ordered=sorted(cal)
+            low=ordered[int(.1*(len(ordered)-1))]if len(ordered)>=50 else None
+            high=ordered[math.ceil(.9*(len(ordered)-1))]if len(ordered)>=50 else None
+            coverage=statistics.mean(statistics.mean(low<=x[2]<=high for x in values)for values in groups.values())if groups and low is not None else None
+            bias=statistics.mean(statistics.mean(x[3]for x in values)for values in groups.values())if groups else None
+            reports[key]=dict(validation_games=len(groups),calibration_examples=len(cal),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(cal)>=50 and fm<bm),residuals=ordered,training_season=2024,validation_season=2025,empirical_band_validation_coverage=coverage,mean_actual_minus_forecast=bias)
     return reports
 
 
@@ -126,3 +131,4 @@ def over_probability(projected,line,report,uncertainty=1.):
     if len(residuals)<20:return None
     threshold=(line-projected)/error_scale(projected)/uncertainty
     return max(.05,min(.95,.5+.8*((1+sum(e>threshold for e in residuals))/(len(residuals)+2)-.5)))
+

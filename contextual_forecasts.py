@@ -29,7 +29,11 @@ def nfl_availability(player, category, team, team_name, season, week, rows, rost
     usage=defaultdict(float)
     for r in prior:
         key=name(r['player_display_name'])
-        if key in current:usage[key]+=r.get(field) or 0
+        if key in current:
+            value=r.get(field)
+            if not isinstance(value,(int,float))or not math.isfinite(value)or value<0:
+                return dict(neutral,reason='Incomplete teammate workload; no numerical redistribution inferred')
+            usage[key]+=value
     active=sum(v for key,v in usage.items() if not unavailable(key))
     missing=sum(v for key,v in usage.items() if unavailable(key))
     # Only half of missing historical opportunity is redistributed. The rest
@@ -41,7 +45,9 @@ def nfl_availability(player, category, team, team_name, season, week, rows, rost
         qbs=defaultdict(lambda:[0.,0.])
         for r in prior:
             if r.get('position')=='QB' and name(r['player_display_name']) in current:
-                a=qbs[name(r['player_display_name'])];a[0]+=r.get('attempts') or 0;a[1]+=r.get('passing_yards') or 0
+                attempts,yards=r.get('attempts'),r.get('passing_yards')
+                if not isinstance(attempts,(int,float))or not isinstance(yards,(int,float))or not math.isfinite(attempts+yards)or attempts<0:continue
+                a=qbs[name(r['player_display_name'])];a[0]+=attempts;a[1]+=yards
         if qbs:
             primary=max(qbs,key=lambda p:qbs[p][0])
             backups=[v for key,v in qbs.items() if key!=primary and not unavailable(key) and v[0]>=30]
@@ -96,3 +102,4 @@ def nfl_situation(team, opponent, cutoff, schedule, team_rows):
         weighted=sum(p*m for p,m in zip(probabilities,means))
         factors.append(max(.9,min(1.1,weighted/overall)) if overall>0 else 1.)
     return dict(passing_factor=factors[0],rushing_factor=factors[1],probabilities={'Win by 8+':probabilities[0],'Within 7':probabilities[1],'Lose by 8+':probabilities[2]},expected_margin=expected,prior_games=len(total),method='Prior-margin empirical scenarios; not live score-state probabilities')
+
