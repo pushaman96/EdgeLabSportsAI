@@ -63,17 +63,25 @@ def explanation(record):
         calculation+=f' Supporting receiving calculation: {display(target.get("team_attempts"))} team attempts × {display(number(target.get("target_share"))*100 if number(target.get("target_share")) is not None else None,"% target share")} = {display(target.get("targets"))} targets; × {display(number(target.get("catch_rate"))*100 if number(target.get("catch_rate")) is not None else None,"% catch rate")} = {display(target.get("receptions"))} receptions.'
         calculation+=' This supporting calculation does not replace the selected receiving model.'
     if context.get('Probability method'):uncertainty+=' Probability method: '+str(context['Probability method'])+'.'
+    if context.get('Minutes risk'):
+        uncertainty+=' Minutes evidence: '+str(context['Minutes risk'])+'. '+str(context.get('Minutes sensitivity',''))+'.'
+        uncertainty+=' Observed minutes sample: '+display(context.get('Minutes sample games'))+' games; '+str(context.get('Minutes sample basis','basis not saved'))+'.'
     adjustments=[]
     for field,label in (('Injury adjustment %','Confirmed-absence adjustment'),('Situation adjustment %','Game-situation workload adjustment')):
         value=number(context.get(field))
         if value is not None:adjustments.append(f'{label}: {value:+.2f}%')
     if record.get('online_status'):adjustments.append(str(record['online_status']))
+    if context.get('Absence scenario status'):
+        adjustments.append('Absence scenario: '+display(context.get('Absence scenario minutes'))+' minutes, '+display(context.get('Absence scenario projection'))+' '+units+'. '+str(context['Absence scenario status']))
     adjustment='; '.join(adjustments) or 'Numerical adjustment details were not saved.'
     validation=context.get('Validation details')
     validation_text='Validation details were not saved with this record; a displayed probability is not independently verified accuracy.'
     if isinstance(validation,dict):
         validation_text=f'Historical stat error: {display(validation.get("mae"))}; recent-average error: {display(validation.get("baseline_mae"))}; benchmark Brier: {display(validation.get("benchmark_brier"))}. '+str(validation.get('scope',''))+'.'
         validation_text+=' Recommendation gate '+('passed.' if validation.get('passed') else 'did not pass; this remains a research forecast.')
+        coverage=number(validation.get('empirical_band_validation_coverage'))
+        if coverage is not None:validation_text+=f' Measured later-game empirical range coverage: {coverage:.1%}; this is not guaranteed future coverage.'
+        if validation.get('validation_games') is not None:validation_text+=' Later validation sample: '+display(validation['validation_games'])+' distinct games.'
     risks='Game flow, unexpected player usage, efficiency changes and availability can change the outcome. Injury status checks do not quantify the effects of every absence. Weather and teammate-injury effects are not fully quantified. These are the inputs saved when the pick was made, not a fresh news or lineup check.'
     if context.get('Game-script risk'):risks=str(context['Game-script risk'])+' '+risks
     if record.get('strategy')=='Manual':risks='This is a manual selection, not a researched model recommendation. '+risks
@@ -101,7 +109,7 @@ def render_saved_explanations(records,sport):
 
 def from_row(row):
     """Explain a current analysis row without requiring an API or saving it."""
-    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %')
+    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status')
     context={key:row[key] for key in fields if key in row}
     return explanation(dict(player=row.get('Player'),category=row.get('Category'),direction=row.get('Selection'),line=row.get('Line'),odds=row.get('Odds'),probability=number(row.get('Estimated win %'))/100 if number(row.get('Estimated win %')) is not None else None,projected_yards=row.get('Projection (yards)'),projected_count=row.get('Projection (count)'),expected_opportunities=row.get('Expected opportunities'),reason=row.get('Reason'),forecast_context=context,online_status=row.get('Online learning status')))
 
@@ -115,3 +123,4 @@ def render_current_explanations(rows,prefix):
         for label,key in [('Forecast','forecast'),('Calculation','calculation'),('Forecast gap','comparison'),('Uncertainty','uncertainty'),('Adjustments','adjustments'),('Validation','validation'),('Probability and price','price'),('Take/Pass reason','reason'),('Risks','risks')]:
             st.write('**'+label+'**');st.write(e[key])
         st.caption('Explains the current saved analysis. No paid AI API call or fresh odds request is made. Reanalyze if prices or availability changed.')
+

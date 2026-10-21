@@ -12,7 +12,9 @@ def season_year(row):
 def season_projection(history,field,target_year,team,cutoff):
     before=[r for r in history if r['date']<str(cutoff)]
     prior=[r for r in before if season_year(r)==target_year-1]
-    current=[r for r in before if season_year(r)==target_year and r['team']==team]
+    season=[r for r in before if season_year(r)==target_year]
+    last_other=max((r['date'] for r in season if r['team']!=team),default='')
+    current=[r for r in season if r['team']==team and r['date']>last_other]
     prior.sort(key=lambda r:(r['date'],r['game']));current.sort(key=lambda r:(r['date'],r['game']))
     if len(prior)<8:return None
     # Season-long efficiency is less sensitive to a short hot/cold stretch.
@@ -24,7 +26,7 @@ def season_projection(history,field,target_year,team,cutoff):
     current_rate=sum(r[field] for r in recent)/sum(r['minutes'] for r in recent) if recent else prior_rate
     minutes=max(1.,min(40.,(1-weight)*prior_minutes+weight*current_minutes))
     rate=(1-weight)*prior_rate+weight*current_rate
-    changed=prior[-1]['team']!=team
+    changed=prior[-1]['team']!=team or bool(last_other)
     baseline=statistics.mean(r[field] for r in prior) if len(current)<8 else statistics.mean(r[field] for r in current[-8:])
     return dict(projected=minutes*rate,minutes=minutes,baseline=baseline,prior_games=len(prior),current_games=len(current),current_weight=weight,role_uncertain=changed and len(current)<3,team_changed=changed,uncertainty=math.sqrt(1+.5*(1-weight)+(.5 if changed and len(current)<3 else 0)),history_through=max(r['date'] for r in prior+current),cohort='Early season (0–7 appearances)' if len(current)<8 else 'Established season')
 
@@ -63,3 +65,4 @@ def fetch_espn_logs(year,athlete_id,player_name):
     url=f'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/{athlete_id}/gamelog?season={year}&seasontype=2'
     with urlopen(url,timeout=15) as response:data=json.load(response)
     return normalize_espn_logs(data,year,athlete_id,player_name)
+

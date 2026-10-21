@@ -72,6 +72,9 @@ def build_reviews(records,usage=None,feedback=None):
         if any(r['category']=='Moneyline' for r in rows):observations.append('Moneylines use historical team ratings. Injury effects, replacements and offensive-line changes are not numerically modeled; review availability warnings separately.')
         observations.append('Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion.')
         reports[sport+':'+day]={'sport':sport,'date':day,'stage':('All games final — unresolved picks need review' if result['pending'] else 'Completed slate review') if all_final else 'Partial slate — games remain unfinished or unavailable','all_games_final':all_final,'metrics':result,'categories':categories,'calibration':calibration,'game_flow_context':flow_rows,'reconciled_team_games':len(covered),'observations':observations,'active_corrections':feedback.get('active_corrections',0),'learning_status':'Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.'}
+        if sport=='NBA':
+            from nba_forecast_quality import settled_quality
+            reports[sport+':'+day]['nba_forecast_quality']=settled_quality(rows)
     return {'schema':1,'reports':reports}
 
 def write_reviews(records,path=PATH,usage_path='game_usage_history.json',feedback_path='pick_learning_state.json'):
@@ -98,6 +101,10 @@ def render_review(sport,records):
         st.caption('Original pregame regular-season records only. Cushions, manual picks and retrospective imports are excluded. Same-game/player picks are correlated.')
         st.dataframe(report['categories'],hide_index=True,use_container_width=True)
         if report['calibration']:st.dataframe(report['calibration'],hide_index=True,use_container_width=True)
+        if report.get('nba_forecast_quality'):
+            st.write('**NBA minutes, forecast error and range coverage**')
+            st.dataframe(report['nba_forecast_quality'],hide_index=True,use_container_width=True)
+            st.caption('Earliest eligible original forecast per player/game/category; games weighted equally. Missing final stats are excluded from comparisons. Range coverage is measured, not guaranteed. These diagnostics do not automatically change predictions.')
         for note in report['observations']:st.write(note)
         if report.get('game_flow_context'):
             st.write('**Game-flow context from reconciled play feeds**')
@@ -108,3 +115,4 @@ def render_review(sport,records):
         if reviewed:st.dataframe(reviewed,hide_index=True,use_container_width=True)
         st.caption(report['learning_status'])
         st.caption('Review updated UTC: '+saved.get('updated_utc','Unknown'))
+
