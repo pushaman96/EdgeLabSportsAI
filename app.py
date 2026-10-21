@@ -161,12 +161,26 @@ def show_games(data, sport_path):
                 visible = not visible
                 st.session_state[leader_key] = visible
             if visible:
-                leaders = game_leader_rows(competition)
-                if leaders:
-                    render_team_table(leaders, hide_index=True, use_container_width=True, sport=sport)
-                    st.caption("ESPN game leaders for this game. Use Refresh scores and live stats below to update.")
+                if event.get('status', {}).get('type', {}).get('state') == 'pre':
+                    st.info("Game leaders will appear after play starts; pregame season leaders are not game stats.")
                 else:
-                    st.info("ESPN has not reported game leaders yet. Check again after play starts.")
+                    leaders = game_leader_rows(competition)
+                    fetched = None
+                    failed = False
+                    if not leaders:
+                        try:
+                            result = get_game_boxscore(sport_path, str(event['id']))
+                            leaders = game_leader_rows(competition, result['data'])
+                            fetched = result['retrieved']
+                        except (requests.exceptions.RequestException, ValueError, TypeError, KeyError):
+                            failed = True
+                    if leaders:
+                        render_team_table(leaders, hide_index=True, use_container_width=True, sport=sport)
+                        st.caption("ESPN game leaders" + (" • fetched at " + fetched if fetched else "") + ". Use Refresh scores and live stats below to update.")
+                    elif failed:
+                        st.warning("ESPN game leaders are temporarily unavailable. Try refreshing scores and live stats.")
+                    else:
+                        st.info("ESPN has not reported game leaders for this game yet.")
             defense_key = leader_key + "_defense"
             defense_visible = st.session_state.get(defense_key, False)
             if st.button("Hide defensive stats" if defense_visible else "Defensive stats", key=defense_key + "_button"):
@@ -237,20 +251,42 @@ def defensive_game_rows(box, sport_path):
     return list(rows.values())
 
 
-def game_leader_rows(competition):
+def game_leader_rows(competition, summary=None):
+    """Accept ESPN's game-level and per-team leader containers.
+
+    Summary leaders provide the fallback when the scoreboard omits them.
+    No absent value is converted to zero or a season average.
+    """
+    summary = summary or {}
     teams = {str(c.get('team', {}).get('id')): c.get('team', {}).get('displayName', '—')
              for c in competition.get('competitors', [])}
     rows = []
-    for category in competition.get('leaders', []):
-        for leader in category.get('leaders', []):
-            athlete = leader.get('athlete', {})
-            team_id = leader.get('team', {}).get('id') or athlete.get('team', {}).get('id')
-            rows.append({
-                'Category': category.get('displayName') or category.get('name', 'Leader'),
-                'Player': athlete.get('displayName') or athlete.get('fullName', 'Unknown'),
-                'Team': teams.get(str(team_id), '—'),
-                'Game stats': leader.get('displayValue', '—'),
-            })
+    seen = set()
+
+    def collect(categories, owner=None):
+        owner = owner or {}
+        for category in categories:
+            for leader in category.get('leaders', []):
+                athlete = leader.get('athlete') or {}
+                name = athlete.get('displayName') or athlete.get('fullName')
+                value = leader.get('displayValue')
+                if not name or value is None or str(value).strip() in ('', '—', '--'):
+                    continue
+                team_id = (leader.get('team') or {}).get('id') or (athlete.get('team') or {}).get('id') or owner.get('id')
+                team = teams.get(str(team_id)) or owner.get('displayName') or '—'
+                label = category.get('displayName') or category.get('name', 'Leader')
+                key = (category.get('name') or label, str(athlete.get('id') or name), team)
+                if key in seen:
+                    continue
+                seen.add(key)
+                rows.append({'Category': label, 'Player': name, 'Team': team, 'Game stats': str(value)})
+
+    collect(competition.get('leaders', []))
+    for competitor in competition.get('competitors', []):
+        collect(competitor.get('leaders', []), competitor.get('team'))
+    if not rows:
+        for group in summary.get('leaders', []):
+            collect(group.get('leaders', []), group.get('team'))
     return rows
 
 
