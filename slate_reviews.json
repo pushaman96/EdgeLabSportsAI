@@ -100,6 +100,106 @@
       "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.",
       "nba_forecast_quality": []
     },
+    "NBA:2026-10-21": {
+      "sport": "NBA",
+      "date": "2026-10-21",
+      "stage": "Partial slate \u2014 games remain unfinished or unavailable",
+      "all_games_final": false,
+      "metrics": {
+        "picks": 29,
+        "settled": 0,
+        "wins": 0,
+        "losses": 0,
+        "pending": 29,
+        "pushes": 0,
+        "distinct_games": 1,
+        "accuracy": null,
+        "brier": null,
+        "mean_estimated_probability": null,
+        "profit_per_1_each": null
+      },
+      "categories": [
+        {
+          "category": "Assists",
+          "picks": 5,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 5,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "PRA",
+          "picks": 2,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 2,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Points",
+          "picks": 11,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 11,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Rebounds",
+          "picks": 4,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 4,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Three-pointers made",
+          "picks": 7,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 7,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        }
+      ],
+      "calibration": [],
+      "game_flow_context": [],
+      "reconciled_team_games": 0,
+      "observations": [
+        "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
+      ],
+      "active_corrections": 0,
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.",
+      "nba_forecast_quality": []
+    },
     "NFL:2026-10-15": {
       "sport": "NFL",
       "date": "2026-10-15",
@@ -384,5 +484,5 @@
       "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
     }
   },
-  "updated_utc": "2026-10-21T04:49:57.492760+00:00"
+  "updated_utc": "2026-10-21T22:44:19.581113+00:00"
 }

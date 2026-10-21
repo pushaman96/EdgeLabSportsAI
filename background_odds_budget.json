@@ -28,7 +28,11 @@
             "home_team": "Orlando Magic",
             "away_team": "Atlanta Hawks"
           },
-          "status": "Reserved before HTTP request"
+          "status": "Prices loaded",
+          "actual_cost": "6",
+          "remaining": "441",
+          "saved_analysis": 1026,
+          "saved_originals": 29
         }
       ],
       "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
