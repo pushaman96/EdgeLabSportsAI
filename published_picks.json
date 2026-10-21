@@ -1785,6 +1785,1878 @@
       "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
       "count_miss": 4.199999999999999,
       "opportunity_miss": 4.210000000000001
+    },
+    {
+      "id": "235f6fb7ad2e1ce2c856",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Victor Wembanyama",
+      "category": "Assists",
+      "direction": "Under",
+      "line": 3.5,
+      "odds": 124.0,
+      "probability": 0.612,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.932445+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 28.55,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 2.99,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.611764705882353,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 2.9850746268656714,
+      "base_expected_opportunities": 28.55223880597015,
+      "base_probability": 0.611764705882353,
+      "online_input_probability": 0.611764705882353,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 28.55,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 67,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 28.51,
+        "Workload candidate projection": 2.98,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 2.72
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 28.55,
+            "Stat projection if efficiency stays unchanged": 2.99
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 31.0,
+            "Stat projection if efficiency stays unchanged": 3.24
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 192,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 50,
+              "Average minutes": 29.36
+            },
+            "At most 1 calendar day": {
+              "Games": 14,
+              "Average minutes": 27.43
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 28.55223880597015,
+        "Workload candidate baseline projection": 2.9850746268656714
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-11"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "e4e448e4f3b0e4473d54",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Jalen Williams",
+      "category": "Assists",
+      "direction": "Over",
+      "line": 4.5,
+      "odds": 110.0,
+      "probability": 0.529,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.932704+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 28.39,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 5.48,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.5294117647058824,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 5.484848484848484,
+      "base_expected_opportunities": 28.393939393939394,
+      "base_probability": 0.5294117647058824,
+      "online_input_probability": 0.5294117647058824,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 28.39,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 33,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 28.15,
+        "Workload candidate projection": 5.44,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 20.0,
+            "Stat projection if efficiency stays unchanged": 3.86
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 28.39,
+            "Stat projection if efficiency stays unchanged": 5.48
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 29.0,
+            "Stat projection if efficiency stays unchanged": 5.6
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "At most 1 calendar day": {
+              "Games": 6,
+              "Average minutes": 30.67
+            },
+            "2\u20137 calendar days": {
+              "Games": 24,
+              "Average minutes": 28.33
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 28.393939393939394,
+        "Workload candidate baseline projection": 5.484848484848484
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "d0a8fd9698cfcffb3732",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Cason Wallace",
+      "category": "Assists",
+      "direction": "Under",
+      "line": 2.5,
+      "odds": 100.0,
+      "probability": 0.5589999999999999,
+      "sportsbook": "FanDuel",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.932868+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 26.6,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 2.6,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.5588235294117647,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 2.5974025974025974,
+      "base_expected_opportunities": 26.5974025974026,
+      "base_probability": 0.5588235294117647,
+      "online_input_probability": 0.5588235294117647,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 26.6,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 77,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 25.65,
+        "Workload candidate projection": 2.5,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 2.05
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 26.6,
+            "Stat projection if efficiency stays unchanged": 2.6
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 24.0,
+            "Stat projection if efficiency stays unchanged": 2.34
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 56,
+              "Average minutes": 26.46
+            },
+            "At most 1 calendar day": {
+              "Games": 19,
+              "Average minutes": 26.0
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 26.5974025974026,
+        "Workload candidate baseline projection": 2.5974025974025974
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:31Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "184623fa13f0db613398",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "De'Aaron Fox",
+      "category": "Assists",
+      "direction": "Over",
+      "line": 4.5,
+      "odds": -125.0,
+      "probability": 0.606,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.932976+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 29.97,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 6.01,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6058823529411764,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 6.0131578947368425,
+      "base_expected_opportunities": 29.973684210526315,
+      "base_probability": 0.6058823529411764,
+      "online_input_probability": 0.6058823529411764,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 29.97,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 76,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 30.63,
+        "Workload candidate projection": 6.14,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 25.0,
+            "Stat projection if efficiency stays unchanged": 5.02
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 29.97,
+            "Stat projection if efficiency stays unchanged": 6.01
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 33.0,
+            "Stat projection if efficiency stays unchanged": 6.62
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 55,
+              "Average minutes": 30.58
+            },
+            "At most 1 calendar day": {
+              "Games": 19,
+              "Average minutes": 29.53
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 29.973684210526315,
+        "Workload candidate baseline projection": 6.0131578947368425
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "40757ecb4cc138993cd8",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Isaiah Hartenstein",
+      "category": "Assists",
+      "direction": "Over",
+      "line": 2.5,
+      "odds": 124.0,
+      "probability": 0.5760000000000001,
+      "sportsbook": "FanDuel",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933069+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 24.3,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 3.53,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.5764705882352941,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 3.531914893617021,
+      "base_expected_opportunities": 24.29787234042553,
+      "base_probability": 0.5764705882352941,
+      "online_input_probability": 0.5764705882352941,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 24.3,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 47,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 22.87,
+        "Workload candidate projection": 3.32,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 17.0,
+            "Stat projection if efficiency stays unchanged": 2.47
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 24.3,
+            "Stat projection if efficiency stays unchanged": 3.53
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 22.0,
+            "Stat projection if efficiency stays unchanged": 3.2
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 34,
+              "Average minutes": 24.0
+            },
+            "At most 1 calendar day": {
+              "Games": 8,
+              "Average minutes": 25.75
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 24.29787234042553,
+        "Workload candidate baseline projection": 3.531914893617021
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:31Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "e7b5146fb76a50c6ca0c",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Dylan Harper",
+      "category": "Assists",
+      "direction": "Under",
+      "line": 3.5,
+      "odds": 125.0,
+      "probability": 0.547,
+      "sportsbook": "BetOnline.ag",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933153+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 22.67,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 3.8,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.5470588235294118,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 3.8,
+      "base_expected_opportunities": 22.67142857142857,
+      "base_probability": 0.5470588235294118,
+      "online_input_probability": 0.5470588235294118,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 22.67,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 70,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 3.9,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 3.52
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 22.67,
+            "Stat projection if efficiency stays unchanged": 3.8
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 4.36
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 52,
+              "Average minutes": 22.73
+            },
+            "At most 1 calendar day": {
+              "Games": 15,
+              "Average minutes": 22.6
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 22.67142857142857,
+        "Workload candidate baseline projection": 3.8
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:52:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "b51ff6f368154a9e4b8c",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Cason Wallace",
+      "category": "Points",
+      "direction": "Under",
+      "line": 9.5,
+      "odds": -130.0,
+      "probability": 0.624,
+      "sportsbook": "BetOnline.ag",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933230+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 26.6,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 8.57,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6235294117647059,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 8.571428571428571,
+      "base_expected_opportunities": 26.5974025974026,
+      "base_probability": 0.6235294117647059,
+      "online_input_probability": 0.6235294117647059,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 26.6,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 77,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 25.65,
+        "Workload candidate projection": 8.27,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 6.77
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 26.6,
+            "Stat projection if efficiency stays unchanged": 8.57
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 24.0,
+            "Stat projection if efficiency stays unchanged": 7.73
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 56,
+              "Average minutes": 26.46
+            },
+            "At most 1 calendar day": {
+              "Games": 19,
+              "Average minutes": 26.0
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 26.5974025974026,
+        "Workload candidate baseline projection": 8.571428571428571
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:52:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "bc33f977146b22b23408",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Alex Caruso",
+      "category": "Points",
+      "direction": "Under",
+      "line": 6.5,
+      "odds": 100.0,
+      "probability": 0.6,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933305+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 18.25,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 6.21,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 6.2142857142857135,
+      "base_expected_opportunities": 18.25,
+      "base_probability": 0.6,
+      "online_input_probability": 0.6,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 18.25,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 56,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 17.74,
+        "Workload candidate projection": 6.04,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 13.0,
+            "Stat projection if efficiency stays unchanged": 4.43
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 18.25,
+            "Stat projection if efficiency stays unchanged": 6.21
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 7.15
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 40,
+              "Average minutes": 18.65
+            },
+            "At most 1 calendar day": {
+              "Games": 10,
+              "Average minutes": 15.6
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 18.25,
+        "Workload candidate baseline projection": 6.2142857142857135
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "b8ab952b952d2048deb0",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Jared McCain",
+      "category": "Points",
+      "direction": "Under",
+      "line": 9.5,
+      "odds": -105.0,
+      "probability": 0.6409999999999999,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933379+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 17.36,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 8.33,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6411764705882352,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 8.328358208955224,
+      "base_expected_opportunities": 17.35820895522388,
+      "base_probability": 0.6411764705882352,
+      "online_input_probability": 0.6411764705882352,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 17.36,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 67,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 17.27,
+        "Workload candidate projection": 8.29,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 12.0,
+            "Stat projection if efficiency stays unchanged": 5.76
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 17.36,
+            "Stat projection if efficiency stays unchanged": 8.33
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 25.0,
+            "Stat projection if efficiency stays unchanged": 11.99
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 49,
+              "Average minutes": 16.76
+            },
+            "At most 1 calendar day": {
+              "Games": 16,
+              "Average minutes": 19.0
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 17.35820895522388,
+        "Workload candidate baseline projection": 8.328358208955224
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "4236da3847fa2fbc6b1e",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Jalen Williams",
+      "category": "Points",
+      "direction": "Under",
+      "line": 18.5,
+      "odds": -105.0,
+      "probability": 0.624,
+      "sportsbook": "BetMGM",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933452+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 28.39,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 17.06,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6235294117647059,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 17.060606060606062,
+      "base_expected_opportunities": 28.393939393939394,
+      "base_probability": 0.6235294117647059,
+      "online_input_probability": 0.6235294117647059,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 28.39,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 33,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 28.15,
+        "Workload candidate projection": 16.91,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 20.0,
+            "Stat projection if efficiency stays unchanged": 12.02
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 28.39,
+            "Stat projection if efficiency stays unchanged": 17.06
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 29.0,
+            "Stat projection if efficiency stays unchanged": 17.42
+          }
+        ],
+        "Confirmed unavailable teammates": "Nikola Topic, Otega Oweh, Thomas Sorber",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 194,
+          "Historical minutes by appearance-gap bucket": {
+            "At most 1 calendar day": {
+              "Games": 6,
+              "Average minutes": 30.67
+            },
+            "2\u20137 calendar days": {
+              "Games": 24,
+              "Average minutes": 28.33
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 28.393939393939394,
+        "Workload candidate baseline projection": 17.060606060606062
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:51:49Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-09"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "e47f2d1009d372ca3c46",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Victor Wembanyama",
+      "category": "Points",
+      "direction": "Under",
+      "line": 25.5,
+      "odds": -116.0,
+      "probability": 0.606,
+      "sportsbook": "BetOnline.ag",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933538+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 28.55,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 24.64,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6058823529411764,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 24.64179104477612,
+      "base_expected_opportunities": 28.55223880597015,
+      "base_probability": 0.6058823529411764,
+      "online_input_probability": 0.6058823529411764,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 28.55,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 67,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 28.51,
+        "Workload candidate projection": 24.61,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 22.44
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 28.55,
+            "Stat projection if efficiency stays unchanged": 24.64
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 31.0,
+            "Stat projection if efficiency stays unchanged": 26.75
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 192,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 50,
+              "Average minutes": 29.36
+            },
+            "At most 1 calendar day": {
+              "Games": 14,
+              "Average minutes": 27.43
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 28.55223880597015,
+        "Workload candidate baseline projection": 24.64179104477612
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:52:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-11"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "9c57f24ce6996dc285f7",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "De'Aaron Fox",
+      "category": "Points",
+      "direction": "Over",
+      "line": 14.5,
+      "odds": -102.0,
+      "probability": 0.5760000000000001,
+      "sportsbook": "FanDuel",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933610+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 29.97,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 17.88,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.5764705882352941,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 17.88157894736842,
+      "base_expected_opportunities": 29.973684210526315,
+      "base_probability": 0.5764705882352941,
+      "online_input_probability": 0.5764705882352941,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 29.97,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 76,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 30.63,
+        "Workload candidate projection": 18.27,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 25.0,
+            "Stat projection if efficiency stays unchanged": 14.91
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 29.97,
+            "Stat projection if efficiency stays unchanged": 17.88
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 33.0,
+            "Stat projection if efficiency stays unchanged": 19.69
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 55,
+              "Average minutes": 30.58
+            },
+            "At most 1 calendar day": {
+              "Games": 19,
+              "Average minutes": 29.53
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 29.973684210526315,
+        "Workload candidate baseline projection": 17.88157894736842
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:31Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "d09779b90c7aebfadf30",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Keldon Johnson",
+      "category": "Points",
+      "direction": "Over",
+      "line": 8.5,
+      "odds": -103.0,
+      "probability": 0.6409999999999999,
+      "sportsbook": "BetRivers",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933692+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 23.2,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 13.06,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6411764705882353,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 13.060240963855422,
+      "base_expected_opportunities": 23.204819277108435,
+      "base_probability": 0.6411764705882353,
+      "online_input_probability": 0.6411764705882353,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 23.2,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 83,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 13.09,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 22.0,
+            "Stat projection if efficiency stays unchanged": 12.38
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 23.2,
+            "Stat projection if efficiency stays unchanged": 13.06
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 14.63
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 61,
+              "Average minutes": 23.54
+            },
+            "At most 1 calendar day": {
+              "Games": 20,
+              "Average minutes": 22.25
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 23.204819277108435,
+        "Workload candidate baseline projection": 13.060240963855422
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:51:32Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "5c64984281875aadc218",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Dylan Harper",
+      "category": "Points",
+      "direction": "Under",
+      "line": 15.5,
+      "odds": -106.0,
+      "probability": 0.747,
+      "sportsbook": "FanDuel",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933774+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 22.67,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 11.91,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.7470588235294118,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 11.914285714285715,
+      "base_expected_opportunities": 22.67142857142857,
+      "base_probability": 0.7470588235294118,
+      "online_input_probability": 0.7470588235294118,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 22.67,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 70,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 12.22,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 11.04
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 22.67,
+            "Stat projection if efficiency stays unchanged": 11.91
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 13.66
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 52,
+              "Average minutes": 22.73
+            },
+            "At most 1 calendar day": {
+              "Games": 15,
+              "Average minutes": 22.6
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 22.67142857142857,
+        "Workload candidate baseline projection": 11.914285714285715
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:31Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "7fa0068eeb74b244b536",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Devin Vassell",
+      "category": "Points",
+      "direction": "Under",
+      "line": 14.5,
+      "odds": -115.0,
+      "probability": 0.606,
+      "sportsbook": "DraftKings",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933881+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 30.56,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 13.88,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6058823529411764,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 13.882352941176471,
+      "base_expected_opportunities": 30.558823529411764,
+      "base_probability": 0.6058823529411764,
+      "online_input_probability": 0.6058823529411764,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 30.56,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 68,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 30.92,
+        "Workload candidate projection": 14.05,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 5.060964363661414,
+          "incumbent_stat_mae": 4.998757118843418,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 11.81
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 30.56,
+            "Stat projection if efficiency stays unchanged": 13.88
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 31.0,
+            "Stat projection if efficiency stays unchanged": 14.08
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 51,
+              "Average minutes": 30.41
+            },
+            "At most 1 calendar day": {
+              "Games": 14,
+              "Average minutes": 32.0
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 30.558823529411764,
+        "Workload candidate baseline projection": 13.882352941176471
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "b8d62cb9ce7bc0a0f887",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Keldon Johnson",
+      "category": "Rebounds",
+      "direction": "Over",
+      "line": 3.5,
+      "odds": -114.0,
+      "probability": 0.659,
+      "sportsbook": "FanDuel",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.933959+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 23.2,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 5.35,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6588235294117646,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 5.349397590361446,
+      "base_expected_opportunities": 23.204819277108435,
+      "base_probability": 0.6588235294117646,
+      "online_input_probability": 0.6588235294117646,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 23.2,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 83,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 5.36,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.861218543111175,
+          "incumbent_stat_mae": 1.8424483873940916,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 22.0,
+            "Stat projection if efficiency stays unchanged": 5.07
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 23.2,
+            "Stat projection if efficiency stays unchanged": 5.35
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 5.99
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 61,
+              "Average minutes": 23.54
+            },
+            "At most 1 calendar day": {
+              "Games": 20,
+              "Average minutes": 22.25
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 23.204819277108435,
+        "Workload candidate baseline projection": 5.349397590361446
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:53:31Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "0456e63c2af9f323671c",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Dylan Harper",
+      "category": "Rebounds",
+      "direction": "Under",
+      "line": 4.5,
+      "odds": 115.0,
+      "probability": 0.6,
+      "sportsbook": "BetOnline.ag",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.934034+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 22.67,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 3.44,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.6,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 3.4428571428571426,
+      "base_expected_opportunities": 22.67142857142857,
+      "base_probability": 0.6,
+      "online_input_probability": 0.6,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 22.67,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 70,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 3.53,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.861218543111175,
+          "incumbent_stat_mae": 1.8424483873940916,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 21.0,
+            "Stat projection if efficiency stays unchanged": 3.19
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 22.67,
+            "Stat projection if efficiency stays unchanged": 3.44
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 3.95
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 52,
+              "Average minutes": 22.73
+            },
+            "At most 1 calendar day": {
+              "Games": 15,
+              "Average minutes": 22.6
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 22.67142857142857,
+        "Workload candidate baseline projection": 3.4428571428571426
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:52:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "110ba10d4a5344ee2692",
+      "sport": "NBA",
+      "event_id": "401909090",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "player": "Keldon Johnson",
+      "category": "Assists",
+      "direction": "Over",
+      "line": 1.5,
+      "odds": 171.0,
+      "probability": 0.429,
+      "sportsbook": "BetOnline.ag",
+      "model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "strategy": "Original",
+      "published_utc": "2026-10-21T01:54:44.934103+00:00",
+      "starts_utc": "2026-10-21T01:55:00Z",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 23.2,
+      "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage validation passed. Confirmed absences receive capped minutes adjustment. Later-game stat baseline passed; probability and actual-price profitability remain unverified.",
+      "projected_count": 1.34,
+      "base_model": "NBA season-prior minutes-rate v3 / complete-season validation",
+      "raw_probability": 0.4294117647058823,
+      "feedback_version": null,
+      "feedback_status": "Collecting prospective evidence",
+      "base_projection": 1.3373493975903614,
+      "base_expected_opportunities": 23.204819277108435,
+      "base_probability": 0.4294117647058823,
+      "online_input_probability": 0.4294117647058823,
+      "forecast_context": {
+        "Opportunity type": "Minutes",
+        "Injury adjustment %": 0.0,
+        "Injury adjustment reason": "Half of confirmed absent teammates\u2019 observed minutes redistributed by active minute share, capped at 10%; experimental",
+        "Minutes forecast": 23.2,
+        "Availability checked UTC": "2026-10-21T01:54:28.221521+00:00",
+        "History source": "ESPN regular-season game logs (NBA.com unavailable)",
+        "Season stage": "Early season (0\u20137 appearances)",
+        "Last-season games": 83,
+        "Current-season appearances": 0,
+        "Current-season weight %": 0.0,
+        "Role uncertainty": "Historical minutes assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.225,
+        "Workload candidate opportunities": 23.25,
+        "Workload candidate projection": 1.34,
+        "Workload candidate status": "Research only \u2014 did not beat all workload and stat benchmarks",
+        "Workload candidate benchmark": {
+          "weight": 0.25,
+          "training_examples": 116,
+          "validation_games": 74,
+          "candidate_workload_mae": 5.347037666549774,
+          "incumbent_workload_mae": 5.37752049800619,
+          "simple_workload_mae": 5.323645183850791,
+          "candidate_stat_mae": 1.6198987603498025,
+          "incumbent_stat_mae": 1.6367745112020122,
+          "passed": false,
+          "status": "Research only \u2014 did not beat all workload and stat benchmarks"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 22.0,
+            "Stat projection if efficiency stays unchanged": 1.27
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 23.2,
+            "Stat projection if efficiency stays unchanged": 1.34
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 26.0,
+            "Stat projection if efficiency stays unchanged": 1.5
+          }
+        ],
+        "Confirmed unavailable teammates": "Jayden Quaintance, Tobias Harris",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Schedule and rest context": {
+          "Days since last observed appearance": 190,
+          "Historical minutes by appearance-gap bucket": {
+            "2\u20137 calendar days": {
+              "Games": 61,
+              "Average minutes": 23.54
+            },
+            "At most 1 calendar day": {
+              "Games": 20,
+              "Average minutes": 22.25
+            }
+          },
+          "Limitation": "Appearance gap is a rest proxy, not a verified team back-to-back or travel schedule. No automatic rest penalty is applied."
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 23.204819277108435,
+        "Workload candidate baseline projection": 1.3373493975903614
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-21T01:52:23Z",
+        "Statistics retrieved UTC": "2026-10-21T01:54:28.220646+00:00",
+        "Player history through": "2026-04-13"
+      },
+      "season_type": "Regular season"
     }
   ]
 }
