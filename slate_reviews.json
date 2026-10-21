@@ -70,7 +70,8 @@
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
       "active_corrections": 0,
-      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.",
+      "nba_forecast_quality": []
     },
     "NFL:2026-10-15": {
       "sport": "NFL",
@@ -356,5 +357,5 @@
       "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic."
     }
   },
-  "updated_utc": "2026-10-21T02:06:56.037902+00:00"
+  "updated_utc": "2026-10-21T03:14:31.522343+00:00"
 }
