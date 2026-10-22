@@ -352,7 +352,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         filtered=[dict(event,bookmakers=[b for b in event.get('bookmakers',[]) if b['title'] in selected_books]) for event in events]
         with st.expander('View sportsbook game prices'):
             render_team_table(bookmaker_rows(filtered),hide_index=True,use_container_width=True, sport=sport)
-        render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_date,selected_books,quick_load)
+        # Load and analyze props before the independent moneyline history work.
         if sport=='NBA':
             with st.expander('Optional manual NBA paper selections'):
                 render_nba_paper_quotes(filtered,selected_books,'nba_moneyline_paper')
@@ -463,6 +463,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                     with st.expander('View all sportsbook prices — not recommendations'):
                         st.caption('Both sides are shown here as available bets, not picks. The analyzed shortlist is above.')
                         render_team_table(props,hide_index=True,use_container_width=True, sport=sport)
+        render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_date,selected_books,quick_load)
         if sport=='NFL':
             if use_preset:st.session_state['quick_team_sacks_loaded']=True
             if st.session_state.get('quick_team_sacks_loaded'):

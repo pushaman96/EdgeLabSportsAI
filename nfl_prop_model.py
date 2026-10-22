@@ -866,6 +866,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
+        stage='game matching'
+        progress=st.empty()
         try:
             contexts = [event_context(e,scoreboard) for e in events]
             usable = [c for c in contexts if c and c['regular']]
@@ -873,8 +875,11 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 st.info('Pass: no matching upcoming NFL regular-season games.');return
             if len({c['season'] for c in usable}) != 1:
                 st.info('Pass: loaded games must belong to the same NFL season.');return
-            with st.spinner('Testing historical forecasts and checking current player availability...'):
-                research = load_prop_research(usable[0]['season'])
+            stage='historical model preparation'
+            with st.spinner('Preparing forecasts; the first run after restart can take longer...'):
+                progress.info('Step 1/3: loading historical models and validation. No additional odds credits are used.')
+                if not experimental:
+                    research = load_prop_research(usable[0]['season'])
                 if experimental:
                     from nfl_workload_lab import load_experimental_research
                     if participation:
@@ -890,7 +895,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                         from boosted_yardage import load_boosted_pick_research
                         research=load_boosted_pick_research(usable[0]['season'])
                     else:research=load_experimental_research(usable[0]['season'],chronological)
-                injury_context.clear()
+                stage='injury, depth-chart and participation feeds'
+                progress.info('Step 2/3: checking injuries, depth charts, participation and rosters.')
                 injuries = injury_context()
                 team_ids = {c[side]['displayName']:c[side]['id'] for c in usable for side in ('home','away')}
                 research=dict(research)
@@ -911,6 +917,8 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                         try:rosters[team] = task.result()
                         except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
                             issues.append(team+': roster unavailable; affected props stay on Pass.')
+                stage='forecast calculation'
+                progress.info('Step 3/3: calculating forecasts for the loaded prices.')
                 rows = []
                 for loaded in events:
                     filtered = dict(loaded,bookmakers=[b for b in loaded.get('bookmakers',[]) if b['title'] in books])
@@ -920,7 +928,9 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                 rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
                 st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'season_prior_reports':research.get('season_prior_reports',{}),'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):
-            st.warning('Pass: player history, roster, schedule or injury data could not be verified. Try again later.');return
+            progress.empty()
+            st.warning('Analysis stopped during '+stage+'. Loaded sportsbook prices are still available. Retry Analyze loaded player props without buying new odds.');return
+        progress.empty()
     saved = st.session_state.get('nfl_prop_analysis')
     if not saved or saved['key'] != cache_key:
         st.info('Click Analyze loaded player props. Analysis uses free statistics and does not request more sportsbook credits.');return
