@@ -72,6 +72,8 @@ def build_reviews(records,usage=None,feedback=None):
         if any(r['category']=='Moneyline' for r in rows):observations.append('Moneylines use historical team ratings. Injury effects, replacements and offensive-line changes are not numerically modeled; review availability warnings separately.')
         observations.append('Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion.')
         reports[sport+':'+day]={'sport':sport,'date':day,'stage':('All games final — unresolved picks need review' if result['pending'] else 'Completed slate review') if all_final else 'Partial slate — games remain unfinished or unavailable','all_games_final':all_final,'metrics':result,'categories':categories,'calibration':calibration,'game_flow_context':flow_rows,'reconciled_team_games':len(covered),'observations':observations,'active_corrections':feedback.get('active_corrections',0),'learning_status':'Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.'}
+        from pick_error_review import build_diagnostics
+        reports[sport+':'+day]['pick_error_diagnostics']=build_diagnostics(rows)
         if sport=='NBA':
             from nba_forecast_quality import settled_quality
             reports[sport+':'+day]['nba_forecast_quality']=settled_quality(rows)
@@ -113,6 +115,9 @@ def render_review(sport,records):
         matching=[r for r in records if eligible(r) and r.get('sport','NFL')==sport and datetime.fromisoformat(r['starts_utc'].replace('Z','+00:00')).astimezone(PACIFIC).date().isoformat()==report['date']]
         reviewed=diagnostics(matching)
         if reviewed:st.dataframe(reviewed,hide_index=True,use_container_width=True)
+        from pick_error_review import build_diagnostics,render as render_errors
+        render_errors(report.get('pick_error_diagnostics') or build_diagnostics(matching))
         st.caption(report['learning_status'])
         st.caption('Review updated UTC: '+saved.get('updated_utc','Unknown'))
+
 
