@@ -3860,11 +3860,11 @@
       "stage": "Partial slate \u2014 games remain unfinished or unavailable",
       "all_games_final": false,
       "metrics": {
-        "picks": 9,
+        "picks": 11,
         "settled": 0,
         "wins": 0,
         "losses": 0,
-        "pending": 9,
+        "pending": 11,
         "pushes": 0,
         "distinct_games": 1,
         "accuracy": null,
@@ -3875,11 +3875,11 @@
       "categories": [
         {
           "category": "Anytime touchdown",
-          "picks": 3,
+          "picks": 4,
           "settled": 0,
           "wins": 0,
           "losses": 0,
-          "pending": 3,
+          "pending": 4,
           "pushes": 0,
           "distinct_games": 1,
           "accuracy": null,
@@ -3917,6 +3917,20 @@
         },
         {
           "category": "Passing yards",
+          "picks": 1,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 1,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Receiving yards",
           "picks": 1,
           "settled": 0,
           "wins": 0,
@@ -4061,9 +4075,33 @@
           "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
           "Learning version used": null,
           "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "adc2db133026b885b6c0",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Colston Loveland",
+          "Category": "Receiving yards",
+          "Selection": "Under",
+          "Book line": 45.5,
+          "Result": "Pending",
+          "Saved reasoning": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "c7d4b73dda31491440b2",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Drake Maye",
+          "Category": "Anytime touchdown",
+          "Selection": "Over",
+          "Book line": 0.5,
+          "Result": "Pending",
+          "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
         }
       ]
     }
   },
-  "updated_utc": "2026-10-22T13:50:34.275799+00:00"
+  "updated_utc": "2026-10-22T14:37:39.703259+00:00"
 }
