@@ -1,6 +1,6 @@
 """Saved market choices; these do not imply available or validated forecasts."""
 STANDARD_PRESETS={
-    'NFL':['Passing yards','Anytime touchdown scorer','Rushing yards'],
+    'NFL':['Passing yards','Rushing yards','Anytime touchdown scorer','Receiving yards'],
     'NBA':['Points','Assists','Rebounds','PRA — points + rebounds + assists','Three-pointers made'],
 }
 NBA_EXTRA_MARKETS={

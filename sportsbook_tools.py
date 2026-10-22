@@ -321,8 +321,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         quick_nfl=False
         quick_nba=False
         if sport=='NFL':
-            st.caption('Standard NFL slate: moneylines + game totals, passing yards, anytime touchdowns and rushing yards. Fresh budget: up to 3 game-line credits plus 3 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
-            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 3/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
+            st.caption('Standard NFL slate: moneylines + game totals, passing yards, rushing yards, anytime touchdowns and receiving yards. Fresh budget: up to 3 game-line credits plus 4 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
+            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 4/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         if sport=='NBA':

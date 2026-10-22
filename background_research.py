@@ -18,7 +18,7 @@ from urllib.request import urlopen
 from zoneinfo import ZoneInfo
 
 SPORTS={'NFL':('football/nfl','americanfootball_nfl'),'NBA':('basketball/nba','basketball_nba')}
-MARKETS={'NFL':['h2h','totals','player_pass_yds','player_rush_yds','player_anytime_td'],
+MARKETS={'NFL':['h2h','totals','player_pass_yds','player_rush_yds','player_anytime_td','player_reception_yds'],
          'NBA':['h2h','player_points','player_assists','player_rebounds','player_threes','player_points_rebounds_assists']}
 CAP=8
 CACHE=Path('.research_cache')
@@ -148,6 +148,7 @@ def prepare(now=None):
                         for athlete in rosters.get(str(team['id']),[]):
                             if str(athlete.get('status')).lower()!='active':continue
                             categories=[('Points','PTS'),('Assists','AST'),('Rebounds','REB'),('Three-pointers made','FG3M'),('PRA','PRA')]if sport=='NBA'else [('Passing yards','player_pass_yds')]if athlete['position']=='QB'else [('Rushing yards','player_rush_yds')]if athlete['position']in ('RB','HB','FB')else []
+                            if sport=='NFL'and athlete['position']in ('RB','HB','FB','WR','TE'):categories.append(('Receiving yards','player_reception_yds'))
                             if sport=='NFL'and athlete['position']in ('QB','RB','HB','FB','WR','TE'):categories.append(('Anytime touchdown','anytime'))
                             for label,field in categories:
                                 if sport=='NBA':
