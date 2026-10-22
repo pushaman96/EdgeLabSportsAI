@@ -1,3 +1,4 @@
+# Deployment refresh: synchronized final settlements and missing-date handling (2026-10-22).
 from probability_order import highest_probability
 
 import streamlit as st
