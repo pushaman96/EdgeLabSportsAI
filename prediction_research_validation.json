@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_utc": "2026-10-22T22:08:32.396619+00:00",
+  "generated_utc": "2026-10-22T23:18:34.651313+00:00",
   "pacific_date": "2026-10-22",
-  "source_hash": "43731bcbc6d2ec3636ff21be568327b4c16dd476873c2b1971e4e88eb0ba65af",
+  "source_hash": "ffa4bb12957a7c0cb4744804df1cfdd9c367adfc68127d77831f56db46a4bc03",
   "status": "Historical development checks; no sportsbook historical prices, profit test or accuracy guarantee",
   "NBA": {
     "history_rows": 5494,

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T22:35:45.642140+00:00",
+  "generated_utc": "2026-10-22T23:21:32.767633+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -10,17 +10,9 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 14,
-      "prepared_projections": 1815,
+      "upcoming_games": 13,
+      "prepared_projections": 1685,
       "issues": [
-        "Player history incomplete: Dominick Barlow",
-        "Player history incomplete: Tacko Fall",
-        "Player history incomplete: Labaron Philon Jr.",
-        "Player history incomplete: Khalifa Diop",
-        "Player history incomplete: Mario Hezonja",
-        "Player history incomplete: Meleek Thomas",
-        "Player history incomplete: Nae'Qwan Tomlin",
-        "Player history incomplete: Ernest Udeh Jr.",
         "Player history incomplete: Josh Dix",
         "Player history incomplete: Aday Mara",
         "Player history incomplete: Otega Oweh",
