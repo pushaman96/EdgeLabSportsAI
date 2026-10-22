@@ -422,7 +422,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                     row.pop('Projection (yards)',None)
                     row.update({'Model':'NFL interceptions frequency/rate v1 — experimental','Projection (count)':round(forecast['expected'],2),'Expected opportunities':round(forecast['attempts'],2),'Opportunity type':'Passing attempts','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Prior games with interception %':round(100*forecast['frequency'],1),'Validation games':interception_report['games'],'Validation Brier':interception_report['brier'],'Baseline Brier':interception_report['baseline_brier']})
                     if not interception_report['passed']:row['Reason']='Interception probability model has not beaten both prior-game frequency and 50/50 baselines in 2025 development; research estimate only.';continue
-                    if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points.';continue
+                    if p<=.5:row['Reason']='Selected outcome is not more likely than its alternative.';continue
                     row['Decision']='Watch — experimental'
                     row['Reason']=f"{forecast['games']} prior starter games; interception-game frequency {100*forecast['frequency']:.0f}%; passing attempts, QB interception rate and opponent interception rate included. Average interceptions is not probability of an interception."
                     continue
@@ -560,8 +560,8 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                         row['Route coverage']='Unavailable; snap share is not route participation'
                 if not model['forecast_passed']:
                     row['Reason'] = 'Forecast did not beat the recent-average baseline on the 2025 test.';continue
-                if p-break_even < .05:
-                    row['Reason'] = 'Estimated edge below five percentage points.';continue
+                if p <= .5:
+                    row['Reason'] = 'Selected outcome is not more likely than its alternative.';continue
                 row['Decision'] = 'Watch — experimental'
                 row['Reason'] = f"{feature['games']} recent games; expected {feature['volume_forecast']:.1f} opportunities; opponent historical {row['Category'].lower()} allowed: {feature['ratio']*100:.0f}% of league average (context, not a standalone direction signal). Availability: {status}. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather."
     for row in rows:
@@ -576,10 +576,10 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
             price=float(row['Odds']);be=100/(price+100)if price>0 else abs(price)/(abs(price)+100)
             row['Estimated win %']=round(100*p,1);row['Model edge (pp)']=round(100*(p-be),1)
             if row.get('Online learning status'):row['Feedback status']=row['Online learning status']+'; '+row['Probability calibration status']
-            edge_reason='Estimated edge below five percentage points.'
-            if row['Decision']!='Pass'and p-be<.05:row['Decision']='Pass';row['Reason']=edge_reason
-            elif row['Decision']=='Pass'and edge_reason in row.get('Reason','')and p-be>=.05:
-                row['Decision']='Watch — experimental';row['Reason']=row['Reason'].replace(edge_reason,'Validated calibration meets the five-percentage-point edge threshold.')
+            edge_reason='Selected outcome is not more likely than its alternative.'
+            if row['Decision']!='Pass'and p<=.5:row['Decision']='Pass';row['Reason']=edge_reason
+            elif row['Decision']=='Pass'and edge_reason in row.get('Reason','')and p>.5:
+                row['Decision']='Watch — experimental';row['Reason']=row['Reason'].replace(edge_reason,'Calibrated outcome is more likely than its alternative.')
         if row.get('New teammates — role uncertainty'):
             row['Reason']+=' New teammates with limited team history: '+row['New teammates — role uncertainty']+'. Target/carry redistribution is not quantified; previous shares may change.'
         if row.get('Snap coverage'):
@@ -588,7 +588,7 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
     if any(m.get('key')in ('player_anytime_td','totals')for b in event.get('bookmakers',[])for m in b.get('markets',[])):
         from nfl_scoring_models import reviews as scoring_reviews
         rows.extend(scoring_reviews(event,scoreboard,research,injuries,rosters,now))
-    return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
+    return sorted(rows,key=lambda r:(r['Decision']=='Pass',-(r['Estimated win %'] or -999)))
 
 def evidence_explanation(row):
     reason=row.get('Reason','')
@@ -608,7 +608,7 @@ def evidence_explanation(row):
     if volume is not None:text+=f"Expected workload: {volume:g} {row.get('Opportunity type','opportunities').lower()}. "
     if probability is not None and breakeven is not None:
         text+=f"Estimated win chance {probability:.1f}% versus {breakeven:.1f}% needed to break even; estimated gap {probability-breakeven:.1f} percentage points. "
-        if reason.startswith('Estimated edge below five percentage points.'):
+        if reason.startswith('Selected outcome is not more likely than its alternative.'):
             text+='Pass because the gap is below the required 5 points; a forecast below or above the line alone is insufficient. '
     if row.get('Snap coverage'):text+=f"Snap coverage: {row['Snap coverage']}; recent share {row.get('Recent snap share %')}%, usual share {row.get('Usual snap share %')}%, selected effect weight {row.get('Snap effect weight')}. Routes run are unavailable. "
     if row.get('Expected team passing attempts') is not None:text+=f"Team passing forecast: {row['Expected team passing attempts']} attempts; player catch probability: {row['Catch probability %']}%. "
@@ -634,24 +634,22 @@ def clear_prop_shortlist(rows):
         grouped[(row['Game'],name_key(row.get('Player','')),row.get('Category',''))].append(row)
     def score(row):
         probability=num(row.get('Estimated win %'))
-        odds=num(row.get('Odds'))
-        if probability is None or odds is None or abs(odds)<100:return -999
-        decimal=1+odds/100 if odds>0 else 1+100/abs(odds)
-        return probability/100*decimal-1
+        return probability if probability is not None else -999
     result=[]
     for group in grouped.values():
         candidates=[r for r in group if r['Decision']!='Pass']
-        directions={r.get('Selection') for r in candidates}
+        top=max((score(r) for r in candidates),default=-999)
+        directions={r.get('Selection') for r in candidates if score(r)==top}
         if len(directions)==1 and directions.issubset({'Over','Under'}):
             row=dict(max(candidates,key=score))
             row['Paper pick']=f"{row['Player']} {row['Selection'].upper()} {row['Line']} {row['Category'].lower()}"
-            if len(candidates)>1:row['Reason'] += ' One loaded quote retained by estimated return; other sportsbook entries consolidated.'
+            if len(candidates)>1:row['Reason'] += ' One loaded quote retained by highest estimated win probability; payout does not choose the direction.'
         else:
-            row=dict(max(group,key=lambda r:num(r.get('Model edge (pp)')) or -999))
+            row=dict(max(group,key=lambda r:num(r.get('Estimated win %')) or -999))
             row['Decision']='Pass'
             for field in ('Selection','Line','Sportsbook','Odds','Estimated win %','Break-even %','Model edge (pp)'):
                 row['Evaluated quote — '+field]=row.get(field)
-            row['Evaluation status']='Evaluated — price edge insufficient' if row.get('Reason')=='Estimated edge below five percentage points.' else 'No qualifying pick — see reason'
+            row['Evaluation status']='Evaluated — no majority outcome' if row.get('Reason')=='Selected outcome is not more likely than its alternative.' else 'No qualifying pick — see reason'
             if candidates:row['Reason']='Qualifying Over and Under quotes conflict or no supported direction exists. No single paper pick.'
             row.update({'Paper pick':'PASS — no pick','Selection':'—','Line':'—','Sportsbook':'—','Odds':'—','Estimated win %':None,'Break-even %':None,'Model edge (pp)':None})
         # A central forecast lean is context, never an instruction to bet.
@@ -678,7 +676,7 @@ def clear_prop_shortlist(rows):
         else:row['Research summary']='Qualifying experimental paper pick'
         # Put the explicit direction first in the displayed/exported table.
         result.append({'Paper pick':row.pop('Paper pick'),**row})
-    return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Model edge (pp)')) or -999)))
+    return sorted(result,key=lambda r:(r['Decision']=='Pass',-(num(r.get('Estimated win %')) or -999)))
 
 def cushion_sources(rows):
     eligible=[r for r in rows if r.get('Category') in ('Passing yards','Receiving yards')]
@@ -693,13 +691,13 @@ def cushion_sources(rows):
             continue
         if chosen.get('Reason','').startswith('Qualifying Over and Under quotes conflict'):continue
         if original.get('Selection') not in ('Over','Under'):continue
-        if original.get('Decision')=='Pass' and original.get('Reason')!='Estimated edge below five percentage points.':continue
+        if original.get('Decision')=='Pass' and original.get('Reason')!='Selected outcome is not more likely than its alternative.':continue
         if num(original.get('Projection (yards)')) is None or num(original.get('Line')) is None:continue
         row=dict(original)
         row['Paper pick']=f"PASS — evaluated quote: {row['Player']} {row['Selection']} {row['Line']} {row['Category']}"
         direction_key=key+(row['Selection'],)
-        score=num(row.get('Model edge (pp)'))
-        prior=num(grouped.get(direction_key,{}).get('Model edge (pp)'))
+        score=num(row.get('Estimated win %'))
+        prior=num(grouped.get(direction_key,{}).get('Estimated win %'))
         if direction_key not in grouped or (score if score is not None else -999)>(prior if prior is not None else -999):grouped[direction_key]=row
     return list(grouped.values())
 
@@ -756,13 +754,13 @@ def analyzed_cushions(watch, events, books, models, now=None, season_priors=None
                 ev=p*(odds/100 if odds>0 else 100/abs(odds))-(1-p)
                 evaluated.append((distance,-ev,book,line,odds,cushion,p,breakeven,ev,updated))
             _,_,book,line,odds,cushion,p,breakeven,ev,updated=min(evaluated)
-            qualifies=p-breakeven>=.05 and ev>0 and model.get('forecast_passed',False)
+            qualifies=p>.5 and model.get('forecast_passed',False)
             row.update({'Cushion decision':'Watch — experimental' if qualifies else 'Pass','Selection status':'Qualifying paper candidate' if qualifies else 'Not recommended — Pass',
                 'Available selection':f"{original['Selection']} {line:g} {original['Category'].lower()}",'Actual cushion yards':cushion,
                 'Sportsbook':book,'Actual odds':odds,'Recalculated win %':round(p*100,1),
                 'Available line':line,'Quote updated UTC':updated,
                 'Break-even %':round(breakeven*100,1),'Model edge (pp)':round((p-breakeven)*100,1),
-                'Reason':f"At {line:g}, the {original['Selection']} has estimated win chance {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. It meets the 5-point edge requirement. Original decision: {original['Decision']}. Experimental, not verified profitability." if qualifies else f"At {line:g}, estimated win chance is {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. The cushion fails the model baseline or 5-point price-edge requirement. More cushion does not necessarily mean better value."})
+                'Reason':f"At {line:g}, the {original['Selection']} has estimated win chance {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. The direction is more likely than its alternative. Payout does not determine selection. Original decision: {original['Decision']}. Experimental, not verified profitability." if qualifies else f"At {line:g}, estimated win chance is {p*100:.1f}% versus {breakeven*100:.1f}% needed at odds {odds:+g}. The cushion fails the model baseline or majority-probability requirement."})
         elif candidates:
             row['Reason']='Reanalyze to load the probability model for this comparison.'
         results.append(row)
@@ -771,7 +769,7 @@ def analyzed_cushions(watch, events, books, models, now=None, season_priors=None
 
 def cushion_target(row):
     if row.get('Category') not in ('Passing yards','Receiving yards'):return None
-    if row.get('Decision')=='Pass' and row.get('Reason')!='Estimated edge below five percentage points.':return None
+    if row.get('Decision')=='Pass' and row.get('Reason')!='Selected outcome is not more likely than its alternative.':return None
     line=num(row.get('Line'))
     if line is None:return None
     receiving=row['Category']=='Receiving yards'
@@ -863,7 +861,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         if chronological:st.info('Separate-calibration experiment: parameters use 2024 weeks 1–12; uncertainty and probability adjustment use weeks 13 onward. Later-year results remain development evidence. This is a separate model, not a proven accuracy upgrade.')
         if boosted:st.info('Boosted paper candidate: passing attempts and receiving targets use team/opponent workload, player share, snap participation and role trends. Passing/receiving yardage and passing-attempt props use a candidate only when it beats the baseline and current v2 on comparable historical games; other cases retain the existing opportunity model. Historical gaps may use three consecutive recent games when supported. Current roster, injury, quote and schedule checks remain required.')
         if experimental and not boosted:st.caption('Workload connected: expected passing attempts, carries or targets feed the yardage forecast, using the historical model selected for that category. Expected opportunities and the workload/efficiency methods appear in analyzed results. Snap counts, teammate absences and weather are not numerical forecast inputs yet. SportsDataIO trial data is excluded.')
-    cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode)
+    cache_key = (tuple(e['id'] for e in events), quote_retrieved, tuple(sorted(books)),mode,'probability-first-v2')
     analyze = st.button('Analyze all loaded player props' if len(events)>1 else 'Analyze loaded player props',key='nfl_analyze_props')
     if auto_analyze or analyze:
         stage='game matching'
@@ -925,7 +923,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
                     rows.extend(prop_reviews(filtered,scoreboard,research,injuries,rosters))
                 from game_day_diagnostics import apply as apply_game_day_diagnostic
                 rows=apply_game_day_diagnostic(rows,'NFL')
-                rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Model edge (pp)'] or -999)))
+                rows.sort(key=lambda r:(r['Decision']=='Pass',-(r['Estimated win %'] or -999)))
                 st.session_state['nfl_prop_analysis'] = {'key':cache_key,'rows':rows,'models':research['models'],'season_prior_reports':research.get('season_prior_reports',{}),'reports':research['reports'],'retrieved':research['retrieved'],'analyzed':datetime.now(timezone.utc).isoformat(),'issues':issues,'injury_retrieved':injuries.get('retrieved'),'injury_source_updated':injuries.get('source_updated'),'roster_checked':datetime.now(timezone.utc).isoformat()}
         except (requests.exceptions.RequestException, ValueError, KeyError, TypeError, AttributeError, OSError, ImportError):
             progress.empty()
@@ -1015,10 +1013,10 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     rejected=[{key:r.get(key) for key in ('Player','Category','Current roster team','Latest historical team','Current-team games','Roster/history status','Research summary','Forecast lean','Forecast projection','Compared direction','Compared line','Compared sportsbook','Compared odds','Compared direction win %','Compared break-even %','Compared edge (pp)','Reason')} for r in display if r['Decision']=='Pass']
     if rejected:
         with st.expander('Why other player props did not qualify'):
-            st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; insufficient price edge means the evaluated quote did not qualify. Market-board category filters only change the price display, not which prediction models exist.')
+            st.caption('A Pass is not an Under prediction. Missing history and unsupported positions mean the model could not evaluate the prop; an outcome probability of 50% or less does not qualify. Market-board category filters only change the price display, not which prediction models exist.')
             render_team_table(rejected,hide_index=True,use_container_width=True, sport='NFL')
             st.caption('Forecast lean compares the central projection with the displayed line. The win probability belongs to the compared Over/Under direction and can differ from that central lean because of the forecast distribution. PASS rows are research only and are not saved as recommended picks. Missing data produces no reliable lean.')
-    st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Value selections can qualify because of payout even when more likely to lose.')
+    st.caption('Risk labels use unverified model probabilities: 70%+ win = lower estimated loss risk; 60–69.9% = moderate; 50–59.9% = elevated; below 50% = high. These are relative labels, not safe bets or proven confidence levels. Recommendations require an estimated win chance above 50%; payout does not determine the selected direction.')
     cushions=analyzed_cushions(cushion_inputs,events,books,saved.get('models',{}),season_priors=saved.get('season_prior_reports',{}))
     grouped_cushions=defaultdict(list)
     for c in cushions:grouped_cushions[(c['Game'],c['Player'],c['Category'])].append(c)
@@ -1027,13 +1025,13 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
         qualified=[c for c in group if c['Cushion decision']!='Pass']
         if len({c['Direction'] for c in qualified})>1:
             row=dict(qualified[0],**{'Cushion decision':'Pass','Reason':'Qualifying cushion directions conflict; no single selection.'})
-        else:row=max(qualified or group,key=lambda c:num(c.get('Model edge (pp)')) if num(c.get('Model edge (pp)')) is not None else -999)
+        else:row=max(qualified or group,key=lambda c:num(c.get('Recalculated win %')) if num(c.get('Recalculated win %')) is not None else -999)
         cushions.append(row)
     if cushions:
         for r in cushions:
             r['Risk label']=estimated_risk(r.get('Recalculated win %')) if r['Cushion decision']!='Pass' else 'Pass — no selection'
         st.subheader('Analyzed passing and receiving cushions')
-        st.caption('Cushions follow the selected original direction. Rejected originals are compared only when no original qualifies; Pass rows are not recommendations. Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and price filters are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
+        st.caption('Cushions follow the selected original direction. Rejected originals are compared only when no original qualifies; Pass rows are not recommendations. Passing targets 30 yards (available range 25–40); receiving targets 25 yards (range 20–25), never below a 15-yard line. Also evaluates price-rejected originals with usable forecasts. Missing-history and unsupported props stay excluded. Actual alternate quotes, recalculated probabilities and forecast checks are required. Small original receiving lines may have no valid cushion. Separate paper experiment; Kalshi quotes are not connected.')
         render_team_table(cushions,hide_index=True,use_container_width=True, sport='NFL')
         output=io.StringIO();writer=csv.DictWriter(output,fieldnames=['Recorded UTC']+list(dict.fromkeys(key for r in cushions for key in r)));writer.writeheader()
         for r in cushions:writer.writerow({'Recorded UTC':saved['analyzed'],**r})
@@ -1041,7 +1039,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
     render_cushion_tracker(watch, starts)
     publish_rows(watch+[r for r in cushion_inputs if r['Decision']=='Pass'], events, cushions)
     if watch:
-        st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated return among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
+        st.caption('One experimental paper direction per player/category; the retained quote has the highest estimated win probability among qualifying loaded quotes. Historical error ranges use the middle 80% of scaled 2024 forecast errors, not guaranteed limits. Confirm player participation and conditions. Profitability at actual sportsbook prices is unverified.')
     else:
         if display:
             st.info('No qualifying modeled paper picks. See Reason beside each Pass; missing data and failed model tests do not establish an Under or Over.')
@@ -1049,7 +1047,7 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             st.info('No supported modeled props were available to analyze for the selected sportsbook. Other loaded markets can be viewed in the prices table and used in the paper parlay builder; they do not have tested pick models yet.')
     with st.expander('Check the prop model test results'):
         render_team_table(saved['reports'],hide_index=True,use_container_width=True, sport='NFL')
-        st.caption('2024 chooses forecast parameters and supplies errors. The opportunity experiment uses 2025 as development evidence; future saved picks provide the prospective test. The original report uses benchmark thresholds, not historical sportsbook prices. Missing/DNP rows are not assigned zero. Availability gates remain active, but injury impacts, weather and lineup changes were not backtested. Failed baseline or price checks remain Pass.')
+        st.caption('2024 chooses forecast parameters and supplies errors. The opportunity experiment uses 2025 as development evidence; future saved picks provide the prospective test. The original report uses benchmark thresholds, not historical sportsbook prices. Missing/DNP rows are not assigned zero. Availability gates remain active, but injury impacts, weather and lineup changes were not backtested. Failed baseline or majority-probability checks remain Pass.')
         st.markdown('[Statistics source: nflverse](https://nflreadr.nflverse.com/reference/load_player_stats.html)')
     if display:
         buffer = io.StringIO()

@@ -61,6 +61,10 @@ def apply(rows,sport,now=None):
         from selection_policy import annotate
         from matchup_homework import dossier
         row=annotate(original);row['Homework']=dossier(row,sport)
+        row['Selection policy']='probability-first-v2'
+        probability=row.get('Estimated win %')
+        if row.get('Decision')!='Pass' and (not isinstance(probability,(int,float)) or not math.isfinite(probability) or probability<=50):
+            row['Decision']='Pass';row['Reason']='No majority-probability outcome is supported by this forecast.'
         audit=evidence(row,report,now,source);row['Game-day diagnostic']=audit
         if row.get('Decision')!='Pass'and not audit['ready']:
             row['Decision']='Pass';row['Reason']='Game-day diagnostic: '+'; '.join(audit['issues'])

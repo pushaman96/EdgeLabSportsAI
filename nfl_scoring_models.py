@@ -164,7 +164,7 @@ def reviews(event,scoreboard,research,injuries,rosters,now=None):
                 row['Estimated win %']=round(100*p,1);row['Model edge (pp)']=round(100*(p-be),1)
                 if not eligible:row['Reason']+=' Role, workload limit or player-history coverage is unverified.'
                 elif not report['passed']:row['Reason']+=' Historical development gate failed; projection only.'
-                elif p-be<.05:row['Reason']+=' Estimated edge below five percentage points.'
+                elif p<=.5:row['Reason']+=' Selected outcome is not more likely than its alternative.'
                 else:row['Decision']='Watch — experimental';row['Reason']+=(' Offensive-only probability estimate; return TDs are not modeled.'if is_td else' Availability coverage checked; injuries and weather are not numerically adjusted.')+' Not verified profitability.'
                 row['Evidence explanation']=row['Reason']
     return out

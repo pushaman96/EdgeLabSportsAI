@@ -143,7 +143,7 @@ def readiness_summary(rows):
         else:
             # A qualifying edge on either side is sufficient; show the most
             # promising evaluated quote, without counting both directions.
-            best=max(group,key=lambda r:r.get('Model edge (pp)') if r.get('Model edge (pp)') is not None else -999)
+            best=max(group,key=lambda r:r.get('Estimated win %') if r.get('Estimated win %') is not None else -999)
             reason=best.get('Reason') or 'No usable forecast'
         counts[reason]+=1
     return [{'Status / reason':reason,'Unique player props':count} for reason,count in sorted(counts.items())]
@@ -334,7 +334,7 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     if row.get('Minutes restriction check',{}).get('Review required'):row['Reason']='Current injury report mentions a minutes limit; verify the restriction before use. No numeric cap is invented.';continue
                     if row.get('NBA role review required'):row['Reason']=row['NBA role status'];continue
                     if not report['passed']:row['Reason']='Season-stage model has not beaten the prior-season/recent-average baseline on later games; forecast shown for research';continue
-                    if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points';continue
+                    if p<=.5:row['Reason']='Selected outcome is not more likely than its alternative';continue
                     row['Decision']='Watch — experimental'
                     row['Reason']='Last-season minutes × production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. '+row['Minutes risk']+'. '+row['Minutes sensitivity']+'. '+row.get('Starting lineup check',{}).get('Status','Starting lineup not checked')+'. Probability and actual-price profitability remain unverified.'
                     if selected_report:row['Reason']='Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. '+row['Reason']
@@ -464,6 +464,8 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
     saved=st.session_state.get(key_prefix+'_results')
     if not saved:return
     rows,analyzed=saved
+    if any(r.get('Selection policy')!='probability-first-v2' for r in rows):
+        st.info('Selection rules updated. Analyze saved NBA prop prices again; no new odds request is needed.');return
     # Archive raw usable forecasts first; recommendations are consolidated below.
     archive(rows,events,scoreboard,'NBA')
     current=[];now=datetime.now(timezone.utc)
@@ -478,10 +480,11 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
     picks=[]
     for group in grouped.values():
         qualified=[r for r in group if r['Decision']!='Pass']
-        if len({r['Selection'] for r in qualified})>1:continue
-        if qualified:picks.append(max(qualified,key=lambda r:r['Estimated win %']/100*(1+float(r['Odds'])/100 if float(r['Odds'])>0 else 1+100/abs(float(r['Odds'])))-1))
+        top=max((r['Estimated win %'] for r in qualified),default=-1)
+        if len({r['Selection'] for r in qualified if r['Estimated win %']==top})>1:continue
+        if qualified:picks.append(max(qualified,key=lambda r:r['Estimated win %']))
     st.write(f'{len(picks)} experimental NBA paper picks; all usable analyzed forecasts are tracked separately.')
-    st.caption('Returning players can qualify with zero current-season appearances. There is no requirement to wait 10 games. Last-season history, verified availability, later-season validation and sufficient price edge are checked separately.')
+    st.caption('Returning players can qualify with zero current-season appearances. There is no requirement to wait 10 games. Last-season history, verified availability, later-season validation and majority outcome probability are checked separately.')
     if current:
         with st.expander('Why NBA props qualify or pass',expanded=not bool(picks)):
             st.dataframe(readiness_summary(current),hide_index=True,use_container_width=True)
