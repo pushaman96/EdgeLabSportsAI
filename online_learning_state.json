@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-22T21:45:19.083357+00:00",
+  "generated_utc": "2026-10-22T22:05:38.332195+00:00",
   "groups": {
     "[\"NBA\",\"NBA season-prior minutes-rate v3 / complete-season validation\",\"Assists\",\"Regular season\"]": {
       "games": 1,
