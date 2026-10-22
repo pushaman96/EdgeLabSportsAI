@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-22T02:20:12.292540+00:00",
+  "generated_utc": "2026-10-22T02:31:40.785474+00:00",
   "groups": {
     "[\"NBA\",\"NBA season-prior minutes-rate v3 / complete-season validation\",\"Assists\",\"Regular season\"]": {
       "games": 1,
@@ -79,9 +79,9 @@
       "games": 2,
       "forecast_games": 2,
       "probability_games": 2,
-      "bias": -0.006710594511339972,
-      "workload_bias": 0.003493179495171865,
-      "temperature": 0.9950292898441324,
+      "bias": -0.010970297569455854,
+      "workload_bias": 0.0025605788647790947,
+      "temperature": 0.9959389429245288,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -90,16 +90,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:19:44.033808+00:00",
-      "version": "b8a041b7f5c6"
+      "trained_through": "2026-10-22T02:31:40.247369+00:00",
+      "version": "d14a90083b6a"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Points\",\"Regular season\"]": {
       "games": 2,
       "forecast_games": 2,
       "probability_games": 2,
-      "bias": 0.0019847091477767755,
-      "workload_bias": 0.008767835254174506,
-      "temperature": 1.0132762663597088,
+      "bias": 0.004843937190390743,
+      "workload_bias": 0.007477929978960541,
+      "temperature": 1.0147001018440764,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -108,16 +108,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:19:44.031065+00:00",
-      "version": "528079cf3354"
+      "trained_through": "2026-10-22T02:31:40.247662+00:00",
+      "version": "f6ae4987a7d4"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Rebounds\",\"Regular season\"]": {
       "games": 2,
       "forecast_games": 2,
       "probability_games": 2,
-      "bias": 0.007195285906587911,
-      "workload_bias": 0.008767835254174506,
-      "temperature": 0.9652783233076911,
+      "bias": 0.00401866438111231,
+      "workload_bias": 0.007477929978960541,
+      "temperature": 0.9695194427733693,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -126,16 +126,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:19:44.033741+00:00",
-      "version": "01a3c1dd9dc1"
+      "trained_through": "2026-10-22T02:31:40.247996+00:00",
+      "version": "3b3e6e241c6b"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Three-pointers made\",\"Regular season\"]": {
       "games": 2,
       "forecast_games": 2,
       "probability_games": 2,
-      "bias": 0.010278218947916539,
-      "workload_bias": 0.0036517243086050576,
-      "temperature": 0.9861431704436212,
+      "bias": 0.012893951935095398,
+      "workload_bias": 0.002755366029204127,
+      "temperature": 0.9930769191613986,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -144,8 +144,8 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:19:44.033781+00:00",
-      "version": "5dba5e7b82d0"
+      "trained_through": "2026-10-22T02:31:40.248155+00:00",
+      "version": "dfef600fe030"
     },
     "[\"NFL\",\"Adjusted NFL Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
       "games": 5,

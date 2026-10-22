@@ -523,16 +523,16 @@
       "all_games_final": false,
       "metrics": {
         "picks": 88,
-        "settled": 39,
-        "wins": 14,
-        "losses": 25,
-        "pending": 49,
+        "settled": 42,
+        "wins": 16,
+        "losses": 26,
+        "pending": 46,
         "pushes": 0,
         "distinct_games": 4,
-        "accuracy": 0.358974358974359,
-        "brier": 0.25707171794871797,
-        "mean_estimated_probability": 0.5337692307692308,
-        "profit_per_1_each": -6.723621152469578
+        "accuracy": 0.38095238095238093,
+        "brier": 0.24784319047619047,
+        "mean_estimated_probability": 0.5366666666666666,
+        "profit_per_1_each": -6.382961811810238
       },
       "categories": [
         {
@@ -566,16 +566,16 @@
         {
           "category": "Points",
           "picks": 27,
-          "settled": 14,
+          "settled": 15,
           "wins": 6,
-          "losses": 8,
-          "pending": 13,
+          "losses": 9,
+          "pending": 12,
           "pushes": 0,
           "distinct_games": 4,
-          "accuracy": 0.42857142857142855,
-          "brier": 0.22811628571428574,
-          "mean_estimated_probability": 0.455,
-          "profit_per_1_each": 2.637401574803149
+          "accuracy": 0.4,
+          "brier": 0.2233102,
+          "mean_estimated_probability": 0.45099999999999996,
+          "profit_per_1_each": 1.6374015748031492
         },
         {
           "category": "Rebounds",
@@ -594,24 +594,24 @@
         {
           "category": "Three-pointers made",
           "picks": 14,
-          "settled": 6,
-          "wins": 1,
+          "settled": 8,
+          "wins": 3,
           "losses": 5,
-          "pending": 8,
+          "pending": 6,
           "pushes": 0,
           "distinct_games": 4,
-          "accuracy": 0.16666666666666666,
-          "brier": 0.37080633333333335,
-          "mean_estimated_probability": 0.6396666666666667,
-          "profit_per_1_each": -4.21875
+          "accuracy": 0.375,
+          "brier": 0.30655375,
+          "mean_estimated_probability": 0.64575,
+          "profit_per_1_each": -2.878090659340659
         }
       ],
       "calibration": [
         {
           "Probability band": "0%\u201350%",
-          "Settled picks": 16,
-          "Mean estimate %": 43.1,
-          "Actual win %": 31.2
+          "Settled picks": 17,
+          "Mean estimate %": 42.9,
+          "Actual win %": 29.4
         },
         {
           "Probability band": "50%\u201360%",
@@ -621,9 +621,9 @@
         },
         {
           "Probability band": "60%\u201370%",
-          "Settled picks": 7,
-          "Mean estimate %": 66.8,
-          "Actual win %": 57.1
+          "Settled picks": 9,
+          "Mean estimate %": 66.7,
+          "Actual win %": 66.7
         },
         {
           "Probability band": "70%\u201380%",
@@ -635,8 +635,8 @@
       "game_flow_context": [],
       "reconciled_team_games": 0,
       "observations": [
-        "Across 39 picks with saved workload and observed opportunities, average actual minus expected workload was -0.2. Correlated picks are included; this does not prove a cause.",
-        "Across 39 count forecasts, mean absolute count error was 3.4.",
+        "Across 42 picks with saved workload and observed opportunities, average actual minus expected workload was -0.3. Correlated picks are included; this does not prove a cause.",
+        "Across 42 count forecasts, mean absolute count error was 3.2.",
         "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
       ],
       "active_corrections": 0,
@@ -856,10 +856,21 @@
           "Category": "Three-pointers made",
           "Selection": "Over",
           "Book line": 0.5,
-          "Result": "Pending",
+          "Result": "Win",
           "Saved reasoning": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Variable observed minutes. Observed minutes scenarios stay on one side. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
           "Learning version used": null,
-          "Interpretation": "Pending final evidence; no error assigned"
+          "Interpretation": "Larger measured component: workload; descriptive arithmetic, not a proven cause",
+          "Forecast": 0.92,
+          "Actual": 1.0,
+          "Expected workload": 29.36,
+          "Actual workload": 31.0,
+          "Actual minus forecast": 0.07999999999999996,
+          "Workload error": 1.6400000000000006,
+          "Estimated win %": 63.4,
+          "Brier error": 0.133956,
+          "Workload component": 0.05138964577656678,
+          "Production component": 0.028610354223433054,
+          "Actual at forecast rate": 0.971389645776567
         },
         {
           "Pick ID": "83f44b937184d58baa94",
@@ -1098,10 +1109,21 @@
           "Category": "Three-pointers made",
           "Selection": "Over",
           "Book line": 1.5,
-          "Result": "Pending",
+          "Result": "Win",
           "Saved reasoning": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Steadier observed minutes. Observed minutes scenarios stay on one side. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
           "Learning version used": null,
-          "Interpretation": "Pending final evidence; no error assigned"
+          "Interpretation": "Larger measured component: production per opportunity; descriptive arithmetic, not a proven cause",
+          "Forecast": 2.51,
+          "Actual": 4.0,
+          "Expected workload": 29.75,
+          "Actual workload": 25.0,
+          "Actual minus forecast": 1.4900000000000002,
+          "Workload error": -4.75,
+          "Estimated win %": 69.4,
+          "Brier error": 0.09363599999999997,
+          "Workload component": -0.40075630252100836,
+          "Production component": 1.8907563025210083,
+          "Actual at forecast rate": 2.1092436974789917
         },
         {
           "Pick ID": "ded5550a9243535fb27b",
@@ -1156,10 +1178,21 @@
           "Category": "Points",
           "Selection": "Over",
           "Book line": 20.5,
-          "Result": "Pending",
+          "Result": "Loss",
           "Saved reasoning": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Steadier observed minutes. Observed minutes scenarios cross the line. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
           "Learning version used": null,
-          "Interpretation": "Pending final evidence; no error assigned"
+          "Interpretation": "Larger measured component: production per opportunity; descriptive arithmetic, not a proven cause",
+          "Forecast": 18.74,
+          "Actual": 19.0,
+          "Expected workload": 29.75,
+          "Actual workload": 25.0,
+          "Actual minus forecast": 0.26000000000000156,
+          "Workload error": -4.75,
+          "Estimated win %": 39.5,
+          "Brier error": 0.15602500000000002,
+          "Workload component": -2.992100840336134,
+          "Production component": 3.2521008403361353,
+          "Actual at forecast rate": 15.747899159663865
         },
         {
           "Pick ID": "ed3f04956f3662ff68c3",
@@ -2154,13 +2187,13 @@
         {
           "Category": "Points",
           "Distinct games": 2,
-          "Stat comparisons": 14,
-          "Stat average absolute error": 5.83975,
-          "Average actual minus forecast": 2.92275,
-          "Minutes comparisons": 14,
-          "Minutes average absolute error": 3.1469999999999994,
-          "Range comparisons": 14,
-          "Measured range coverage %": 82.5
+          "Stat comparisons": 15,
+          "Stat average absolute error": 5.596704545454545,
+          "Average actual minus forecast": 2.85625,
+          "Minutes comparisons": 15,
+          "Minutes average absolute error": 3.216818181818181,
+          "Range comparisons": 15,
+          "Measured range coverage %": 82.95454545454545
         },
         {
           "Category": "Rebounds",
@@ -2176,13 +2209,13 @@
         {
           "Category": "Three-pointers made",
           "Distinct games": 2,
-          "Stat comparisons": 6,
-          "Stat average absolute error": 1.212,
-          "Average actual minus forecast": -0.17600000000000005,
-          "Minutes comparisons": 6,
-          "Minutes average absolute error": 2.1119999999999997,
-          "Range comparisons": 6,
-          "Measured range coverage %": 80.0
+          "Stat comparisons": 8,
+          "Stat average absolute error": 1.0892857142857144,
+          "Average actual minus forecast": -0.125,
+          "Minutes comparisons": 8,
+          "Minutes average absolute error": 2.2092857142857145,
+          "Range comparisons": 8,
+          "Measured range coverage %": 85.71428571428572
         }
       ]
     },
@@ -3316,5 +3349,5 @@
       ]
     }
   },
-  "updated_utc": "2026-10-22T02:19:45.290789+00:00"
+  "updated_utc": "2026-10-22T02:31:41.190894+00:00"
 }

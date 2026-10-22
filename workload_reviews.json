@@ -6,12 +6,12 @@
       "sport": "NBA",
       "category": "Assists",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 29,
+      "forecasts": 31,
       "distinct_games": 3,
-      "candidate_workload_mae": 3.160444444444444,
-      "baseline_workload_mae": 3.093126178461121,
-      "candidate_stat_mae": 1.5832777777777778,
-      "baseline_stat_mae": 1.5798260893524607
+      "candidate_workload_mae": 3.1887777777777773,
+      "baseline_workload_mae": 3.092032156713037,
+      "candidate_stat_mae": 1.5416666666666667,
+      "baseline_stat_mae": 1.54278082915417
     },
     {
       "sport": "NBA",
@@ -28,34 +28,34 @@
       "sport": "NBA",
       "category": "Points",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 30,
+      "forecasts": 32,
       "distinct_games": 3,
-      "candidate_workload_mae": 3.2997777777777775,
-      "baseline_workload_mae": 3.369619557282405,
-      "candidate_stat_mae": 5.814,
-      "baseline_stat_mae": 5.730716017456661
+      "candidate_workload_mae": 3.328111111111111,
+      "baseline_workload_mae": 3.368525535534321,
+      "candidate_stat_mae": 5.805888888888889,
+      "baseline_stat_mae": 5.709287813931217
     },
     {
       "sport": "NBA",
       "category": "Rebounds",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 30,
+      "forecasts": 32,
       "distinct_games": 3,
-      "candidate_workload_mae": 3.2997777777777775,
-      "baseline_workload_mae": 3.369619557282405,
-      "candidate_stat_mae": 2.538777777777778,
-      "baseline_stat_mae": 2.550355607143861
+      "candidate_workload_mae": 3.328111111111111,
+      "baseline_workload_mae": 3.368525535534321,
+      "candidate_stat_mae": 2.464166666666667,
+      "baseline_stat_mae": 2.4902730062305447
     },
     {
       "sport": "NBA",
       "category": "Three-pointers made",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 13,
+      "forecasts": 15,
       "distinct_games": 2,
-      "candidate_workload_mae": 2.664999999999999,
-      "baseline_workload_mae": 2.6409144318114173,
-      "candidate_stat_mae": 1.939,
-      "baseline_stat_mae": 1.8844120392940014
+      "candidate_workload_mae": 2.707499999999999,
+      "baseline_workload_mae": 2.6392733991892907,
+      "candidate_stat_mae": 1.88,
+      "baseline_stat_mae": 1.8270750431072544
     }
   ],
   "nba_role_groups": [],
