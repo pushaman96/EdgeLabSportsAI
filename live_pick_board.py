@@ -160,6 +160,25 @@ def current_moneyline_board(saved,records,sport,day,now=None):
         output[game]={'Game':game,'Current predicted winner':team,'Estimated win %':p,'Earlier frozen selection':original,'Change':'Changed from saved selection' if any(r['player']!=team for r in frozen if r.get('category')=='Moneyline') else 'Same as saved selection','Analyzed UTC':saved[3],'Status':'Experimental current forecast; earlier pick remains in historical results'}
     return sorted(output.values(),key=lambda r:-r['Estimated win %'])
 
+def latest_moneyline_records(records):
+    """Latest saved moneyline per game/strategy; preserve every older record."""
+    groups={};visible=[];earlier=[]
+    for row in records:
+        if row.get('category')!='Moneyline':visible.append(row);continue
+        groups.setdefault((row.get('sport','NFL'),str(row.get('event_id')),row.get('strategy','Original')),[]).append(row)
+    for values in groups.values():
+        def saved_time(row):
+            try:return utc(row.get('published_utc')).timestamp()
+            except (ValueError,TypeError,OverflowError):return float('-inf')
+        latest=max(saved_time(r) for r in values)
+        newest=[r for r in values if saved_time(r)==latest]
+        if len({r.get('player') for r in newest})!=1:
+            earlier.extend(values);continue
+        chosen=min(newest,key=lambda r:str(r.get('id','')))
+        visible.append(chosen)
+        earlier.extend(r for r in values if r is not chosen)
+    return visible,earlier
+
 def render_live_board(records,sport='NFL'):
     import streamlit as st
     selected=[r for r in records if r.get('sport','NFL')==sport]
@@ -177,7 +196,8 @@ def render_live_board(records,sport='NFL'):
     from pick_presentation import filter_matchup
     games=sorted({r['game'] for r in selected})
     game=st.selectbox('Focus on a matchup',['All games']+games,key='pick_board_matchup_'+sport)
-    selected=highest_probability(filter_matchup(selected,game),"probability")
+    selected,earlier_moneylines=latest_moneyline_records(filter_matchup(selected,game))
+    selected=highest_probability(selected,"probability")
     if game!='All games' and ' at ' in game:
         away,home=game.split(' at ',1)
         index=st.session_state.get('team_emblems',{})
@@ -210,7 +230,7 @@ def render_live_board(records,sport='NFL'):
         st.dataframe(latest_moneylines,hide_index=True,use_container_width=True)
         st.caption('The current forecast above can differ from an earlier saved pick below. Updating the forecast never changes the original pick or its eventual result.')
     elif moneylines:
-        st.info('Moneylines below are frozen historical picks, not current recommendations. Use Compare model with current moneylines with already loaded prices to show a fresh forecast; no new odds request is needed.')
+        st.info('Main table shows the latest saved moneyline per game. Earlier versions are in moneyline history below. Use Compare model with current moneylines for a fresh analysis of loaded prices; no new odds request is needed.')
 
     auto=st.toggle('Auto-refresh live stats every 30 seconds',value=True,key='pick_board_auto_'+sport)
     st.caption('Uses ESPN stats, not sportsbook credits. Updates while this app session is active; feed delays and stat corrections are possible. Original lines and probabilities remain frozen. Below an Under line during a game is not a final win. Missing stats are never treated as zero or DNP.')
@@ -238,14 +258,15 @@ def render_live_board(records,sport='NFL'):
         # Remember verified settlements for full-page accuracy and review panels.
         st.session_state['ledger_live_grades']=merge_grades(
             st.session_state.get('ledger_live_grades',[])+[r for r in current if r['id'] not in {g['id'] for g in st.session_state.get('ledger_live_grades',[])}],updates)
-        summaries=collect_summaries(current,cached_fetch)
+        prior=merge_grades(earlier_moneylines,updates)
+        summaries=collect_summaries(current+prior,cached_fetch)
         if any(v.get('stale')for v in summaries.values()):st.caption('Some game feeds are delayed; showing last-good stats with their original timestamps. Automatic retry is pending.')
         rows=build_board(current,summaries,team_assets=st.session_state.get("team_emblems",{}))
         forecasts={r['Game']:r for r in current_moneyline_board(st.session_state.get('moneyline_history_candidates'),current,sport,day)}
         for row in rows:
             if row['Category']=='Moneyline':
                 forecast=forecasts.get(row['Game'])
-                row['Recommendation status']='Earlier saved pick — current forecast selects '+forecast['Current predicted winner'] if forecast and forecast['Current predicted winner']!=row['Player / team'] else 'Frozen historical pick; see current forecast above'
+                row['Recommendation status']='Earlier saved pick — current forecast selects '+forecast['Current predicted winner'] if forecast and forecast['Current predicted winner']!=row['Player / team'] else 'Latest saved moneyline; original forecast remains frozen'
 
         from pick_presentation import pick_status,result_indicator
         original={r['id']:r for r in current}
@@ -261,6 +282,13 @@ def render_live_board(records,sport='NFL'):
         with cards_tab:
             from pick_cards import render_pick_cards
             render_pick_cards(current,sport,live_rows=rows)
+        if prior:
+            with st.expander('Earlier moneyline history — replaced selections',expanded=False):
+                st.caption('Earlier versions are retained for original-pick grading and accuracy reports. They are not additional current recommendations. Main-table counts cover displayed latest selections only.')
+                history_rows=build_board(prior,summaries,team_assets=st.session_state.get('team_emblems',{}))
+                for row in history_rows:row['Recommendation status']='Replaced — history only'
+                st.dataframe(history_rows,hide_index=True,use_container_width=True,column_config={'Team logo':st.column_config.ImageColumn('Team',width='small')})
+
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
