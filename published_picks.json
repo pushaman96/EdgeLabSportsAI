@@ -49146,6 +49146,868 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
       "season_type": "Regular season"
+    },
+    {
+      "id": "adc2db133026b885b6c0",
+      "sport": "NFL",
+      "event_id": "401873010",
+      "game": "New England Patriots at Chicago Bears",
+      "player": "Colston Loveland",
+      "category": "Receiving yards",
+      "direction": "Under",
+      "line": 45.5,
+      "odds": -112.0,
+      "probability": 0.604,
+      "sportsbook": "DraftKings",
+      "model": "NFL season-prior workload v2 / team-share matchup",
+      "strategy": "Original",
+      "published_utc": "2026-10-22T14:28:53.696767+00:00",
+      "starts_utc": "2026-10-23T00:15:00+00:00",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": 43.57,
+      "expected_opportunities": 5.75,
+      "reason": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+      "projected_count": null,
+      "base_model": "NFL season-prior workload v2 / team-share matchup",
+      "raw_probability": 0.604,
+      "feedback_version": null,
+      "feedback_status": "Collecting evidence \u2014 original probability retained",
+      "forecast_context": {
+        "Opportunity type": "Targets",
+        "Current roster team": "CHI",
+        "Current-team games": 6,
+        "Evidence explanation": "Forecast: 43.57 receiving yards. Compared quote: Under 45.5 at -112 (DraftKings). Last-season history: 16 games; current-season appearances: 6; current-season weight: 60.0%. Historical role assumption; lineup changes may differ Current roster team: CHI; current-team games: 6; Current team matches history. Expected workload: 5.75 targets. Estimated win chance 60.4% versus 52.8% needed to break even; estimated gap 7.6 percentage points. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Extra absence and predicted-margin effects remain separate unvalidated scenarios; they do not boost the tested base forecast. Depth listings do not confirm game-day starters, and snap share is not routes run.",
+        "Range method": "Earlier model residual 10th\u201390th percentiles; empirical range, not guaranteed future coverage",
+        "Historical error range low": 12.098400891823623,
+        "Historical error range high": 80.84448264233924,
+        "Validation details": {
+          "mae": 24.00283720482277,
+          "baseline_mae": 24.93005809294872,
+          "passed": true,
+          "validation_games": 208,
+          "empirical_band_validation_coverage": 0.7935534951159952,
+          "scope": "NFL season-stage historical stat development comparison; not historical sportsbook returns"
+        },
+        "History source": "Completed nflverse regular-season weekly statistics",
+        "Season stage": "Established season",
+        "Last-season games": 16,
+        "Current-season appearances": 6,
+        "Current-season weight %": 60.0,
+        "Role uncertainty": "Historical role assumption; lineup changes may differ",
+        "Uncertainty multiplier": 1.0,
+        "Workload candidate opportunities": 5.76,
+        "Workload candidate projection": 43.66,
+        "Workload candidate status": "Stat/workload benchmark passed \u2014 probability validation still required",
+        "Workload candidate benchmark": {
+          "weight": 0.75,
+          "training_examples": 903,
+          "validation_games": 208,
+          "candidate_workload_mae": 2.1619925471390395,
+          "incumbent_workload_mae": 2.1701603333300707,
+          "simple_workload_mae": 2.2353012438949937,
+          "candidate_stat_mae": 23.940166413433612,
+          "incumbent_stat_mae": 24.00283720482277,
+          "passed": true,
+          "status": "Stat/workload benchmark passed \u2014 probability validation still required"
+        },
+        "Workload sensitivity scenarios": [
+          {
+            "Scenario": "Observed lower workload",
+            "Workload": 4.0,
+            "Stat projection if efficiency stays unchanged": 30.3
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Workload": 5.8,
+            "Stat projection if efficiency stays unchanged": 43.94
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Workload": 7.0,
+            "Stat projection if efficiency stays unchanged": 53.03
+          }
+        ],
+        "Confirmed unavailable teammates": "Anthony Johnson Jr., Dayo Odeyingbo, Jack Sanborn, Kyle Monangai",
+        "Lineup scenario limitation": "Unavailable teammates may change roles. Their opportunities are not automatically assigned to this player. Scenario rows are sensitivity examples, not picks or scenario probabilities.",
+        "Supporting team workload": 32.9,
+        "Supporting player workload share %": 17.48,
+        "Game context scenarios": {
+          "Forecast": {
+            "passing_factor": 1.009900284900285,
+            "rushing_factor": 0.9745440872344426,
+            "probabilities": {
+              "Win by 8+": 0.26666666666666666,
+              "Within 7": 0.3333333333333333,
+              "Lose by 8+": 0.4
+            },
+            "expected_margin": -1.958333333333333,
+            "prior_games": 12,
+            "method": "Prior-margin empirical scenarios; not live score-state probabilities"
+          },
+          "Use": "Historical margin scenarios only; no extra adjustment to this candidate or evidence of causation"
+        },
+        "Workload candidate version": "workload-candidates-v1",
+        "Workload candidate baseline opportunities": 5.800000000000001,
+        "Workload candidate baseline projection": 43.936932392988055,
+        "Probability calibration status": "Collecting evidence \u2014 original probability retained",
+        "NFL evidence version": "nfl-forecast-evidence-v1",
+        "NFL player averages": [
+          {
+            "Sample": "Last season \u2014 all teams",
+            "Observed games": 16,
+            "Stat sample games": 16,
+            "Average": 44.5625,
+            "Median": 34.5,
+            "Opportunity type": "targets",
+            "Opportunities/game": 5.125,
+            "Opportunity sample games": 16,
+            "Stat per opportunity": 8.695121951219512,
+            "Includes prior season": true,
+            "Includes prior team": false,
+            "Completion %": null,
+            "Completion % sample games": 16,
+            "Catch %": 70.73170731707317,
+            "Catch % sample games": 16,
+            "Passing TD/attempt %": null,
+            "Passing TD/attempt % sample games": 16,
+            "Interceptions/attempt %": null,
+            "Interceptions/attempt % sample games": 16,
+            "Yards/pass attempt": null,
+            "Yards/carry": -2.0,
+            "Yards/target": 8.695121951219512,
+            "Yards/reception": 12.293103448275861,
+            "Target share %": 16.532258064516128,
+            "Target share % matched games": 16,
+            "Carry share %": 0.20876826722338204,
+            "Carry share % matched games": 16,
+            "Pass-attempt share %": 0.0,
+            "Pass-attempt share % matched games": 16,
+            "Mean game offensive snap %": 64.5,
+            "Snap games matched": 16,
+            "Compared line": 45.5,
+            "Historical overs": 6,
+            "Historical unders": 10,
+            "Historical pushes": 0,
+            "Historical over % (excluding pushes)": 37.5
+          },
+          {
+            "Sample": "This season \u2014 all teams",
+            "Observed games": 6,
+            "Stat sample games": 6,
+            "Average": 29.166666666666668,
+            "Median": 25.0,
+            "Opportunity type": "targets",
+            "Opportunities/game": 5.0,
+            "Opportunity sample games": 6,
+            "Stat per opportunity": 5.833333333333333,
+            "Includes prior season": false,
+            "Includes prior team": false,
+            "Completion %": null,
+            "Completion % sample games": 6,
+            "Catch %": 63.333333333333336,
+            "Catch % sample games": 6,
+            "Passing TD/attempt %": null,
+            "Passing TD/attempt % sample games": 6,
+            "Interceptions/attempt %": null,
+            "Interceptions/attempt % sample games": 6,
+            "Yards/pass attempt": null,
+            "Yards/carry": null,
+            "Yards/target": 5.833333333333333,
+            "Yards/reception": 9.210526315789474,
+            "Target share %": 15.463917525773196,
+            "Target share % matched games": 6,
+            "Carry share %": 0.0,
+            "Carry share % matched games": 6,
+            "Pass-attempt share %": 0.0,
+            "Pass-attempt share % matched games": 6,
+            "Mean game offensive snap %": 85.33333333333334,
+            "Snap games matched": 6,
+            "Compared line": 45.5,
+            "Historical overs": 2,
+            "Historical unders": 4,
+            "Historical pushes": 0,
+            "Historical over % (excluding pushes)": 33.333333333333336
+          },
+          {
+            "Sample": "Current-team current stint",
+            "Observed games": 6,
+            "Stat sample games": 6,
+            "Average": 29.166666666666668,
+            "Median": 25.0,
+            "Opportunity type": "targets",
+            "Opportunities/game": 5.0,
+            "Opportunity sample games": 6,
+            "Stat per opportunity": 5.833333333333333,
+            "Includes prior season": false,
+            "Includes prior team": false,
+            "Completion %": null,
+            "Completion % sample games": 6,
+            "Catch %": 63.333333333333336,
+            "Catch % sample games": 6,
+            "Passing TD/attempt %": null,
+            "Passing TD/attempt % sample games": 6,
+            "Interceptions/attempt %": null,
+            "Interceptions/attempt % sample games": 6,
+            "Yards/pass attempt": null,
+            "Yards/carry": null,
+            "Yards/target": 5.833333333333333,
+            "Yards/reception": 9.210526315789474,
+            "Target share %": 15.463917525773196,
+            "Target share % matched games": 6,
+            "Carry share %": 0.0,
+            "Carry share % matched games": 6,
+            "Pass-attempt share %": 0.0,
+            "Pass-attempt share % matched games": 6,
+            "Mean game offensive snap %": 85.33333333333334,
+            "Snap games matched": 6,
+            "Compared line": 45.5,
+            "Historical overs": 2,
+            "Historical unders": 4,
+            "Historical pushes": 0,
+            "Historical over % (excluding pushes)": 33.333333333333336
+          },
+          {
+            "Sample": "Last 3 appearances",
+            "Observed games": 3,
+            "Stat sample games": 3,
+            "Average": 47.0,
+            "Median": 57.0,
+            "Opportunity type": "targets",
+            "Opportunities/game": 7.0,
+            "Opportunity sample games": 3,
+            "Stat per opportunity": 6.714285714285714,
+            "Includes prior season": false,
+            "Includes prior team": false,
+            "Completion %": null,
+            "Completion % sample games": 3,
+            "Catch %": 66.66666666666667,
+            "Catch % sample games": 3,
+            "Passing TD/attempt %": null,
+            "Passing TD/attempt % sample games": 3,
+            "Interceptions/attempt %": null,
+            "Interceptions/attempt % sample games": 3,
+            "Yards/pass attempt": null,
+            "Yards/carry": null,
+            "Yards/target": 6.714285714285714,
+            "Yards/reception": 10.071428571428571,
+            "Target share %": 20.192307692307693,
+            "Target share % matched games": 3,
+            "Carry share %": 0.0,
+            "Carry share % matched games": 3,
+            "Pass-attempt share %": 0.0,
+            "Pass-attempt share % matched games": 3,
+            "Mean game offensive snap %": 86.66666666666667,
+            "Snap games matched": 3,
+            "Compared line": 45.5,
+            "Historical overs": 2,
+            "Historical unders": 1,
+            "Historical pushes": 0,
+            "Historical over % (excluding pushes)": 66.66666666666667
+          },
+          {
+            "Sample": "Last 5 appearances",
+            "Observed games": 5,
+            "Stat sample games": 5,
+            "Average": 35.0,
+            "Median": 31.0,
+            "Opportunity type": "targets",
+            "Opportunities/game": 5.6,
+            "Opportunity sample games": 5,
+            "Stat per opportunity": 6.25,
+            "Includes prior season": false,
+            "Includes prior team": false,
+            "Completion %": null,
+            "Completion % sample games": 5,
+            "Catch %": 67.85714285714286,
+            "Catch % sample games": 5,
+            "Passing TD/attempt %": null,
+            "Passing TD/attempt % sample games": 5,
+            "Interceptions/attempt %": null,
+            "Interceptions/attempt % sample games": 5,
+            "Yards/pass attempt": null,
+            "Yards/carry": null,
+            "Yards/target": 6.25,
+            "Yards/reception": 9.210526315789474,
+            "Target share %": 16.666666666666668,
+            "Target share % matched games": 5,
+            "Carry share %": 0.0,
+            "Carry share % matched games": 5,
+            "Pass-attempt share %": 0.0,
+            "Pass-attempt share % matched games": 5,
+            "Mean game offensive snap %": 85.0,
+            "Snap games matched": 5,
+            "Compared line": 45.5,
+            "Historical overs": 2,
+            "Historical unders": 3,
+            "Historical pushes": 0,
+            "Historical over % (excluding pushes)": 40.0
+          }
+        ],
+        "NFL averages method": "Completed regular-season observed games only. Rates use paired totals. Recent samples may span seasons/teams as labeled; missing rows are not zero or DNP. Historical line percentages are not predicted win chances.",
+        "NFL verified schedule context": {
+          "Team": {
+            "Status": "Verified completed NFL schedule",
+            "Previous game": "2026_06_CHI_ATL",
+            "Previous game date": "2026-10-18",
+            "Calendar days between games": 4,
+            "Scheduled off days": 3,
+            "Short week": true,
+            "Extended schedule gap": false,
+            "Method": "Schedule gaps, not verified physical rest; no automatic rest penalty"
+          },
+          "Opponent": {
+            "Status": "Verified completed NFL schedule",
+            "Previous game": "2026_06_NYJ_NE",
+            "Previous game date": "2026-10-18",
+            "Calendar days between games": 4,
+            "Scheduled off days": 3,
+            "Short week": true,
+            "Extended schedule gap": false,
+            "Method": "Schedule gaps, not verified physical rest; no automatic rest penalty"
+          }
+        },
+        "NFL opponent workload context": [
+          {
+            "Season": 2025,
+            "Team sample games": 8,
+            "Opponent sample games": 8,
+            "Team attempts + carries/game": 64.625,
+            "Team pass-attempt % of attempts + carries": 53.191489361702125,
+            "Opponent allowed passing_yards/game": 172.0,
+            "passing_yards sample games": 8,
+            "Opponent allowed rushing_yards/game": 131.25,
+            "rushing_yards sample games": 8,
+            "Opponent allowed receiving_yards/game": 172.0,
+            "receiving_yards sample games": 8,
+            "Opponent allowed attempts/game": 29.875,
+            "attempts sample games": 8,
+            "Opponent allowed carries/game": 27.75,
+            "carries sample games": 8,
+            "Opponent allowed targets/game": 28.625,
+            "targets sample games": 8,
+            "Opponent allowed receptions/game": 18.875,
+            "receptions sample games": 8,
+            "Limitation": "Team-level context, not position-specific. Attempts + carries exclude sacks and are not a full pace metric. No extra multiplier applied."
+          },
+          {
+            "Season": 2026,
+            "Team sample games": 6,
+            "Opponent sample games": 6,
+            "Team attempts + carries/game": 70.66666666666667,
+            "Team pass-attempt % of attempts + carries": 49.056603773584904,
+            "Opponent allowed passing_yards/game": 227.5,
+            "passing_yards sample games": 6,
+            "Opponent allowed rushing_yards/game": 91.83333333333333,
+            "rushing_yards sample games": 6,
+            "Opponent allowed receiving_yards/game": 227.5,
+            "receiving_yards sample games": 6,
+            "Opponent allowed attempts/game": 32.0,
+            "attempts sample games": 6,
+            "Opponent allowed carries/game": 23.333333333333332,
+            "carries sample games": 6,
+            "Opponent allowed targets/game": 30.5,
+            "targets sample games": 6,
+            "Opponent allowed receptions/game": 21.166666666666668,
+            "receptions sample games": 6,
+            "Limitation": "Team-level context, not position-specific. Attempts + carries exclude sacks and are not a full pace metric. No extra multiplier applied."
+          }
+        ],
+        "NFL depth check": {
+          "Listings": [
+            {
+              "Position slot": "te",
+              "Position": "TE",
+              "Listed rank": 1,
+              "First-listed player": "Colston Loveland"
+            }
+          ],
+          "Status": "ESPN depth listing; game-day starting role and workload are unconfirmed",
+          "Confirmed game-day starter": null
+        },
+        "NFL depth checked UTC": "2026-10-22T14:27:32.790961+00:00",
+        "NFL restriction check": {
+          "Review required": false,
+          "Status": "No explicit current game-workload limit found in checked report; unrestricted usage is not confirmed"
+        },
+        "NFL snap trend": {
+          "Sample games": 6,
+          "Matched games": 6,
+          "Recent two-game snap %": 84.00000000000001,
+          "Earlier snap %": 86.0,
+          "Role change flag": false,
+          "Limitation": "Observed snap-share change, not routes, a confirmed new starting role or a causal explanation; no snap penalty/boost automatically applied"
+        },
+        "NFL workload sensitivity": [
+          {
+            "Scenario": "Observed lower workload",
+            "Opportunities": 2.0,
+            "Stat if production per opportunity stays unchanged": 15.154782608695653
+          },
+          {
+            "Scenario": "Base workload forecast",
+            "Opportunities": 5.75,
+            "Stat if production per opportunity stays unchanged": 43.57
+          },
+          {
+            "Scenario": "Observed higher workload",
+            "Opportunities": 9.0,
+            "Stat if production per opportunity stays unchanged": 68.19652173913043
+          }
+        ],
+        "NFL recent-role candidate": {
+          "Version": "nfl-forecast-evidence-v1",
+          "Opportunities": 6.0,
+          "Projection": 45.46434782608696,
+          "Base opportunities": 5.75,
+          "Base projection": 43.57,
+          "Sample games": 2,
+          "Status": "Recent observed opportunities only; research scenario, not a validated replacement or automatic pick"
+        },
+        "NFL teammate involvement": [
+          {
+            "Currently unavailable teammate": "Kyle Monangai",
+            "Recorded positive offensive snaps": {
+              "Games": 14,
+              "Stat average": 49.142857142857146,
+              "Opportunities/game": 5.857142857142857
+            },
+            "Recorded zero offensive snaps": {
+              "Games": 0,
+              "Stat average": null,
+              "Opportunities/game": null
+            },
+            "Observed stat difference": null,
+            "Status": "Insufficient matched evidence (need 3 games in each group)",
+            "Limitation": "A missing snap row is unknown, not zero or DNP. Recorded zero offensive snaps does not prove injury or total game absence. No causal effect or automatic redistribution is inferred."
+          }
+        ],
+        "Game-day diagnostic": {
+          "version": 1,
+          "checked_utc": "2026-10-22T14:28:27.489319+00:00",
+          "ready": true,
+          "software": {
+            "passed": true,
+            "tests_run": 328,
+            "tests_skipped": 0,
+            "checked_utc": "2026-10-22T14:01:30.116520+00:00",
+            "same_code": true,
+            "fresh_today": true
+          },
+          "category_baseline_passed": true,
+          "earlier_calibration_examples": 548,
+          "later_historical_games_or_examples": 208,
+          "historical_scope": "Game-weighted synthetic half-unit lines; reference distributions fit on the same earlier window. No historical sportsbook lines, prices, ROI or independent future-performance proof",
+          "quote_fresh": true,
+          "model_qualified": true,
+          "issues": [],
+          "interpretation": "Counts are reported as measured; software tests and historical games are different. Correlated props are not independent games. Diagnostics do not guarantee a winning bet."
+        },
+        "Homework": {
+          "version": "verified-matchup-homework-v1",
+          "sport": "NFL",
+          "factors": [
+            {
+              "Factor": "Player workload and efficiency",
+              "Evidence": "{\"method\": null, \"expected\": 5.75, \"conversion\": null}",
+              "Effect": "Applied by selected forecast model"
+            },
+            {
+              "Factor": "Team and opponent behavior",
+              "Evidence": "{\"observed\": [{\"Season\": 2025, \"Team sample games\": 8, \"Opponent sample games\": 8, \"Team attempts + carries/game\": 64.625, \"Team pass-attempt % of attempts + carries\": 53.191489361702125, \"Opponent allowed passing_yards/game\": 172.0, \"passing_yards sample games\": 8, \"Opponent allowed rushing_yards/game\": 131.25, \"rushing_yards sample games\": 8, \"Opponent allowed receiving_yards/game\": 172.0, \"receiving_yards sample games\": 8, \"Opponent allowed attempts/game\": 29.875, \"attempts sample games\": 8, \"Opponent allowed carries/game\": 27.75, \"carries sample games\": 8, \"Opponent allowed targets/game\": 28.625, \"targets sample games\": 8, \"Opponent allowed receptions/game\": 18.875, \"receptions sample games\": 8, \"Limitation\": \"Team-level context, not position-specific. Attempts + carries exclude sacks and are not a full pace metric. No extra multiplier applied.\"}, {\"Season\": 2026, \"Team sample games\": 6, \"Opponent sample games\": 6, \"Team attempts + carries/game\": 70.66666666666667, \"Team pass-attempt % of attempts + carries\": 49.056603773584904, \"Opponent allowed passing_yards/game\": 227.5, \"passing_yards sample games\": 6, \"Opponent allowed rushing_yards/game\": 91.83333333333333, \"rushing_yards sample games\": 6, \"Opponent allowed receiving_yards/game\": 227.5, \"receiving_yards sample games\": 6, \"Opponent allowed attempts/game\": 32.0, \"attempts sample games\": 6, \"Opponent allowed carries/game\": 23.333333333333332, \"carries sample games\": 6, \"Opponent allowed targets/game\": 30.5, \"targets sample games\": 6, \"Opponent allowed receptions/game\": 21.166666666666668, \"receptions sample games\": 6, \"Limitation\": \"Team-level context, not position-specific. Attempts + carries exclude sacks and are not a full pace metric. No extra multiplier applied.\"}], \"candidate\": {\"team_volume\": 32.89705882352941, \"player_share\": 0.17482468443197757, \"opponent_workload_ratio\": 0.9587501047037846, \"prior_team_tendency\": {\"games\": 17, \"pass_attempt_share\": 0.5319740500463392}, \"current_team_tendency\": {\"games\": 4, \"pass_attempt_share\": 0.496551724137931}, \"method\": \"Team workload \u00d7 observed player share blended with incumbent volume; bounded opponent workload adjustment. Existing efficiency/defense model retained. Attempts + carries exclude sacks; observed tendencies do not identify a coaching system.\"}}",
+              "Effect": "Team-share and opponent workload candidate applied after chronological checks"
+            },
+            {
+              "Factor": "Depth, injuries and snap trends",
+              "Evidence": "{\"depth\": {\"Listings\": [{\"Position slot\": \"te\", \"Position\": \"TE\", \"Listed rank\": 1, \"First-listed player\": \"Colston Loveland\"}], \"Status\": \"ESPN depth listing; game-day starting role and workload are unconfirmed\", \"Confirmed game-day starter\": null}, \"snaps\": {\"Sample games\": 6, \"Matched games\": 6, \"Recent two-game snap %\": 84.00000000000001, \"Earlier snap %\": 86.0, \"Role change flag\": false, \"Limitation\": \"Observed snap-share change, not routes, a confirmed new starting role or a causal explanation; no snap penalty/boost automatically applied\"}, \"restrictions\": {\"Review required\": false, \"Status\": \"No explicit current game-workload limit found in checked report; unrestricted usage is not confirmed\"}}",
+              "Effect": "Eligibility and research; numerical effects only where selected model validates them"
+            },
+            {
+              "Factor": "Game situation",
+              "Evidence": "[{\"Scenario\": \"Observed lower workload\", \"Opportunities\": 2.0, \"Stat if production per opportunity stays unchanged\": 15.154782608695653}, {\"Scenario\": \"Base workload forecast\", \"Opportunities\": 5.75, \"Stat if production per opportunity stays unchanged\": 43.57}, {\"Scenario\": \"Observed higher workload\", \"Opportunities\": 9.0, \"Stat if production per opportunity stays unchanged\": 68.19652173913043}]",
+              "Effect": "Scenario and risk evidence; future score state is unknown"
+            }
+          ],
+          "probability_meaning": "Estimated chance of the quoted selection winning, not player shooting percentage or verified hit rate",
+          "limitation": "No program watches the future or establishes why a single outcome occurred. New numerical context effects require earlier-fit/later-test comparisons."
+        },
+        "Opportunity candidate": {
+          "version": "NFL season-prior workload v2 / team-share matchup",
+          "projection": 43.57168495640658,
+          "opportunities": 5.751784637279078,
+          "benchmark": {
+            "synthetic_probability_games": 208,
+            "synthetic_probability_cases": 2792,
+            "candidate_brier": 0.23085062738717302,
+            "incumbent_brier": 0.23406325752833027,
+            "simple_baseline_brier": 0.24215056048328776,
+            "candidate_log_loss": 0.6538060456918466,
+            "mean_over_probability": 0.4376923574247457,
+            "observed_over_rate": 0.4262477106227106,
+            "incumbent_log_loss": 0.6606715081220095,
+            "simple_baseline_log_loss": 0.6772963834765582,
+            "passed": true,
+            "forecast_passed": true,
+            "probability_passed": true,
+            "candidate_mae": 23.9401743961757,
+            "incumbent_mae": 24.00283720482277,
+            "simple_baseline_mae": 24.93005809294872,
+            "candidate_workload_mae": 2.158072047646507,
+            "incumbent_workload_mae": 2.1701603333300707,
+            "validation_games": 208,
+            "calibration_examples": 548,
+            "temperature_games": 77,
+            "temperature": 1.25,
+            "validation_season": 2025,
+            "validation_mode": "Complete later observed season",
+            "calibration_split": "2024-14",
+            "calibration_through": "2024-18",
+            "validation_from": "2025-05",
+            "status": "Historical stat/workload and synthetic-probability checks passed",
+            "scope": "Game-weighted synthetic half-unit lines; reference distributions fit on the same earlier window. No historical sportsbook lines, prices, ROI or independent future-performance proof"
+          }
+        },
+        "Matchup homework": {
+          "team_volume": 32.89705882352941,
+          "player_share": 0.17482468443197757,
+          "opponent_workload_ratio": 0.9587501047037846,
+          "prior_team_tendency": {
+            "games": 17,
+            "pass_attempt_share": 0.5319740500463392
+          },
+          "current_team_tendency": {
+            "games": 4,
+            "pass_attempt_share": 0.496551724137931
+          },
+          "method": "Team workload \u00d7 observed player share blended with incumbent volume; bounded opponent workload adjustment. Existing efficiency/defense model retained. Attempts + carries exclude sacks; observed tendencies do not identify a coaching system."
+        },
+        "Opportunity model applied": true,
+        "Matchup model applied": true,
+        "Probability tier": "Higher model probability \u2014 experimental",
+        "Probability evidence": "Model estimate; prospective calibration and profitability not established",
+        "Selection policy": "probability-label-audit-v1",
+        "Research model comparison": [
+          {
+            "version": "NFL season-prior workload v2 / team-share matchup",
+            "incumbent_projection": 43.936932392988055,
+            "candidate_projection": 43.57168495640658,
+            "incumbent_probability": 0.58353591160221,
+            "candidate_probability": 0.6039973481135587,
+            "line": 45.5,
+            "selection": "Under",
+            "historical_checks_passed": true
+          }
+        ],
+        "Market reasoning": {
+          "version": "exact-market-reasoning-v1",
+          "supported": true,
+          "win_condition": "Wins at 45 or fewer receiving yards. Whole-number final statistics cannot equal this fractional line.",
+          "illustrative_outcomes": [
+            {
+              "Actual": 45,
+              "Result": "Win"
+            },
+            {
+              "Actual": 46,
+              "Result": "Loss"
+            }
+          ],
+          "opportunity_logic": "Targets \u00d7 catch probability \u00d7 yards per catch. Catch volume alone does not establish a yardage win.",
+          "projection_note": "Central forecast: 43.57. A mean forecast is not a hit probability; the full outcome distribution matters.",
+          "price_comparison": "Existing model estimate 60.4%; price break-even 52.8%; difference +7.6 percentage points. This arithmetic assumes the saved probability belongs to this exact selection, line and price; a changed line requires model reanalysis. Push probability is not supplied, so this is not a push-adjusted expected-value estimate.",
+          "scope": "Exact-line arithmetic and explanatory scenarios, not a new prediction model or proof of profitability. Illustrations assume participation and final official stats; platform void/stat-correction rules can differ.",
+          "cross_market_example": {
+            "label": "Hypothetical teaching example \u2014 not this player\u2019s forecast or a likely game script",
+            "stat_line": {
+              "Receptions": 6,
+              "Receiving yards": 48,
+              "Anytime touchdown": 0
+            },
+            "markets": [
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 45.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 44.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 48.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 53.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 43.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 33.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 38.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Under",
+                "Line": 41.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Anytime touchdown",
+                "Selection": "Over",
+                "Line": 0.5,
+                "Illustrative actual": 0,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 41.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 38.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 43.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 33.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 53.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 44.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 48.5,
+                "Illustrative actual": 48,
+                "Result": "Loss"
+              },
+              {
+                "Category": "Receiving yards",
+                "Selection": "Over",
+                "Line": 45.5,
+                "Illustrative actual": 48,
+                "Result": "Win"
+              }
+            ],
+            "correlation_note": "These markets share player/game outcomes; probabilities must not be multiplied as if independent. No joint hit probability has been estimated."
+          }
+        }
+      },
+      "paired_forecast": {
+        "version": 1,
+        "base_projection": null,
+        "issued_projection": 43.57,
+        "base_workload": null,
+        "issued_workload": 5.75,
+        "base_probability": null,
+        "issued_probability": 0.604,
+        "learning_version": null,
+        "scope": "Frozen unadjusted base versus actually issued forecast; not hypothetical candidate"
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-22T14:23:52Z",
+        "Statistics retrieved UTC": "2026-10-22T14:24:30.471505+00:00",
+        "Injury source updated UTC": "2026-10-22T14:27:28Z",
+        "Injury retrieved UTC": "2026-10-22T14:27:32.756241+00:00",
+        "Roster checked UTC": "2026-10-22T14:27:33.129573+00:00",
+        "Player history through": "2026-10-18",
+        "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
+        "ESPN scheduled start UTC": "2026-10-23T00:15Z",
+        "NFL depth checked UTC": "2026-10-22T14:27:32.790961+00:00"
+      },
+      "season_type": "Regular season"
+    },
+    {
+      "id": "c7d4b73dda31491440b2",
+      "sport": "NFL",
+      "event_id": "401873010",
+      "game": "New England Patriots at Chicago Bears",
+      "player": "Drake Maye",
+      "category": "Anytime touchdown",
+      "direction": "Over",
+      "line": 0.5,
+      "odds": 350.0,
+      "probability": 0.275,
+      "sportsbook": "FanDuel",
+      "model": "NFL offensive anytime TD opportunities v1 / 2024 calibration / 2025 development",
+      "strategy": "Original",
+      "published_utc": "2026-10-22T14:28:53.697117+00:00",
+      "starts_utc": "2026-10-23T00:15:00+00:00",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": 5.897058823529411,
+      "reason": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability.",
+      "projected_count": 0.243,
+      "base_model": "NFL offensive anytime TD opportunities v1 / 2024 calibration / 2025 development",
+      "raw_probability": 0.275,
+      "feedback_version": null,
+      "feedback_status": null,
+      "base_projection": 0.24307533241111592,
+      "base_probability": 0.27532139307440423,
+      "online_input_probability": 0.27532139307440423,
+      "forecast_context": {
+        "Opportunity type": "Carries + targets",
+        "Evidence explanation": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability.",
+        "Validation details": {
+          "calibration_examples": 3282,
+          "validation_games": 272,
+          "validation_examples": 3282,
+          "temperature": 0.75,
+          "brier": 0.17097820167657504,
+          "baseline_brier": 0.18304794569525193,
+          "passed": true,
+          "scope": "Offensive scoring occurrence only; returns not modeled. 2025 development holdout, not historical odds profitability."
+        },
+        "Game-day diagnostic": {
+          "version": 1,
+          "checked_utc": "2026-10-22T14:28:27.489319+00:00",
+          "ready": true,
+          "software": {
+            "passed": true,
+            "tests_run": 328,
+            "tests_skipped": 0,
+            "checked_utc": "2026-10-22T14:01:30.116520+00:00",
+            "same_code": true,
+            "fresh_today": true
+          },
+          "category_baseline_passed": true,
+          "earlier_calibration_examples": 3282,
+          "later_historical_games_or_examples": 272,
+          "historical_scope": "Offensive scoring occurrence only; returns not modeled. 2025 development holdout, not historical odds profitability.",
+          "quote_fresh": true,
+          "model_qualified": true,
+          "issues": [],
+          "interpretation": "Counts are reported as measured; software tests and historical games are different. Correlated props are not independent games. Diagnostics do not guarantee a winning bet."
+        },
+        "Homework": {
+          "version": "verified-matchup-homework-v1",
+          "sport": "NFL",
+          "factors": [
+            {
+              "Factor": "Player workload and efficiency",
+              "Evidence": "{\"method\": null, \"expected\": 5.897058823529411, \"conversion\": null}",
+              "Effect": "Applied by selected forecast model"
+            },
+            {
+              "Factor": "Team and opponent behavior",
+              "Evidence": "{\"observed\": null, \"candidate\": null}",
+              "Effect": "Existing model opponent feature where available; no duplicate multiplier"
+            },
+            {
+              "Factor": "Depth, injuries and snap trends",
+              "Evidence": "{\"depth\": null, \"snaps\": null, \"restrictions\": null}",
+              "Effect": "Eligibility and research; numerical effects only where selected model validates them"
+            },
+            {
+              "Factor": "Game situation",
+              "Evidence": "Unavailable in the checked sources",
+              "Effect": "Scenario and risk evidence; future score state is unknown"
+            }
+          ],
+          "probability_meaning": "Estimated chance of the quoted selection winning, not player shooting percentage or verified hit rate",
+          "limitation": "No program watches the future or establishes why a single outcome occurred. New numerical context effects require earlier-fit/later-test comparisons."
+        },
+        "Probability tier": "Lower-probability value research",
+        "Probability evidence": "Model estimate; prospective calibration and profitability not established",
+        "Selection policy": "probability-label-audit-v1",
+        "Market reasoning": {
+          "version": "exact-market-reasoning-v1",
+          "supported": true,
+          "win_condition": "Wins if the player scores at least one touchdown. Receiving yards and receptions alone do not settle this market.",
+          "illustrative_outcomes": [
+            {
+              "Actual touchdowns scored": 0,
+              "Result": "Loss"
+            },
+            {
+              "Actual touchdowns scored": 1,
+              "Result": "Win"
+            }
+          ],
+          "opportunity_logic": "Scoring opportunities and touchdown conversion; overall targets or yardage do not alone establish touchdown probability. A passing touchdown is not a touchdown scored by the passer.",
+          "projection_note": "Central forecast: 0.243. A mean forecast is not a hit probability; the full outcome distribution matters.",
+          "price_comparison": "Existing model estimate 27.5%; price break-even 22.2%; difference +5.3 percentage points. This arithmetic assumes the saved probability belongs to this exact selection, line and price; a changed line requires model reanalysis. Push probability is not supplied, so this is not a push-adjusted expected-value estimate.",
+          "scope": "Exact-line arithmetic and explanatory scenarios, not a new prediction model or proof of profitability. Illustrations assume participation and final official stats; platform void/stat-correction rules can differ."
+        }
+      },
+      "paired_forecast": {
+        "version": 1,
+        "base_projection": 0.24307533241111592,
+        "issued_projection": 0.243,
+        "base_workload": null,
+        "issued_workload": 5.897058823529411,
+        "base_probability": 0.27532139307440423,
+        "issued_probability": 0.275,
+        "learning_version": null,
+        "scope": "Frozen unadjusted base versus actually issued forecast; not hypothetical candidate"
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-22T14:23:01Z",
+        "Statistics retrieved UTC": "2026-10-22T14:24:30.471505+00:00",
+        "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
+        "ESPN scheduled start UTC": "2026-10-23T00:15Z"
+      },
+      "season_type": "Regular season"
     }
   ]
 }
