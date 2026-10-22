@@ -8,17 +8,17 @@ from nba_tools import render_nba_tools, clear_nba_caches, clear_nba_live_caches,
 from sportsbook_tools import render_sportsbooks
 from paper_parlay import render_paper_parlay
 from nfl_workload_lab import render_workload_lab
-import importlib
+from runtime_health import reload_if_changed, invalidate_public
 import pick_history
 # Streamlit reruns app.py while imported modules can retain an older API after deployment.
-pick_history = importlib.reload(pick_history)
+pick_history = reload_if_changed(pick_history)
 render_history = pick_history.render_history
 import nfl_prop_model
 import nfl_workload_lab
 import sportsbook_tools
-nfl_prop_model = importlib.reload(nfl_prop_model)
-nfl_workload_lab = importlib.reload(nfl_workload_lab)
-sportsbook_tools = importlib.reload(sportsbook_tools)
+nfl_prop_model = reload_if_changed(nfl_prop_model)
+nfl_workload_lab = reload_if_changed(nfl_workload_lab)
+sportsbook_tools = reload_if_changed(sportsbook_tools)
 render_workload_lab = nfl_workload_lab.render_workload_lab
 render_sportsbooks = sportsbook_tools.render_sportsbooks
 import csv
@@ -35,7 +35,7 @@ st.set_page_config(
 )
 
 st.title("🏈 Kamikaze Picks")
-st.sidebar.caption('Research update: matchup homework and opportunity benchmarks v1')
+st.sidebar.caption('Runtime recovery v1 · cached dashboard and public feeds')
 st.caption("NFL & NBA · Scores, saved picks and experimental forecasts")
 
 SPORTS = {
@@ -58,27 +58,16 @@ NFL_HISTORY_URL = (
 
 @st.cache_data(ttl=30)
 def get_scoreboard(sport_path, game_date):
-    url = f"{BASE_URL}/site/v2/sports/{sport_path}/scoreboard"
-    response = requests.get(
-        url,
-        params={"dates": game_date.strftime("%Y%m%d")},
-        timeout=15,
-        headers=HEADERS,
-    )
-    response.raise_for_status()
-    return response.json()
+    from runtime_health import public_json
+    data,meta=public_json('scoreboard '+sport_path,f'{BASE_URL}/site/v2/sports/{sport_path}/scoreboard',params={'dates':game_date.strftime('%Y%m%d')},validate=lambda d:isinstance(d.get('events'),list))
+    return dict(data,_feed_health=meta)
 
 
 @st.cache_data(ttl=900)
 def get_standings(sport_path):
-    url = f"{BASE_URL}/v2/sports/{sport_path}/standings"
-    response = requests.get(
-        url,
-        timeout=15,
-        headers=HEADERS,
-    )
-    response.raise_for_status()
-    return response.json()
+    from runtime_health import public_json
+    data,meta=public_json('standings '+sport_path,f'{BASE_URL}/v2/sports/{sport_path}/standings',fresh=900,max_stale=3600,validate=lambda d:isinstance(d.get('children'),list))
+    return dict(data,_feed_health=meta)
 
 
 def show_games(data, sport_path):
@@ -305,12 +294,10 @@ def game_status_text(event):
 
 @st.cache_data(ttl=30)
 def get_game_boxscore(sport_path, event_id):
-    response = requests.get(
-        f"{BASE_URL}/site/v2/sports/{sport_path}/summary",
-        params={"event": event_id}, headers=HEADERS, timeout=15,
-    )
-    response.raise_for_status()
-    return {"data": response.json(), "retrieved": datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%I:%M:%S %p %Z")}
+    from runtime_health import summary
+    result=summary(sport_path,event_id)
+    checked=datetime.fromisoformat(result['retrieved_utc']).astimezone(ZoneInfo('America/Los_Angeles')).strftime('%I:%M:%S %p %Z')
+    return dict(result,retrieved=checked+(' · last-good data, retry pending'if result['stale']else''))
 
 
 def show_live_game_stats(data, sport_path):
@@ -327,7 +314,11 @@ def show_live_game_stats(data, sport_path):
         if st.button("Refresh scores and live stats", key="refresh_boxscore"):
             get_scoreboard.clear()
             get_game_boxscore.clear()
+            invalidate_public('summary')
             st.rerun()
+        if not st.toggle('Load selected game box score',value=False,key='load_selected_boxscore'):
+            st.caption('Enable to load this game’s full box score; scores and game-leader buttons remain available above.')
+            return
         try:
             result = get_game_boxscore(sport_path, event_id)
             summary = result['data']
@@ -523,6 +514,7 @@ def expected_home_win(home_rating, away_rating, home_advantage=55):
     return 1 / (1 + 10 ** (-rating_difference / 400))
 
 
+@st.cache_data(ttl=3600,max_entries=8,show_spinner=False)
 def build_elo_model(games, k_factor=20, home_advantage=55):
     ratings = {}
     predictions = []
@@ -759,6 +751,7 @@ def shrink_probability(probability, strength):
     return 0.5 + strength * (probability - 0.5)
 
 
+@st.cache_data(ttl=3600,max_entries=8,show_spinner=False)
 def test_probability_adjustment(predictions):
     ordered = sorted(predictions, key=lambda game: game["Date"])
     if len(ordered) < 100:
@@ -1285,6 +1278,7 @@ selected_date = st.sidebar.date_input(
 )
 
 if st.sidebar.button("Refresh live data — keep model history"):
+    invalidate_public()
     clear_nba_live_caches()
     get_scoreboard.clear()
     get_standings.clear()
@@ -1310,12 +1304,15 @@ st.caption(f"Showing games for {selected_date.strftime('%B %d, %Y')}. Completed 
 if st.button("Refresh scores, plays and game stats", key="scoreboard_refresh_top"):
     get_scoreboard.clear()
     get_game_boxscore.clear()
+    invalidate_public('scoreboard')
+    invalidate_public('summary')
 
 score_tab, activity_tab = st.tabs(["Scores, plays and statistics", "Popular bets and betting splits"])
 with score_tab:
     try:
         with st.spinner(f"Loading {sport} games..."):
             scoreboard = get_scoreboard(SPORTS[sport], selected_date)
+        if scoreboard.get('_feed_health',{}).get('stale'):st.warning('ESPN is delayed. Showing last-good scores from '+scoreboard['_feed_health']['retrieved_utc']+'; automatic retry is pending.')
         show_games(scoreboard, SPORTS[sport])
         if sport == "NFL":
             with st.expander("Game winner probabilities — selected date"):
@@ -1386,6 +1383,7 @@ with standings_tab:
     try:
         with st.spinner(f"Loading {sport} standings..."):
             standings_data = get_standings(SPORTS[sport])
+            if standings_data.get('_feed_health',{}).get('stale'):st.caption('Standings feed delayed; last-good data from '+standings_data['_feed_health']['retrieved_utc'])
             teams = parse_standings(standings_data)
 
         if not teams:
@@ -2045,3 +2043,7 @@ with dashboard_status:
 
 
 
+
+
+from runtime_health import render as render_runtime_health
+render_runtime_health()

@@ -374,10 +374,18 @@ def review_projections(now=None):
     write('background_validation.json',{'generated_utc':now.isoformat(),'paired':{s:summary(records,s)for s in SPORTS},'projection_baselines':{s:projection_summary(data['records'],s)for s in SPORTS},'promotion_status':'No automatic model promotion. Later chronological validation is required; existing experimental guards remain separate.'})
 def render(sport):
     import streamlit as st
-    report=read(REPORT,{})
+    from runtime_health import snapshot
+    report=read('background_status.json',{})
     with st.expander('Background research — readiness and daily credit budget'):
         st.write('Last research update (UTC): '+str(report.get('generated_utc','Not run yet')))
         item=report.get('sports',{}).get(sport,{})
+        if st.toggle('Load prepared research projections',value=False,key='load_background_projections_'+sport):
+            def dashboard(data):
+                fields=('game','player','category','projection','simple_baseline','workload','role_uncertain','published_utc')
+                return {'generated_utc':data.get('generated_utc'),'sports':{league:{'status':part.get('status'),'issues':part.get('issues',[]),'projections':[{k:r.get(k)for k in fields}for r in part.get('projections',[])]}for league,part in data.get('sports',{}).items()}}
+            expanded=snapshot(REPORT,'background-dashboard-v1',dashboard,{})
+            item=expanded.get('sports',{}).get(sport,item)
+        else:st.caption('Prepared projections: '+str(item.get('prepared_projections','Not reported'))+'. Detailed data loads only when requested; background research continues.')
         st.write(item.get('status','Waiting for first background research run'))
         if item.get('issues'):st.write(item['issues'])
         st.caption('Preparation uses free sources. Research projections have no sportsbook win probability and are not picks. The scheduled job runs even when this app is closed; GitHub schedules can be delayed.')
@@ -408,4 +416,5 @@ if __name__=='__main__':
     else:
         # Free connectivity check on code pushes, no odds or model-history requests.
         now=datetime.now(timezone.utc);write('background_connectivity.json',{'checked_utc':now.isoformat(),'events':{s:len(boards(s,now)['events'])for s in SPORTS}})
+
 

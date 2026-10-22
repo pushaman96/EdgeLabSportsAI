@@ -55,13 +55,18 @@ def render(records,sport):
     import json
     from pathlib import Path
     import streamlit as st
-    try:analyzed=json.loads(Path('analyzed_forecasts.json').read_text())['records']
-    except (OSError,ValueError,KeyError):analyzed=[]
-    # Prefer fresh graded published rows when the same record is present twice.
-    merged={r['id']:r for r in analyzed}
-    merged.update({r['id']:r for r in records})
     with st.expander('Original versus adjusted — frozen future-game comparison'):
+        if not st.toggle('Load detailed paired forecast archive',value=False,key='load_paired_archive_'+sport):
+            st.caption('Load this detailed research comparison when needed; grading and learning continue in the background.')
+            return
+        from runtime_health import snapshot
+        fields=('id','sport','strategy','evidence','season_type','published_utc','starts_utc','event_id','player','category','base_model','model','paired_forecast','result','actual','actual_opportunities')
+        analyzed=snapshot('analyzed_forecasts.json','paired-compact-v1',lambda data:[{k:r[k]for k in fields if k in r}for r in data['records']],[])
+        # Prefer fresh graded published rows when the same record is present twice.
+        merged={r['id']:r for r in analyzed}
+        merged.update({r['id']:r for r in records})
         rows=summary(list(merged.values()),sport)
         if rows:st.dataframe(rows,hide_index=True,use_container_width=True)
         else:st.info('Waiting for new paired forecasts. Older base forecasts are not reconstructed after results.')
         st.caption('Includes usable analyzed passes and recommendations, separate from official pick accuracy. Earliest player/game/category/model counts once; paired errors are averaged equally by game. Negative issued-minus-base errors favor the issued forecast. Missing statistics are excluded independently. An unchanged forecast is not evidence that learning helped; lower observed error alone does not prove future improvement.')
+

@@ -80,6 +80,8 @@ def autosave_report(label,data,file_name,mime='text/plain',key=None,**kwargs):
     if isinstance(data,bytes):data=data.decode('utf-8')
     digest=hashlib.sha256(data.encode()).hexdigest()
     confirmed=st.session_state.setdefault('automatic_report_digests',{})
+    if confirmed.get(file_name)!=digest and load_report(file_name)==data:
+        confirmed[file_name]=digest
     if confirmed.get(file_name)==digest:
         st.session_state.setdefault('pending_report_saves',{}).pop(file_name,None)
         return
@@ -128,3 +130,4 @@ def render_storage_status(sport='NFL'):
             else:st.success('All queued report saves verified in GitHub.')
         for name,reason in list(st.session_state.get('report_save_errors',{}).items())[:5]:st.warning(name+': '+reason)
         st.caption('Frozen picks have a separate retry button above the live board. Reports are latest snapshots; they do not prove pregame publication. No keys are displayed or stored in reports.')
+

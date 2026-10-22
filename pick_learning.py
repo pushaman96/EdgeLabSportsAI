@@ -146,14 +146,16 @@ def adjust_row(row,probability,now=None,state=None,strategy='Original',sport='NF
 def render_feedback(records,sport):
     import streamlit as st
     with st.expander('Learning from saved predictions and mistakes'):
-        from online_learning import build_state
-        from forecast_tracking import records as analyzed_records
-        online=build_state([r for r in records+analyzed_records() if r.get('sport','NFL')==sport])
+        from runtime_health import snapshot
+        online=snapshot('online_learning_state.json','saved-online-state-v1',lambda data:data,{'groups':{}})
+        st.caption('Saved background learning state, updated UTC: '+str(online.get('generated_utc','Awaiting grading job'))+'. Opening this panel does not retrain the model.')
         st.write('**Learning after each completed game — experimental**')
         st.caption('Every eligible graded game updates a small forecast bias, workload bias and probability adjustment. Updates start after game one, with neutral prior weight, clipped errors and a 15% forecast adjustment limit. Original forecasts stay frozen. Usable analyzed Pass forecasts train in a separate log and never enter the official pick results. NFL props and NFL/NBA moneylines use this layer; NBA manual prop quotes have no model to train.')
         summaries=[]
         for group, fitted in online['groups'].items():
-            descriptor=json.loads(group);n=fitted['issued_comparisons']
+            descriptor=json.loads(group)
+            if descriptor[0]!=sport:continue
+            n=fitted['issued_comparisons']
             summaries.append({'Sport':descriptor[0],'Model':descriptor[1],'Category':descriptor[2],'Games learned':fitted['games'],'Learning status':fitted.get('guard_status'),'Comparison games':fitted.get('comparison_games',0),'Applied learning weight':fitted.get('application_weight',1),'Forecast adjustment %':round(100*fitted['bias'],2),'Workload adjustment %':round(100*fitted['workload_bias'],2),'Probability strength':round(fitted['temperature'],3),'Frozen candidate comparisons':n,'Original Brier':round(fitted['base_brier_sum']/n,4) if n else None,'Candidate Brier':round(fitted['issued_brier_sum']/n,4) if n else None})
         if summaries:st.dataframe(summaries,hide_index=True,use_container_width=True)
         st.caption('Lower Brier is better. Comparisons use candidate and original forecasts frozen before the result, including shadow forecasts during rollback. Positive candidate loss differences are worse. Learning weight is reduced after 5 recent harmful comparison games and rolled back after at least 10 with a positive lower bound. Shadow comparisons can restore it after recovery. Updated files become available to forecasts after the grading job saves and the app reloads. Improvements are not established yet.')
@@ -164,3 +166,4 @@ def render_feedback(records,sport):
         if state['diagnostics']:st.dataframe(state['diagnostics'],hide_index=True,use_container_width=True)
         st.caption('Per-game adjustments above take priority when available. The larger-sample validation report is retained for research and fallback corrections.')
         st.caption('Review labels and workload/efficiency contributions describe measured errors, not proven causes. Per-game feedback adjusts forecasts and probabilities; it does not retrain the underlying trees or quantify injury, coaching or weather effects. Cushions and manual picks do not train this layer.')
+

@@ -23,6 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - run: pip install -r requirements.txt
       - run: python -m unittest discover -s tests -p 'test_*.py'
       - run: python pick_history.py
       - name: Save completed grades
@@ -35,4 +36,5 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+
 

@@ -25,13 +25,8 @@ def merge_grades(records, updates):
     return output
 
 
-def fetch_grades():
-    # Public ledger only. No token, paid odds request, or private credential.
-    stamp = int(datetime.now(timezone.utc).timestamp() // 60)
-    url = ('https://raw.githubusercontent.com/pushaman96/EdgeLabSportsAI/'
-           'main/published_picks.json?settlement_minute=' + str(stamp))
-    with urlopen(url, timeout=15) as response:
-        data = json.load(response)
-    if not isinstance(data, dict) or not isinstance(data.get('records'), list):
-        raise ValueError('Invalid settlement ledger')
-    return [r for r in data['records'] if isinstance(r, dict) and r.get('result') in FINAL]
+def fetch_grades(with_status=False):
+    from runtime_health import public_json
+    data,meta=public_json('settlement ledger','https://raw.githubusercontent.com/pushaman96/EdgeLabSportsAI/main/published_picks.json',fresh=60,max_stale=300,validate=lambda d:isinstance(d.get('records'),list))
+    rows=[r for r in data['records']if isinstance(r,dict)and r.get('result')in FINAL]
+    return (rows,meta)if with_status else rows

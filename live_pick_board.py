@@ -110,9 +110,9 @@ def build_board(records,summaries,now=None,team_assets=None):
     return rows
 
 def fetch_summary(sport,event_id):
-    path='basketball/nba' if sport=='NBA' else 'football/nfl'
-    data=json.load(urlopen('https://site.api.espn.com/apis/site/v2/sports/'+path+'/summary?event='+str(event_id),timeout=12))
-    return {'data':data,'retrieved_utc':datetime.now(timezone.utc).isoformat()}
+    from runtime_health import summary
+    return summary('basketball/nba'if sport=='NBA'else'football/nfl',event_id)
+
 
 def collect_summaries(records,fetch=fetch_summary,now=None):
     now=now or datetime.now(timezone.utc)
@@ -162,16 +162,18 @@ def render_live_board(records,sport='NFL'):
     @st.cache_data(ttl=60,show_spinner=False)
     def cached_grades():
         from settlement_sync import fetch_grades
-        return fetch_grades()
+        return fetch_grades(with_status=True)
     @st.fragment(run_every='30s' if auto else None)
     def panel():
         if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):
+            from runtime_health import invalidate_public
+            invalidate_public('summary');invalidate_public('settlement')
             cached_fetch.clear();cached_grades.clear()
         from settlement_sync import merge_grades
         try:
-            updates=cached_grades()
+            updates,grade_meta=cached_grades()
             st.session_state['latest_settlement_grades']=updates
-            st.caption('Saved final grades synchronized from permanent history.')
+            st.caption(('Permanent history delayed — last-good final grades from 'if grade_meta['stale']else'Saved final grades synchronized; checked ')+grade_meta['retrieved_utc'])
         except Exception:
             updates=st.session_state.get('latest_settlement_grades',[])
             st.caption('Permanent grade refresh unavailable; retaining last verified results and retrying.')
@@ -180,6 +182,7 @@ def render_live_board(records,sport='NFL'):
         st.session_state['ledger_live_grades']=merge_grades(
             st.session_state.get('ledger_live_grades',[])+[r for r in current if r['id'] not in {g['id'] for g in st.session_state.get('ledger_live_grades',[])}],updates)
         summaries=collect_summaries(current,cached_fetch)
+        if any(v.get('stale')for v in summaries.values()):st.caption('Some game feeds are delayed; showing last-good stats with their original timestamps. Automatic retry is pending.')
         rows=build_board(current,summaries,team_assets=st.session_state.get("team_emblems",{}))
         from pick_presentation import pick_status,result_indicator
         original={r['id']:r for r in current}
@@ -198,4 +201,5 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
 

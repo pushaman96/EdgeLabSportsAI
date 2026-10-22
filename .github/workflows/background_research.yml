@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: '3.13'
           cache: pip
+      - run: pip install -r requirements.txt
       - name: Run complete daily software diagnostic
         run: python game_day_diagnostics.py
-      - run: pip install -r requirements.txt
       - uses: actions/cache@v4
         with:
           path: .research_cache
@@ -80,4 +80,5 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+
 
