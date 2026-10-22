@@ -126,6 +126,31 @@ def collect_summaries(records,fetch=fetch_summary,now=None):
             except Exception:output[key]={'error':'Feed unavailable'}
     return output
 
+def current_moneyline_board(saved,records,sport,day,now=None):
+    """Show fresh session analysis separately; never rewrite frozen history."""
+    now=now or datetime.now(timezone.utc)
+    if not saved or len(saved)<5 or saved[0]!=str(day) or saved[4]!=sport:return []
+    try:
+        if not 0<=(now-utc(saved[3])).total_seconds()<=900:return []
+    except (TypeError,ValueError):return []
+    groups={}
+    for record in records:
+        if record.get('category')=='Moneyline' and record.get('sport','NFL')==sport:
+            groups.setdefault(record['game'],[]).append(record)
+    output={}
+    for row in saved[2]:
+        game=row.get('Game');frozen=groups.get(game,[])
+        p=number(row.get('Model win %',row.get('Estimated win %')))
+        if not frozen or row.get('Decision')=='Pass' or row.get('Moneyline selection policy')!='most-likely-winner-v1' or p is None or p<=50:continue
+        try:
+            if not 0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900 or any(utc(r['starts_utc'])<=now for r in frozen):continue
+        except (KeyError,TypeError,ValueError):continue
+        team=row.get('Team to research')or row.get('Player')
+        if team not in game.split(' at '):continue
+        original=', '.join(sorted({r['player'] for r in frozen}))
+        output[game]={'Game':game,'Current predicted winner':team,'Estimated win %':p,'Earlier frozen selection':original,'Change':'Changed from saved selection' if any(r['player']!=team for r in frozen) else 'Same as saved selection','Analyzed UTC':saved[3],'Status':'Experimental current forecast; earlier pick remains in historical results'}
+    return sorted(output.values(),key=lambda r:-r['Estimated win %'])
+
 def render_live_board(records,sport='NFL'):
     import streamlit as st
     selected=[r for r in records if r.get('sport','NFL')==sport]
@@ -155,6 +180,14 @@ def render_live_board(records,sport='NFL'):
     count=sum(r['category']!='Moneyline' for r in selected);moneylines=len(selected)-count
     st.caption('Sorted by frozen estimated win probability, highest first; unmodeled entries appear last.')
     st.write(f'**{count} saved props · {moneylines} moneyline picks**')
+    latest_moneylines=current_moneyline_board(st.session_state.get('moneyline_history_candidates'),selected,sport,day)
+    if latest_moneylines:
+        st.write('**Current moneyline forecast — latest analysis**')
+        st.dataframe(latest_moneylines,hide_index=True,use_container_width=True)
+        st.caption('The current forecast above can differ from an earlier saved pick below. Updating the forecast never changes the original pick or its eventual result.')
+    elif moneylines:
+        st.info('Moneylines below are frozen historical picks, not current recommendations. Use Compare model with current moneylines with already loaded prices to show a fresh forecast; no new odds request is needed.')
+
     auto=st.toggle('Auto-refresh live stats every 30 seconds',value=True,key='pick_board_auto_'+sport)
     st.caption('Uses ESPN stats, not sportsbook credits. Updates while this app session is active; feed delays and stat corrections are possible. Original lines and probabilities remain frozen. Below an Under line during a game is not a final win. Missing stats are never treated as zero or DNP.')
     @st.cache_data(ttl=25,show_spinner=False)
@@ -184,6 +217,12 @@ def render_live_board(records,sport='NFL'):
         summaries=collect_summaries(current,cached_fetch)
         if any(v.get('stale')for v in summaries.values()):st.caption('Some game feeds are delayed; showing last-good stats with their original timestamps. Automatic retry is pending.')
         rows=build_board(current,summaries,team_assets=st.session_state.get("team_emblems",{}))
+        forecasts={r['Game']:r for r in current_moneyline_board(st.session_state.get('moneyline_history_candidates'),current,sport,day)}
+        for row in rows:
+            if row['Category']=='Moneyline':
+                forecast=forecasts.get(row['Game'])
+                row['Recommendation status']='Earlier saved pick — current forecast selects '+forecast['Current predicted winner'] if forecast and forecast['Current predicted winner']!=row['Player / team'] else 'Frozen historical pick; see current forecast above'
+
         from pick_presentation import pick_status,result_indicator
         original={r['id']:r for r in current}
         rows=[{'Result':result_indicator(row),'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]

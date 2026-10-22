@@ -36,7 +36,7 @@ st.set_page_config(
 
 st.title("🏈 Kamikaze Picks")
 st.sidebar.caption('Runtime recovery v1 · cached dashboard and public feeds')
-st.sidebar.caption('Forecast release: probability-first-v2 · saved-price reuse')
+st.sidebar.caption('Forecast release: probability-first-v2 · current-vs-frozen board')
 st.caption("NFL & NBA · Scores, saved picks and experimental forecasts")
 
 SPORTS = {
