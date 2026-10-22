@@ -32,6 +32,22 @@ class LiveBoardTests(unittest.TestCase):
         data=copy.deepcopy(self.data);data['header']['id']='other'
         self.assertIn('identity mismatch',self.row(data)['Live position'])
 
+    def test_incomplete_final_feed_retains_verified_saved_grade(self):
+        data=copy.deepcopy(self.data)
+        data['header']['competitions'][0]['status']['type'].update(state='post',completed=True)
+        data['boxscore']={}
+        for result in ('Win','Loss','Push'):
+            row=self.row(data,dict(self.record,result=result,actual=150))
+            self.assertEqual(row['Final result'],result)
+            self.assertEqual(row['Live stat'],150)
+            self.assertIn('saved grade',row['Live position'])
+        self.assertEqual(self.row(data)['Final result'],'Pending')
+
+    def test_complete_final_feed_can_correct_saved_grade(self):
+        data=copy.deepcopy(self.data)
+        data['header']['competitions'][0]['status']['type'].update(state='post',completed=True)
+        self.assertEqual(self.row(data,dict(self.record,result='Loss',actual=220))['Final result'],'Win')
+
     def test_fetch_once_per_game_and_no_pregame_fetch(self):
         calls=[]
         def fetch(sport,eid):calls.append((sport,eid));return {'data':self.data}
@@ -46,3 +62,4 @@ class LiveBoardTests(unittest.TestCase):
         self.assertEqual(self.record,before)
 
 if __name__=='__main__':unittest.main()
+

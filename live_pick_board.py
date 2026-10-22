@@ -82,8 +82,13 @@ def build_board(records,summaries,now=None,team_assets=None):
         if kind.get('completed'):
             # Feed result is authoritative for the live display; persistence is handled by the grading job.
             graded=grade_record(dict(record,result='Pending'),data)
-            row['Final result']=graded['result'];row['Live stat']=number(graded.get('actual'))
-            row['Live position']='Final' if graded['result']!='Pending' else 'Final — stat missing; settlement review needed'
+            if graded['result']!='Pending':
+                row['Final result']=graded['result'];row['Live stat']=number(graded.get('actual'))
+                row['Live position']='Final'
+            elif row['Final result'] in ('Win','Loss','Push'):
+                row['Live position']='Final — saved grade; current feed statistic incomplete'
+            else:
+                row['Live position']='Final — stat missing; settlement review needed'
         elif state=='pre':row['Live position']=kind.get('detail') or 'Waiting for kickoff'
         elif state!='in':row['Live position']=kind.get('detail') or 'Game status unresolved'
         elif record['category']=='Moneyline':
@@ -176,3 +181,4 @@ def render_live_board(records,sport='NFL'):
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
+
