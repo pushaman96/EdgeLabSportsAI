@@ -1,15 +1,11 @@
 {
   "version": 1,
-  "checked_utc": "2026-10-22T13:57:47.445228+00:00",
+  "checked_utc": "2026-10-22T14:01:30.116520+00:00",
   "pacific_date": "2026-10-22",
-  "source_hash": "490f04f9094ba9ed2fa4f01549df4da1f88b3396efd15714c6e92006c1a1f3d1",
-  "tests_run": 324,
+  "source_hash": "a7e88a0e3eb0b8fd8b80a34186848ace1a3dd731df40a6fe44fb265abdc8a300",
+  "tests_run": 328,
   "tests_skipped": 0,
-  "passed": false,
-  "failed_tests": [
-    "test_cached_presets_without_session_planner_does_not_crash (test_credit_saver_ui.SaverUITests.test_cached_presets_without_session_planner_does_not_crash)",
-    "test_multiple_selection_loads_only_chosen_games_and_honors_budget (test_credit_saver_ui.SaverUITests.test_multiple_selection_loads_only_chosen_games_and_honors_budget)",
-    "test_saver_requests_only_the_selected_game (test_credit_saver_ui.SaverUITests.test_saver_requests_only_the_selected_game)"
-  ],
+  "passed": true,
+  "failed_tests": [],
   "scope": "Software regression tests. These are not historical games, a pick win rate or proof of profit."
 }
