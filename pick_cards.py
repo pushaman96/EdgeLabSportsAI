@@ -25,6 +25,8 @@ def render_pick_cards(records,sport,live_rows=None):
                     icon,title=st.columns([1,7]);icon.image(team['logo'],width=28);title.write('**'+r.get('player','Unknown')+'**')
                 else:st.write('**'+r.get('player','Unknown')+'**')
                 st.write(e['selection'])
+                from probability_labels import indicator
+                st.caption(indicator(r.get('probability'))['label'])
                 st.caption(r.get('game',''))
                 prob=r.get('probability');prob_text=f'{prob:.0%}' if isinstance(prob,(int,float)) and 0<prob<1 else 'Not modeled'
                 metrics=st.columns(2);metrics[0].metric('Estimated win chance',prob_text)

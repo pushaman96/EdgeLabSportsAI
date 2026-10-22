@@ -96,7 +96,8 @@ def enrich_rows(rows,sport,index,team=None):
 def render_team_table(rows,sport,team=None,**kwargs):
     import streamlit as st
     index=st.session_state.get('team_emblems',{})
-    display=enrich_rows(rows,sport,index,team)
+    from probability_labels import decorate
+    display=[decorate(row) for row in enrich_rows(rows,sport,index,team)]
     columns=dict(kwargs.pop('column_config',{}) or {})
     for row in display:
         for key in row:

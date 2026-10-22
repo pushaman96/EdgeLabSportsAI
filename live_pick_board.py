@@ -182,7 +182,7 @@ def latest_moneyline_records(records):
 def render_live_board(records,sport='NFL'):
     import streamlit as st
     selected=[r for r in records if r.get('sport','NFL')==sport]
-    st.subheader('Live pick board — all saved predictions in one table')
+    st.subheader('Live pick board — grouped by model probability')
     if not selected:st.info('Saved predictions will appear here automatically.');return
     now=datetime.now(timezone.utc)
     dates=sorted({utc(r['starts_utc']).astimezone(PACIFIC).date() for r in selected})
@@ -275,7 +275,12 @@ def render_live_board(records,sport='NFL'):
         with tracking_tab:
             st.caption('✅ Win · ❌ Loss · ➖ Push · ⏳ Pending or review needed. Win/loss marks appear only after final grading.')
             if rows:
-                st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team / total away",width="small"),"Opponent logo":st.column_config.ImageColumn("Total home",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
+                from probability_labels import grouped, LEGEND
+                st.caption(LEGEND)
+                for group, values in grouped(rows).items():
+                    if not values:continue
+                    st.write('**'+group+' — '+str(len(values))+' picks**')
+                    st.dataframe(values,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team / total away",width="small"),"Opponent logo":st.column_config.ImageColumn("Total home",width="small")},height=min(1000,max(200,35*(len(values)+1))))
                 wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
                 st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
             else:st.info('No saved picks match the selected date and strategies.')
