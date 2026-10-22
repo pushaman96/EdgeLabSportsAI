@@ -249,6 +249,7 @@ def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_d
         except Exception:
             st.info('Moneyline history is temporarily unavailable. Player-prop research remains available; retry the comparison without loading new odds.')
             return
+        st.session_state['spread_research_context']=(signature,models)
         st.session_state['moneyline_auto_signature']=signature
         injury_notes=[{'Game':away+' at '+home,'Status':'Availability screen passed' if context.get('injury_verified') else 'Injury warning — not numerically adjusted','Reason':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc')} for (home,away),context in models.items()] if sport=='NFL' else []
         st.session_state['moneyline_injury_notes']=injury_notes
@@ -259,6 +260,10 @@ def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_d
         archive_forecasts(analyzed,filtered,scoreboard,sport)
         reviews=[r for r in analyzed if r['Decision']!='Pass']
         st.session_state['moneyline_history_candidates']=(str(selected_date),tuple(selected_books),reviews,datetime.now(timezone.utc).isoformat(),sport)
+    spread_context=st.session_state.get('spread_research_context')
+    if spread_context and spread_context[0]==signature:
+        from spread_model import render as render_spread_research
+        render_spread_research(filtered,spread_context[1])
     if st.session_state.get('moneyline_injury_notes'):
         with st.expander('Moneyline injury verification — both teams'):
             render_team_table(st.session_state['moneyline_injury_notes'],hide_index=True,use_container_width=True, sport=sport)

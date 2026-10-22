@@ -1230,6 +1230,8 @@ def sportsbook_model_context(sport_name, scoreboard_data):
         from nba_moneyline_research import load_history
         games=load_history(current_nba_season_end())['games']
     else:games=load_nfl_history()
+    from spread_model import prepare, forecast
+    spread_research = prepare(games)
     ratings, predictions = build_elo_model(games)
     adjustment = test_probability_adjustment(predictions)
     strength = adjustment["strength"] if adjustment else 1.0
@@ -1260,6 +1262,8 @@ def sportsbook_model_context(sport_name, scoreboard_data):
         injury = screens.get((home.get("displayName"), away.get("displayName")), {})
         output[(home.get("displayName"), away.get("displayName"))] = {
             "probability":probability, "cutoff":cutoff.isoformat(),
+            "spread_margin":forecast(spread_research,home_code,away_code,event.get("date",cutoff)),
+            "spread_validation":{k:spread_research[k] for k in ("validation_games","validation_season","mae","baseline_mae")},
             "eligible":type_id == 2 and (nba_history_eligible if sport_name=='NBA' else 0 <= age <= 30),
             "history_basis":nba_history_basis if sport_name=='NBA'else'Recent completed NFL history',
             "validation":{"passed":bool(adjustment and adjustment["improvement"]>=0),"calibration_examples":adjustment["calibration_games"] if adjustment else 0,"validation_games":adjustment["evaluation_games"] if adjustment else 0,"scope":"Chronological Elo shrinkage against unadjusted Elo; not sportsbook returns"},
