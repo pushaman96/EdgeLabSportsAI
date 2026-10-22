@@ -52674,6 +52674,129 @@
         "NFL depth checked UTC": "2026-10-22T15:15:20.169499+00:00"
       },
       "season_type": "Regular season"
+    },
+    {
+      "id": "e7c08f2f5a627de98ff1",
+      "sport": "NFL",
+      "event_id": "401873010",
+      "game": "New England Patriots at Chicago Bears",
+      "player": "Chicago Bears",
+      "category": "Moneyline",
+      "direction": "Win",
+      "line": null,
+      "odds": -155.0,
+      "probability": 0.513,
+      "sportsbook": "DraftKings",
+      "model": "Adjusted NFL Elo moneyline",
+      "strategy": "Original",
+      "published_utc": "2026-10-22T15:19:31.066059+00:00",
+      "starts_utc": "2026-10-23T00:15:00+00:00",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": null,
+      "reason": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Chicago Bears: Key-player availability changes are not modeled: Kyle Monangai: Out / roster Active | New England Patriots: Recent primary QB and major usage players passed availability checks; Elo remains unadjusted for injuries, replacements, offensive line and defense.; checked 2026-10-22T15:19:04.010914+00:00",
+      "projected_count": null,
+      "base_model": "Adjusted NFL Elo moneyline",
+      "raw_probability": 0.51442139066812,
+      "feedback_version": null,
+      "feedback_status": "Experimental learning active; 5 completed games",
+      "online_version": "b4b2b32df1b6",
+      "online_status": "Experimental learning active; 5 completed games",
+      "base_probability": 0.51442139066812,
+      "online_input_probability": 0.51442139066812,
+      "candidate_probability": 0.5127310747166193,
+      "forecast_context": {
+        "Game-day diagnostic": {
+          "version": 1,
+          "checked_utc": "2026-10-22T15:19:04.059795+00:00",
+          "ready": true,
+          "software": {
+            "passed": true,
+            "tests_run": 343,
+            "tests_skipped": 0,
+            "checked_utc": "2026-10-22T15:09:15.322624+00:00",
+            "same_code": true,
+            "fresh_today": true
+          },
+          "category_baseline_passed": true,
+          "earlier_calibration_examples": 1406,
+          "later_historical_games_or_examples": 1419,
+          "historical_scope": "Chronological Elo shrinkage against unadjusted Elo; not sportsbook returns",
+          "quote_fresh": true,
+          "model_qualified": true,
+          "issues": [],
+          "interpretation": "Counts are reported as measured; software tests and historical games are different. Correlated props are not independent games. Diagnostics do not guarantee a winning bet."
+        },
+        "Homework": {
+          "version": "verified-matchup-homework-v1",
+          "sport": "NFL",
+          "factors": [
+            {
+              "Factor": "Team win model",
+              "Evidence": "Recent completed NFL history",
+              "Effect": "Historical Elo ratings and chronological probability shrinkage applied"
+            },
+            {
+              "Factor": "Quoted moneyline price",
+              "Evidence": "-155.0",
+              "Effect": "Compared with estimated win probability; sportsbook break-even probability is not a model forecast"
+            },
+            {
+              "Factor": "Availability",
+              "Evidence": "Chicago Bears: Key-player availability changes are not modeled: Kyle Monangai: Out / roster Active | New England Patriots: Recent primary QB and major usage players passed availability checks; Elo remains unadjusted for injuries, replacements, offensive line and defense.",
+              "Effect": "Warning evidence; no invented numerical injury adjustment"
+            }
+          ],
+          "probability_meaning": "Chance of the selected team winning the game; distinct from player-prop probability and price break-even rate",
+          "limitation": "Current injury replacements and coaching changes are not fully numerically modeled. No historical sportsbook-return proof."
+        },
+        "Probability tier": "Close outcome \u2014 experimental",
+        "Probability evidence": "Model estimate; prospective calibration and profitability not established",
+        "Selection policy": "probability-first-v2",
+        "Market reasoning": {
+          "version": "exact-market-reasoning-v1",
+          "supported": true,
+          "win_condition": "Wins if the selected team wins; a tie is illustrated as a push. Verify the sportsbook\u2019s tie/overtime rules.",
+          "illustrative_outcomes": [
+            {
+              "Actual team result": "Win",
+              "Result": "Win"
+            },
+            {
+              "Actual team result": "Loss",
+              "Result": "Loss"
+            },
+            {
+              "Actual team result": "Tie",
+              "Result": "Push"
+            }
+          ],
+          "opportunity_logic": "The selected team must win. A strong individual performance or high combined score does not establish the game winner.",
+          "projection_note": "No central statistic forecast supplied; none invented.",
+          "price_comparison": "Existing model estimate 51.3%; price break-even 60.8%; difference -9.5 percentage points. This arithmetic assumes the saved probability belongs to this exact selection, line and price; a changed line requires model reanalysis. Push probability is not supplied, so this is not a push-adjusted expected-value estimate.",
+          "scope": "Exact-line arithmetic and explanatory scenarios, not a new prediction model or proof of profitability. Illustrations assume participation and final official stats; platform void/stat-correction rules can differ."
+        }
+      },
+      "paired_forecast": {
+        "version": 1,
+        "base_projection": null,
+        "issued_projection": null,
+        "base_workload": null,
+        "issued_workload": null,
+        "base_probability": 0.51442139066812,
+        "issued_probability": 0.513,
+        "learning_version": "b4b2b32df1b6",
+        "scope": "Frozen unadjusted base versus actually issued forecast; not hypothetical candidate"
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-22T15:12:12Z",
+        "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
+        "ESPN scheduled start UTC": "2026-10-23T00:15Z"
+      },
+      "season_type": "Regular season"
     }
   ]
 }
