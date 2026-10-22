@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "run_id": "39850285003",
+    "sport": "NBA",
+    "event_id": "110e33c79c5ec8c0377702aff685f83b",
+    "espn_id": "401909093",
+    "markets": [
+      "h2h",
+      "player_points",
+      "player_assists",
+      "player_rebounds",
+      "player_threes",
+      "player_points_rebounds_assists"
+    ],
+    "reserved_cost": 6,
+    "reserved_utc": "2026-10-22T20:38:33.595136+00:00",
+    "event": {
+      "id": "110e33c79c5ec8c0377702aff685f83b",
+      "sport_key": "basketball_nba",
+      "sport_title": "NBA",
+      "commence_time": "2026-10-22T23:10:00Z",
+      "home_team": "Philadelphia 76ers",
+      "away_team": "Cleveland Cavaliers"
+    },
+    "status": "Reserved before HTTP request"
+  }
+]

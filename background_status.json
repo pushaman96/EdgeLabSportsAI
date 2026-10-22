@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T19:39:22.169020+00:00",
+  "generated_utc": "2026-10-22T20:36:53.387801+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -10,8 +10,8 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 11,
-      "prepared_projections": 1440,
+      "upcoming_games": 14,
+      "prepared_projections": 1815,
       "issues": [
         "Player history incomplete: Dominick Barlow",
         "Player history incomplete: Tacko Fall",
@@ -92,7 +92,34 @@
         "Player history incomplete: Fred VanVleet",
         "Player history incomplete: Darryn Peterson",
         "Player history incomplete: Malik Dia",
-        "Player history incomplete: Jaron Pierre Jr."
+        "Player history incomplete: Jaron Pierre Jr.",
+        "Player history incomplete: Jimmy Butler III",
+        "Player history incomplete: Graham Ike",
+        "Player history incomplete: Yaxel Lendeborg",
+        "Player history incomplete: Moses Moody",
+        "Player history incomplete: Georges Niang",
+        "Player history incomplete: Kristaps Porzingis",
+        "Player history incomplete: Cameron Boozer",
+        "Player history incomplete: Carson Cooper",
+        "Player history incomplete: Karim Lopez",
+        "Player history incomplete: Cameron Carr",
+        "Player history incomplete: Arthur Kaluma",
+        "Player history incomplete: AK Okereke",
+        "Player history incomplete: Collin Sexton",
+        "Player history incomplete: Bradley Beal",
+        "Player history incomplete: Brandon Ingram",
+        "Player history incomplete: Nick Martinelli",
+        "Player history incomplete: Baba Miller",
+        "Player history incomplete: Jordan Miller",
+        "Player history incomplete: Yanic Konan Niederhauser",
+        "Player history incomplete: Keaton Wagler",
+        "Player history incomplete: Darius Acuff Jr.",
+        "Player history incomplete: Alex Karaban",
+        "Player history incomplete: Malik Monk",
+        "Player history incomplete: Emanuel Sharp",
+        "Player history incomplete: Ben Simmons",
+        "Player history incomplete: Damian Lillard",
+        "Player history incomplete: Shaedon Sharpe"
       ]
     }
   }
