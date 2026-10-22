@@ -58,6 +58,7 @@
       "baseline_stat_mae": 1.5597658193217137
     }
   ],
+  "prediction_model_groups": [],
   "nba_role_groups": [],
   "nfl_role_groups": [],
   "status": "Prospective research comparison only. No automatic promotion or causal diagnosis."
