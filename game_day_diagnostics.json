@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "checked_utc": "2026-10-22T12:53:13.826423+00:00",
+  "checked_utc": "2026-10-22T13:15:38.663104+00:00",
   "pacific_date": "2026-10-22",
-  "source_hash": "f50922de05d3e7624bc4c241e096b57289b44d98420f9d784c247c4c8bddabc1",
-  "tests_run": 301,
-  "tests_skipped": 1,
+  "source_hash": "aa09efbe838bd7040be273fa445b8a1af8f608e70411ee8cc28ee1fb4019ea4f",
+  "tests_run": 314,
+  "tests_skipped": 0,
   "passed": true,
   "failed_tests": [],
   "scope": "Software regression tests. These are not historical games, a pick win rate or proof of profit."
