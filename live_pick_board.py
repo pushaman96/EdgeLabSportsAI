@@ -144,7 +144,7 @@ def current_moneyline_board(saved,records,sport,day,now=None):
     except (TypeError,ValueError):return []
     groups={}
     for record in records:
-        if record.get('category')=='Moneyline' and record.get('sport','NFL')==sport:
+        if record.get('sport','NFL')==sport:
             groups.setdefault(record['game'],[]).append(record)
     output={}
     for row in saved[2]:
@@ -156,8 +156,8 @@ def current_moneyline_board(saved,records,sport,day,now=None):
         except (KeyError,TypeError,ValueError):continue
         team=row.get('Team to research')or row.get('Player')
         if team not in game.split(' at '):continue
-        original=', '.join(sorted({r['player'] for r in frozen}))
-        output[game]={'Game':game,'Current predicted winner':team,'Estimated win %':p,'Earlier frozen selection':original,'Change':'Changed from saved selection' if any(r['player']!=team for r in frozen) else 'Same as saved selection','Analyzed UTC':saved[3],'Status':'Experimental current forecast; earlier pick remains in historical results'}
+        original=', '.join(sorted({r['player'] for r in frozen if r.get('category')=='Moneyline'})) or 'No earlier saved moneyline'
+        output[game]={'Game':game,'Current predicted winner':team,'Estimated win %':p,'Earlier frozen selection':original,'Change':'Changed from saved selection' if any(r['player']!=team for r in frozen if r.get('category')=='Moneyline') else 'Same as saved selection','Analyzed UTC':saved[3],'Status':'Experimental current forecast; earlier pick remains in historical results'}
     return sorted(output.values(),key=lambda r:-r['Estimated win %'])
 
 def render_live_board(records,sport='NFL'):

@@ -23,3 +23,8 @@ class CurrentMoneylineBoardTests(unittest.TestCase):
     def test_old_value_selection_is_not_current(self):
         self.row.pop('Moneyline selection policy')
         self.assertEqual(current_moneyline_board(self.saved,[self.record],'NFL',self.day,self.now),[])
+    def test_current_moneyline_does_not_require_prior_saved_moneyline(self):
+        prop=dict(self.record,category='Passing yards',player='Fixture QB')
+        rows=current_moneyline_board(self.saved,[prop],'NFL',self.day,self.now)
+        self.assertEqual(rows[0]['Current predicted winner'],'Bears')
+        self.assertEqual(rows[0]['Earlier frozen selection'],'No earlier saved moneyline')
