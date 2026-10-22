@@ -29,6 +29,26 @@ def render_public_history(sport,path='published_picks.json'):
     from pick_history import sync_session_records
     sync_session_records(key_prefix='dashboard_storage_'+sport,show_success=False)
     render_live_board(records,sport)
+    st.subheader('Saved-pick probability accuracy')
+    summary=accuracy_summary(records,sport)
+    columns=st.columns(3)
+    columns[0].metric('Settled picks',summary['settled'])
+    columns[1].metric('Winner accuracy',f"{summary['accuracy']:.1%}" if summary['accuracy'] is not None else 'Not enough results')
+    columns[2].metric('Brier score',f"{summary['brier']:.4f}" if summary['brier'] is not None else 'Not available')
+    st.caption(f"{summary['wins']} wins · {summary['losses']} losses. Original regular-season picks saved before games; historical imports, cushions and manual entries are kept separate. Lower Brier is better. Historical model accuracy appears with matchup predictions below.")
+    from nba_calibration import render as render_probability_calibration
+    render_probability_calibration(records,sport=sport)
+
+
+    from slate_review import render_review
+    render_review(sport,records)
+
+
+
+def render_admin_panels(records,sport):
+    from app_view import is_research
+    if not is_research():return
+    import streamlit as st
     from automatic_reports import render_storage_status
     render_storage_status(sport)
     with st.expander('Workload candidate results — prospective comparison'):
@@ -48,20 +68,6 @@ def render_public_history(sport,path='published_picks.json'):
             st.write('**Frozen opportunity and matchup candidates versus incumbent**')
             st.dataframe(models,hide_index=True,use_container_width=True)
         st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
-    st.subheader('Saved-pick probability accuracy')
-    summary=accuracy_summary(records,sport)
-    columns=st.columns(3)
-    columns[0].metric('Settled picks',summary['settled'])
-    columns[1].metric('Winner accuracy',f"{summary['accuracy']:.1%}" if summary['accuracy'] is not None else 'Not enough results')
-    columns[2].metric('Brier score',f"{summary['brier']:.4f}" if summary['brier'] is not None else 'Not available')
-    st.caption(f"{summary['wins']} wins · {summary['losses']} losses. Original regular-season picks saved before games; historical imports, cushions and manual entries are kept separate. Lower Brier is better. Historical model accuracy appears with matchup predictions below.")
-    from nba_calibration import render as render_probability_calibration
-    render_probability_calibration(records,sport=sport)
-
-
-    from slate_review import render_review
-    render_review(sport,records)
-
     from pick_learning import render_feedback
     render_feedback(records,sport)
     from learning_audit import render as render_learning_audit
@@ -72,5 +78,3 @@ def render_public_history(sport,path='published_picks.json'):
     render_background_research(sport)
     from nfl_scoring_models import render_validation as render_scoring_validation
     render_scoring_validation(sport)
-
-

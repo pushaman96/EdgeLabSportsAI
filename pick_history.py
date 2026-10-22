@@ -197,8 +197,8 @@ def render_history(sport='NFL'):
     graded={r['id']:r for r in st.session_state.get('ledger_live_grades',[])}
     records=[graded.get(r['id'],r) for r in records]
     all_records=records
-    from pick_learning import render_feedback
-    render_feedback(all_records,sport)
+    from dashboard_history import render_admin_panels
+    render_admin_panels(all_records,sport)
     records=[r for r in records if r.get('sport','NFL')==sport]
     season_types=sorted({r.get('season_type','Unknown') for r in records})
     if season_types:

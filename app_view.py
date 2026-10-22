@@ -1,7 +1,7 @@
 """Owner authorization shared by every Admin / Research section.
 
 Configure [admin] password in Streamlit Secrets (at least 16 characters).
-The owner has temporarily disabled the lock with ADMIN_LOCK_ENABLED.
+Admin / Research panels require owner sign-in.
 When enabled, no configured password means no admin access.
 """
 import hashlib
@@ -11,7 +11,7 @@ import time
 MAIN = "Main dashboard"
 RESEARCH = "Admin / Research"
 SESSION_SECONDS = 8 * 60 * 60
-ADMIN_LOCK_ENABLED = False
+ADMIN_LOCK_ENABLED = True
 
 
 def _password():
