@@ -22,3 +22,24 @@ class EmblemTests(unittest.TestCase):
             def metric(self,*a):self.result=a
         column=Column();render_team_score(column,{'displayName':'Home'},'17')
         self.assertEqual(column.result,('Home','17'))
+
+    def test_nba_punctuation_matches_team_without_changing_pick(self):
+        teams=[{'id':'19','displayName':'Orlando Magic','logo':'https://a.espncdn.com/i/teamlogos/nba/500/orl.png'},
+               {'id':'1','displayName':'Atlanta Hawks','logo':'https://a.espncdn.com/i/teamlogos/nba/500/atl.png'}]
+        data={'header':{'competitions':[{'competitors':[{'team':t} for t in teams]}]},
+              'boxscore':{'players':[{'team':teams[0],'statistics':[{'athletes':[{'athlete':{'displayName':'Wendell Carter Jr.'}}]}]},
+                                     {'team':teams[1],'statistics':[{'athletes':[{'athlete':{'displayName':'CJ McCollum'}}]}]}]}}
+        for player,expected in (('Wendell Carter Jr','Orlando Magic'),('C.J. McCollum','Atlanta Hawks')):
+            record={'sport':'NBA','category':'Three-pointers made','player':player}
+            before=copy.deepcopy(record)
+            emblem=pick_team(record,data)
+            self.assertEqual(emblem['name'],expected)
+            self.assertTrue(emblem['logo'])
+            self.assertEqual(record,before)
+
+    def test_ambiguous_athlete_team_stays_unknown(self):
+        teams=[{'id':'1','displayName':'Away'},{'id':'2','displayName':'Home'}]
+        data={'header':{'competitions':[{'competitors':[{'team':t} for t in teams]}]},
+              'boxscore':{'players':[{'team':t,'statistics':[{'athletes':[{'athlete':{'displayName':'Same Player'}}]}]} for t in teams]}}
+        self.assertIsNone(pick_team({'sport':'NBA','category':'Points','player':'Same Player'},data))
+

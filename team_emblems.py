@@ -1,5 +1,6 @@
 """Team emblems from ESPN metadata already loaded by the app. No API requests."""
 from urllib.parse import urlparse
+from extended_stats import key as athlete_identity
 
 def logo_url(team):
     candidates=[team.get('logo')]+[r.get('href') for r in team.get('logos',[]) if isinstance(r,dict)]
@@ -42,7 +43,7 @@ def pick_team(record,data=None,index=None):
     # If no frozen team was saved, use an unambiguous athlete match from this game's feed.
     matches=[]
     for block in (data or {}).get('boxscore',{}).get('players',[]):
-        if any(a.get('athlete',{}).get('displayName')==record.get('player') for group in block.get('statistics',[]) for a in group.get('athletes',[])):
+        if any(athlete_identity(a.get('athlete',{}).get('displayName'))==athlete_identity(record.get('player')) for group in block.get('statistics',[]) for a in group.get('athletes',[])):
             team=block.get('team',{});key=sport+':'+str(team.get('id') or team.get('displayName'))
             if key in index:matches.append(index[key])
     unique={m['name']:m for m in matches}
@@ -99,4 +100,5 @@ def render_team_table(rows,sport,team=None,**kwargs):
         for key in row:
             if key.endswith(' emblem'):columns[key]=st.column_config.ImageColumn('',width='small')
     st.dataframe(display,column_config=columns,**kwargs)
+
 
