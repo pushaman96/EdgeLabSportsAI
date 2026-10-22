@@ -36,6 +36,12 @@
         }
       ],
       "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
+    },
+    "2026-10-22": {
+      "cap": 8,
+      "reserved": 0,
+      "requests": [],
+      "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
     }
   }
 }
