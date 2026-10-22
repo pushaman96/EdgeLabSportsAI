@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T03:54:33.895684+00:00",
+  "generated_utc": "2026-10-22T04:38:55.121607+00:00",
   "paired": {
     "NFL": [],
     "NBA": [
@@ -115,10 +115,10 @@
     "NBA": [
       {
         "Category": "PRA",
-        "Matched forecasts": 156,
-        "Distinct games": 8,
-        "Projection MAE": 6.5765260056698915,
-        "Simple baseline MAE": 6.5765260056698915,
+        "Matched forecasts": 180,
+        "Distinct games": 9,
+        "Projection MAE": 6.519483134672682,
+        "Simple baseline MAE": 6.519483134672682,
         "Projection minus baseline MAE": 0.0,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       }
