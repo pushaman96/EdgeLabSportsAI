@@ -156,7 +156,8 @@ def saved_reviews(records):
         rows.append(dict(sport=sport,category=category,season_stage=stage,forecasts=len(values),distinct_games=len(games),candidate_workload_mae=averages[0],baseline_workload_mae=averages[1],candidate_stat_mae=averages[2],baseline_stat_mae=averages[3]))
     from nba_role_usage import saved_role_reviews
     from nfl_forecast_evidence import saved_role_reviews as nfl_role_reviews
-    return {'schema':1,'version':'workload-candidates-v1','groups':rows,'nba_role_groups':saved_role_reviews(records),'nfl_role_groups':nfl_role_reviews(records),'status':'Prospective research comparison only. No automatic promotion or causal diagnosis.'}
+    from candidate_tracking import summary as prediction_model_summary
+    return {'schema':1,'version':'workload-candidates-v1','groups':rows,'prediction_model_groups':prediction_model_summary(records),'nba_role_groups':saved_role_reviews(records),'nfl_role_groups':nfl_role_reviews(records),'status':'Prospective research comparison only. No automatic promotion or causal diagnosis.'}
 
 
 def write_saved_reviews(records,path='workload_reviews.json'):
@@ -167,4 +168,5 @@ def write_saved_reviews(records,path='workload_reviews.json'):
     if not target.exists()or target.read_text()!=text:
         temp=target.with_suffix('.tmp');temp.write_text(text);temp.replace(target)
     return result
+
 

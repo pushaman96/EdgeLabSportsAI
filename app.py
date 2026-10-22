@@ -35,6 +35,7 @@ st.set_page_config(
 )
 
 st.title("🏈 Kamikaze Picks")
+st.sidebar.caption('Research update: matchup homework and opportunity benchmarks v1')
 st.caption("NFL & NBA · Scores, saved picks and experimental forecasts")
 
 SPORTS = {
@@ -1217,12 +1218,19 @@ def show_espn_nfl_weather(scoreboard_data, game_date):
 
 
 def sportsbook_model_context(sport_name, scoreboard_data):
-    games = load_nfl_history() if sport_name == "NFL" else load_nba_saved_history(current_nba_season_end())["games"]
+    if sport_name == 'NBA':
+        from nba_moneyline_research import load_history
+        games=load_history(current_nba_season_end())['games']
+    else:games=load_nfl_history()
     ratings, predictions = build_elo_model(games)
     adjustment = test_probability_adjustment(predictions)
     strength = adjustment["strength"] if adjustment else 1.0
     cutoff = max(game["date"] for game in games)
     age = (datetime.now(timezone.utc).date() - cutoff).days
+    nba_history_eligible=False;nba_history_basis=None
+    if sport_name=='NBA':
+        from nba_moneyline_research import history_ready
+        nba_history_eligible,nba_history_basis=history_ready(games,current_nba_season_end(),datetime.now(timezone.utc).date())
     output = {}
     screens = {}
     if sport_name == "NFL":
@@ -1244,7 +1252,8 @@ def sportsbook_model_context(sport_name, scoreboard_data):
         injury = screens.get((home.get("displayName"), away.get("displayName")), {})
         output[(home.get("displayName"), away.get("displayName"))] = {
             "probability":probability, "cutoff":cutoff.isoformat(),
-            "eligible":type_id == 2 and 0 <= age <= 30,
+            "eligible":type_id == 2 and (nba_history_eligible if sport_name=='NBA' else 0 <= age <= 30),
+            "history_basis":nba_history_basis if sport_name=='NBA'else'Recent completed NFL history',
             "validation":{"passed":bool(adjustment and adjustment["improvement"]>=0),"calibration_examples":adjustment["calibration_games"] if adjustment else 0,"validation_games":adjustment["evaluation_games"] if adjustment else 0,"scope":"Chronological Elo shrinkage against unadjusted Elo; not sportsbook returns"},
             "injury_verified":sport_name == "NFL" and injury.get("eligible",False),
             "injury_reason":injury.get("reason","Injury verification unavailable"),
@@ -2032,6 +2041,7 @@ st.caption(
 from pick_readiness import render_overview
 with dashboard_status:
     render_overview(sport, selected_date)
+
 
 
 

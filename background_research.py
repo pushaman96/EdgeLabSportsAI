@@ -110,7 +110,7 @@ def prepare(now=None):
                     if os.environ.get('ODDS_API_KEY'):
                         try:
                             from nfl_prop_model import load_prop_research
-                            cached('nfl_model_scoring_v2_'+str(year),1800,lambda:load_prop_research(year))
+                            cached('nfl_model_opportunity_v3_'+str(year),1800,lambda:load_prop_research(year))
                         except Exception:item['issues'].append('Full NFL validation unavailable; quote analysis may remain Pass')
                     aliases={'LAR':'LA','WSH':'WAS','JAC':'JAX'}
                 else:
@@ -233,7 +233,7 @@ def model_rows(sport,event,board,now):
         context=load_context([event],board,now=now)
         return reviews([event],board,data,load_nba_injuries(),roster,now=now,context=context)
     from nfl_prop_model import load_prop_research,injury_context,current_roster,prop_reviews
-    year=int(board['events'][0]['season']['year']);data=cached('nfl_model_scoring_v2_'+str(year),1800,lambda:load_prop_research(year))
+    year=int(board['events'][0]['season']['year']);data=cached('nfl_model_opportunity_v3_'+str(year),1800,lambda:load_prop_research(year))
     roster={t['displayName']:current_roster(t['id'])for e in board['events']for t in participants(e).values()}
     # Additional role sources are optional evidence; absent rows stay unknown.
     return prop_reviews(event,board,data,injury_context(),roster,now=now)
@@ -250,11 +250,15 @@ def moneyline_rows(sport,event,board,now):
             except (ValueError,TypeError,KeyError):continue
         aliases={'LAR':'LA','WSH':'WAS'}
     else:
-        from nba_tools import load_nba_saved_history
+        from nba_moneyline_research import load_history
         year=int(board['events'][0]['season']['year'])
-        games=[g for g in load_nba_saved_history(year)['games']if g['date']<day(now)]
+        games=[g for g in load_history(year)['games']if g['date']<day(now)]
         aliases={'NY':'NYK','GS':'GSW','NO':'NOP','SA':'SAS','UTAH':'UTA','WSH':'WAS'}
     if len(games)<100:return []
+    nba_history_eligible=False;nba_history_basis=None
+    if sport=='NBA':
+        from nba_moneyline_research import history_ready
+        nba_history_eligible,nba_history_basis=history_ready(games,year,day(now))
     ratings,predictions=build_elo_model(games);validation=test_probability_adjustment(predictions)
     strength=validation['strength']if validation else 1
     models={}
@@ -265,7 +269,7 @@ def moneyline_rows(sport,event,board,now):
         hc=aliases.get(home['abbreviation'],home['abbreviation']);ac=aliases.get(away['abbreviation'],away['abbreviation'])
         cutoff=max(g['date']for g in games)
         if hc not in ratings or ac not in ratings:continue
-        models[home['displayName'],away['displayName']]={'probability':shrink_probability(expected_home_win(ratings[hc],ratings[ac]),strength),'eligible':0<=(day(now)-cutoff).days<=30,'cutoff':cutoff.isoformat(),'validation':{'passed':bool(validation and validation['improvement']>=0),'calibration_examples':validation['calibration_games']if validation else 0,'validation_games':validation['evaluation_games']if validation else 0,'scope':'Chronological Elo shrinkage comparison against the unadjusted model; not sportsbook returns'},'injury_verified':False,'injury_reason':'Background Elo has no numerical injury adjustment; review current availability'}
+        models[home['displayName'],away['displayName']]={'probability':shrink_probability(expected_home_win(ratings[hc],ratings[ac]),strength),'eligible':source.get('season',board.get('season',{})).get('type')==2 and (nba_history_eligible if sport=='NBA'else 0<=(day(now)-cutoff).days<=30),'cutoff':cutoff.isoformat(),'history_basis':nba_history_basis,'validation':{'passed':bool(validation and validation['improvement']>=0),'calibration_examples':validation['calibration_games']if validation else 0,'validation_games':validation['evaluation_games']if validation else 0,'scope':'Chronological Elo shrinkage comparison against the unadjusted model; not sportsbook returns'},'injury_verified':False,'injury_reason':'Background Elo has no numerical injury adjustment; review current availability'}
     from sportsbook_tools import moneyline_reviews
     rows=moneyline_reviews([event],models,now=now,sport=sport,include_passes=True)
     for row in rows:row['Reason']='Historical Elo price comparison. Availability/replacement effects are not numerically modeled; experimental.'
@@ -404,3 +408,4 @@ if __name__=='__main__':
     else:
         # Free connectivity check on code pushes, no odds or model-history requests.
         now=datetime.now(timezone.utc);write('background_connectivity.json',{'checked_utc':now.isoformat(),'events':{s:len(boards(s,now)['events'])for s in SPORTS}})
+

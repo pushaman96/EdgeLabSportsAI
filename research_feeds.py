@@ -47,6 +47,7 @@ def render_research_feeds(sport):
         if provider=='SportsDataIO':
             st.markdown('[SportsDataIO Discovery Lab](https://discoverylab.sportsdata.io/) · [API documentation](https://sportsdata.io/developers/api-documentation/'+sport.lower()+')')
             st.caption('Tests the documented SportsDataIO player-season stats endpoint. Discovery Lab entitlements may differ; verify the endpoint included with your key. Start with a completed season. Current-season season totals cannot be used as historical pregame inputs.')
+            st.caption('SportsDataIO free-trial statistics can be scrambled. This optional feed stays outside the prediction models. Current roster, injury and lineup research uses checked ESPN sources; no paid provider is required for the new homework.')
             identifier=st.text_input('Season identifier',value='2025' if sport=='NFL' else '2026',key='research_sdio_season_'+sport)
             quality=st.selectbox('Provider data status',['Access/real-data status not yet verified','Provider-confirmed real data','Scrambled demo data'],key='research_data_quality')
         else:

@@ -35,6 +35,8 @@ jobs:
           restore-keys: research-v1-${{ runner.os }}-
       - name: Free connectivity check
         run: python background_research.py smoke
+      - name: Compare opportunity and matchup models using free historical data
+        run: python validate_prediction_research.py
       - name: Refresh free research and prepare models
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
@@ -48,7 +50,7 @@ jobs:
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
-          for file in game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
+          for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if ! git diff --cached --quiet; then
@@ -70,7 +72,7 @@ jobs:
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
-          for file in game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
+          for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if ! git diff --cached --quiet; then
@@ -78,3 +80,4 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+

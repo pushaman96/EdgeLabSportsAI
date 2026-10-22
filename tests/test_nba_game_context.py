@@ -27,6 +27,16 @@ def game(eid='g',day='2026-10-01T02:00:00Z',absent=False,points='20',period=4,co
 
 
 class ContextTests(unittest.TestCase):
+    def test_homework_measures_rotation_and_shot_mix_from_complete_earlier_games(self):
+        from matchup_homework import profiles
+        games=[game(str(i))for i in range(3)]
+        data=profiles(games,'2026-10-22T00:00:00Z')
+        self.assertEqual(data['1'][0]['rotation_players'],5)
+        self.assertAlmostEqual(data['1'][0]['three_attempt_share'],25/80)
+        self.assertEqual(profiles(games,'2026-09-01T00:00:00Z'),{})
+        games[0]['boxscore']['players'][0]['statistics'][0]['athletes'][0]['stats'][0]='--'
+        self.assertEqual(len(profiles(games,'2026-10-22T00:00:00Z')['1']),2)
+
     def test_team_schedule_season_identity_and_no_preseason_or_canceled_games(self):
         event={'id':'g','date':'2026-10-21T23:00:00Z','timeValid':True,'season':{'year':2027},'seasonType':{'type':2},'competitions':[{'competitors':[{'team':{'id':'1'},'homeAway':'home'},{'team':{'id':'2'},'homeAway':'away'}],'status':{'type':{'completed':False}}}]}
         payload={'team':{'id':'1'},'season':{'year':2027,'type':2},'events':[event]}
@@ -132,3 +142,4 @@ class CalibrationTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+

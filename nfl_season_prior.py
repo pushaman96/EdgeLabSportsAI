@@ -102,6 +102,9 @@ def validate(players,teams):
             coverage=statistics.mean(statistics.mean(low<=x[2]<=high for x in values)for values in groups.values())if groups and low is not None else None
             bias=statistics.mean(statistics.mean(x[3]for x in values)for values in groups.values())if groups else None
             reports[key]=dict(validation_games=len(groups),calibration_examples=len(cal),forecast_mae=fm,baseline_mae=bm,passed=bool(len(groups)>=20 and len(cal)>=50 and fm<bm),residuals=ordered,training_season=2024,validation_season=2025,empirical_band_validation_coverage=coverage,mean_actual_minus_forecast=bias)
+    from nfl_opportunity import validate as validate_opportunity
+    candidates=validate_opportunity(players,teams)
+    for key,report in reports.items():report['opportunity_report']=candidates.get(key,{'passed':False,'residuals':[]})
     return reports
 
 
@@ -109,7 +112,7 @@ def evaluated_row(row,forecast,report):
     result=dict(row);projection=forecast['projected'];count='yards' not in row['Category'].lower()
     result['Model']=VERSION;result['Base model']=VERSION
     result['Projection (count)' if count else 'Projection (yards)']=round(projection,2)
-    result.update({'Expected opportunities':round(forecast['opportunities'],2),'Last-season games':forecast['prior_games'],'Current-season appearances':forecast['current_games'],'Current-season weight %':round(100*forecast['current_weight'],1),'Season stage':forecast['cohort'],'History source':'Completed nflverse regular-season weekly statistics','Role uncertainty':'New-team role unverified' if forecast['role_uncertain'] else 'Historical role assumption; lineup changes may differ','Uncertainty multiplier':round(forecast['uncertainty'],3),'Validation':{k:v for k,v in report.items()if k!='residuals'},'Opportunity type':'Passing attempts' if 'Passing' in row['Category'] else 'Carries' if 'Rushing' in row['Category'] else 'Targets'})
+    result.update({'Expected opportunities':round(forecast['opportunities'],2),'Last-season games':forecast['prior_games'],'Current-season appearances':forecast['current_games'],'Current-season weight %':round(100*forecast['current_weight'],1),'Season stage':forecast['cohort'],'History source':'Completed nflverse regular-season weekly statistics','Role uncertainty':'New-team role unverified' if forecast['role_uncertain'] else 'Historical role assumption; lineup changes may differ','Uncertainty multiplier':round(forecast['uncertainty'],3),'Validation':{k:v for k,v in report.items()if k not in ('residuals','opportunity_report')},'Opportunity type':'Passing attempts' if 'Passing' in row['Category'] else 'Carries' if 'Rushing' in row['Category'] else 'Targets'})
     residuals=report.get('residuals',[])
     reason='Last-season starting estimate blended with current-season usage; '+forecast['defense_status']+'. '
     if len(residuals)<20:result['Reason']=reason+'Insufficient earlier calibration; stat projection only';return result
@@ -129,6 +132,10 @@ def evaluated_row(row,forecast,report):
 def over_probability(projected,line,report,uncertainty=1.):
     residuals=report.get('residuals',[])
     if len(residuals)<20:return None
+    if 'temperature'in report:
+        from forecast_benchmark import probability
+        return probability(projected,line,residuals,report['temperature'])
     threshold=(line-projected)/error_scale(projected)/uncertainty
     return max(.05,min(.95,.5+.8*((1+sum(e>threshold for e in residuals))/(len(residuals)+2)-.5)))
+
 

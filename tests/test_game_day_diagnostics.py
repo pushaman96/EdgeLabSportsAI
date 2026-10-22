@@ -17,6 +17,7 @@ class DiagnosticTests(unittest.TestCase):
     def test_old_quote_failed_model_and_missing_probability_do_not_qualify(self):
         for row in (self.row(**{'Quote updated UTC':(NOW-timedelta(minutes=16)).isoformat()}),self.row(Validation={'passed':False}),self.row(**{'Estimated win %':None})):
             self.assertFalse(evidence(row,self.report(),NOW,'code')['ready'])
+        self.assertFalse(evidence(self.row(**{'Estimated win %':True}),self.report(),NOW,'code')['ready'])
     def test_existing_pass_is_not_promoted_and_no_invented_samples(self):
         a=evidence(self.row(Decision='Pass',Validation={'passed':True}),self.report(),NOW,'code')
         self.assertFalse(a['ready']);self.assertIsNone(a['later_historical_games_or_examples'])

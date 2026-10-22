@@ -57,5 +57,28 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(adjust_row(row,.65,now,state,sport='NBA'),.65)
         self.assertEqual(row['Raw estimated win %'],65)
 
+    def test_opportunity_candidate_applies_only_after_all_historical_checks(self):
+        import nba_prop_model as model
+        now,event,board,data,injuries,roster=self.fixture()
+        fitted=model.research(data['logs'],'2026-10-20')
+        original=reviews([event],board,data,injuries,roster,now,context={})[0]
+        candidate={'minutes':20,'values':{'PTS':40},'shots':{},'history_through':'2026-10-18','method':'fixture'}
+        report={'passed':True,'candidate_mae':2,'simple_baseline_mae':4,'residuals':[0.]*60,
+                'temperature':.75,'validation_games':100,'calibration_examples':60}
+        fitted['opportunity_reports']['PTS','Established season']=report
+        with patch.object(model,'research',return_value=fitted),patch('nba_opportunity.estimate',return_value=candidate):
+            row=reviews([event],board,data,injuries,roster,now,context={})[0]
+        self.assertTrue(row['Opportunity model applied'])
+        self.assertEqual(row['Projection (count)'],40)
+        self.assertIn('minutes-shot-opportunities',row['Model'])
+        frozen=make_record(dict(row,Sport='NBA'),'espn',event['commence_time'],now,strategy='Analysis')
+        self.assertEqual(frozen['forecast_context']['Research model comparison'][0]['candidate_projection'],40)
+        report['passed']=False
+        with patch.object(model,'research',return_value=fitted),patch('nba_opportunity.estimate',return_value=candidate):
+            row=reviews([event],board,data,injuries,roster,now,context={})[0]
+        self.assertFalse(row.get('Opportunity model applied',False))
+        self.assertEqual(row['Projection (count)'],original['Projection (count)'])
+
 
 if __name__=='__main__':unittest.main()
+

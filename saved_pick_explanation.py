@@ -133,9 +133,16 @@ def render_saved_explanations(records,sport):
             st.write('**NFL observed averages and conversion rates saved before the game**')
             st.dataframe(context['NFL player averages'],hide_index=True,use_container_width=True)
             st.caption(context.get('NFL averages method',''))
-            for label,field in (('Role and participation','NFL snap trend'),('Depth listing','NFL depth check'),('Workload-limit report','NFL restriction check'),('Rest and schedule','NFL verified schedule context'),('Matchup context','NFL opponent workload context'),('Teammate involvement comparisons','NFL teammate involvement'),('Unvalidated context scenario','NFL context scenario','Game-day diagnostic')):
+            for label,field in (('Role and participation','NFL snap trend'),('Depth listing','NFL depth check'),('Workload-limit report','NFL restriction check'),('Rest and schedule','NFL verified schedule context'),('Matchup context','NFL opponent workload context'),('Teammate involvement comparisons','NFL teammate involvement'),('Unvalidated context scenario','NFL context scenario')):
                 if context.get(field):st.write('**'+label+'**');st.write(context[field])
         for label,field in (('Reported lineup and minutes limit','Starting lineup check'),('Minutes-limit report','Minutes restriction check'),('Verified schedule and rest','Verified schedule context'),('Teammate absence comparisons','Teammate absence usage'),('Opponent and possession context','Opponent and pace context')):
+            if context.get(field):st.write('**'+label+'**');st.write(context[field])
+        if context.get('Homework'):
+            st.write('**Pregame homework — facts and their effect on this prediction**')
+            for fact in context['Homework'].get('factors',[]):
+                st.write('**'+fact['Factor']+'** — '+fact['Effect'])
+                st.write(fact['Evidence'])
+        for label,field in (('Shot and minutes candidate tests','Opportunity candidate'),('Team behavior and matchup research','Matchup homework'),('Matchup candidate tests','Matchup benchmark')):
             if context.get(field):st.write('**'+label+'**');st.write(context[field])
         if (record.get('forecast_context')or{}).get('Game-day diagnostic'):
             st.write('**Game-day diagnostic at publication**');st.write(record['forecast_context']['Game-day diagnostic'])
@@ -158,3 +165,4 @@ def render_current_explanations(rows,prefix):
         for label,key in [('Forecast','forecast'),('Calculation','calculation'),('Forecast gap','comparison'),('Uncertainty','uncertainty'),('Adjustments','adjustments'),('Validation','validation'),('Probability and price','price'),('Take/Pass reason','reason'),('Risks','risks')]:
             st.write('**'+label+'**');st.write(e[key])
         st.caption('Explains the current saved analysis. No paid AI API call or fresh odds request is made. Reanalyze if prices or availability changed.')
+

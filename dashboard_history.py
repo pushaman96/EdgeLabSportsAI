@@ -43,6 +43,10 @@ def render_public_history(sport,path='published_picks.json'):
         if sport=='NFL'and workload.get('nfl_role_groups'):
             st.write('**NFL recent-role workload and range comparisons**')
             st.dataframe(workload['nfl_role_groups'],hide_index=True,use_container_width=True)
+        models=[r for r in workload.get('prediction_model_groups',[])if r['sport']==sport]
+        if models:
+            st.write('**Frozen opportunity and matchup candidates versus incumbent**')
+            st.dataframe(models,hide_index=True,use_container_width=True)
         st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
     st.subheader('Saved-pick probability accuracy')
     summary=accuracy_summary(records,sport)
@@ -62,8 +66,11 @@ def render_public_history(sport,path='published_picks.json'):
     render_feedback(records,sport)
     from learning_audit import render as render_learning_audit
     render_learning_audit(sport,records)
+    from validate_prediction_research import render as render_prediction_research
+    render_prediction_research(sport)
     from background_research import render as render_background_research
     render_background_research(sport)
     from nfl_scoring_models import render_validation as render_scoring_validation
     render_scoring_validation(sport)
+
 

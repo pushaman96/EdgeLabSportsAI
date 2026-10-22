@@ -56,4 +56,16 @@ class NflSeasonPriorTests(unittest.TestCase):
         future=dict(p[-2],season=2026,passing_yards=99999)
         self.assertEqual(r,validate(p+[future],t+[future]))
 
+    def test_team_share_candidate_is_bounded_and_ignores_future_workload(self):
+        from nfl_opportunity import candidate
+        p,t=self.fixture();idx=indexes(p,t)
+        f=candidate('A',2026,1,'A','B','player_pass_yds',idx)
+        self.assertIsNotNone(f)
+        self.assertGreaterEqual(f['opportunities'],.8*30)
+        self.assertLessEqual(f['opportunities'],1.2*30)
+        self.assertIsNotNone(f['homework']['prior_team_tendency']['pass_attempt_share'])
+        future=dict(p[-2],season=2026,week=1,attempts=99999,passing_yards=99999)
+        self.assertEqual(f,candidate('A',2026,1,'A','B','player_pass_yds',indexes(p+[future],t+[future])))
+
 if __name__=='__main__':unittest.main()
+

@@ -44,7 +44,7 @@ def evidence(row,report=None,now=None,current_hash=None):
     try:quote_fresh=0<=(now-utc(row['Quote updated UTC'])).total_seconds()<=900
     except (KeyError,ValueError,TypeError):quote_fresh=False
     p=row.get('Estimated win %',row.get('Model win %'))
-    valid_probability=isinstance(p,(int,float))and math.isfinite(p)and 0<p<100
+    valid_probability=isinstance(p,(int,float))and not isinstance(p,bool)and math.isfinite(p)and 0<p<100
     issues=[]
     if not health['passed']:issues.append('Daily software diagnostic is missing, stale, failed or from different code')
     if not passed:issues.append('Category historical baseline pass is missing or failed')
@@ -55,10 +55,13 @@ def evidence(row,report=None,now=None,current_hash=None):
 def apply(rows,sport,now=None):
     report=load();source=fingerprint();now=now or datetime.now(timezone.utc);output=[]
     for original in rows:
-        row=dict(original);audit=evidence(row,report,now,source);row['Game-day diagnostic']=audit
+        from selection_policy import annotate
+        from matchup_homework import dossier
+        row=annotate(original);row['Homework']=dossier(row,sport)
+        audit=evidence(row,report,now,source);row['Game-day diagnostic']=audit
         if row.get('Decision')!='Pass'and not audit['ready']:
             row['Decision']='Pass';row['Reason']='Game-day diagnostic: '+'; '.join(audit['issues'])
-        output.append(row)
+        output.append(annotate(row))
     return output
 def render(sport):
     import streamlit as st
@@ -70,3 +73,4 @@ def render(sport):
         st.caption('Historical calibration and later-game baseline results are checked per forecast and saved with it. These counts appear in the pick explanation. Repeating the same tests does not create independent prediction evidence. Source and quote checks still run when forecasts are issued.')
 if __name__=='__main__':
     sys.exit(0 if run_tests()['passed']else 1)
+

@@ -81,10 +81,12 @@ def research(logs, cutoff):
     full_season_split=bool(validation_dates and earlier)
     split=min(validation_dates) if full_season_split else dates[int(.65*len(dates))] if dates else str(cutoff)
     history=defaultdict(list);players=defaultdict(list);errors=defaultdict(list);validation=defaultdict(lambda:defaultdict(list))
-    cohort_errors=defaultdict(list);cohort_validation=defaultdict(lambda:defaultdict(list))
+    cohort_errors=defaultdict(list);cohort_validation=defaultdict(lambda:defaultdict(list));opportunity_samples=defaultdict(lambda:defaultdict(list))
     for r in sorted(older,key=lambda r:(r['date'],r['game'],r['player'])):
         h=history[r['player'],r['team']]
         before=[x for x in h if x['date']<r['date']]
+        from nba_opportunity import estimate as opportunity_estimate,VARIANTS
+        candidate_variants={variant:opportunity_estimate(players[r['player']],season_year(r),r['team'],r['date'],variant)for variant in VARIANTS}
         for _,field in MARKETS.values():
             detail=season_projection(players[r['player']],field,season_year(r),r['team'],r['date'])
             f=(detail['projected'],detail['minutes'],detail['baseline']) if detail else projection(before,field)
@@ -92,6 +94,11 @@ def research(logs, cutoff):
             forecast,minutes,baseline=f
             cohort=detail['cohort'] if detail else 'Established season'
             scale=detail['uncertainty'] if detail else 1.
+            for variant,candidate in candidate_variants.items():
+                if candidate and candidate['values'].get(field)is not None and season_year(r)<target_year and (not detail or not detail['role_uncertain']):
+                    opportunity_samples[field,cohort][variant].append({'date':r['date'],'season':season_year(r),'game':r['game'],
+                        'candidate':candidate['values'][field],'base':forecast,'base_uncertainty':scale,'baseline':baseline,'actual':r[field],
+                        'workload':candidate['minutes'],'base_workload':minutes,'actual_workload':r['minutes']})
             error=(r[field]-forecast)/max(1.,math.sqrt(forecast))/scale
             if r['date']<split:
                 errors[field].append(error);cohort_errors[field,cohort].append(error)
@@ -112,7 +119,9 @@ def research(logs, cutoff):
     cohort_reports={(field,cohort):report(label,cohort_validation[field,cohort],cohort_errors[field,cohort]) for label,field in MARKETS.values() for cohort in ('Early season (0–7 appearances)','Established season')}
     from workload_candidates import validate_nba
     workload_reports=validate_nba(older)
-    return dict(workload_reports=workload_reports,history=history,players=players,errors=errors,reports=reports,cohort_errors=cohort_errors,cohort_reports=cohort_reports)
+    from forecast_benchmark import validate_variants as validate_opportunity
+    opportunity_reports={key:validate_opportunity(values)for key,values in opportunity_samples.items()}
+    return dict(opportunity_reports=opportunity_reports,workload_reports=workload_reports,history=history,players=players,errors=errors,reports=reports,cohort_errors=cohort_errors,cohort_reports=cohort_reports)
 
 
 def probability(projected, line, errors):
@@ -185,6 +194,10 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
         game_day=start.astimezone(ZoneInfo('America/Los_Angeles')).date()
         if game_day not in research_cache:research_cache[game_day]=research(data['logs'],game_day)
         model=research_cache[game_day]
+        if context is not None and 'matchup_reports'not in model:
+            from matchup_homework import validate_nba_context
+            model['matchup_reports']=validate_nba_context(data['logs'],context.get('history',[]),game_day,model.get('opportunity_reports',{}))
+            model['matchup_facts']={}
         for book in event.get('bookmakers',[]):
             for market in book.get('markets',[]):
                 if market['key'] not in MARKETS:continue
@@ -235,6 +248,54 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     calibration=model['cohort_errors'][field,cohort] if detail else model['errors'][field]
                     uncertainty=detail['uncertainty'] if detail else 1.
                     calibration=[e*uncertainty for e in calibration]
+                    incumbent_calibration=list(calibration)
+                    probability_fn=probability;selected_report=None
+                    from nba_opportunity import estimate as estimate_opportunity,attach as attach_opportunity,VERSION as OPPORTUNITY_VERSION
+                    opportunity_report=model.get('opportunity_reports',{}).get((field,cohort),{})
+                    candidate=estimate_opportunity(player_history,data['season'],nba_team,game_day,opportunity_report.get('selected_variant','median-minutes'))
+                    attach_opportunity(row,candidate,field,opportunity_report)
+                    if opportunity_report.get('passed')and candidate and candidate['values'].get(field)is not None:
+                        projected=candidate['values'][field];minutes=adjusted_minutes=candidate['minutes']
+                        calibration=opportunity_report['residuals'];selected_report=opportunity_report
+                        from forecast_benchmark import probability as tested_probability
+                        probability_fn=lambda value,line,errors:tested_probability(value,line,errors,selected_report['temperature'])
+                        row.update({'Model':OPPORTUNITY_VERSION,'Base model':OPPORTUNITY_VERSION,'Opportunity model applied':True})
+                    if context is not None:
+                        from matchup_homework import nba_facts,VERSION as MATCHUP_VERSION
+                        game=context.get('games',{}).get(str(source['id']),{})
+                        opponent=next((tid for name,tid in game.get('teams',{}).items()if str(tid)!=str(teams[team])),None)
+                        fact_key=(str(source['id']),str(teams[team]),field)
+                        if fact_key not in model['matchup_facts']:
+                            model['matchup_facts'][fact_key]=nba_facts(context.get('history',[]),event['commence_time'],teams[team],opponent,field)
+                        facts=model['matchup_facts'][fact_key];row['Matchup homework']=facts
+                        matchup_report=model.get('matchup_reports',{}).get((field,cohort),{})
+                        row['Matchup benchmark']={k:v for k,v in matchup_report.items()if k!='residuals'}
+                        if matchup_report.get('passed')and facts['complete_matchup']:
+                            # Match the exact composite candidate used in the historical tests.
+                            if candidate and candidate['values'].get(field)is not None:
+                                projected=candidate['values'][field];minutes=adjusted_minutes=candidate['minutes']
+                            else:projected,minutes,_=forecast;adjusted_minutes=minutes
+                            projected*=facts['candidate_factor'];calibration=matchup_report['residuals'];selected_report=matchup_report
+                            from forecast_benchmark import probability as tested_probability
+                            probability_fn=lambda value,line,errors:tested_probability(value,line,errors,selected_report['temperature'])
+                            row.update({'Model':MATCHUP_VERSION+' / '+field,'Base model':MATCHUP_VERSION+' / '+field,'Matchup model applied':True})
+                            row['NBA context limitation']='The bounded pace/allowed-stat candidate passed the saved chronological development checks and is applied. Rotation descriptions, teammate absences and unconfirmed lineups are separate evidence; no additional numerical effects are inferred.'
+                    if selected_report:
+                        row.update({'Minutes forecast':round(minutes,2),'Uncertainty multiplier':1.,'Probability method':'Earlier residual distribution with temperature selected before later historical validation; synthetic-line development evidence only'})
+                    from forecast_benchmark import probability as benchmark_probability
+                    comparisons=[]
+                    incumbent_p=probability(forecast[0],line,incumbent_calibration)
+                    for version,cp,report in (
+                        (OPPORTUNITY_VERSION,candidate['values'].get(field)if candidate else None,opportunity_report),
+                        ('verified-matchup-homework-v1 / '+field,(candidate['values'].get(field)if candidate and candidate['values'].get(field)is not None else forecast[0])*row.get('Matchup homework',{}).get('candidate_factor',1),model.get('matchup_reports',{}).get((field,cohort),{})if row.get('Matchup homework',{}).get('complete_matchup')else {})):
+                        if cp is None or not report.get('residuals'):continue
+                        candidate_p=benchmark_probability(cp,line,report['residuals'],report.get('temperature',1))
+                        if candidate_p is None or incumbent_p is None:continue
+                        comparisons.append({'version':version,'incumbent_projection':forecast[0],'candidate_projection':cp,
+                            'incumbent_probability':1-incumbent_p if row['Selection']=='Under'else incumbent_p,
+                            'candidate_probability':1-candidate_p if row['Selection']=='Under'else candidate_p,
+                            'line':line,'selection':row['Selection'],'historical_checks_passed':report.get('passed',False)})
+                    row['Research model comparison']=comparisons
                     row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','History source':data.get('source','NBA.com'),'Season stage':cohort,'Last-season games':detail['prior_games'] if detail else 0,'Current-season appearances':detail['current_games'] if detail else len(history),'Current-season weight %':round(100*detail['current_weight'],1) if detail else 100.,'Role uncertainty':'New team; fewer than 3 current-team games' if detail and detail['role_uncertain'] else 'Historical minutes assumption; lineup changes may differ','Uncertainty multiplier':round(uncertainty,3)})
                     if context is not None:
                         from nba_game_context import attach_context
@@ -245,21 +306,22 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                         sample=nba_sample(live,player_history,field)
                         absent=[r['Player']for r in injuries['rows']if r['Team']==team and normalized(r['Player']) in out_names]
                         attach(row,sample,model.get('workload_reports',{}).get((field,cohort)),absent)
-                    p=probability(projected,line,calibration)
+                    p=probability_fn(projected,line,calibration)
                     if p is None:row['Reason']='Insufficient earlier calibration errors';continue
                     row['Base estimated win %']=100*(1-p if row['Selection']=='Under' else p)
                     projected,adjusted_minutes=adjust_forecast(row,projected,adjusted_minutes,now,sport='NBA')
-                    p=probability(projected,line,calibration)
+                    p=probability_fn(projected,line,calibration)
                     if row['Selection']=='Under':p=1-p
                     if row.get('Candidate projection') is not None:
-                        candidate=probability(row['Candidate projection'],line,calibration)
-                        row['Candidate input win %']=100*(1-candidate if row['Selection']=='Under' else candidate)
+                        candidate_p=probability_fn(row['Candidate projection'],line,calibration)
+                        row['Candidate input win %']=100*(1-candidate_p if row['Selection']=='Under' else candidate_p)
                     p=adjust_probability(row,p,now,sport='NBA')
                     from pick_learning import adjust_row as validated_calibration
                     p=validated_calibration(row,p,now=now,sport='NBA')
                     row['Probability calibration status']=row['Feedback status']
                     breakeven=100/(odds+100) if odds>0 else abs(odds)/(abs(odds)+100)
-                    row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Feedback status':row.get('Online learning status','Collecting prospective per-game evidence')+'; '+row['Probability calibration status'],'Validation':model['cohort_reports'][field,cohort] if detail else model['reports'][field]})
+                    selected_validation=dict({k:v for k,v in selected_report.items()if k!='residuals'},forecast_mae=selected_report['candidate_mae'],baseline_mae=selected_report['simple_baseline_mae'])if selected_report else model['cohort_reports'][field,cohort] if detail else model['reports'][field]
+                    row.update({'Projection (count)':round(projected,2),'Expected opportunities':round(adjusted_minutes,2),'Opportunity type':'Minutes','Estimated win %':round(100*p,1),'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Feedback status':row.get('Online learning status','Collecting prospective per-game evidence')+'; '+row['Probability calibration status'],'Validation':selected_validation})
                     from nba_forecast_quality import attach_quality
                     attach_quality(row,player_history,game_day,nba_team,projected,adjusted_minutes,calibration)
                     if context is not None:
@@ -275,6 +337,7 @@ def reviews(events, scoreboard, data, injuries, rosters, now=None, context=None)
                     if p-breakeven<.05:row['Reason']='Estimated edge below five percentage points';continue
                     row['Decision']='Watch — experimental'
                     row['Reason']='Last-season minutes × production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. '+row['Minutes risk']+'. '+row['Minutes sensitivity']+'. '+row.get('Starting lineup check',{}).get('Status','Starting lineup not checked')+'. Probability and actual-price profitability remain unverified.'
+                    if selected_report:row['Reason']='Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. '+row['Reason']
     return output
 
 
@@ -431,11 +494,18 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
             st.caption('Validation requires 50 earlier calibration examples and 20 later distinct games for the category and season stage, plus lower forecast error than the simple baseline. These are historical samples, not 20 new games this season. Passing the stat test does not prove profitable odds or calibrated probabilities.')
     else:
         st.info('No supported, matched, upcoming regular-season player quotes were analyzed. Check the selected date, game, sportsbook and supported categories: points, rebounds, assists and three-pointers made. Preseason and started games do not qualify.')
+    from selection_policy import render_research
+    render_research(current,'NBA')
     if picks:render_team_table(picks,hide_index=True,use_container_width=True,sport='NBA')
     forecasts=[r for r in current if r.get('Projection (count)') is not None]
     if forecasts:
         unique={}
         for r in forecasts:unique.setdefault((r['Game'],r['Player'],r['Category']),r)
+        with st.expander('NBA homework — matchups, team tendencies and candidate tests'):
+            for r in unique.values():
+                st.write('**'+r['Player']+' · '+r['Category']+' · '+r['Game']+'**')
+                st.write({'Opportunity model applied':r.get('Opportunity model applied',False),'Matchup model applied':r.get('Matchup model applied',False),'Shot/minutes candidate':r.get('Opportunity candidate'),'Opponent/team facts':r.get('Matchup homework'),'Matchup validation':r.get('Matchup benchmark')})
+            st.caption('Existing selection cutoffs are unchanged. Team pace, shot mix and rotation patterns describe observed tendencies. Numerical matchup adjustments require later-game stat, workload and synthetic-probability benchmark passes. Unknown coaching systems or injury redistribution are not invented.')
         with st.expander('NBA projections — last-season starting point and new-season blend',expanded=not bool(picks)):
             st.caption('Stat estimates can be shown before a category qualifies for a recommendation. Role uncertainty and failed or insufficient validation remain explicit. These projections are not a promise of hitting a sportsbook line.')
             fields=('Game','Player','Category','Projection (count)','Minutes forecast','Last-season games','Current-season appearances','Current-season weight %','Role uncertainty','History source')
@@ -528,3 +598,4 @@ def current_roster_nba(team_id):
         rows.append(dict(id=str(athlete.get('id','')),name=athlete.get('displayName'),status=status.get('name') if isinstance(status,dict) else str(status)))
     if not rows:raise ValueError('NBA roster empty')
     return rows
+

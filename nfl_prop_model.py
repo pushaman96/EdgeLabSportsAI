@@ -179,7 +179,7 @@ def fit_and_test(players, teams):
     return models, reports
 
 @st.cache_data(ttl=21600)
-def load_prop_research(season):
+def load_prop_research(season,research_schema=3):
     with ThreadPoolExecutor(max_workers=6) as pool:
         tasks = {(kind,y): pool.submit(load_season_stats,kind,y) for kind in ('player','team') for y in sorted({2023,2024,2025,season-1,season})}
         values = {key: task.result() for key,task in tasks.items()}
@@ -197,7 +197,7 @@ def load_prop_research(season):
     workload_reports=validate_nfl(players,teams)
     from nfl_scoring_models import td_validate,total_validate
     td_report=td_validate(players);total_report=total_validate(schedule)
-    return {'td_report':td_report,'total_report':total_report,'workload_reports':workload_reports,'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':2,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
+    return {'td_report':td_report,'total_report':total_report,'workload_reports':workload_reports,'season_prior_reports':season_prior_reports,'passing_count_reports':passing_reports,'schema_version':research_schema,'players':players,'teams':teams,'schedule':schedule,'models':models,'reports':reports,'retrieved':datetime.now(timezone.utc).isoformat(),'season':season}
 
 @st.cache_data(ttl=300)
 def injury_context():
@@ -341,6 +341,25 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                 if market['key']=='player_pass_interceptions' and line!=.5:candidate=None
                 if candidate:
                     prior_report=research.get('season_prior_reports',{}).get((market['key'],candidate['cohort']),{'passed':False,'residuals':[]})
+                    from nfl_opportunity import candidate as matchup_candidate,VERSION as MATCHUP_VERSION
+                    context_candidate=matchup_candidate(trade['player_id'],context['season'],int(schedule['week']),team,opponent,market['key'],idx)
+                    context_report=prior_report.get('opportunity_report',{})
+                    if context_candidate:
+                        row['Matchup homework']=context_candidate['homework']
+                        row['Opportunity candidate']={'version':MATCHUP_VERSION,'projection':context_candidate['projected'],'opportunities':context_candidate['opportunities'],'benchmark':{k:v for k,v in context_report.items()if k!='residuals'}}
+                        if context_report.get('residuals')and prior_report.get('residuals'):
+                            from forecast_benchmark import probability as candidate_probability
+                            from nfl_season_prior import over_probability as incumbent_probability
+                            bp=incumbent_probability(candidate['projected'],line,prior_report,candidate['uncertainty'])
+                            cp=candidate_probability(context_candidate['projected'],line,context_report['residuals'],context_report.get('temperature',1))
+                            if bp is not None and cp is not None:
+                                row['Research model comparison']=[{'version':MATCHUP_VERSION,'incumbent_projection':candidate['projected'],'candidate_projection':context_candidate['projected'],
+                                    'incumbent_probability':1-bp if row['Selection']=='Under'else bp,'candidate_probability':1-cp if row['Selection']=='Under'else cp,
+                                    'line':line,'selection':row['Selection'],'historical_checks_passed':context_report.get('passed',False)}]
+                    use_context=bool(context_candidate and context_report.get('passed'))
+                    if use_context:
+                        candidate=dict(context_candidate,uncertainty=1.)
+                        prior_report=dict(context_report,forecast_mae=context_report['candidate_mae'],baseline_mae=context_report['simple_baseline_mae'])
                     row['Last-season blend candidate projection']=round(candidate['projected'],2)
                     if candidate['current_games']<4 or prior_report.get('passed'):
                         for code,values in ((team,idx[1].get((context['season'],team),[])),(opponent,idx[2].get((context['season'],opponent),[]))):
@@ -349,6 +368,9 @@ def prop_reviews(event, scoreboard, research, injuries, rosters, now=None):
                             observed={r['game_id'] for r in values if r['week']<int(schedule['week'])}
                             if not expected.issubset(observed):candidate=dict(candidate,coverage_gap=True)
                         row.update(prior_row(row,candidate,prior_report))
+                        if use_context:
+                            row.update({'Model':MATCHUP_VERSION,'Base model':MATCHUP_VERSION,'Opportunity model applied':True,'Matchup model applied':True})
+                            row['Reason']='Team volume × player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. '+row['Reason']
                         from workload_candidates import nfl_sample,attach
                         sample=nfl_sample(dict(player_id=trade['player_id'],season=context['season'],week=int(schedule['week']),team=team,opponent_team=opponent),market['key'],idx)
                         absent=[p['name'] for p in rosters.get(team_name,[]) if str(injuries['statuses'].get((team_name,name_key(p['name'])),p.get('status',''))).lower() in ('out','injured reserve','ir','suspended','inactive')]
@@ -688,6 +710,8 @@ def analyzed_cushions(watch, events, books, models, now=None, season_priors=None
         receiving=original.get('Category')=='Receiving yards'
         model=models.get('player_reception_yds' if receiving else 'player_pass_yds',{})
         prior_model=(season_priors or {}).get(('player_reception_yds' if receiving else 'player_pass_yds',original.get('Season stage')), {}) if original.get('Model','').startswith('NFL season-prior workload') else {}
+        if original.get('Opportunity model applied')and prior_model.get('opportunity_report',{}).get('passed'):
+            prior_model=prior_model['opportunity_report']
         if original.get('Model','').startswith('NFL season-prior workload'):model=dict(prior_model,forecast_passed=prior_model.get('passed',False))
         desired=25 if receiving else 30
         minimum,maximum=(20,25) if receiving else (25,40)
@@ -1025,3 +1049,4 @@ def render_prop_research(event, scoreboard, books, quote_retrieved, auto_analyze
             writer.writerow({'Recorded UTC':saved['analyzed'],'Game starts UTC':starts[row['Game']],**row})
         autosave_report('Download this prop analysis',buffer.getvalue(),file_name='nfl_prop_analysis.csv',mime='text/csv',key='nfl_prop_export')
     st.caption(f"Analysis time: {saved['analyzed']}. Statistics retrieved: {saved['retrieved']}. This is a research shortlist; no automatic bets are placed.")
+
