@@ -7,8 +7,8 @@ def tracked_records(path,session_records=(),live_grades=()):
     except (OSError,ValueError,KeyError):records=[]
     merged={r['id']:r for r in records}
     for r in session_records:merged.setdefault(r['id'],r)
-    graded={r['id']:r for r in live_grades}
-    return [graded.get(k,r) for k,r in merged.items()]
+    from settlement_sync import merge_grades
+    return merge_grades(list(merged.values()),live_grades)
 
 def accuracy_summary(records,sport):
     rows=[r for r in records if r.get('sport','NFL')==sport and r.get('evidence') in ('Personal paper record','Published before kickoff') and r.get('strategy')=='Original' and r.get('result') in ('Win','Loss') and r.get('season_type')=='Regular season']
@@ -66,3 +66,4 @@ def render_public_history(sport,path='published_picks.json'):
     render_background_research(sport)
     from nfl_scoring_models import render_validation as render_scoring_validation
     render_scoring_validation(sport)
+

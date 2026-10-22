@@ -159,13 +159,30 @@ def render_live_board(records,sport='NFL'):
     st.caption('Uses ESPN stats, not sportsbook credits. Updates while this app session is active; feed delays and stat corrections are possible. Original lines and probabilities remain frozen. Below an Under line during a game is not a final win. Missing stats are never treated as zero or DNP.')
     @st.cache_data(ttl=25,show_spinner=False)
     def cached_fetch(league,eid):return fetch_summary(league,eid)
+    @st.cache_data(ttl=60,show_spinner=False)
+    def cached_grades():
+        from settlement_sync import fetch_grades
+        return fetch_grades()
     @st.fragment(run_every='30s' if auto else None)
     def panel():
-        if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):cached_fetch.clear()
-        summaries=collect_summaries(selected,cached_fetch)
-        rows=build_board(selected,summaries,team_assets=st.session_state.get("team_emblems",{}))
+        if st.button('Refresh pick-board stats now',key='pick_board_refresh_'+sport):
+            cached_fetch.clear();cached_grades.clear()
+        from settlement_sync import merge_grades
+        try:
+            updates=cached_grades()
+            st.session_state['latest_settlement_grades']=updates
+            st.caption('Saved final grades synchronized from permanent history.')
+        except Exception:
+            updates=st.session_state.get('latest_settlement_grades',[])
+            st.caption('Permanent grade refresh unavailable; retaining last verified results and retrying.')
+        current=merge_grades(selected,updates)
+        # Remember verified settlements for full-page accuracy and review panels.
+        st.session_state['ledger_live_grades']=merge_grades(
+            st.session_state.get('ledger_live_grades',[])+[r for r in current if r['id'] not in {g['id'] for g in st.session_state.get('ledger_live_grades',[])}],updates)
+        summaries=collect_summaries(current,cached_fetch)
+        rows=build_board(current,summaries,team_assets=st.session_state.get("team_emblems",{}))
         from pick_presentation import pick_status,result_indicator
-        original={r['id']:r for r in selected}
+        original={r['id']:r for r in current}
         rows=[{'Result':result_indicator(row),'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
         tracking_tab,cards_tab=st.tabs(['Live tracking table','Pick cards'])
         with tracking_tab:
@@ -177,7 +194,7 @@ def render_live_board(records,sport='NFL'):
             else:st.info('No saved picks match the selected date and strategies.')
         with cards_tab:
             from pick_cards import render_pick_cards
-            render_pick_cards(selected,sport,live_rows=rows)
+            render_pick_cards(current,sport,live_rows=rows)
     panel()
     from saved_pick_explanation import render_saved_explanations
     render_saved_explanations(selected,sport)
