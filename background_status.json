@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T01:41:09.475734+00:00",
+  "generated_utc": "2026-10-22T02:18:38.830240+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -10,23 +10,9 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 5,
-      "prepared_projections": 620,
+      "upcoming_games": 3,
+      "prepared_projections": 355,
       "issues": [
-        "Player history incomplete: Cameron Carr",
-        "Player history incomplete: Arthur Kaluma",
-        "Player history incomplete: AK Okereke",
-        "Player history incomplete: Collin Sexton",
-        "Player history incomplete: Jimmy Butler III",
-        "Player history incomplete: Graham Ike",
-        "Player history incomplete: Yaxel Lendeborg",
-        "Player history incomplete: Moses Moody",
-        "Player history incomplete: Georges Niang",
-        "Player history incomplete: Kristaps Porzingis",
-        "Player history incomplete: Damian Lillard",
-        "Player history incomplete: Shaedon Sharpe",
-        "Player history incomplete: Koa Peat",
-        "Player history incomplete: Mark Williams",
         "Player history incomplete: Bradley Beal",
         "Player history incomplete: Brandon Ingram",
         "Player history incomplete: Nick Martinelli",
