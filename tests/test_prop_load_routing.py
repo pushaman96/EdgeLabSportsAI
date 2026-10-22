@@ -11,7 +11,7 @@ class PropLoadRoutingTests(unittest.TestCase):
         node=next(n for n in ast.parse(Path('nfl_prop_model.py').read_text()).body if isinstance(n,ast.FunctionDef)and n.name=='render_prop_research')
         trigger=next(n for n in node.body if isinstance(n,ast.If)and ast.unparse(n.test)=='auto_analyze or analyze')
         node.body=node.body[:node.body.index(trigger)+1]
-        work=next(n for n in trigger.body[0].body if isinstance(n,ast.With))
+        work=next(n for n in next(n for n in trigger.body if isinstance(n,ast.Try)).body if isinstance(n,ast.With))
         stop=next(i for i,n in enumerate(work.body)if isinstance(n,ast.Assign)and any(isinstance(t,ast.Name)and t.id=='stage' for t in n.targets))
         work.body=work.body[:stop]
         st=MagicMock();st.selectbox.return_value=mode;st.button.return_value=False
