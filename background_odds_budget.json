@@ -64,7 +64,11 @@
             "home_team": "Philadelphia 76ers",
             "away_team": "Cleveland Cavaliers"
           },
-          "status": "Reserved before HTTP request"
+          "status": "Prices loaded",
+          "actual_cost": "6",
+          "remaining": "382",
+          "saved_analysis": 969,
+          "saved_originals": 21
         }
       ],
       "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
