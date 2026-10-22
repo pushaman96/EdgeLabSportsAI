@@ -123,7 +123,7 @@ def evaluated_row(row,forecast,report):
     if forecast['coverage_gap']:reason+='Recent player-stat coverage gap; missing games are not zero or DNP.'
     elif forecast['role_uncertain']:reason+='New-team role needs four observed current-team appearances.'
     elif not report.get('passed'):reason+='Season-stage model has not beaten its baseline on later games; research projection only.'
-    elif p-be<.05:reason+='Estimated edge below five percentage points.'
+    elif p<=.5:reason+='Selected outcome is not more likely than its alternative.'
     else:result['Decision']='Watch — experimental';reason+='Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate.'
     result['Reason']=reason
     return result

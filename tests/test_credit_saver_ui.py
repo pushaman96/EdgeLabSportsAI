@@ -13,10 +13,10 @@ class Context:
     def __exit__(self,*a):pass
 class UI:
     def __init__(self,mode,remaining):
-        self.mode=mode;self.remaining=remaining;self.session_state={};self.budget=4
+        self.mode=mode;self.remaining=remaining;self.session_state={};self.budget=4;self.preset=False
     def radio(self,*a,**k):return self.mode
     def number_input(self,*a,**k):return self.budget
-    def button(self,label,**k):return k.get('key')=='sportsbook_props_all_load' and not k.get('disabled')
+    def button(self,label,**k):return (k.get('key')=='quick_nfl_slate' if self.preset else k.get('key')=='sportsbook_props_all_load') and not k.get('disabled')
     def text_input(self,*a,**k):return 'fixture'
     def selectbox(self,label,options,index=0,**k):return options[1] if k.get('key')=='sportsbook_source' else options[index]
     def multiselect(self,label,options,default=None,**k):
@@ -27,8 +27,8 @@ class UI:
     def spinner(self,*a,**k):return Context()
     def __getattr__(self,name):return lambda *a,**k:None
 class SaverUITests(unittest.TestCase):
-    def run_ui(self,mode,remaining,games_to_select=1,started=False):
-        ui=UI(mode,remaining);ui.game_limit=games_to_select;requests=[]
+    def run_ui(self,mode,remaining,games_to_select=1,started=False,preset=False):
+        ui=UI(mode,remaining);ui.game_limit=games_to_select;ui.preset=preset;requests=[]
         start=(datetime.now(timezone.utc)+timedelta(days=-1 if started else 1)).replace(hour=18).isoformat()
         events=[dict(id=str(i),away_team='Away'+str(i),home_team='Home'+str(i),commence_time=start,bookmakers=[{'title':'Book'}]) for i in range(2)]
         self.displayed=[]
@@ -66,4 +66,8 @@ class SaverUITests(unittest.TestCase):
 
     def test_started_saved_game_stays_visible_without_odds_request(self):
         self.assertEqual(self.run_ui('Saved data only — 0 credits','0',started=True),[])
+        self.assertEqual(self.displayed,['0'])
+
+    def test_preset_reanalysis_reuses_saved_quotes_even_with_zero_credits(self):
+        self.assertEqual(self.run_ui('Saved data only — 0 credits','0',preset=True),[])
         self.assertEqual(self.displayed,['0'])

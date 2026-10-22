@@ -143,8 +143,8 @@ def evaluated_row(row, forecast, report, now=None):
     output.update({'Projection (count)':round(expected,2),'Expected opportunities':round(attempts,2),'Opportunity type':'Passing attempts','Conversion rate %':round(100*expected/attempts,2),'QB historical conversion %':round(100*forecast['qb_rate'],2),'Opponent conversion %':round(100*forecast['opponent_rate'],2),'Historical error range low':quantile(pmf,.1),'Historical error range high':quantile(pmf,.9),'Range method':'10th–90th percentiles of attempts/conversion distribution; experimental','Estimated win %':round(100*p,1),'Raw estimated win %':output['Online input win %'],'Break-even %':round(100*breakeven,1),'Model edge (pp)':round(100*(p-breakeven),1),'Probability method':f'Conversion-distribution probability blended with prior threshold frequency; frequency weight {weight:.2f}, selected on older-season data','Validation details':report,'Feedback status':output.get('Online learning status','Collecting prospective results'),'Workload method':'Recent current-team passing attempts with historical attempt variability','Efficiency method':'QB conversion rate shrunk to league prior, bounded opponent adjustment','Current-team games':forecast['current_team_games']})
     if not report.get('passed'):
         output['Decision']='Pass';output['Reason']='Count model has not beaten both the stat and probability benchmarks; research forecast only'
-    elif p-breakeven<.05:
-        output['Decision']='Pass';output['Reason']='Estimated edge below five percentage points'
+    elif p<=.5:
+        output['Decision']='Pass';output['Reason']='Selected outcome is not more likely than its alternative'
     else:
         output['Decision']='Watch — experimental';output['Reason']='Recent passing workload × conversion rate; historical stat and probability benchmark gates passed. Actual-price profitability remains unverified'
     return output

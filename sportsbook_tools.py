@@ -319,22 +319,28 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     allow_game,game_reason=spending_allowed(mode,3,budget,remaining)
     st.caption('Credit-saving mode: choose a few games and categories below. Full-slate preset buttons are available in Standard mode. Saved-data mode blocks new odds loads while keeping already loaded prices visible.')
     automatic=False  # Background workflow owns autoload; no session-planner import.
+    preset_markets=','.join(sorted(PROP_MARKETS[sport][label] for label in STANDARD_PRESETS[sport]))
+    saved_game=st.session_state.get('sportsbook_result')
+    saved_props=st.session_state.get('sportsbook_props_all_result')
+    reuse_available=bool(saved_game and saved_game[:2]==(sport,key) and saved_props and saved_props[0][:4]==(sport,key,str(selected_date),preset_markets) and saved_props[1].get('results'))
     st.caption('Background preset preparation now runs in GitHub Actions while the app is closed. See Background research for status and its shared eight-credit daily automated budget. This page does not automatically spend credits on each new session. Load buttons and add-ons below are explicit extra requests outside that background budget.')
     try:
         quick_nfl=False
         quick_nba=False
         if sport=='NFL':
             st.caption('Standard NFL slate: moneylines + game totals, passing yards, rushing yards, anytime touchdowns and receiving yards. Fresh budget: up to 3 game-line credits plus 4 credits per upcoming game. Saved recommendations are frozen automatically; unsupported markets remain prices/research only.')
-            quick_nfl=st.button('Load NFL slate, analyze & autosave — up to 3 + 4/game credits',key='quick_nfl_slate',disabled=mode!='Standard mode' or not allow_game)
+            quick_nfl=st.button('Reanalyze saved NFL slate — 0 credits' if reuse_available else 'Load NFL slate, analyze & autosave — up to 3 + 4/game credits',key='quick_nfl_slate',disabled=not reuse_available and (mode!='Standard mode' or not allow_game))
             with st.expander('About team sack estimates'):
                 st.write('Team defensive sacks: the provider lists individual-player sacks, not a confirmed team sack-total market. The Team statistics tab now provides a free sack-pressure/pass-protection research comparison. It is not yet a validated sack betting model.')
         if sport=='NBA':
             st.caption('NBA preset: moneylines, points, assists, rebounds, PRA and three-pointers made. Fresh budget: up to 3 credits for game lines plus 5 per upcoming game. PRA uses an experimental combined-stat forecast with its own historical baseline gate.')
-            quick_nba=st.button('Load NBA slate & save board — up to 3 + 5/game credits',key='quick_nba_slate',disabled=mode!='Standard mode' or not allow_game)
+            quick_nba=st.button('Reanalyze saved NBA slate — 0 credits' if reuse_available else 'Load NBA slate & save board — up to 3 + 5/game credits',key='quick_nba_slate',disabled=not reuse_available and (mode!='Standard mode' or not allow_game))
             st.caption('Shooting categories are made shots unless explicitly labeled attempted. Field-goal attempts and three-point attempts are not included as unsupported market keys.')
         quick_load=quick_nfl or quick_nba or automatic
+        reuse_preset=quick_load and reuse_available
+        if reuse_preset:st.info("Reanalyzing saved prices — 0 odds credits. Quote timestamps are unchanged; stale quotes remain research only.")
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
-        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load',disabled=not allow_game) or quick_load:
+        if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load',disabled=not allow_game) or (quick_load and not reuse_preset):
             if not quick_load:odds_request.clear(key,sport)
             result=odds_request(key,sport)
             st.session_state['sportsbook_result']=(sport,key,result)
@@ -403,13 +409,13 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             batch_key = (sport,key,str(selected_date),markets,tuple(e['id'] for e in targets))
             action_label='Load selected games & analyze' if sport=='NFL' else 'Load selected game markets'
             loaded_all = st.button(f'{action_label} — up to {estimated_credits(len(targets),markets)} credits',key='sportsbook_props_all_load',disabled=not markets or not targets or not allowed) or use_preset
-            if loaded_all and not allowed:
+            if loaded_all and not allowed and not reuse_preset:
                 st.warning(blocked_reason)
                 loaded_all=False
-            if loaded_all and numeric(remaining)==0:
+            if loaded_all and numeric(remaining)==0 and not reuse_preset:
                 st.warning('The game-line response reports zero credits remaining. Prop requests were skipped; already loaded data remains available.')
                 loaded_all=False
-            if loaded_all and markets and targets:
+            if loaded_all and markets and targets and not reuse_preset:
                 if fresh_props:
                     for target in targets:odds_request.clear(key,sport,target['id'],markets)
                 with st.spinner(f'Loading prop categories for the selected {sport} games...'):

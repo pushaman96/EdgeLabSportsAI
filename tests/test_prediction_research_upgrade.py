@@ -18,10 +18,11 @@ class ProbabilityUnitTests(unittest.TestCase):
         self.assertAlmostEqual(row['Model edge (pp)'],12.62,places=2)
         self.assertAlmostEqual(row['Expected return per unit'],.65/(110/210)-1)
         self.assertAlmostEqual(price_probability(200),1/3)
-    def test_user_keeps_existing_selections_without_sixty_percent_cutoff(self):
+    def test_low_probability_payout_does_not_qualify_main_shortlist(self):
         row=apply([self.row(**{'Estimated win %':40,'Odds':250})])[0]
         self.assertEqual(row['Decision'],'Watch — experimental')
-        self.assertTrue(row['Value research eligible'])
+        self.assertFalse(row['Value research eligible'])
+        self.assertFalse(row['Main shortlist eligible'])
         self.assertNotIn('high',row['Probability tier'].lower())
     def test_bad_percentages_and_odds_do_not_create_valid_probability(self):
         for value in (None,float('nan'),float('inf'),0,100,True):
