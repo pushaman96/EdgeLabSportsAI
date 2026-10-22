@@ -58,6 +58,15 @@ def build_board(records,summaries,now=None,team_assets=None):
         valid_data=item.get('data') if item and str(item.get('data',{}).get('header',{}).get('id',''))==str(record['event_id']) else None
         emblem=pick_team(record,valid_data,team_assets)
         row={'Team logo':emblem.get('logo') if emblem else None,**row}
+        if record.get('category')=='Game total points':
+            assets=dict(team_assets or {})
+            if valid_data:
+                from team_emblems import team_index
+                assets.update(team_index(valid_data.get('header',{}).get('competitions',[]),record.get('sport','NFL')))
+            names=record['game'].split(' at ')
+            if len(names)==2:
+                away,home=[assets.get(record.get('sport','NFL')+':'+name,{}) for name in names]
+                row['Team logo']=away.get('logo');row['Opponent logo']=home.get('logo')
         # Even when the feed is down, retain previously verified final ledger grades.
         if record.get('result') in ('Win','Loss','Push'):
             row['Final result']=record['result'];row['Live position']='Final — saved grade'
@@ -177,6 +186,21 @@ def render_live_board(records,sport='NFL'):
             if team.get('logo'):
                 icon,label=column.columns([1,7]);icon.image(team['logo'],width=28);label.write('**'+name+'**')
             else:column.write('**'+name+'**')
+    if sport=='NFL':
+        from team_emblems import pick_team,roster_emblems
+        assets=st.session_state.get('team_emblems',{})
+        missing=[r for r in selected if r.get('category') not in ('Moneyline','Game total points') and utc(r['starts_utc'])>now and not pick_team(r,index=assets)]
+        if missing:
+            from nfl_prop_model import current_roster
+            @st.cache_data(ttl=900,show_spinner=False)
+            def emblem_roster(team_id):
+                try:return current_roster(team_id)
+                except Exception:return []
+            teams={name for r in missing for name in r['game'].split(' at ')}
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                tasks={name:pool.submit(emblem_roster,assets[sport+':'+name]['id']) for name in teams if assets.get(sport+':'+name,{}).get('id')}
+                rosters={name:task.result() for name,task in tasks.items()}
+            st.session_state['team_emblems']=roster_emblems(missing,assets,rosters,sport)
     count=sum(r['category']!='Moneyline' for r in selected);moneylines=len(selected)-count
     st.caption('Sorted by frozen estimated win probability, highest first; unmodeled entries appear last.')
     st.write(f'**{count} saved props · {moneylines} moneyline picks**')
@@ -230,7 +254,7 @@ def render_live_board(records,sport='NFL'):
         with tracking_tab:
             st.caption('✅ Win · ❌ Loss · ➖ Push · ⏳ Pending or review needed. Win/loss marks appear only after final grading.')
             if rows:
-                st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
+                st.dataframe(rows,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team / total away",width="small"),"Opponent logo":st.column_config.ImageColumn("Total home",width="small")},height=min(1000,max(200,35*(len(rows)+1))))
                 wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
                 st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
             else:st.info('No saved picks match the selected date and strategies.')

@@ -135,6 +135,7 @@ def reviews(event,scoreboard,research,injuries,rosters,now=None):
                     status=injuries.get('statuses',{}).get((team,name_key(player)),'Not listed')
                     if not fresh or team not in injuries.get('teams',set())or str(athlete.get('status')).lower()!='active'or status.lower()not in ('active','not listed'):row['Reason']='Fresh verified availability required';continue
                     ids={r['player_id']for r in research['players']if name_key(r['player_display_name'])==name_key(player)}
+                    row['Current roster team']=team
                     code=home if side=='home'else away
                     f=td_estimate(next(iter(ids)),context['season'],int(schedule['week']),code,idx)if len(ids)==1 else None
                     if not f:row['Reason']='Complete prior rushing/receiving TD and opportunity history unavailable';continue

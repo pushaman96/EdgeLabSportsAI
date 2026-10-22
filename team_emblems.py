@@ -40,6 +40,8 @@ def pick_team(record,data=None,index=None):
     else:name=(record.get('forecast_context') or {}).get('Current roster team')
     entry=index.get(sport+':'+str(name)) if name else None
     if entry:return entry
+    cached=index.get(sport+':player:'+str(record.get('game'))+':'+athlete_identity(record.get('player')))
+    if cached:return cached
     # If no frozen team was saved, use an unambiguous athlete match from this game's feed.
     matches=[]
     for block in (data or {}).get('boxscore',{}).get('players',[]):
@@ -102,3 +104,19 @@ def render_team_table(rows,sport,team=None,**kwargs):
     st.dataframe(display,column_config=columns,**kwargs)
 
 
+
+def roster_emblems(records,index,rosters,sport):
+    """Only assign an athlete to a unique roster among this game's two teams."""
+    result=dict(index)
+    for record in records:
+        if record.get('category') in ('Moneyline','Game total points'):continue
+        names=str(record.get('game','')).split(' at ')
+        if len(names)!=2:continue
+        matches=[]
+        for name in names:
+            entry=index.get(sport+':'+name)
+            if entry and any(athlete_identity(p.get('name'))==athlete_identity(record.get('player')) for p in rosters.get(name,[])):
+                matches.append(entry)
+        if len(matches)==1:
+            result[sport+':player:'+record['game']+':'+athlete_identity(record.get('player'))]=matches[0]
+    return result
