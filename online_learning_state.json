@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-22T04:39:00.612953+00:00",
+  "generated_utc": "2026-10-22T04:50:23.926160+00:00",
   "groups": {
     "[\"NBA\",\"NBA season-prior minutes-rate v3 / complete-season validation\",\"Assists\",\"Regular season\"]": {
       "games": 1,
@@ -58,12 +58,12 @@
       "version": "30e3064a76e3"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit / joint PRA v1\",\"PRA\",\"Regular season\"]": {
-      "games": 3,
-      "forecast_games": 3,
-      "probability_games": 3,
-      "bias": -0.0030622790062615245,
-      "workload_bias": -0.00212066969156045,
-      "temperature": 1.0050754567097635,
+      "games": 4,
+      "forecast_games": 4,
+      "probability_games": 4,
+      "bias": -0.020810881406111405,
+      "workload_bias": -0.0035870465163032415,
+      "temperature": 1.0017796140968898,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -72,16 +72,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:37:41.028711+00:00",
-      "version": "01a24cd119a4"
+      "trained_through": "2026-10-22T04:50:23.603359+00:00",
+      "version": "13dd335c6475"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Assists\",\"Regular season\"]": {
-      "games": 3,
-      "forecast_games": 3,
-      "probability_games": 3,
-      "bias": -0.014604989361096759,
-      "workload_bias": -0.0024245192404692387,
-      "temperature": 0.985692638006852,
+      "games": 4,
+      "forecast_games": 4,
+      "probability_games": 4,
+      "bias": -0.014815701922348901,
+      "workload_bias": -0.0038675230229882774,
+      "temperature": 0.9883154627999249,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -90,16 +90,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:37:41.017457+00:00",
-      "version": "b4ee9e9872a7"
+      "trained_through": "2026-10-22T04:50:23.587672+00:00",
+      "version": "b53cad6f9c66"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Points\",\"Regular season\"]": {
-      "games": 3,
-      "forecast_games": 3,
-      "probability_games": 3,
-      "bias": -0.013117889160828757,
-      "workload_bias": 0.00547420856322133,
-      "temperature": 1.0185041553032734,
+      "games": 4,
+      "forecast_games": 4,
+      "probability_games": 4,
+      "bias": -0.0329962070805362,
+      "workload_bias": 0.0039711762451354535,
+      "temperature": 1.0254995278460202,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -108,16 +108,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:37:41.023105+00:00",
-      "version": "4655a16625f9"
+      "trained_through": "2026-10-22T04:50:23.594598+00:00",
+      "version": "d5111c17f1af"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Rebounds\",\"Regular season\"]": {
-      "games": 3,
-      "forecast_games": 3,
-      "probability_games": 3,
-      "bias": 0.016144906272735515,
-      "workload_bias": 0.00547420856322133,
-      "temperature": 0.9666780376174755,
+      "games": 4,
+      "forecast_games": 4,
+      "probability_games": 4,
+      "bias": 0.010745400562132329,
+      "workload_bias": 0.0039711762451354535,
+      "temperature": 0.9652382553450913,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -126,16 +126,16 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:37:41.030981+00:00",
-      "version": "6f452957ed4e"
+      "trained_through": "2026-10-22T04:50:23.605451+00:00",
+      "version": "a276e83532fa"
     },
     "[\"NBA\",\"NBA season-prior minutes-rate v5 / verified context and calibration audit\",\"Three-pointers made\",\"Regular season\"]": {
-      "games": 3,
-      "forecast_games": 3,
-      "probability_games": 3,
-      "bias": 0.006089632757059127,
-      "workload_bias": 0.0019772519517421983,
-      "temperature": 0.999346657557998,
+      "games": 4,
+      "forecast_games": 4,
+      "probability_games": 4,
+      "bias": -0.02043036951380331,
+      "workload_bias": 0.0007432162960777932,
+      "temperature": 1.0011658579135039,
       "issued_comparisons": 0,
       "base_brier_sum": 0.0,
       "issued_brier_sum": 0.0,
@@ -144,8 +144,8 @@
       "comparison_lower_bound": -1.0,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-22T02:37:41.030789+00:00",
-      "version": "271b375d39d3"
+      "trained_through": "2026-10-22T04:50:23.605998+00:00",
+      "version": "960a96323851"
     },
     "[\"NFL\",\"Adjusted NFL Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
       "games": 5,
