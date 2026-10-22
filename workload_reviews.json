@@ -6,34 +6,56 @@
       "sport": "NBA",
       "category": "Assists",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 15,
+      "forecasts": 25,
+      "distinct_games": 2,
+      "candidate_workload_mae": 3.8906666666666663,
+      "baseline_workload_mae": 3.650889608851311,
+      "candidate_stat_mae": 1.7911666666666668,
+      "baseline_stat_mae": 1.7951068120599438
+    },
+    {
+      "sport": "NBA",
+      "category": "PRA",
+      "season_stage": "Early season (0\u20137 appearances)",
+      "forecasts": 12,
       "distinct_games": 1,
-      "candidate_workload_mae": 3.9913333333333334,
-      "baseline_workload_mae": 4.086574005724285,
-      "candidate_stat_mae": 1.4833333333333334,
-      "baseline_stat_mae": 1.508587874423799
+      "candidate_workload_mae": 3.210833333333332,
+      "baseline_workload_mae": 3.2119231467340845,
+      "candidate_stat_mae": 5.676666666666667,
+      "baseline_stat_mae": 5.67651991968631
     },
     {
       "sport": "NBA",
       "category": "Points",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 15,
-      "distinct_games": 1,
-      "candidate_workload_mae": 3.9913333333333334,
-      "baseline_workload_mae": 4.086574005724285,
-      "candidate_stat_mae": 5.468,
-      "baseline_stat_mae": 5.546345758709906
+      "forecasts": 25,
+      "distinct_games": 2,
+      "candidate_workload_mae": 3.8906666666666663,
+      "baseline_workload_mae": 3.650889608851311,
+      "candidate_stat_mae": 5.606999999999999,
+      "baseline_stat_mae": 5.576687979639951
     },
     {
       "sport": "NBA",
       "category": "Rebounds",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 15,
+      "forecasts": 25,
+      "distinct_games": 2,
+      "candidate_workload_mae": 3.8906666666666663,
+      "baseline_workload_mae": 3.650889608851311,
+      "candidate_stat_mae": 2.096166666666667,
+      "baseline_stat_mae": 2.0569751268845637
+    },
+    {
+      "sport": "NBA",
+      "category": "Three-pointers made",
+      "season_stage": "Early season (0\u20137 appearances)",
+      "forecasts": 10,
       "distinct_games": 1,
-      "candidate_workload_mae": 3.9913333333333334,
-      "baseline_workload_mae": 4.086574005724285,
-      "candidate_stat_mae": 2.1193333333333335,
-      "baseline_stat_mae": 2.1758507517693766
+      "candidate_workload_mae": 3.789999999999999,
+      "baseline_workload_mae": 3.215205211978337,
+      "candidate_stat_mae": 1.518,
+      "baseline_stat_mae": 1.4699265453340815
     }
   ],
   "nba_role_groups": [],
