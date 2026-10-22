@@ -1,5 +1,6 @@
 """Durable published ledger plus completed-game grading. No bets are placed."""
 import json, math, hashlib, base64
+from extended_stats import key as athlete_identity
 from pathlib import Path
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -116,7 +117,7 @@ def grade_record(record,data):
             if not nba and group.get('name')!={'Passing yards':'passing','Rushing yards':'rushing','Receiving yards':'receiving','Receptions':'receiving','Passing attempts':'passing','Passing interceptions':'passing','Passing completions':'passing','Passing touchdowns':'passing','Rushing attempts':'rushing'}.get(r['category']):continue
             labels=group.get('labels',[])
             for entry in group.get('athletes',[]):
-                if entry.get('athlete',{}).get('displayName')==r['player']:
+                if athlete_identity(entry.get('athlete',{}).get('displayName'))==athlete_identity(r['player']):
                     stats=dict(zip(labels,entry.get('stats',[])))
                     label={'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}.get(r['category'],'YDS')
                     if not nba:
