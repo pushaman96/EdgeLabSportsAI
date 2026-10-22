@@ -30,3 +30,23 @@ class AutomaticRotationTests(unittest.TestCase):
         self.assertTrue(automatic_plan('NBA',tuesday,tuesday,8,'Standard mode',False)['enabled'])
         self.assertFalse(automatic_plan('NBA',tuesday,tuesday,7,'Standard mode',False)['enabled'])
         self.assertFalse(automatic_plan('NBA',tuesday,tuesday,8,'Saved data only — 0 credits',False)['enabled'])
+
+
+class SelectionRecoveryTests(unittest.TestCase):
+    def test_date_change_removes_stale_widget_values(self):
+        from sportsbook_presets import reconcile_prop_selection
+        state={'sportsbook_props_game_NFL':'old','credit_saver_games_NFL':['old','new'],'sportsbook_props_categories_NFL':['Passing yards','removed']}
+        reconcile_prop_selection(state,'NFL',['new'],['Passing yards','Receiving yards'])
+        self.assertEqual(state['sportsbook_props_game_NFL'],'__multiple_prop_games__')
+        self.assertEqual(state['credit_saver_games_NFL'],['new'])
+        self.assertEqual(state['sportsbook_props_categories_NFL'],['Passing yards'])
+    def test_retains_started_game_and_user_choices(self):
+        from sportsbook_presets import reconcile_prop_selection
+        state={'sportsbook_props_game_NFL':'started','credit_saver_games_NFL':['started'],'sportsbook_props_categories_NFL':[]}
+        reconcile_prop_selection(state,'NFL',['started','upcoming'],STANDARD_PRESETS['NFL'])
+        self.assertEqual(state['sportsbook_props_game_NFL'],'started')
+        self.assertEqual(state['credit_saver_games_NFL'],['started'])
+        self.assertEqual(state['sportsbook_props_categories_NFL'],[])
+    def test_nfl_four_market_budget(self):
+        self.assertEqual(STANDARD_PRESETS['NFL'],['Passing yards','Rushing yards','Anytime touchdown scorer','Receiving yards'])
+        self.assertEqual(preset_budget('NFL',2),11)

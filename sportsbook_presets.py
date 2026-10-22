@@ -31,3 +31,15 @@ def automatic_plan(sport,selected_date,today,budget,mode,attempted):
     cap=min(8,int(budget))
     games=max(0,(cap-3)//len(STANDARD_PRESETS[sport])) if enabled else 0
     return {'enabled':enabled and games>0,'max_games':games,'cap':cap}
+
+def reconcile_prop_selection(state,sport,event_ids,category_labels):
+    """Reconcile widgets before creation; keep started games visible, never fetch."""
+    game_key='sportsbook_props_game_'+sport
+    if state.get(game_key) not in set(event_ids)|{'__all_nfl_games__','__multiple_prop_games__'}:
+        state[game_key]='__multiple_prop_games__'
+    games_key='credit_saver_games_'+sport
+    if games_key in state:
+        state[games_key]=[v for v in state[games_key] if v in event_ids]
+    categories_key='sportsbook_props_categories_'+sport
+    if categories_key in state:
+        state[categories_key]=[v for v in state[categories_key] if v in category_labels]

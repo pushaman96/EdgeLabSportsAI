@@ -10,7 +10,7 @@ import streamlit as st
 from nfl_prop_model import render_prop_research
 from pick_history import publish_rows
 from odds_changes import estimated_credits, render_changes
-from sportsbook_presets import STANDARD_PRESETS, NBA_EXTRA_MARKETS, archive_market_board
+from sportsbook_presets import STANDARD_PRESETS, NBA_EXTRA_MARKETS, archive_market_board, reconcile_prop_selection
 from scoring_quote_merge import with_game_totals
 
 class OddsSourceError(ValueError):
@@ -332,7 +332,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         quick_load=quick_nfl or quick_nba or automatic
         st.caption('Fresh game-line load: up to 3 credits (moneyline, spread and total; one US region). Viewing saved results costs 0 credits.')
         if st.button('Load / refresh sportsbook game lines — up to 3 credits',key='sportsbook_load',disabled=not allow_game) or quick_load:
-            if not quick_load:odds_request.clear()
+            if not quick_load:odds_request.clear(key,sport)
             result=odds_request(key,sport)
             st.session_state['sportsbook_result']=(sport,key,result)
             remaining=result.get('remaining')
@@ -372,6 +372,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
         st.caption('Unchecked: reuse the five-minute provider-response cache when available. Checked: next Load requests new prices. No free check can establish whether sportsbook lines changed; the snapshot comparison below only compares prices already loaded.')
         all_option = '__all_nfl_games__'
         multiple_option='__multiple_prop_games__'
+        reconcile_prop_selection(st.session_state,sport,[e['id'] for e in events],list(PROP_MARKETS[sport]))
         event_id=st.selectbox('Player props games',[e['id'] for e in events]+[all_option,multiple_option],index=len(events)+1,format_func=lambda value:'Choose multiple games' if value==multiple_option else f'All {sport} games on selected date' if value==all_option else next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='sportsbook_props_game_'+sport)
         if st.button('Add on markets / customize',key='preset_add_on_'+sport):
             st.session_state['preset_add_on_open_'+sport]=True
@@ -382,11 +383,11 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             st.caption('Permanent prop rotation: '+', '.join(labels)+'. Moneyline and game totals are loaded with game lines.')
         markets=','.join(sorted(PROP_MARKETS[sport][label] for label in labels))
         upcoming=[e for e in events if datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>datetime.now(timezone.utc)]
-        selected_ids=[e['id'] for e in upcoming]
+        selected_ids=[e['id'] for e in events]
         if event_id==multiple_option or (mode=='Credit-saving mode' and event_id==all_option):
-            selected_ids=st.multiselect('Games to load — only these games consume credits',[e['id'] for e in upcoming],default=[e['id'] for e in upcoming[:1]],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in upcoming if e['id']==value),key='credit_saver_games_'+sport)
+            selected_ids=st.multiselect('Games to load — only these games consume credits',[e['id'] for e in events],default=[e['id'] for e in upcoming[:1]],format_func=lambda value:next(e['away_team']+' at '+e['home_team'] for e in events if e['id']==value),key='credit_saver_games_'+sport)
         if automatic:selected_ids=selected_ids[:plan['max_games']]
-        preview_games=len(selected_ids) if event_id in (all_option,multiple_option) else int(any(e['id']==event_id for e in upcoming))
+        preview_games=sum(e['id'] in selected_ids for e in upcoming) if event_id in (all_option,multiple_option) else int(any(e['id']==event_id for e in upcoming))
         cost=estimated_credits(preview_games,markets)
         allowed,blocked_reason=spending_allowed(mode,cost,budget,remaining)
         st.caption(f'This prop load: up to {cost} credits for {preview_games} games × {len(labels)} categories. Viewing the current board costs 0.')
@@ -406,7 +407,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
                 st.warning('The game-line response reports zero credits remaining. Prop requests were skipped; already loaded data remains available.')
                 loaded_all=False
             if loaded_all and markets and targets:
-                if fresh_props:odds_request.clear()
+                if fresh_props:
+                    for target in targets:odds_request.clear(key,sport,target['id'],markets)
                 with st.spinner(f'Loading prop categories for the selected {sport} games...'):
                     batch = load_all_prop_lines(key,sport,targets,markets)
                 st.session_state['sportsbook_props_all_result'] = (batch_key,batch)
@@ -437,7 +439,7 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             action_label='Load selected props & analyze' if sport=='NFL' else 'Load selected prop markets'
             single_loaded=st.button(f'{action_label} — up to {estimated_credits(1,markets)} credits',key='sportsbook_props_load',disabled=not markets or not preview_games or not allowed)
             if single_loaded and markets and allowed:
-                if fresh_props:odds_request.clear()
+                if fresh_props:odds_request.clear(key,sport,event_id,markets)
                 prop_result=odds_request(key,sport,event_id,markets)
                 st.session_state['sportsbook_props_result']=(sport,key,event_id,markets,prop_result)
                 st.session_state['odds_quota_check']=balance_record(st.session_state.get('odds_quota_check'),fingerprint,prop_result.get('remaining'),prop_result['retrieved'])
@@ -465,8 +467,8 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
             if use_preset:st.session_state['quick_team_sacks_loaded']=True
             if st.session_state.get('quick_team_sacks_loaded'):
                 from pass_protection import render_pass_protection
-                with st.expander('Team sack estimates — defense vs opposing pass protection',expanded=True):
-                    render_pass_protection(selected_date.year,selected_date,auto_load=True,prefix='slate')
+                with st.expander('Team sack estimates — defense vs opposing pass protection',expanded=False):
+                    render_pass_protection(selected_date.year,selected_date,auto_load=False,prefix='slate')
     except OddsSourceError as exc:
         st.warning(str(exc))
     except (requests.exceptions.RequestException,ValueError,KeyError,TypeError,AttributeError,OSError):
