@@ -123,6 +123,8 @@ def render_saved_explanations(records,sport):
         if e['details']:
             st.write('**Full explanation saved with this pick**');st.write(e['details'])
         context=record.get('forecast_context')or {}
+        from market_reasoning import render as render_market_reasoning
+        render_market_reasoning(context.get('Market reasoning') or saved_market_reasoning(record))
         if context.get('Player averages'):
             st.write('**Player averages and shooting percentages saved before the game**')
             st.dataframe(context['Player averages'],hide_index=True,use_container_width=True)
@@ -151,7 +153,7 @@ def render_saved_explanations(records,sport):
 
 def from_row(row):
     """Explain a current analysis row without requiring an API or saving it."""
-    fields=('Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average','NFL evidence version','NFL player averages','NFL averages method','NFL verified schedule context','NFL opponent workload context','NFL depth check','NFL restriction check','NFL snap trend','NFL workload sensitivity','NFL recent-role candidate','NFL teammate involvement','NFL context scenario')
+    fields=('Market reasoning','Opportunity type','Workload method','Efficiency method','Current-team games','Game-script risk','Evidence explanation','Conversion rate %','Historical error range low','Historical error range high','Range method','Validation details','Probability method','Target breakdown','Passing conversion breakdown','Injury adjustment %','Situation adjustment %','Minutes risk','Minutes sensitivity','Minutes sample games','Minutes sample basis','Absence scenario minutes','Absence scenario projection','Absence scenario status','Starting lineup check','Minutes restriction check','Verified schedule context','Teammate absence usage','Opponent and pace context','NBA context limitation','Player averages','Player averages method','Last-season average','This-season average','Last-5 average','Last-10 average','NFL evidence version','NFL player averages','NFL averages method','NFL verified schedule context','NFL opponent workload context','NFL depth check','NFL restriction check','NFL snap trend','NFL workload sensitivity','NFL recent-role candidate','NFL teammate involvement','NFL context scenario')
     context={key:row[key] for key in fields if key in row}
     return explanation(dict(player=row.get('Player'),category=row.get('Category'),direction=row.get('Selection'),line=row.get('Line'),odds=row.get('Odds'),probability=number(row.get('Estimated win %'))/100 if number(row.get('Estimated win %')) is not None else None,projected_yards=row.get('Projection (yards)'),projected_count=row.get('Projection (count)'),expected_opportunities=row.get('Expected opportunities'),reason=row.get('Reason'),forecast_context=context,online_status=row.get('Online learning status')))
 
@@ -162,7 +164,17 @@ def render_current_explanations(rows,prefix):
     with st.expander('Forecast explanations — calculations, uncertainty and Pass reasons'):
         selected=st.selectbox('Choose an analyzed forecast',range(len(rows)),format_func=lambda i:' · '.join(str(rows[i].get(k,'')) for k in ('Player','Category','Selection','Line','Decision')),key=prefix+'_calculation_explanation')
         e=from_row(rows[selected])
+        from market_reasoning import analysis,render as render_market_reasoning
+        render_market_reasoning(rows[selected].get('Market reasoning')or analysis(rows[selected]))
         for label,key in [('Forecast','forecast'),('Calculation','calculation'),('Forecast gap','comparison'),('Uncertainty','uncertainty'),('Adjustments','adjustments'),('Validation','validation'),('Probability and price','price'),('Take/Pass reason','reason'),('Risks','risks')]:
             st.write('**'+label+'**');st.write(e[key])
         st.caption('Explains the current saved analysis. No paid AI API call or fresh odds request is made. Reanalyze if prices or availability changed.')
 
+
+
+
+def saved_market_reasoning(record):
+    """Explain old frozen fields without rewriting or regrading the ledger."""
+    from market_reasoning import analysis
+    p=number(record.get('probability'))
+    return analysis({'Category':record.get('category'),'Selection':record.get('direction'),'Line':record.get('line'),'Odds':record.get('odds'),'Estimated win %':100*p if p is not None else None,'Projection (yards)':record.get('projected_yards'),'Projection (count)':record.get('projected_count'),'Expected opportunities':record.get('expected_opportunities')})

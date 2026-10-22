@@ -50,6 +50,9 @@ def evidence(row,report=None,now=None,current_hash=None):
     if not passed:issues.append('Category historical baseline pass is missing or failed')
     if not quote_fresh:issues.append('Quote is older than 15 minutes or its time is unknown')
     if not valid_probability:issues.append('Usable forecast probability is unavailable')
+    if row.get('Category'):
+        from market_reasoning import analysis
+        if not analysis(row)['supported']:issues.append('Exact market category, selection or line is unsupported or invalid')
     ready=not issues and row.get('Decision')!='Pass'
     return {'version':1,'checked_utc':now.isoformat(),'ready':ready,'software':health,'category_baseline_passed':passed,'earlier_calibration_examples':calibration,'later_historical_games_or_examples':later,'historical_scope':validation.get('scope',validation.get('split_method','See frozen model validation')),'quote_fresh':quote_fresh,'model_qualified':row.get('Decision')!='Pass','issues':issues,'interpretation':'Counts are reported as measured; software tests and historical games are different. Correlated props are not independent games. Diagnostics do not guarantee a winning bet.'}
 def apply(rows,sport,now=None):
@@ -62,7 +65,8 @@ def apply(rows,sport,now=None):
         if row.get('Decision')!='Pass'and not audit['ready']:
             row['Decision']='Pass';row['Reason']='Game-day diagnostic: '+'; '.join(audit['issues'])
         output.append(annotate(row))
-    return output
+    from market_reasoning import apply as explain_markets
+    return explain_markets(output,sport)
 def render(sport):
     import streamlit as st
     health=software_status(load())
@@ -73,4 +77,5 @@ def render(sport):
         st.caption('Historical calibration and later-game baseline results are checked per forecast and saved with it. These counts appear in the pick explanation. Repeating the same tests does not create independent prediction evidence. Source and quote checks still run when forecasts are issued.')
 if __name__=='__main__':
     sys.exit(0 if run_tests()['passed']else 1)
+
 

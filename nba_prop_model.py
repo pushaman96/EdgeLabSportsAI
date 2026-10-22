@@ -577,6 +577,8 @@ def render(events, scoreboard, books, auto_analyze=False, key_prefix='nba_props'
             st.dataframe(scenarios[chosen]['Workload sensitivity scenarios'],hide_index=True,use_container_width=True)
             st.write(scenarios[chosen].get('Workload candidate benchmark',{}))
             if scenarios[chosen].get('Schedule and rest context'):st.write(scenarios[chosen]['Schedule and rest context'])
+    from saved_pick_explanation import render_current_explanations
+    render_current_explanations(current,key_prefix+'_nba_current')
     with st.expander('All NBA forecasts and Pass reasons'):
         if current:render_team_table(current,hide_index=True,use_container_width=True,sport='NBA')
     publish_rows(picks,events,key_prefix=key_prefix+'_publish',sport='NBA')
@@ -598,4 +600,5 @@ def current_roster_nba(team_id):
         rows.append(dict(id=str(athlete.get('id','')),name=athlete.get('displayName'),status=status.get('name') if isinstance(status,dict) else str(status)))
     if not rows:raise ValueError('NBA roster empty')
     return rows
+
 
