@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T16:40:38.211881+00:00",
+  "generated_utc": "2026-10-22T17:36:37.492703+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -10,8 +10,8 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 3,
-      "prepared_projections": 380,
+      "upcoming_games": 8,
+      "prepared_projections": 1010,
       "issues": [
         "Player history incomplete: Dominick Barlow",
         "Player history incomplete: Tacko Fall",
@@ -38,7 +38,45 @@
         "Player history incomplete: Nic Claxton",
         "Player history incomplete: Jaylin Sellers",
         "Player history incomplete: Dailyn Swain",
-        "Player history incomplete: Caleb Wilson"
+        "Player history incomplete: Caleb Wilson",
+        "Player history incomplete: Chris Cenac Jr.",
+        "Player history incomplete: Dillon Mitchell",
+        "Player history incomplete: Jaden Akins",
+        "Player history incomplete: Tyler Nickel",
+        "Player history incomplete: Christian Anderson",
+        "Player history incomplete: Kylan Boswell",
+        "Player history incomplete: Kon Knueppel",
+        "Player history incomplete: Hannes Steinbach",
+        "Player history incomplete: Coby White",
+        "Player history incomplete: Grant Williams",
+        "Player history incomplete: Zuby Ejiofor",
+        "Player history incomplete: Kingston Flemings",
+        "Player history incomplete: Mouhamed Gueye",
+        "Player history incomplete: Henri Veesaar",
+        "Player history incomplete: Johnny Furphy",
+        "Player history incomplete: Tyrese Haliburton",
+        "Player history incomplete: T.J. McConnell",
+        "Player history incomplete: Braden Smith",
+        "Player history incomplete: Santi Aldama",
+        "Player history incomplete: Tarik Biberovic",
+        "Player history incomplete: Sergio de Larrea",
+        "Player history incomplete: Kyrie Irving",
+        "Player history incomplete: Morez Johnson Jr.",
+        "Player history incomplete: Tobi Lawal",
+        "Player history incomplete: Dereck Lively II",
+        "Player history incomplete: Anthony Black",
+        "Player history incomplete: Jonathan Isaac",
+        "Player history incomplete: Izaiyah Nelson",
+        "Player history incomplete: Donte DiVincenzo",
+        "Player history incomplete: Isaiah Evans",
+        "Player history incomplete: Trey Lyles",
+        "Player history incomplete: AJ Dybantsa",
+        "Player history incomplete: Felix Okpara",
+        "Player history incomplete: Tristan Vukcevic",
+        "Player history incomplete: Jamir Watkins",
+        "Player history incomplete: Nate Bittle",
+        "Player history incomplete: Jaden Bradley",
+        "Player history incomplete: Allen Graves"
       ]
     }
   }
