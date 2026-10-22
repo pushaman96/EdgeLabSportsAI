@@ -3853,7 +3853,217 @@
           "Actual at forecast rate": 33.01146231330323
         }
       ]
+    },
+    "NFL:2026-10-22": {
+      "sport": "NFL",
+      "date": "2026-10-22",
+      "stage": "Partial slate \u2014 games remain unfinished or unavailable",
+      "all_games_final": false,
+      "metrics": {
+        "picks": 9,
+        "settled": 0,
+        "wins": 0,
+        "losses": 0,
+        "pending": 9,
+        "pushes": 0,
+        "distinct_games": 1,
+        "accuracy": null,
+        "brier": null,
+        "mean_estimated_probability": null,
+        "profit_per_1_each": null
+      },
+      "categories": [
+        {
+          "category": "Anytime touchdown",
+          "picks": 3,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 3,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Game total points",
+          "picks": 1,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 1,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Moneyline",
+          "picks": 1,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 1,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Passing yards",
+          "picks": 1,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 1,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        },
+        {
+          "category": "Rushing yards",
+          "picks": 3,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 3,
+          "pushes": 0,
+          "distinct_games": 1,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        }
+      ],
+      "calibration": [],
+      "game_flow_context": [],
+      "reconciled_team_games": 0,
+      "observations": [
+        "Moneylines use historical team ratings. Injury effects, replacements and offensive-line changes are not numerically modeled; review availability warnings separately.",
+        "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
+      ],
+      "active_corrections": 0,
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.",
+      "pick_error_diagnostics": [
+        {
+          "Pick ID": "800bc2b38efc609f20f3",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "New England Patriots",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled. Injury verification: Chicago Bears: Key-player availability changes are not modeled: Kyle Monangai: Out / roster Active | New England Patriots: Recent primary QB and major usage players passed availability checks; Elo remains unadjusted for injuries, replacements, offensive line and defense.; checked 2026-10-22T13:43:02.520613+00:00",
+          "Learning version used": "b4b2b32df1b6",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "84b511bf855bfec0c324",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "TreVeyon Henderson",
+          "Category": "Rushing yards",
+          "Selection": "Over",
+          "Book line": 24.5,
+          "Result": "Pending",
+          "Saved reasoning": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "590e2340bb7856020497",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "New England Patriots at Chicago Bears",
+          "Category": "Game total points",
+          "Selection": "Under",
+          "Book line": 50.5,
+          "Result": "Pending",
+          "Saved reasoning": "Last-season offense and opponent points allowed blended with strictly earlier current-season games. No injury/weather multiplier; overtime stays in final scores. Availability coverage checked; injuries and weather are not numerically adjusted. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "184277d7622aec1ae677",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Drake Maye",
+          "Category": "Passing yards",
+          "Selection": "Over",
+          "Book line": 256.5,
+          "Result": "Pending",
+          "Saved reasoning": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "0297970a39a4d5bce93f",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "D'Andre Swift",
+          "Category": "Rushing yards",
+          "Selection": "Under",
+          "Book line": 50.5,
+          "Result": "Pending",
+          "Saved reasoning": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "c43b9031681f6ef5ac49",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Rhamondre Stevenson",
+          "Category": "Rushing yards",
+          "Selection": "Under",
+          "Book line": 31.5,
+          "Result": "Pending",
+          "Saved reasoning": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "d81c0ae5f2ec13b7f53b",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Hunter Henry",
+          "Category": "Anytime touchdown",
+          "Selection": "Over",
+          "Book line": 0.5,
+          "Result": "Pending",
+          "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "7d8a6f5b8985c6e35a7d",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "DeMario Douglas",
+          "Category": "Anytime touchdown",
+          "Selection": "Over",
+          "Book line": 0.5,
+          "Result": "Pending",
+          "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "2395933e824cf6c21880",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "TreVeyon Henderson",
+          "Category": "Anytime touchdown",
+          "Selection": "Over",
+          "Book line": 0.5,
+          "Result": "Pending",
+          "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        }
+      ]
     }
   },
-  "updated_utc": "2026-10-22T04:50:24.058513+00:00"
+  "updated_utc": "2026-10-22T13:50:34.275799+00:00"
 }
