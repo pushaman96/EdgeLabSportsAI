@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-22T15:13:58.274906+00:00",
+  "generated_utc": "2026-10-22T15:36:21.062386+00:00",
   "paired": {
     "NFL": [
       {
@@ -109,8 +109,29 @@
       },
       {
         "Category": "Receiving yards",
+        "Model": "NFL opportunity experiment v2 / 2024 fit / 2025 development / context-audit-v2",
+        "Frozen forecasts": 2,
+        "Distinct games": 1,
+        "Projection MAE comparisons": 0,
+        "Projection MAE games": 0,
+        "Base Projection MAE": null,
+        "Issued Projection MAE": null,
+        "Issued minus base Projection MAE": null,
+        "Workload MAE comparisons": 0,
+        "Workload MAE games": 0,
+        "Base Workload MAE": null,
+        "Issued Workload MAE": null,
+        "Issued minus base Workload MAE": null,
+        "Brier comparisons": 0,
+        "Brier games": 0,
+        "Base Brier": null,
+        "Issued Brier": null,
+        "Issued minus base Brier": null
+      },
+      {
+        "Category": "Receiving yards",
         "Model": "NFL season-prior workload v2 / team-share matchup",
-        "Frozen forecasts": 1,
+        "Frozen forecasts": 3,
         "Distinct games": 1,
         "Projection MAE comparisons": 0,
         "Projection MAE games": 0,
