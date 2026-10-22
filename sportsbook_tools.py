@@ -228,7 +228,10 @@ def moneyline_reviews(events,models,now=None,sport='NFL',include_passes=False):
                     else:p=adjust_row(feedback,p,now,sport=sport)
                     odds=numeric(outcome['price']);decimal=1+odds/100 if odds>0 else 1+100/abs(odds)
                     ev=p*decimal-1
-                    qualifies=ev>0 and p-market_p>=.05
+                    qualifies=(model['probability']>.5 and outcome['name']==event['home_team']) or (model['probability']<.5 and outcome['name']==event['away_team'])
+                    feedback['Moneyline selection policy']='most-likely-winner-v1'
+                    feedback['Projected winning margin']='Unavailable — no validated margin model'
+                    feedback['Reason']='Selected as the more likely winner from historical team ratings; sportsbook payout does not choose the team. A narrow probability edge is a close game, not high confidence. Injury and replacement effects are not numerically modeled.'
                     if not qualifies and not include_passes:continue
                     feedback['Validation']=model.get('validation',{})
                     feedback['History source']=model.get('history_basis','Historical regular-season team results')
@@ -238,7 +241,7 @@ def moneyline_reviews(events,models,now=None,sport='NFL',include_passes=False):
 
 def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_date,selected_books,use_preset=False):
     st.subheader(f'{sport} moneyline predictions — game winners')
-    st.caption('Compares adjusted Elo with the break-even price; requires a gap of at least five percentage points, quotes no more than 15 minutes old, and recent regular-season history (NBA opening dates can use a labeled prior-season rating). '+('NFL roster and injury checks are warnings only; injury, defensive and offensive-line effects are not numerically modeled.' if sport=='NFL' else 'NBA preseason games do not qualify for this regular-season model. NBA supported props use a separate experimental minutes-rate forecast; unsupported categories remain prices only. NBA injury effects are not numerically modeled.'))
+    st.caption('Selects the team with the higher historical Elo win probability, independently of payout or price edge. A near-50% estimate is a close game. Requires quotes no more than 15 minutes old and recent regular-season history (NBA opening dates can use a labeled prior-season rating). '+('NFL roster and injury checks are warnings only; injury, defensive and offensive-line effects are not numerically modeled.' if sport=='NFL' else 'NBA preseason games do not qualify for this regular-season model. NBA supported props use a separate experimental minutes-rate forecast; unsupported categories remain prices only. NBA injury effects are not numerically modeled.'))
     signature=(sport,str(selected_date),tuple(selected_books),tuple((e.get('id'),m.get('last_update') or b.get('last_update'))for e in filtered for b in e.get('bookmakers',[])for m in b.get('markets',[])if m.get('key')=='h2h'))
     auto_compare=sport=='NBA' and bool(signature[-1]) and st.session_state.get('moneyline_auto_signature')!=signature
     if st.button('Compare model with current moneylines',key='sportsbook_research') or use_preset or auto_compare:
@@ -261,7 +264,7 @@ def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_d
             render_team_table(st.session_state['moneyline_injury_notes'],hide_index=True,use_container_width=True, sport=sport)
     saved_reviews=st.session_state.get('moneyline_history_candidates')
     if saved_reviews and saved_reviews[:2]==(str(selected_date),tuple(selected_books)) and len(saved_reviews)>4 and saved_reviews[4]==sport:
-        reviews=saved_reviews[2]
+        reviews=[r for r in saved_reviews[2] if r.get('Moneyline selection policy')=='most-likely-winner-v1']
         now=datetime.now(timezone.utc)
         if (now-datetime.fromisoformat(saved_reviews[3])).total_seconds()>900:reviews=[]
         reviews=[r for r in reviews if 0<=(now-datetime.fromisoformat(r['Quote updated UTC'].replace('Z','+00:00'))).total_seconds()<=900 and any(e['away_team']+' at '+e['home_team']==r['Game'] and datetime.fromisoformat(e['commence_time'].replace('Z','+00:00'))>now for e in filtered)]
@@ -273,14 +276,14 @@ def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_d
             reviews=highest_probability(list(unique.values()),"Model win %")
             for row in reviews:
                 row['Decision'] = 'Watch — experimental'
-                row['Reason'] = 'Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled.' if sport=='NFL' else 'NBA Elo price comparison; no numerical injury adjustment.'
-            st.caption("Sorted by estimated win probability, highest first. Probability and payout value are different measures.")
+                row['Reason'] = 'Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled.'
+            st.caption("Sorted by estimated win probability, highest first. Team selection follows win probability. Prices are shown for reference. No validated point-margin or spread-cover forecast is available.")
             render_team_table(reviews,hide_index=True,use_container_width=True, sport=sport)
-            records=[{**{k:r[k] for k in ('Base estimated win %','Online input win %','Online version','Online learning status','Candidate win %','Game-day diagnostic','Validation','Homework','Probability tier','Probability evidence','Selection policy','Market reasoning') if k in r},'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
+            records=[{**{k:r[k] for k in ('Base estimated win %','Online input win %','Online version','Online learning status','Candidate win %','Game-day diagnostic','Validation','Homework','Probability tier','Probability evidence','Selection policy','Market reasoning','Moneyline selection policy','Projected winning margin') if k in r},'Decision':r['Decision'],'Category':'Moneyline','Game':r['Game'],'Player':r['Team to research'],'Selection':'Win','Line':None,'Odds':r['Moneyline'],'Estimated win %':r['Model win %'],'Sportsbook':r['Sportsbook'],'Quote updated UTC':r['Quote updated UTC'],'Model':r.get('Model','Adjusted NFL Elo moneyline'),'Base model':r.get('Base model','Adjusted NFL Elo moneyline'),'Raw estimated win %':r.get('Raw estimated win %'),'Feedback version':r.get('Feedback version'),'Feedback status':r.get('Feedback status'),'Reason':r.get('Reason','')+' Injury verification: '+str(r.get('Injury verification reason'))+'; checked '+str(r.get('Injury checked UTC'))} for r in reviews]
             from saved_pick_explanation import render_current_explanations
             render_current_explanations(records,sport+'_moneyline_current')
             publish_rows(records,filtered,key_prefix='moneyline_ledger',sport=sport)
-        else:st.info('Pass — no eligible research candidates. The model may be stale, games may be preseason, quotes may be old, or no qualifying price gap exists.')
+        else:st.info('No current winner forecast. Press Compare model with current moneylines to recalculate. Missing history, preseason, stale quotes or an exact 50/50 estimate can prevent a selection.')
 
 def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     if sport not in SPORT_KEYS:return

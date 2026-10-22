@@ -273,7 +273,7 @@ def moneyline_rows(sport,event,board,now):
         models[home['displayName'],away['displayName']]={'probability':shrink_probability(expected_home_win(ratings[hc],ratings[ac]),strength),'eligible':source.get('season',board.get('season',{})).get('type')==2 and (nba_history_eligible if sport=='NBA'else 0<=(day(now)-cutoff).days<=30),'cutoff':cutoff.isoformat(),'history_basis':nba_history_basis,'validation':{'passed':bool(validation and validation['improvement']>=0),'calibration_examples':validation['calibration_games']if validation else 0,'validation_games':validation['evaluation_games']if validation else 0,'scope':'Chronological Elo shrinkage comparison against the unadjusted model; not sportsbook returns'},'injury_verified':False,'injury_reason':'Background Elo has no numerical injury adjustment; review current availability'}
     from sportsbook_tools import moneyline_reviews
     rows=moneyline_reviews([event],models,now=now,sport=sport,include_passes=True)
-    for row in rows:row['Reason']='Historical Elo price comparison. Availability/replacement effects are not numerically modeled; experimental.'
+    for row in rows:row['Reason']='Higher estimated historical Elo win probability; payout does not choose the team. Availability/replacement effects are not numerically modeled; experimental.'
     return rows
 def execute(now=None):
     now=now or datetime.now(timezone.utc);pending=read('background_pending.json',[])
