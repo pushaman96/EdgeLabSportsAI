@@ -3860,11 +3860,11 @@
       "stage": "Partial slate \u2014 games remain unfinished or unavailable",
       "all_games_final": false,
       "metrics": {
-        "picks": 11,
+        "picks": 15,
         "settled": 0,
         "wins": 0,
         "losses": 0,
-        "pending": 11,
+        "pending": 15,
         "pushes": 0,
         "distinct_games": 1,
         "accuracy": null,
@@ -3931,11 +3931,11 @@
         },
         {
           "category": "Receiving yards",
-          "picks": 1,
+          "picks": 5,
           "settled": 0,
           "wins": 0,
           "losses": 0,
-          "pending": 1,
+          "pending": 5,
           "pushes": 0,
           "distinct_games": 1,
           "accuracy": null,
@@ -4099,9 +4099,57 @@
           "Saved reasoning": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability.",
           "Learning version used": null,
           "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "6cbcf1085ce60c557d48",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Hunter Henry",
+          "Category": "Receiving yards",
+          "Selection": "Over",
+          "Book line": 23.5,
+          "Result": "Pending",
+          "Saved reasoning": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "ac6b437d807ce193549b",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Rome Odunze",
+          "Category": "Receiving yards",
+          "Selection": "Over",
+          "Book line": 34.5,
+          "Result": "Pending",
+          "Saved reasoning": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "acfdf2f2dbe30ac6ee2c",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "DeMario Douglas",
+          "Category": "Receiving yards",
+          "Selection": "Under",
+          "Book line": 47.5,
+          "Result": "Pending",
+          "Saved reasoning": "6 recent games; expected 5.0 opportunities; opponent historical receiving yards allowed: 90% of league average (context, not a standalone direction signal). Availability: Active. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "f3a1b2f08084db89361a",
+          "Game": "New England Patriots at Chicago Bears",
+          "Player": "Luther Burden III",
+          "Category": "Receiving yards",
+          "Selection": "Under",
+          "Book line": 66.5,
+          "Result": "Pending",
+          "Saved reasoning": "6 recent games; expected 7.2 opportunities; opponent historical receiving yards allowed: 102% of league average (context, not a standalone direction signal). Availability: Active. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
+          "Learning version used": null,
+          "Interpretation": "Pending final evidence; no error assigned"
         }
       ]
     }
   },
-  "updated_utc": "2026-10-22T14:37:39.703259+00:00"
+  "updated_utc": "2026-10-22T15:20:13.096982+00:00"
 }
