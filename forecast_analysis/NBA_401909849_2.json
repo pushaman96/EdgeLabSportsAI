@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "records": [
+    {
+      "id": "0714270b168039802c14",
+      "sport": "NBA",
+      "event_id": "401909849",
+      "game": "New Orleans Pelicans at Utah Jazz",
+      "player": "Utah Jazz",
+      "category": "Moneyline",
+      "direction": "Win",
+      "line": null,
+      "odds": -105.0,
+      "probability": 0.447,
+      "sportsbook": "MyBookie.ag",
+      "model": "Adjusted NBA Elo moneyline",
+      "strategy": "Analysis",
+      "published_utc": "2026-10-23T22:21:50.866726+00:00",
+      "starts_utc": "2026-10-24T01:30:00+00:00",
+      "evidence": "Personal paper record",
+      "result": "Pending",
+      "actual": null,
+      "profit_per_1": null,
+      "projected_yards": null,
+      "expected_opportunities": null,
+      "reason": "Selected as the more likely winner from historical team ratings; sportsbook payout does not choose the team. A narrow probability edge is a close game, not high confidence. Injury and replacement effects are not numerically modeled.",
+      "projected_count": null,
+      "base_model": "Adjusted NBA Elo moneyline",
+      "raw_probability": 0.44672734133664294,
+      "feedback_version": null,
+      "feedback_status": "Experimental learning active; 1 completed games",
+      "online_version": "9d9b46a3dc10",
+      "online_status": "Experimental learning active; 1 completed games",
+      "base_probability": 0.44672734133664294,
+      "online_input_probability": 0.44672734133664294,
+      "candidate_probability": 0.4474328996319321,
+      "forecast_context": {
+        "History source": "Recent completed regular-season ratings",
+        "Game-day diagnostic": {
+          "version": 1,
+          "checked_utc": "2026-10-23T22:21:50.837597+00:00",
+          "ready": false,
+          "software": {
+            "passed": true,
+            "tests_run": 376,
+            "tests_skipped": 0,
+            "checked_utc": "2026-10-23T22:00:25.267456+00:00",
+            "same_code": true,
+            "fresh_today": true
+          },
+          "category_baseline_passed": true,
+          "earlier_calibration_examples": 979,
+          "later_historical_games_or_examples": 991,
+          "historical_scope": "Chronological Elo shrinkage against unadjusted Elo; not sportsbook returns",
+          "quote_fresh": true,
+          "model_qualified": false,
+          "issues": [],
+          "interpretation": "Counts are reported as measured; software tests and historical games are different. Correlated props are not independent games. Diagnostics do not guarantee a winning bet."
+        },
+        "Homework": {
+          "version": "verified-matchup-homework-v1",
+          "sport": "NBA",
+          "factors": [
+            {
+              "Factor": "Team win model",
+              "Evidence": "Recent completed regular-season ratings",
+              "Effect": "Historical Elo ratings and chronological probability shrinkage applied"
+            },
+            {
+              "Factor": "Quoted moneyline price",
+              "Evidence": "-105.0",
+              "Effect": "Compared with estimated win probability; sportsbook break-even probability is not a model forecast"
+            },
+            {
+              "Factor": "Availability",
+              "Evidence": "Injury verification unavailable",
+              "Effect": "Warning evidence; no invented numerical injury adjustment"
+            }
+          ],
+          "probability_meaning": "Chance of the selected team winning the game; distinct from player-prop probability and price break-even rate",
+          "limitation": "Current injury replacements and coaching changes are not fully numerically modeled. No historical sportsbook-return proof."
+        },
+        "Probability tier": "Close outcome \u2014 experimental",
+        "Probability evidence": "Model estimate; prospective calibration and profitability not established",
+        "Selection policy": "probability-first-v2",
+        "Market reasoning": {
+          "version": "exact-market-reasoning-v1",
+          "supported": true,
+          "win_condition": "Wins if the selected team wins; a tie is illustrated as a push. Verify the sportsbook\u2019s tie/overtime rules.",
+          "illustrative_outcomes": [
+            {
+              "Actual team result": "Win",
+              "Result": "Win"
+            },
+            {
+              "Actual team result": "Loss",
+              "Result": "Loss"
+            },
+            {
+              "Actual team result": "Tie",
+              "Result": "Push"
+            }
+          ],
+          "opportunity_logic": "The selected team must win. A strong individual performance or high combined score does not establish the game winner.",
+          "projection_note": "No central statistic forecast supplied; none invented.",
+          "price_comparison": "Existing model estimate 44.7%; price break-even 51.2%; difference -6.5 percentage points. This arithmetic assumes the saved probability belongs to this exact selection, line and price; a changed line requires model reanalysis. Push probability is not supplied, so this is not a push-adjusted expected-value estimate.",
+          "scope": "Exact-line arithmetic and explanatory scenarios, not a new prediction model or proof of profitability. Illustrations assume participation and final official stats; platform void/stat-correction rules can differ."
+        }
+      },
+      "paired_forecast": {
+        "version": 1,
+        "base_projection": null,
+        "issued_projection": null,
+        "base_workload": null,
+        "issued_workload": null,
+        "base_probability": 0.44672734133664294,
+        "issued_probability": 0.447,
+        "learning_version": "9d9b46a3dc10",
+        "scope": "Frozen unadjusted base versus actually issued forecast; not hypothetical candidate"
+      },
+      "source_audit": {
+        "Quote updated UTC": "2026-10-23T22:21:19Z",
+        "Odds scheduled start UTC": "2026-10-24T01:40:00Z",
+        "ESPN scheduled start UTC": "2026-10-24T01:30Z"
+      },
+      "season_type": "Regular season",
+      "forecast_decision": "Pass",
+      "record_purpose": "Analyzed forecast only; excluded from official pick results"
+    }
+  ]
+}
