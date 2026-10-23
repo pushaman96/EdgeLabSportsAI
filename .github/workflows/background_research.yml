@@ -48,6 +48,7 @@ jobs:
           for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
+          git add forecast_analysis
           if ! git diff --cached --quiet; then
             git commit -m "Prepare background research and reserve automatic odds budget"
             git pull --rebase origin main
@@ -66,6 +67,7 @@ jobs:
           for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json forecast_confidence_audit.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
+          git add forecast_analysis
           if ! git diff --cached --quiet; then
             git commit -m "Save background forecasts and postgame validation"
             git pull --rebase origin main

@@ -103,6 +103,8 @@ def render_storage_status(sport='NFL'):
     import requests
     from pick_history import storage_status,StorageError,sync_session_records
     with st.expander('Storage status — verify saves and retry without loading odds'):
+        from forecast_tracking import retry_pending
+        retry_pending(sport)
         try:token=st.secrets.get('PICK_HISTORY_GITHUB_TOKEN','')
         except Exception:token=''
         token=token.strip() if isinstance(token,str) else ''

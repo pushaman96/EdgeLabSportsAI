@@ -257,7 +257,7 @@ def storage_status(response,operation):
     raise StorageError(operation+': '+reason)
 
 
-def persist_records(records,token,client=None,ledger=LEDGER):
+def persist_records(records,token,client=None,ledger=LEDGER,allow_create=False):
     """Append frozen records; verify durable IDs without overwriting old picks."""
     if client is None:
         import requests as client
@@ -265,6 +265,10 @@ def persist_records(records,token,client=None,ledger=LEDGER):
     url=f'https://api.github.com/repos/{REPO}/contents/{ledger}'
     def read():
         response=client.get(url,headers=headers,params={'ref':'main'},timeout=15)
+        if response.status_code==404 and allow_create:
+            if not ledger.startswith('forecast_analysis/') or '..' in ledger:
+                raise StorageError('Invalid analysis archive path.')
+            return {},{'schema':1,'records':[]}
         storage_status(response,'Reading pick history')
         payload=response.json()
         if payload.get('encoding')=='none':
@@ -282,7 +286,9 @@ def persist_records(records,token,client=None,ledger=LEDGER):
             if record['id'] not in seen:new.append(record);seen.add(record['id'])
         if not new:return 0
         data['records'].extend(new)
-        response=client.put(url,headers=headers,json={'message':'Automatically save frozen pregame paper picks','branch':'main','sha':payload['sha'],'content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()},timeout=20)
+        body={'message':'Automatically save frozen pregame paper picks','branch':'main','content':base64.b64encode(json.dumps(data,indent=2).encode()).decode()}
+        if payload.get('sha'):body['sha']=payload['sha']
+        response=client.put(url,headers=headers,json=body,timeout=20)
         if response.status_code in (409,422) and attempt<2:continue
         storage_status(response,'Writing pick history')
         _,verified=read()

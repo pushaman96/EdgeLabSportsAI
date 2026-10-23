@@ -32,7 +32,8 @@ jobs:
         run: python forecast_confidence_audit.py
       - name: Save completed grades
         run: |
-          if ! git diff --quiet -- live_game_research.json forecast_confidence_audit.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; then
+          git add forecast_analysis
+          if ! git diff --cached --quiet || ! git diff --quiet -- live_game_research.json forecast_confidence_audit.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; then
             git config user.name "Kamikaze Picks grading"
             git config user.email "actions@users.noreply.github.com"
             git add live_game_research.json forecast_confidence_audit.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json
