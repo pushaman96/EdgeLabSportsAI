@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-23T23:50:40.064686+00:00",
+  "checked_utc": "2026-10-23T23:59:00.280499+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
@@ -14085,7 +14085,7 @@
       "event_id": "401909845",
       "sport": "NBA",
       "game": "Minnesota Timberwolves at Orlando Magic",
-      "updated_utc": "2026-10-23T23:50:39.875946+00:00",
+      "updated_utc": "2026-10-23T23:59:00.105872+00:00",
       "completed": false,
       "latest_situations": {
         "schema": 1,
@@ -16211,21 +16211,476 @@
             "Situation": "Trailing by 8+",
             "Classification": "Driving Floating Bank Jump Shot",
             "Text": "Jalen Suggs makes 6-foot two point shot (Paolo Banchero assists)"
+          },
+          {
+            "Play ID": "401909845234",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "7:45",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 14.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Alley Oop Dunk Shot",
+            "Text": "Rudy Gobert makes alley oop dunk (Trey Lyles assists)"
+          },
+          {
+            "Play ID": "401909845237",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -16.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Full Timeout",
+            "Text": "Magic Full timeout"
+          },
+          {
+            "Play ID": "401909845238",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -16.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Coach's Challenge (Overturned)",
+            "Text": "(07:26) [Magic] COACH'S CHALLENGE (CALL OVERTURNED) [Magic] retain their timeout"
+          },
+          {
+            "Play ID": "401909845239",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 16.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Bones Hyland shooting foul"
+          },
+          {
+            "Play ID": "401909845241",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -16.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Paolo Banchero makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909845244",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 15.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Joan Beringer enters the game for Trey Lyles"
+          },
+          {
+            "Play ID": "401909845245",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 15.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Jaden McDaniels enters the game for Rudy Gobert"
+          },
+          {
+            "Play ID": "401909845246",
+            "Team": null,
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "Delay of Game",
+            "Text": "delay of game violation"
+          },
+          {
+            "Play ID": "401909845247",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "7:26",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -15.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Paolo Banchero makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909845248",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "7:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 14.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Jaden McDaniels makes 24-foot three point jumper (Anthony Edwards assists)"
+          },
+          {
+            "Play ID": "401909845250",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "6:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -17.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Cutting Layup Shot",
+            "Text": "Jalen Suggs makes 2-foot layup (Paolo Banchero assists)"
+          },
+          {
+            "Play ID": "401909845252",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 15.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Goaltending",
+            "Text": "Jaden McDaniels defensive goaltending violation"
+          },
+          {
+            "Play ID": "401909845253",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 15.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Step Back Jump Shot",
+            "Text": "Bones Hyland misses 12-foot step back jumpshot"
+          },
+          {
+            "Play ID": "401909845254",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "6:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -15.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Desmond Bane defensive rebound"
+          },
+          {
+            "Play ID": "401909845255",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "6:16",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -15.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Jalen Suggs makes 5-foot driving floating jump shot"
+          },
+          {
+            "Play ID": "401909845256",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Desmond Bane shooting foul"
+          },
+          {
+            "Play ID": "401909845258",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Jonathan Kuminga misses free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909845259",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Timberwolves offensive team rebound"
+          },
+          {
+            "Play ID": "401909845260",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Jonathan Kuminga makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909845262",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -14.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Franz Wagner enters the game for Tristan da Silva"
+          },
+          {
+            "Play ID": "401909845264",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "6:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 14.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Kicked Ball",
+            "Text": "Bones Hyland kicked ball violation"
+          },
+          {
+            "Play ID": "401909845265",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "5:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -14.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Turnaround Jump Shot",
+            "Text": "Paolo Banchero makes 13-foot turnaround jump shot"
+          },
+          {
+            "Play ID": "401909845266",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Driving Layup Shot",
+            "Text": "Anthony Edwards misses driving layup"
+          },
+          {
+            "Play ID": "401909845267",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Joan Beringer offensive rebound"
+          },
+          {
+            "Play ID": "401909845268",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:29",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Tip Shot",
+            "Text": "Joan Beringer misses tip shot"
+          },
+          {
+            "Play ID": "401909845269",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:29",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Bones Hyland offensive rebound"
+          },
+          {
+            "Play ID": "401909845270",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Layup Shot",
+            "Text": "Anthony Edwards misses layup"
+          },
+          {
+            "Play ID": "401909845271",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "5:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Wendell Carter Jr. defensive rebound"
+          },
+          {
+            "Play ID": "401909845272",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "5:14",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Paolo Banchero makes 13-foot jumper"
+          },
+          {
+            "Play ID": "401909845273",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "5:01",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Personal Foul",
+            "Text": "Wendell Carter Jr. personal foul"
+          },
+          {
+            "Play ID": "401909845276",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "5:01",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Ayo Dosunmu enters the game for Bones Hyland"
+          },
+          {
+            "Play ID": "401909845277",
+            "Team": "Minnesota Timberwolves",
+            "Period": 2,
+            "Clock": "4:49",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Lost Ball Turnover",
+            "Text": "Joan Beringer lost ball turnover (Paolo Banchero steals)"
+          },
+          {
+            "Play ID": "401909845279",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "4:43",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Franz Wagner misses 23-foot three point jumper"
+          },
+          {
+            "Play ID": "401909845280",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "4:43",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Jalen Suggs offensive rebound"
+          },
+          {
+            "Play ID": "401909845281",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "4:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "No Turnover",
+            "Text": "Franz Wagner turnover Anthony Edwards"
           }
         ],
         "situation_splits": [],
         "last_play": {
-          "Play ID": "401909845232",
+          "Play ID": "401909845281",
           "Team": "Orlando Magic",
           "Period": 2,
-          "Clock": "8:01",
+          "Clock": "4:33",
           "Down": null,
           "Distance": null,
           "Yard line": null,
-          "Score margin before play": -16.0,
+          "Score margin before play": -10.0,
           "Situation": "Trailing by 8+",
-          "Classification": "Driving Floating Bank Jump Shot",
-          "Text": "Jalen Suggs makes 6-foot two point shot (Paolo Banchero assists)"
+          "Classification": "No Turnover",
+          "Text": "Franz Wagner turnover Anthony Edwards"
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -17877,6 +18332,339 @@
             "Situation": "Trailing by 8+",
             "Classification": "Driving Floating Bank Jump Shot",
             "Text": "Jalen Suggs makes 6-foot two point shot (Paolo Banchero assists)"
+          }
+        },
+        {
+          "observed_utc": "2026-10-23T23:59:00.105872+00:00",
+          "status": {
+            "displayClock": "4:22",
+            "period": 2,
+            "type": {
+              "id": "2",
+              "name": "STATUS_IN_PROGRESS",
+              "state": "in",
+              "completed": false,
+              "description": "In Progress",
+              "detail": "4:22 - 2nd Quarter",
+              "shortDetail": "4:22 - 2nd",
+              "statusPrimary": "4:22",
+              "statusSecondary": "2nd"
+            },
+            "displayPeriod": "2nd"
+          },
+          "scores": [
+            {
+              "team": "Orlando Magic",
+              "score": "34"
+            },
+            {
+              "team": "Minnesota Timberwolves",
+              "score": "44"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "399d2a60c97fa688357c",
+              "player": "Jaden McDaniels",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "79b15975ae218b42bbc1",
+              "player": "Desmond Bane",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "2f182fe10aa0d0a07543",
+              "player": "Ayo Dosunmu",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "7b5ec8a2d172b1103332",
+              "player": "Jalen Suggs",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "77bf79476d21d2d85d91",
+              "player": "Franz Wagner",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "d092843a374db3727aad",
+              "player": "Anthony Edwards",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "a65a5c6133d9c9e9e278",
+              "player": "Paolo Banchero",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "6322282f11e8776f14d3",
+              "player": "Jaden McDaniels",
+              "category": "Points",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "c177f583653e4394d847",
+              "player": "Rudy Gobert",
+              "category": "Points",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "59e9ad4568ee53ca753e",
+              "player": "Tristan da Silva",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "edfdc66769e35afa6ba4",
+              "player": "Terrence Shannon Jr.",
+              "category": "Points",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "4721ec978f9c215facd6",
+              "player": "Desmond Bane",
+              "category": "Points",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "00adc33856e3e91ecd50",
+              "player": "Franz Wagner",
+              "category": "Points",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "0d5ed6ccc82130549c39",
+              "player": "Jalen Suggs",
+              "category": "Points",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "ee4714965ac618796c1f",
+              "player": "Wendell Carter Jr",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "072dc3c918dff256a52c",
+              "player": "Ayo Dosunmu",
+              "category": "Points",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "21a580dd76a10b7f2c0f",
+              "player": "Anthony Edwards",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "893d4e2ccf4f0c73a834",
+              "player": "Jaden McDaniels",
+              "category": "PRA",
+              "observed_stat": 12.0
+            },
+            {
+              "pick_id": "918d04d99a2934c6fe62",
+              "player": "Desmond Bane",
+              "category": "PRA",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "b3cd490e8c51e0928ab7",
+              "player": "Anthony Edwards",
+              "category": "PRA",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "e3395bd89d39db715c21",
+              "player": "Franz Wagner",
+              "category": "PRA",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "9956686e811bb96019fc",
+              "player": "Ayo Dosunmu",
+              "category": "PRA",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "1e90c8b5f99edc5a8f27",
+              "player": "Jalen Suggs",
+              "category": "PRA",
+              "observed_stat": 12.0
+            },
+            {
+              "pick_id": "dd106102ca5c5289728a",
+              "player": "Paolo Banchero",
+              "category": "PRA",
+              "observed_stat": 19.0
+            },
+            {
+              "pick_id": "20bf36c360ddda906f28",
+              "player": "Desmond Bane",
+              "category": "Rebounds",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "542f6e379ce214b4650e",
+              "player": "Jaden McDaniels",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "adfd4ffc9fa4c141f9e2",
+              "player": "Wendell Carter Jr",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "7bc56a2bb0212326feca",
+              "player": "Ayo Dosunmu",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "f65fe7c20fd7c79f9f8a",
+              "player": "Rudy Gobert",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "fe6877615fce76eccc78",
+              "player": "Jalen Suggs",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "a7e0117aea47e01e47c2",
+              "player": "Franz Wagner",
+              "category": "Rebounds",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "0f2b597a9022ad6d7123",
+              "player": "Anthony Edwards",
+              "category": "Rebounds",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "1dc0de011745e3f153e4",
+              "player": "Paolo Banchero",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "0550efc971390f5654c2",
+              "player": "Jaden McDaniels",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "795203838b500c9c3c90",
+              "player": "Desmond Bane",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "db0654fb7af4f3061690",
+              "player": "Ayo Dosunmu",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "69380fc583d0251c7c8b",
+              "player": "Jalen Suggs",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "4306dd1779a6ed073ea8",
+              "player": "Paolo Banchero",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "ce5b944d25d9ec66f667",
+              "player": "Anthony Edwards",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "55bf2a657619b7e5da7c",
+              "player": "Franz Wagner",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "40426c90b47c8a5b1759",
+              "player": "Rudy Gobert",
+              "category": "PRA",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "aeef6454679703ce4c1b",
+              "player": "Tristan da Silva",
+              "category": "PRA",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "bc7b48e8e886d92ed7fc",
+              "player": "Tristan da Silva",
+              "category": "Rebounds",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "13baa6b40b348077aa65",
+              "player": "Tristan da Silva",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "767164250364401c9403",
+              "player": "Terrence Shannon Jr.",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "fe19c7f80e1f764b4714",
+              "player": "Terrence Shannon Jr.",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "16ceb1f0f601d5937e8f",
+              "player": "Rudy Gobert",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "c3e9f0ea8ee46f8efa4f",
+              "player": "Tristan da Silva",
+              "category": "Assists",
+              "observed_stat": 0.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909845281",
+            "Team": "Orlando Magic",
+            "Period": 2,
+            "Clock": "4:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "No Turnover",
+            "Text": "Franz Wagner turnover Anthony Edwards"
           }
         }
       ],
