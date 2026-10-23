@@ -1,11 +1,11 @@
 {
-  "generated_utc": "2026-10-22T23:35:43.531284+00:00",
+  "generated_utc": "2026-10-23T00:50:10.787710+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
-      "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 1,
-      "prepared_projections": 28,
+      "status": "No upcoming regular-season games in next 30 hours",
+      "upcoming_games": 0,
+      "prepared_projections": 0,
       "issues": []
     },
     "NBA": {
