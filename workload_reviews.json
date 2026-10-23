@@ -6,59 +6,115 @@
       "sport": "NBA",
       "category": "Assists",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 45,
-      "distinct_games": 5,
-      "candidate_workload_mae": 3.730433333333333,
-      "baseline_workload_mae": 3.7179169729542947,
-      "candidate_stat_mae": 1.4785833333333334,
-      "baseline_stat_mae": 1.4817640569211727
+      "forecasts": 52,
+      "distinct_games": 6,
+      "candidate_workload_mae": 3.501313492063492,
+      "baseline_workload_mae": 3.544713760806506,
+      "candidate_stat_mae": 1.5171527777777778,
+      "baseline_stat_mae": 1.540061016086526
     },
     {
       "sport": "NBA",
       "category": "PRA",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 30,
-      "distinct_games": 4,
-      "candidate_workload_mae": 3.625520833333333,
-      "baseline_workload_mae": 3.625752714761797,
-      "candidate_stat_mae": 7.025833333333333,
-      "baseline_stat_mae": 7.02572476633646
+      "forecasts": 37,
+      "distinct_games": 5,
+      "candidate_workload_mae": 3.4361309523809522,
+      "baseline_workload_mae": 3.4363417118229505,
+      "candidate_stat_mae": 6.832380952380952,
+      "baseline_stat_mae": 6.832237004120823
     },
     {
       "sport": "NBA",
       "category": "Points",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 48,
-      "distinct_games": 5,
-      "candidate_workload_mae": 3.7669333333333332,
-      "baseline_workload_mae": 3.8094205328901687,
-      "candidate_stat_mae": 5.9326,
-      "baseline_stat_mae": 5.980516789501666
+      "forecasts": 56,
+      "distinct_games": 6,
+      "candidate_workload_mae": 3.545986111111111,
+      "baseline_workload_mae": 3.616843217642686,
+      "candidate_stat_mae": 5.820291666666667,
+      "baseline_stat_mae": 5.837945659460131
     },
     {
       "sport": "NBA",
       "category": "Rebounds",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 48,
-      "distinct_games": 5,
-      "candidate_workload_mae": 3.7669333333333332,
-      "baseline_workload_mae": 3.8094205328901687,
-      "candidate_stat_mae": 1.9556333333333333,
-      "baseline_stat_mae": 1.9754626702314912
+      "forecasts": 55,
+      "distinct_games": 6,
+      "candidate_workload_mae": 3.531730158730159,
+      "baseline_workload_mae": 3.6209667274197344,
+      "candidate_stat_mae": 1.9365992063492063,
+      "baseline_stat_mae": 1.9556596048453372
     },
     {
       "sport": "NBA",
       "category": "Three-pointers made",
       "season_stage": "Early season (0\u20137 appearances)",
-      "forecasts": 29,
-      "distinct_games": 4,
-      "candidate_workload_mae": 3.3973958333333334,
-      "baseline_workload_mae": 3.3942551136543573,
-      "candidate_stat_mae": 1.4908333333333332,
-      "baseline_stat_mae": 1.4678334612923989
+      "forecasts": 37,
+      "distinct_games": 5,
+      "candidate_workload_mae": 3.2061666666666664,
+      "baseline_workload_mae": 3.24619541920454,
+      "candidate_stat_mae": 1.3789166666666666,
+      "baseline_stat_mae": 1.3603495523717186
     }
   ],
-  "prediction_model_groups": [],
+  "prediction_model_groups": [
+    {
+      "sport": "NBA",
+      "Category": "Assists",
+      "Candidate": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": -0.017194769273106862,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": 0.0222061001060434,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NBA",
+      "Category": "PRA",
+      "Candidate": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": -0.24011777780969318,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": 0.03761451618310818,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NBA",
+      "Category": "Points",
+      "Candidate": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": -0.007532204852578328,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": 0.02044157811350356,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NBA",
+      "Category": "Rebounds",
+      "Candidate": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": 0.0,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": -0.006441149688843616,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NBA",
+      "Category": "Three-pointers made",
+      "Candidate": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": 0.05712143834446139,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": 0.03658225416272178,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    }
+  ],
   "nba_role_groups": [],
   "nfl_role_groups": [],
   "status": "Prospective research comparison only. No automatic promotion or causal diagnosis."
