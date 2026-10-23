@@ -38,15 +38,10 @@ jobs:
       - name: Compare opportunity and matchup models using free historical data
         run: python validate_prediction_research.py
       - name: Refresh free research and prepare models
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python background_research.py prepare
-      - name: Reserve daily automatic credit budget
-        if: github.event_name != 'push'
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      - name: Clear disabled automatic odds reservations
         run: python background_research.py reserve
-      - name: Persist research and reservations before any odds request
+      - name: Persist free research
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
@@ -58,11 +53,6 @@ jobs:
             git pull --rebase origin main
             git push
           fi
-      - name: Fetch reserved prices and freeze eligible forecasts
-        if: github.event_name != 'push'
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-        run: python background_research.py execute
       - name: Grade finished games and evaluate frozen comparisons
         run: |
           python pick_history.py

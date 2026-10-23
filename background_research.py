@@ -20,7 +20,7 @@ from zoneinfo import ZoneInfo
 SPORTS={'NFL':('football/nfl','americanfootball_nfl'),'NBA':('basketball/nba','basketball_nba')}
 MARKETS={'NFL':['h2h','totals','player_pass_yds','player_rush_yds','player_anytime_td','player_reception_yds'],
          'NBA':['h2h','player_points','player_assists','player_rebounds','player_threes','player_points_rebounds_assists']}
-CAP=8
+CAP=0
 CACHE=Path('.research_cache')
 REPORT=Path('background_research.json')
 BUDGET=Path('background_odds_budget.json')
@@ -80,7 +80,7 @@ def nfl_data(year):
     return {'players':players,'teams':teams,'schedule':csv_url(SCHEDULE_URL),'season':year,'retrieved':datetime.now(timezone.utc).isoformat()}
 def prepare(now=None):
     now=now or datetime.now(timezone.utc)
-    report={'schema':1,'generated_utc':now.isoformat(),'status':'Free research; projections are not betting recommendations','odds_setup':('GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds'if os.environ.get('ODDS_API_KEY')else'GitHub Actions ODDS_API_KEY secret required for background prices; Streamlit secrets are separate'),'sports':{},'issues':[]}
+    report={'schema':1,'generated_utc':now.isoformat(),'status':'Free research; projections are not betting recommendations','odds_setup':'Automatic odds spending disabled; use an explicit app load button for prices','sports':{},'issues':[]}
     history=read(LEDGER,{'schema':1,'records':[]});known={r['id']for r in history['records']}
     for sport in SPORTS:
         item={'status':'Pending','projections':[],'issues':[]};report['sports'][sport]=item
@@ -174,47 +174,15 @@ def prepare(now=None):
     return report
 
 def reserve(now=None,run_id=None,has_key=None):
-    now=now or datetime.now(timezone.utc);run_id=run_id or os.environ.get('GITHUB_RUN_ID','local')
-    has_key=bool(os.environ.get('ODDS_API_KEY'))if has_key is None else has_key
+    """Automatic provider requests are disabled, even with a configured key."""
+    now=now or datetime.now(timezone.utc)
     budget=read(BUDGET,{'schema':1,'days':{}})
-    today=str(day(now));account=budget['days'].setdefault(today,{'cap':CAP,'reserved':0,'requests':[]})
+    account=budget['days'].setdefault(str(day(now)),{'cap':0,'reserved':0,'requests':[]})
+    account['cap']=0
+    account['setup_status']='Automatic odds spending disabled. Load odds only with an explicit app button.'
+    write(BUDGET,budget)
     write('background_pending.json',[])
-    # Re-running a job never reuses an old reservation for another HTTP request.
-    if any(r['run_id']==run_id for r in account['requests']):return []
-    if not has_key:
-        account['setup_status']='Missing GitHub Actions ODDS_API_KEY; free preparation still runs'
-        write(BUDGET,budget);return []
-    remaining=CAP-account['reserved'];candidates=[]
-    report=read(REPORT,{})
-    if (now-utc(report.get('generated_utc','2000-01-01T00:00:00Z'))).total_seconds()>3600:return []
-    for sport,item in report.get('sports',{}).items():
-        if sport=='NFL'and day(now).weekday()not in (6,0,3):continue
-        if len(MARKETS[sport])>remaining:continue
-        try:
-            # Provider's event-list endpoint is free; no odds are loaded here.
-            listing=get('https://api.the-odds-api.com/v4/sports/'+SPORTS[sport][1]+'/events?'+urlencode({'apiKey':os.environ['ODDS_API_KEY']}))
-        except Exception:
-            account['setup_status']='Event discovery unavailable; no odds request reserved';continue
-        for source in item.get('scoreboard',{}).get('events',[]):
-            if not upcoming(source,now):continue
-            start=utc(source['date'])
-            if not timedelta(minutes=10)<start-now<=timedelta(hours=3):continue
-            sides=participants(source)
-            if set(sides)!= {'home','away'}:continue
-            matched=[e for e in listing if e.get('home_team')==sides['home']['displayName']and e.get('away_team')==sides['away']['displayName']and abs((utc(e['commence_time'])-start).total_seconds())<3600]
-            if len(matched)!=1:continue
-            event=matched[0]
-            if any(r['event_id']==event['id']for r in account['requests']):continue
-            candidates.append((start,sport,event,source['id']))
-    chosen=[]
-    for _,sport,event,eid in sorted(candidates,key=lambda r:(r[0],r[1])):
-        cost=len(MARKETS[sport])
-        if cost>CAP-account['reserved']:continue
-        request={'run_id':run_id,'sport':sport,'event_id':event['id'],'espn_id':eid,'markets':MARKETS[sport],'reserved_cost':cost,'reserved_utc':now.isoformat(),'event':event,'status':'Reserved before HTTP request'}
-        account['requests'].append(request);account['reserved']+=cost;chosen.append(request)
-    account['setup_status']='Configured; budget is shared across both sports, automatic background requests only'
-    write(BUDGET,budget);write('background_pending.json',chosen)
-    return chosen
+    return []
 def append_records(path,rows):
     data=read(path,{'schema':1,'records':[]});existing={r['id']for r in data['records']}
     data['records'].extend(r for r in rows if r['id']not in existing)
@@ -276,66 +244,9 @@ def moneyline_rows(sport,event,board,now):
     for row in rows:row['Reason']='Higher estimated historical Elo win probability; payout does not choose the team. Availability/replacement effects are not numerically modeled; experimental.'
     return rows
 def execute(now=None):
-    now=now or datetime.now(timezone.utc);pending=read('background_pending.json',[])
-    report=read(REPORT,{})
-    budget=read(BUDGET,{'days':{}});account=budget['days'].get(str(day(now)),{})
-    quotes=read('background_quotes.json',{'schema':1,'events':[]})
-    for request in pending:
-        if request.get('run_id')!=os.environ.get('GITHUB_RUN_ID','local'):continue
-        try:
-            check_time=datetime.now(timezone.utc)
-            if utc(request['event']['commence_time'])<=check_time:request['status']='Skipped: game started';continue
-            from pick_history import verified_pregame_start
-            fresh_board=boards(request['sport'],check_time)
-            fresh_source=next(e for e in fresh_board['events']if e['id']==request['espn_id'])
-            verified_pregame_start(fresh_source,request['event']['commence_time'],check_time)
-            # Exactly one request per durable reservation; no retry on ambiguous failure.
-            params={'apiKey':os.environ['ODDS_API_KEY'],'regions':'us','markets':','.join(request['markets']),'oddsFormat':'american','dateFormat':'iso'}
-            url='https://api.the-odds-api.com/v4/sports/'+SPORTS[request['sport']][1]+'/events/'+request['event_id']+'/odds?'+urlencode(params)
-            with urlopen(url,timeout=25)as response:
-                event=json.load(response);request['actual_cost']=response.headers.get('x-requests-last');request['remaining']=response.headers.get('x-requests-remaining')
-            request['status']='Prices loaded'
-            # Freeze after the HTTP response, not before it; do not backdate.
-            quote_time=datetime.now(timezone.utc)
-            quotes['events'].append({'sport':request['sport'],'retrieved_utc':quote_time.isoformat(),'event':event})
-            sport=request['sport'];board=fresh_board
-            from pick_history import verified_pregame_start,make_record
-            source=next(e for e in board['events']if e['id']==request['espn_id'])
-            start=verified_pregame_start(source,event['commence_time'],quote_time)
-            rows=[]
-            try:rows.extend(model_rows(sport,event,board,quote_time))
-            except Exception:request['forecast_status']='Player model source/validation unavailable; prices saved without fabricated picks'
-            try:rows.extend(moneyline_rows(sport,event,board,datetime.now(timezone.utc)))
-            except Exception:request['moneyline_status']='Moneyline source unavailable'
-            from game_day_diagnostics import apply as apply_game_day_diagnostic
-            rows=apply_game_day_diagnostic(rows,sport)
-            frozen=[];recommendations={};now_freeze=datetime.now(timezone.utc)
-            # Recheck the actual current time after slow history/model work.
-            verified_pregame_start(source,event['commence_time'],now_freeze)
-            for row in rows:
-                try:
-                    row=dict(row,Sport=sport,**{'Odds scheduled start UTC':event['commence_time'],'ESPN scheduled start UTC':source['date']})
-                    r=make_record(row,source['id'],start,now_freeze,strategy='Analysis');r.update(season_type='Regular season',record_purpose='Analyzed forecast; not official pick score',forecast_decision=row['Decision'])
-                    frozen.append(r)
-                    if row.get('Decision')!='Pass':
-                        identity=(row['Player'],row['Category'])
-                        recommendations.setdefault(identity,[]).append(row)
-                except (ValueError,TypeError,KeyError):continue
-            originals=[]
-            for values in recommendations.values():
-                if len({r['Selection']for r in values})!=1:continue
-                row=max(values,key=lambda r:float(r['Estimated win %']))
-                r=make_record(row,source['id'],start,now_freeze);r['season_type']='Regular season';originals.append(r)
-            append_records('analyzed_forecasts.json',frozen);append_records('published_picks.json',originals)
-            request['saved_analysis']=len(frozen);request['saved_originals']=len(originals)
-        except Exception:
-            request['status']='Request/source/model unavailable or pregame window closed; reservation retained, no automatic retry'
-        finally:
-            for r in account.get('requests',[]):
-                if r['event_id']==request['event_id']and r['run_id']==request['run_id']:r.update({k:v for k,v in request.items()if k!='event'})
-    # Latest snapshots only; frozen predictions live in their existing ledgers.
-    quotes['events']=quotes['events'][-40:]
-    write('background_quotes.json',quotes);write(BUDGET,budget)
+    """Discard old reservations without making any provider request."""
+    write('background_pending.json',[])
+    return []
 def projection_summary(records,sport):
     groups={}
     for r in records:
@@ -377,7 +288,7 @@ def render(sport):
     import streamlit as st
     from runtime_health import snapshot
     report=read('background_status.json',{})
-    with st.expander('Background research — readiness and daily credit budget'):
+    with st.expander('Background research — free preparation only'):
         st.write('Last research update (UTC): '+str(report.get('generated_utc','Not run yet')))
         item=report.get('sports',{}).get(sport,{})
         if st.toggle('Load prepared research projections',value=False,key='load_background_projections_'+sport):
@@ -395,7 +306,7 @@ def render(sport):
         budget=read(BUDGET,{'days':{}}).get('days',{}).get(str(day(datetime.now(timezone.utc))),{})
         st.write('Automated credits reserved today, shared NFL + NBA: '+str(budget.get('reserved',0))+' / '+str(CAP))
         st.write(budget.get('setup_status',report.get('odds_setup','Background prices not configured')))
-        st.caption('Reservations are saved before requests and retained after failures. The cap covers background automation; manually requested add-ons spend extra. Eight credits generally cover one game with the full preset, not every game.')
+        st.caption('Automatic odds requests are disabled for NFL and NBA. Only an explicit app load button can request new odds. Free research, live observations and grading continue without odds credits.')
         validation=read('background_validation.json',{})
         if validation.get('paired',{}).get(sport):st.dataframe(validation['paired'][sport],hide_index=True,use_container_width=True)
         if validation.get('projection_baselines',{}).get(sport):

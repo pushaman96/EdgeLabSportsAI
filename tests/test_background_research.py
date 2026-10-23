@@ -26,17 +26,14 @@ class BackgroundTests(unittest.TestCase):
         with patch.dict(os.environ,{},clear=True),patch.object(bg,'get',side_effect=AssertionError('No request')):
             self.assertEqual(bg.reserve(NOW,'run',False),[])
         self.assertEqual(bg.read(bg.BUDGET,{})['days'][str(bg.day(NOW))]['reserved'],0)
-    def test_daily_shared_budget_and_same_run_retry_are_durable(self):
+    def test_automatic_spending_disabled_even_with_key_and_pending_request(self):
         self.report()
-        provider=[{'id':'odds','home_team':'Home','away_team':'Away','commence_time':event()['date']}]
-        with patch.dict(os.environ,{'ODDS_API_KEY':'fixture'}),patch.object(bg,'get',return_value=provider):
-            self.assertEqual(len(bg.reserve(NOW,'run',True)),1)
-            account=bg.read(bg.BUDGET,{})['days'][str(bg.day(NOW))]
-            self.assertEqual(account['reserved'],6)
-            self.assertNotIn('fixture',json.dumps(account))
+        bg.write('background_pending.json',[{'sport':'NBA','event_id':'old'}])
+        with patch.dict(os.environ,{'ODDS_API_KEY':'fixture'}),patch.object(bg,'get',side_effect=AssertionError('No provider request')),patch.object(bg,'urlopen',side_effect=AssertionError('No HTTP request')):
             self.assertEqual(bg.reserve(NOW,'run',True),[])
-            self.assertEqual(bg.read('background_pending.json',None),[])
-            self.assertEqual(bg.reserve(NOW,'another',True),[])
+            self.assertEqual(bg.execute(NOW),[])
+        self.assertEqual(bg.read('background_pending.json',None),[])
+        self.assertEqual(bg.read(bg.BUDGET,{})['days'][str(bg.day(NOW))]['reserved'],0)
     def test_started_and_non_nfl_rotation_day_do_not_reserve(self):
         self.report()
         data=bg.read(bg.REPORT,{})

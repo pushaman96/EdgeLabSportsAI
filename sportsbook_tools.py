@@ -323,12 +323,12 @@ def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     st.caption('Last reported credits remaining: '+str(remaining if remaining is not None else 'Unknown')+'. Cached prices may be outdated. Budget checks assume a fresh request; an available cache hit may cost 0.')
     allow_game,game_reason=spending_allowed(mode,3,budget,remaining)
     st.caption('Credit-saving mode: choose a few games and categories below. Full-slate preset buttons are available in Standard mode. Saved-data mode blocks new odds loads while keeping already loaded prices visible.')
-    automatic=False  # Background workflow owns autoload; no session-planner import.
+    automatic=False  # New odds require an explicit load button.
     preset_markets=','.join(sorted(PROP_MARKETS[sport][label] for label in STANDARD_PRESETS[sport]))
     saved_game=st.session_state.get('sportsbook_result')
     saved_props=st.session_state.get('sportsbook_props_all_result')
     reuse_available=bool(saved_game and saved_game[:2]==(sport,key) and saved_props and saved_props[0][:4]==(sport,key,str(selected_date),preset_markets) and saved_props[1].get('results'))
-    st.caption('Background preset preparation now runs in GitHub Actions while the app is closed. See Background research for status and its shared eight-credit daily automated budget. This page does not automatically spend credits on each new session. Load buttons and add-ons below are explicit extra requests outside that background budget.')
+    st.caption('Automatic odds spending is OFF for NFL and NBA. Free background research and live tracking continue. New odds are requested only when you press a load button; displaying or reanalyzing saved prices uses no new odds credits.')
     try:
         quick_nfl=False
         quick_nba=False
