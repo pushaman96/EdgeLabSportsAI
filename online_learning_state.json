@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-23T21:06:24.200461+00:00",
+  "generated_utc": "2026-10-23T21:37:21.088903+00:00",
   "groups": {
     "[\"NBA\",\"Adjusted NBA Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
       "games": 1,
