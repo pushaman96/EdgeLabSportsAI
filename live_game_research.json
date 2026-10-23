@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-23T07:04:26.209264+00:00",
+  "checked_utc": "2026-10-23T07:57:13.279121+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
       "sport": "NFL",
       "game": "New England Patriots at Chicago Bears",
-      "updated_utc": "2026-10-23T07:04:26.026638+00:00",
+      "updated_utc": "2026-10-23T07:57:12.951777+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -3895,6 +3895,171 @@
             "Classification": "Other",
             "Text": "END GAME"
           }
+        },
+        {
+          "observed_utc": "2026-10-23T07:57:12.951777+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            },
+            "isTBDFlex": false
+          },
+          "scores": [
+            {
+              "team": "Chicago Bears",
+              "score": "30"
+            },
+            {
+              "team": "New England Patriots",
+              "score": "24"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "800bc2b38efc609f20f3",
+              "player": "New England Patriots",
+              "category": "Moneyline",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "84b511bf855bfec0c324",
+              "player": "TreVeyon Henderson",
+              "category": "Rushing yards",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "590e2340bb7856020497",
+              "player": "New England Patriots at Chicago Bears",
+              "category": "Game total points",
+              "observed_stat": 54.0
+            },
+            {
+              "pick_id": "184277d7622aec1ae677",
+              "player": "Drake Maye",
+              "category": "Passing yards",
+              "observed_stat": 321.0
+            },
+            {
+              "pick_id": "0297970a39a4d5bce93f",
+              "player": "D'Andre Swift",
+              "category": "Rushing yards",
+              "observed_stat": 78.0
+            },
+            {
+              "pick_id": "c43b9031681f6ef5ac49",
+              "player": "Rhamondre Stevenson",
+              "category": "Rushing yards",
+              "observed_stat": 22.0
+            },
+            {
+              "pick_id": "d81c0ae5f2ec13b7f53b",
+              "player": "Hunter Henry",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "7d8a6f5b8985c6e35a7d",
+              "player": "DeMario Douglas",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "2395933e824cf6c21880",
+              "player": "TreVeyon Henderson",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "adc2db133026b885b6c0",
+              "player": "Colston Loveland",
+              "category": "Receiving yards",
+              "observed_stat": 69.0
+            },
+            {
+              "pick_id": "c7d4b73dda31491440b2",
+              "player": "Drake Maye",
+              "category": "Anytime touchdown",
+              "observed_stat": 1
+            },
+            {
+              "pick_id": "6cbcf1085ce60c557d48",
+              "player": "Hunter Henry",
+              "category": "Receiving yards",
+              "observed_stat": 71.0
+            },
+            {
+              "pick_id": "ac6b437d807ce193549b",
+              "player": "Rome Odunze",
+              "category": "Receiving yards",
+              "observed_stat": 69.0
+            },
+            {
+              "pick_id": "acfdf2f2dbe30ac6ee2c",
+              "player": "DeMario Douglas",
+              "category": "Receiving yards",
+              "observed_stat": 23.0
+            },
+            {
+              "pick_id": "f3a1b2f08084db89361a",
+              "player": "Luther Burden III",
+              "category": "Receiving yards",
+              "observed_stat": 130.0
+            },
+            {
+              "pick_id": "e7c08f2f5a627de98ff1",
+              "player": "Chicago Bears",
+              "category": "Moneyline",
+              "observed_stat": null
+            }
+          ],
+          "situation_splits": [
+            {
+              "Team": "New England Patriots",
+              "Situation": "Within 7",
+              "Phase": "Regulation",
+              "Classified dropbacks": 17,
+              "Designed runs": 8,
+              "Sacks": 2,
+              "Pass-call %": 68.0
+            },
+            {
+              "Team": "Chicago Bears",
+              "Situation": "Within 7",
+              "Phase": "Regulation",
+              "Classified dropbacks": 39,
+              "Designed runs": 26,
+              "Sacks": 3,
+              "Pass-call %": 60.0
+            },
+            {
+              "Team": "New England Patriots",
+              "Situation": "Trailing by 8+",
+              "Phase": "Regulation",
+              "Classified dropbacks": 19,
+              "Designed runs": 6,
+              "Sacks": 0,
+              "Pass-call %": 76.0
+            }
+          ],
+          "last_play": {
+            "Play ID": "4018730104228",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "0:00",
+            "Down": 0,
+            "Distance": 0,
+            "Yard line": 52,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "END GAME"
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -3903,7 +4068,7 @@
       "event_id": "401909093",
       "sport": "NBA",
       "game": "Cleveland Cavaliers at Philadelphia 76ers",
-      "updated_utc": "2026-10-23T07:04:26.026638+00:00",
+      "updated_utc": "2026-10-23T07:57:12.951777+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -11929,6 +12094,172 @@
         },
         {
           "observed_utc": "2026-10-23T07:04:26.026638+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "Philadelphia 76ers",
+              "score": "114"
+            },
+            {
+              "team": "Cleveland Cavaliers",
+              "score": "106"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "d7f46090039fe5f8c851",
+              "player": "James Harden",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "dec48b3b3de5b2c6738a",
+              "player": "Donovan Mitchell",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "12bf30ecf16caba77d4e",
+              "player": "Evan Mobley",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "2234f021753d4a489d92",
+              "player": "VJ Edgecombe",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "be5963012acc56c54596",
+              "player": "Jaylon Tyson",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "35599783e9fbc8123c62",
+              "player": "James Harden",
+              "category": "Points",
+              "observed_stat": 16.0
+            },
+            {
+              "pick_id": "a1d8e8f382ca6f09e730",
+              "player": "VJ Edgecombe",
+              "category": "Points",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "7d615269de2c6164d342",
+              "player": "Jaylon Tyson",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "3c1eedd3d67bad090039",
+              "player": "Sam Merrill",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "5c93b65b967e16f14264",
+              "player": "Tyrese Maxey",
+              "category": "PRA",
+              "observed_stat": 41.0
+            },
+            {
+              "pick_id": "049d3035d7aafdbbf4a5",
+              "player": "James Harden",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "2a745226e021e58da8dc",
+              "player": "VJ Edgecombe",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "9c88539bf887a121b2ba",
+              "player": "Jaylon Tyson",
+              "category": "PRA",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "423f6c3d0a516403d89a",
+              "player": "Tyrese Maxey",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "5d8338b2e788c3b82bef",
+              "player": "Tyrese Maxey",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "aee34dd42ef6ccd209bf",
+              "player": "James Harden",
+              "category": "Three-pointers made",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "71ae997ec03c24a0c04a",
+              "player": "Sam Merrill",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "7e9db16618cdde947cdd",
+              "player": "VJ Edgecombe",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "1159a9d6648b53f83619",
+              "player": "Joel Embiid",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "ebd93680549497c7ae62",
+              "player": "Jaylon Tyson",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "398772b5e9437edff74a",
+              "player": "Cleveland Cavaliers",
+              "category": "Moneyline",
+              "observed_stat": null
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909093748",
+            "Team": null,
+            "Period": 4,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Game",
+            "Text": "End of Game"
+          }
+        },
+        {
+          "observed_utc": "2026-10-23T07:57:12.951777+00:00",
           "status": {
             "type": {
               "id": "3",
