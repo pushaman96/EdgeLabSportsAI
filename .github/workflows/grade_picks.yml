@@ -25,13 +25,15 @@ jobs:
           python-version: '3.13'
       - run: pip install -r requirements.txt
       - run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Archive live game observations using free ESPN data
+        run: python live_game_research.py
       - run: python pick_history.py
       - name: Save completed grades
         run: |
-          if ! git diff --quiet -- published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; then
+          if ! git diff --quiet -- live_game_research.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; then
             git config user.name "Kamikaze Picks grading"
             git config user.email "actions@users.noreply.github.com"
-            git add published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json
+            git add live_game_research.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json
             git commit -m "Grade picks, archive usage and update per-game feedback"
             git pull --rebase origin main
             git push
