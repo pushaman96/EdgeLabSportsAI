@@ -924416,7 +924416,9 @@
       "season_type": "Regular season",
       "forecast_decision": "Pass",
       "record_purpose": "Analyzed forecast only; excluded from official pick results",
-      "grading_note": "Required combined/scoring evidence incomplete; remains unresolved, not zero or DNP."
+      "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
+      "settlement_checked_utc": "2026-10-23T23:26:26.007004+00:00",
+      "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
       "id": "bee2d7c751632de37615",
@@ -931662,7 +931664,9 @@
       "season_type": "Regular season",
       "forecast_decision": "Pass",
       "record_purpose": "Analyzed forecast only; excluded from official pick results",
-      "grading_note": "Required combined/scoring evidence incomplete; remains unresolved, not zero or DNP."
+      "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
+      "settlement_checked_utc": "2026-10-23T23:26:26.011762+00:00",
+      "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
       "id": "e86d17f16cf5cc7dbd52",

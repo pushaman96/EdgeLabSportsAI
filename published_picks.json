@@ -1390,7 +1390,9 @@
         "Evidence explanation": "Forecast: 69.2 rushing yards. Compared quote: Over 52.5 at -109 (DraftKings). Current roster team: NYG; current-team games: 5; Current team matches history. Expected workload: 16.2 carries. Estimated win chance 58.9% versus 52.2% needed to break even; estimated gap 6.7 percentage points. Collecting evidence \u2014 original probability retained. Experimental estimates, not independently verified confidence or profitability. Injury status is checked, but injury effects, teammate absences and weather are not quantified in this forecast."
       },
       "season_type": "Regular season",
-      "grading_note": "Player total not uniquely reported; manual settlement review required."
+      "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
+      "settlement_checked_utc": "2026-10-23T23:26:24.661930+00:00",
+      "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
       "id": "ae3c98430e8f8c030f93",
