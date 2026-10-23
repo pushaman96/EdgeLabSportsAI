@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T02:41:38.610065+00:00",
+  "generated_utc": "2026-10-23T03:39:45.875685+00:00",
   "paired": {
     "NFL": [
       {
@@ -7,42 +7,42 @@
         "Model": "NFL offensive anytime TD opportunities v1 / 2024 calibration / 2025 development",
         "Frozen forecasts": 15,
         "Distinct games": 1,
-        "Projection MAE comparisons": 0,
-        "Projection MAE games": 0,
-        "Base Projection MAE": null,
-        "Issued Projection MAE": null,
-        "Issued minus base Projection MAE": null,
+        "Projection MAE comparisons": 13,
+        "Projection MAE games": 1,
+        "Base Projection MAE": 0.39378262440970363,
+        "Issued Projection MAE": 0.39384615384615385,
+        "Issued minus base Projection MAE": 6.352943645021591e-05,
         "Workload MAE comparisons": 0,
         "Workload MAE games": 0,
         "Base Workload MAE": null,
         "Issued Workload MAE": null,
         "Issued minus base Workload MAE": null,
-        "Brier comparisons": 0,
-        "Brier games": 0,
-        "Base Brier": null,
-        "Issued Brier": null,
-        "Issued minus base Brier": null
+        "Brier comparisons": 13,
+        "Brier games": 1,
+        "Base Brier": 0.21274988980016582,
+        "Issued Brier": 0.21281784615384616,
+        "Issued minus base Brier": 6.795635368034292e-05
       },
       {
         "Category": "Game total points",
         "Model": "NFL scoring total v1 / 2024 calibration / 2025 development",
         "Frozen forecasts": 1,
         "Distinct games": 1,
-        "Projection MAE comparisons": 0,
-        "Projection MAE games": 0,
-        "Base Projection MAE": null,
-        "Issued Projection MAE": null,
-        "Issued minus base Projection MAE": null,
+        "Projection MAE comparisons": 1,
+        "Projection MAE games": 1,
+        "Base Projection MAE": 7.916666666666671,
+        "Issued Projection MAE": 7.917000000000002,
+        "Issued minus base Projection MAE": 0.000333333333330188,
         "Workload MAE comparisons": 0,
         "Workload MAE games": 0,
         "Base Workload MAE": null,
         "Issued Workload MAE": null,
         "Issued minus base Workload MAE": null,
-        "Brier comparisons": 0,
-        "Brier games": 0,
-        "Base Brier": null,
-        "Issued Brier": null,
-        "Issued minus base Brier": null
+        "Brier comparisons": 1,
+        "Brier games": 1,
+        "Base Brier": 0.36704139804997604,
+        "Issued Brier": 0.3672360000000001,
+        "Issued minus base Brier": 0.00019460195002407588
       },
       {
         "Category": "Moneyline",
@@ -59,11 +59,11 @@
         "Base Workload MAE": null,
         "Issued Workload MAE": null,
         "Issued minus base Workload MAE": null,
-        "Brier comparisons": 0,
-        "Brier games": 0,
-        "Base Brier": null,
-        "Issued Brier": null,
-        "Issued minus base Brier": null
+        "Brier comparisons": 2,
+        "Brier games": 1,
+        "Base Brier": 0.23578658584068254,
+        "Issued Brier": 0.23716900000000002,
+        "Issued minus base Brier": 0.0013824141593174744
       },
       {
         "Category": "Passing yards",
@@ -112,21 +112,21 @@
         "Model": "NFL opportunity experiment v2 / 2024 fit / 2025 development / context-audit-v2",
         "Frozen forecasts": 2,
         "Distinct games": 1,
-        "Projection MAE comparisons": 0,
-        "Projection MAE games": 0,
-        "Base Projection MAE": null,
-        "Issued Projection MAE": null,
-        "Issued minus base Projection MAE": null,
-        "Workload MAE comparisons": 0,
-        "Workload MAE games": 0,
-        "Base Workload MAE": null,
-        "Issued Workload MAE": null,
-        "Issued minus base Workload MAE": null,
-        "Brier comparisons": 0,
-        "Brier games": 0,
-        "Base Brier": null,
-        "Issued Brier": null,
-        "Issued minus base Brier": null
+        "Projection MAE comparisons": 2,
+        "Projection MAE games": 1,
+        "Base Projection MAE": 43.92152349711758,
+        "Issued Projection MAE": 43.9,
+        "Issued minus base Projection MAE": -0.02152349711758461,
+        "Workload MAE comparisons": 2,
+        "Workload MAE games": 1,
+        "Base Workload MAE": 2.0833333333333335,
+        "Issued Workload MAE": 2.085,
+        "Issued minus base Workload MAE": 0.0016666666666664831,
+        "Brier comparisons": 2,
+        "Brier games": 1,
+        "Base Brier": 0.2504973287557005,
+        "Issued Brier": 0.2505385,
+        "Issued minus base Brier": 4.117124429947605e-05
       },
       {
         "Category": "Receiving yards",
@@ -385,7 +385,35 @@
     ]
   },
   "projection_baselines": {
-    "NFL": [],
+    "NFL": [
+      {
+        "Category": "Anytime touchdown",
+        "Matched forecasts": 13,
+        "Distinct games": 1,
+        "Projection MAE": 0.39378262440970363,
+        "Simple baseline MAE": 0.4233058608058608,
+        "Projection minus baseline MAE": -0.02952323639615717,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
+        "Category": "Game total points",
+        "Matched forecasts": 1,
+        "Distinct games": 1,
+        "Projection MAE": 7.916666666666671,
+        "Simple baseline MAE": 7.974264705882355,
+        "Projection minus baseline MAE": -0.05759803921568363,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
+        "Category": "Receiving yards",
+        "Matched forecasts": 5,
+        "Distinct games": 1,
+        "Projection MAE": 17.89470295866449,
+        "Simple baseline MAE": 22.57333333333333,
+        "Projection minus baseline MAE": -4.678630374668842,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      }
+    ],
     "NBA": [
       {
         "Category": "PRA",

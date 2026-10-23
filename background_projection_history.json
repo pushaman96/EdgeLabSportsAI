@@ -30,8 +30,12 @@
       "projection": 59.915292890750834,
       "workload": 14.575,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 78.0,
+      "actual_workload": 22.0,
+      "absolute_error": 18.084707109249166,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00"
     },
     {
       "id": "NFL|401873010|4431611|Passing yards|NFL season-prior preparation v1",
@@ -46,8 +50,12 @@
       "projection": 233.93642363518492,
       "workload": 32.09243697478991,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 308.0,
+      "actual_workload": 33.0,
+      "absolute_error": 74.06357636481508,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00"
     },
     {
       "id": "NFL|401873010|4432710|Rushing yards|NFL season-prior preparation v1",
@@ -62,8 +70,12 @@
       "projection": 38.73488920263922,
       "workload": 9.28921568627451,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 9.0,
+      "actual_workload": 3.0,
+      "absolute_error": 29.734889202639224,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00"
     },
     {
       "id": "NFL|401873010|4431452|Passing yards|NFL season-prior preparation v1",
@@ -78,8 +90,12 @@
       "projection": 264.7242017154467,
       "workload": 30.776470588235295,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 321.0,
+      "actual_workload": 31.0,
+      "absolute_error": 56.275798284553275,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00"
     },
     {
       "id": "NFL|401873010|4569173|Rushing yards|NFL season-prior preparation v1",
@@ -94,8 +110,12 @@
       "projection": 42.521854517644606,
       "workload": 10.764285714285714,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 22.0,
+      "actual_workload": 6.0,
+      "absolute_error": 20.521854517644606,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00"
     },
     {
       "id": "NBA|401909834|4432573|Points|NBA season-prior preparation v1",
@@ -25135,8 +25155,13 @@
       "simple_baseline": 46.025735294117645,
       "workload": null,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Scoring research; no injury/weather adjustment or betting line implied"
+      "result": "Measured",
+      "status": "Scoring research; no injury/weather adjustment or betting line implied",
+      "actual": 54.0,
+      "actual_workload": null,
+      "absolute_error": 7.916666666666671,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 7.974264705882355
     },
     {
       "id": "NFL|401873010|4685278|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25152,8 +25177,13 @@
       "simple_baseline": 0.13333333333333333,
       "workload": 7.3100000000000005,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1,
+      "actual_workload": null,
+      "absolute_error": 0.7689920830958261,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.8666666666666667
     },
     {
       "id": "NFL|401873010|4258595|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25169,8 +25199,13 @@
       "simple_baseline": 0.125,
       "workload": 2.25,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.0881827087925545,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.125
     },
     {
       "id": "NFL|401873010|4723086|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25186,8 +25221,13 @@
       "simple_baseline": 0.375,
       "workload": 5.825,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1,
+      "actual_workload": null,
+      "absolute_error": 0.6525354421640919,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.625
     },
     {
       "id": "NFL|401873010|4608686|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25220,8 +25260,13 @@
       "simple_baseline": 0.5,
       "workload": 6.9,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.28888480472596,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.5
     },
     {
       "id": "NFL|401873010|2973405|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25271,8 +25316,13 @@
       "simple_baseline": 0.625,
       "workload": 18.025,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1,
+      "actual_workload": null,
+      "absolute_error": 0.31126875171072554,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.375
     },
     {
       "id": "NFL|401873010|4431611|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25288,8 +25338,13 @@
       "simple_baseline": 0.23529411764705882,
       "workload": 5.369747899159663,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.33168607154788965,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.23529411764705882
     },
     {
       "id": "NFL|401873010|4047646|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25305,8 +25360,13 @@
       "simple_baseline": 0.4666666666666667,
       "workload": 7.711111111111111,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.37598325327139975,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.4666666666666667
     },
     {
       "id": "NFL|401873010|4427095|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25322,8 +25382,13 @@
       "simple_baseline": 0.1875,
       "workload": 4.475,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.3649845166198064,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.1875
     },
     {
       "id": "NFL|401873010|4432710|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25339,8 +25404,13 @@
       "simple_baseline": 0.5882352941176471,
       "workload": 11.081699346405228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.31018142071633886,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.5882352941176471
     },
     {
       "id": "NFL|401873010|3046439|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25356,8 +25426,13 @@
       "simple_baseline": 0.4117647058823529,
       "workload": 4.447058823529412,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.3968165728801906,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.4117647058823529
     },
     {
       "id": "NFL|401873010|4431431|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25373,8 +25448,13 @@
       "simple_baseline": 0.0,
       "workload": 5.25,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0,
+      "actual_workload": null,
+      "absolute_error": 0.0650186251269895,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.0
     },
     {
       "id": "NFL|401873010|4431452|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25390,8 +25470,13 @@
       "simple_baseline": 0.23529411764705882,
       "workload": 5.897058823529411,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1,
+      "actual_workload": null,
+      "absolute_error": 0.7569246675888841,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.7647058823529411
     },
     {
       "id": "NFL|401873010|4569173|Anytime touchdown|NFL offensive TD preparation v1",
@@ -25407,8 +25492,13 @@
       "simple_baseline": 0.6428571428571429,
       "workload": 13.471428571428572,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1,
+      "actual_workload": null,
+      "absolute_error": 0.4077151990854905,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 0.3571428571428571
     },
     {
       "id": "NBA|401909834|4432573|PRA|NBA season-prior preparation v1",
@@ -32333,8 +32423,13 @@
       "simple_baseline": 6.0,
       "workload": 2.25,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 28.0,
+      "actual_workload": 3.0,
+      "absolute_error": 16.910144470847072,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 22.0
     },
     {
       "id": "NFL|401873010|4723086|Receiving yards|NFL season-prior preparation v1",
@@ -32350,8 +32445,13 @@
       "simple_baseline": 43.0,
       "workload": 5.800000000000001,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 69.0,
+      "actual_workload": 12.0,
+      "absolute_error": 25.063067607011945,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 26.0
     },
     {
       "id": "NFL|401873010|4431299|Receiving yards|NFL season-prior preparation v1",
@@ -32367,8 +32467,13 @@
       "simple_baseline": 54.25,
       "workload": 6.9,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 69.0,
+      "actual_workload": 5.0,
+      "absolute_error": 14.397651872753578,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 14.75
     },
     {
       "id": "NFL|401873010|4047646|Receiving yards|NFL season-prior preparation v1",
@@ -32384,8 +32489,13 @@
       "simple_baseline": 66.86666666666666,
       "workload": 7.711111111111111,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 48.0,
+      "actual_workload": 6.0,
+      "absolute_error": 4.22652538585249,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 18.86666666666666
     },
     {
       "id": "NFL|401873010|3046439|Receiving yards|NFL season-prior preparation v1",
@@ -32401,8 +32511,13 @@
       "simple_baseline": 39.75,
       "workload": 4.447058823529412,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 71.0,
+      "actual_workload": 7.0,
+      "absolute_error": 28.87612545685736,
+      "graded_utc": "2026-10-23T03:39:45.875685+00:00",
+      "baseline_absolute_error": 31.25
     },
     {
       "id": "NBA|401909848|4997526|Points|NBA season-prior preparation v1",
