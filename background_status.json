@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T16:41:19.462426+00:00",
+  "generated_utc": "2026-10-23T17:37:02.547218+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
@@ -10,8 +10,8 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 13,
-      "prepared_projections": 1695,
+      "upcoming_games": 15,
+      "prepared_projections": 1970,
       "issues": [
         "Player history incomplete: Nate Ament",
         "Player history incomplete: Brayden Burries",
@@ -101,7 +101,15 @@
         "Player history incomplete: Emanuel Sharp",
         "Player history incomplete: Ben Simmons",
         "Player history incomplete: Damian Lillard",
-        "Player history incomplete: Shaedon Sharpe"
+        "Player history incomplete: Shaedon Sharpe",
+        "Player history incomplete: Mario Hezonja",
+        "Player history incomplete: Meleek Thomas",
+        "Player history incomplete: Tyler Bilodeau",
+        "Player history incomplete: Mikel Brown Jr.",
+        "Player history incomplete: Joshua Jefferson",
+        "Player history incomplete: Dominick Barlow",
+        "Player history incomplete: Tacko Fall",
+        "Player history incomplete: Labaron Philon Jr."
       ]
     }
   }
