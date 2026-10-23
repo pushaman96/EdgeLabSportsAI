@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-23T02:09:43.527732+00:00",
+  "checked_utc": "2026-10-23T02:51:33.187394+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
       "sport": "NFL",
       "game": "New England Patriots at Chicago Bears",
-      "updated_utc": "2026-10-23T02:09:42.942356+00:00",
+      "updated_utc": "2026-10-23T02:51:32.976937+00:00",
       "completed": false,
       "latest_situations": {
         "schema": 1,
@@ -1299,7 +1299,7 @@
             "Score margin before play": 6.0,
             "Situation": "Within 7",
             "Classification": "QB scramble",
-            "Text": " C.Williams scrambles right end to NE 12 for 9 yards (M.Jones)."
+            "Text": "C.Williams scrambles right end to NE 12 for 9 yards (C.Elliss)."
           },
           {
             "Play ID": "4018730102412",
@@ -1326,6 +1326,591 @@
             "Situation": "Leading by 8+",
             "Classification": "Other",
             "Text": "Official Timeout at 09:41."
+          },
+          {
+            "Play ID": "4018730102453",
+            "Team": "Chicago Bears",
+            "Period": 3,
+            "Clock": "9:41",
+            "Down": 0,
+            "Distance": 0,
+            "Yard line": 35,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Other",
+            "Text": "C.Santos kicks 65 yards from CHI 35 to landing zone to end zone, Touchback to the NE 20."
+          },
+          {
+            "Play ID": "4018730102482",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "9:41",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 80,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass short right to H.Henry ran ob at NE 34 for 14 yards."
+          },
+          {
+            "Play ID": "4018730102512",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "9:07",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 66,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass incomplete deep left to A.Brown (M.Muhammad)."
+          },
+          {
+            "Play ID": "4018730102535",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "8:59",
+            "Down": 2,
+            "Distance": 10,
+            "Yard line": 66,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) R.Stevenson left guard to NE 37 for 3 yards (J.Lynch; K.Street). CHI-M.Muhammad was injured during the play."
+          },
+          {
+            "Play ID": "4018730102557",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "8:20",
+            "Down": 3,
+            "Distance": 7,
+            "Yard line": 63,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass short right to H.Henry to 50 for 13 yards (G.Jarrett)."
+          },
+          {
+            "Play ID": "4018730102585",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "7:36",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 50,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) T.Henderson left guard to CHI 47 for 3 yards (J.Kromah)."
+          },
+          {
+            "Play ID": "4018730102607",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "6:52",
+            "Down": 2,
+            "Distance": 7,
+            "Yard line": 47,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "No play / penalty",
+            "Text": "(Shotgun) PENALTY on CHI-D.Bush, Neutral Zone Infraction, 5 yards, enforced at CHI 47 - No Play."
+          },
+          {
+            "Play ID": "4018730102631",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "6:32",
+            "Down": 2,
+            "Distance": 2,
+            "Yard line": 42,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "No play / penalty",
+            "Text": "(Shotgun) T.Henderson right guard to CHI 36 for 6 yards (J.van den Berg).PENALTY on NE-M.Moses, Offensive Holding, 10 yards, enforced at CHI 42 - No Play."
+          },
+          {
+            "Play ID": "4018730102664",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "6:13",
+            "Down": 2,
+            "Distance": 12,
+            "Yard line": 52,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass deep left to A.Brown to CHI 36 for 16 yards (T.Stevenson)."
+          },
+          {
+            "Play ID": "4018730102689",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "5:34",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 36,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "D.Maye pass short middle to H.Henry to CHI 38 for -2 yards (J.Kromah, D.Jackson)."
+          },
+          {
+            "Play ID": "4018730102714",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "4:50",
+            "Down": 2,
+            "Distance": 12,
+            "Yard line": 38,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass short middle to H.Henry to CHI 25 for 13 yards (C.Lewis)."
+          },
+          {
+            "Play ID": "4018730102739",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "4:11",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 25,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "No play / penalty",
+            "Text": "(Shotgun) PENALTY on NE-E.Raridon, False Start, 5 yards, enforced at CHI 25 - No Play."
+          },
+          {
+            "Play ID": "4018730102763",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "3:46",
+            "Down": 1,
+            "Distance": 15,
+            "Yard line": 30,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass deep right to E.Raridon for 30 yards, TOUCHDOWN. A.Borregales extra point is GOOD, Center-J.Ashby, Holder-M.Wishnowsky."
+          },
+          {
+            "Play ID": "4018730102797",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "3:46",
+            "Down": -1,
+            "Distance": 0,
+            "Yard line": 15,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Official Timeout at 03:46."
+          },
+          {
+            "Play ID": "4018730102804",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "3:46",
+            "Down": 0,
+            "Distance": 0,
+            "Yard line": 65,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "A.Borregales kicks 61 yards from NE 35 to CHI 4. Z.Thomas pushed ob at CHI 26 for 22 yards (D.Muasau)."
+          },
+          {
+            "Play ID": "4018730102834",
+            "Team": "Chicago Bears",
+            "Period": 3,
+            "Clock": "3:39",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 26,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "C.Williams pass short left to C.Loveland pushed ob at CHI 28 for 2 yards (J.Reed)."
+          },
+          {
+            "Play ID": "4018730102869",
+            "Team": "Chicago Bears",
+            "Period": 3,
+            "Clock": "3:12",
+            "Down": 2,
+            "Distance": 8,
+            "Yard line": 28,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "C.Williams pass incomplete short right to K.Raymond [C.Elliss]."
+          },
+          {
+            "Play ID": "4018730102892",
+            "Team": "Chicago Bears",
+            "Period": 3,
+            "Clock": "3:09",
+            "Down": 3,
+            "Distance": 8,
+            "Yard line": 28,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) C.Williams pass incomplete deep right to C.Loveland."
+          },
+          {
+            "Play ID": "4018730102915",
+            "Team": "Chicago Bears",
+            "Period": 3,
+            "Clock": "3:03",
+            "Down": 4,
+            "Distance": 8,
+            "Yard line": 28,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "T.Taylor punts 65 yards to NE 7, Center-S.Daly. M.Jones to NE 26 for 19 yards (D.Hardy; B.Johnson)."
+          },
+          {
+            "Play ID": "4018730102928",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "2:50",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 74,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Official Timeout at 02:50."
+          },
+          {
+            "Play ID": "4018730102941",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "2:50",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 74,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass short middle to H.Henry to NE 40 for 14 yards (C.Lewis)."
+          },
+          {
+            "Play ID": "4018730102973",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "2:13",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 60,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) R.Stevenson right guard to NE 41 for 1 yard (K.Gordon)."
+          },
+          {
+            "Play ID": "4018730102995",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "1:33",
+            "Down": 2,
+            "Distance": 9,
+            "Yard line": 59,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) D.Maye pass short middle to D.Douglas to NE 49 for 8 yards (D.Thieneman)."
+          },
+          {
+            "Play ID": "4018730103020",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "0:54",
+            "Down": 3,
+            "Distance": 1,
+            "Yard line": 51,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "No play / penalty",
+            "Text": "C.Lomu reported in as eligible.  PENALTY on NE-W.Campbell, False Start, 5 yards, enforced at NE 49 - No Play."
+          },
+          {
+            "Play ID": "4018730103057",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "0:40",
+            "Down": 3,
+            "Distance": 6,
+            "Yard line": 56,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "QB scramble",
+            "Text": "(Shotgun) D.Maye scrambles left end to NE 48 for 4 yards (D.Bush)."
+          },
+          {
+            "Play ID": "4018730103086",
+            "Team": "New England Patriots",
+            "Period": 3,
+            "Clock": "0:00",
+            "Down": 4,
+            "Distance": 2,
+            "Yard line": 52,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "END QUARTER 3"
+          },
+          {
+            "Play ID": "4018730103106",
+            "Team": "New England Patriots",
+            "Period": 4,
+            "Clock": "15:00",
+            "Down": 4,
+            "Distance": 2,
+            "Yard line": 52,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "No play / penalty",
+            "Text": "(Shotgun) PENALTY on NE-M.Pryor, False Start, 5 yards, enforced at NE 48 - No Play."
+          },
+          {
+            "Play ID": "4018730103135",
+            "Team": "New England Patriots",
+            "Period": 4,
+            "Clock": "15:00",
+            "Down": 4,
+            "Distance": 7,
+            "Yard line": 57,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "M.Wishnowsky punts 43 yards to CHI 14, Center-J.Ashby, fair catch by K.Raymond."
+          },
+          {
+            "Play ID": "4018730103145",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "14:53",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 14,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Official Timeout at 14:53."
+          },
+          {
+            "Play ID": "4018730103155",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "14:53",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 14,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "No play / penalty",
+            "Text": "D.Swift right tackle to CHI 16 for 2 yards (G.Jacas).PENALTY on CHI, Illegal Shift, 5 yards, enforced at CHI 14 - No Play."
+          },
+          {
+            "Play ID": "4018730103195",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "14:29",
+            "Down": 1,
+            "Distance": 15,
+            "Yard line": 9,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) D.Swift right end to CHI 16 for 7 yards (M.Jones)."
+          },
+          {
+            "Play ID": "4018730103217",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "13:50",
+            "Down": 2,
+            "Distance": 8,
+            "Yard line": 16,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) C.Williams pass short right to D.Swift pushed ob at CHI 13 for -3 yards (C.Elliss)."
+          },
+          {
+            "Play ID": "4018730103247",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "13:14",
+            "Down": 3,
+            "Distance": 11,
+            "Yard line": 13,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) C.Williams pass deep right to R.Odunze to CHI 34 for 21 yards (C.Gonzalez)."
+          },
+          {
+            "Play ID": "4018730103272",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "12:37",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 34,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "D.Swift right guard to CHI 39 for 5 yards (C.Durden)."
+          },
+          {
+            "Play ID": "4018730103294",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "11:54",
+            "Down": 2,
+            "Distance": 5,
+            "Yard line": 39,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) D.Swift right tackle to CHI 49 for 10 yards (K.Byard; C.Woods)."
+          },
+          {
+            "Play ID": "4018730103316",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "11:10",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 49,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": " (Shotgun) C.Williams pass short right to D.Swift to NE 47 for 4 yards (C.Gonzalez)."
+          },
+          {
+            "Play ID": "4018730103341",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "10:29",
+            "Down": 2,
+            "Distance": 6,
+            "Yard line": 53,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "R.Johnson right end to NE 43 for 4 yards (C.Elliss)."
+          },
+          {
+            "Play ID": "4018730103363",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "9:44",
+            "Down": 3,
+            "Distance": 2,
+            "Yard line": 57,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) C.Williams pass incomplete short right to C.Loveland."
+          },
+          {
+            "Play ID": "4018730103375",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "9:40",
+            "Down": 4,
+            "Distance": 2,
+            "Yard line": 57,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Timeout #1 by CHI at 09:40."
+          },
+          {
+            "Play ID": "4018730103386",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "9:40",
+            "Down": 4,
+            "Distance": 2,
+            "Yard line": 57,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(9:40) (Shotgun) C.Williams pass short middle to C.Loveland to NE 34 for 9 yards (C.Woods).\nPenalty on NE-C.Gonzalez, Illegal Use of Hands, declined."
+          },
+          {
+            "Play ID": "4018730103429",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "9:21",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 66,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "D.Swift right end to NE 34 for no gain (C.Woodson; C.Elliss)."
+          },
+          {
+            "Play ID": "4018730103451",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "8:41",
+            "Down": 2,
+            "Distance": 10,
+            "Yard line": 66,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Designed run",
+            "Text": "(Shotgun) D.Swift right guard to NE 35 for -1 yards (M.Jones, M.Williams)."
+          },
+          {
+            "Play ID": "4018730103473",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "8:08",
+            "Down": 3,
+            "Distance": 11,
+            "Yard line": 65,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pass attempt",
+            "Text": "(Shotgun) C.Williams pass incomplete deep right [C.Elliss]."
+          },
+          {
+            "Play ID": "4018730103496",
+            "Team": "Chicago Bears",
+            "Period": 4,
+            "Clock": "8:02",
+            "Down": 4,
+            "Distance": 11,
+            "Yard line": 65,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "C.Santos 53 yard field goal is No Good, Hit Right Upright, Center-S.Daly, Holder-T.Taylor."
+          },
+          {
+            "Play ID": "4018730103507",
+            "Team": "New England Patriots",
+            "Period": 4,
+            "Clock": "7:57",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 57,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Official Timeout at 07:57."
           }
         ],
         "situation_splits": [
@@ -1333,42 +1918,42 @@
             "Team": "New England Patriots",
             "Situation": "Within 7",
             "Phase": "Regulation",
-            "Classified dropbacks": 11,
-            "Designed runs": 7,
+            "Classified dropbacks": 14,
+            "Designed runs": 8,
             "Sacks": 1,
-            "Pass-call %": 61.1
+            "Pass-call %": 63.6
           },
           {
             "Team": "Chicago Bears",
             "Situation": "Within 7",
             "Phase": "Regulation",
-            "Classified dropbacks": 25,
-            "Designed runs": 14,
+            "Classified dropbacks": 34,
+            "Designed runs": 20,
             "Sacks": 2,
-            "Pass-call %": 64.1
+            "Pass-call %": 63.0
           },
           {
             "Team": "New England Patriots",
             "Situation": "Trailing by 8+",
             "Phase": "Regulation",
-            "Classified dropbacks": 7,
-            "Designed runs": 4,
+            "Classified dropbacks": 14,
+            "Designed runs": 6,
             "Sacks": 0,
-            "Pass-call %": 63.6
+            "Pass-call %": 70.0
           }
         ],
         "last_play": {
-          "Play ID": "4018730102446",
-          "Team": "Chicago Bears",
-          "Period": 3,
-          "Clock": "9:41",
-          "Down": -1,
-          "Distance": 0,
-          "Yard line": 85,
-          "Score margin before play": 13.0,
-          "Situation": "Leading by 8+",
+          "Play ID": "4018730103507",
+          "Team": "New England Patriots",
+          "Period": 4,
+          "Clock": "7:57",
+          "Down": 1,
+          "Distance": 10,
+          "Yard line": 57,
+          "Score margin before play": -6.0,
+          "Situation": "Within 7",
           "Classification": "Other",
-          "Text": "Official Timeout at 09:41."
+          "Text": "Official Timeout at 07:57."
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -1543,6 +2128,176 @@
             "Classification": "Other",
             "Text": "Official Timeout at 09:41."
           }
+        },
+        {
+          "observed_utc": "2026-10-23T02:51:32.976937+00:00",
+          "status": {
+            "displayClock": "7:57",
+            "period": 4,
+            "type": {
+              "id": "2",
+              "name": "STATUS_IN_PROGRESS",
+              "state": "in",
+              "completed": false,
+              "description": "In Progress",
+              "detail": "7:57 - 4th Quarter",
+              "shortDetail": "7:57 - 4th",
+              "statusPrimary": "7:57",
+              "statusSecondary": "4th"
+            },
+            "isTBDFlex": false,
+            "displayPeriod": "4th"
+          },
+          "scores": [
+            {
+              "team": "Chicago Bears",
+              "score": "27"
+            },
+            {
+              "team": "New England Patriots",
+              "score": "21"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "800bc2b38efc609f20f3",
+              "player": "New England Patriots",
+              "category": "Moneyline",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "84b511bf855bfec0c324",
+              "player": "TreVeyon Henderson",
+              "category": "Rushing yards",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "590e2340bb7856020497",
+              "player": "New England Patriots at Chicago Bears",
+              "category": "Game total points",
+              "observed_stat": 48.0
+            },
+            {
+              "pick_id": "184277d7622aec1ae677",
+              "player": "Drake Maye",
+              "category": "Passing yards",
+              "observed_stat": 275.0
+            },
+            {
+              "pick_id": "0297970a39a4d5bce93f",
+              "player": "D'Andre Swift",
+              "category": "Rushing yards",
+              "observed_stat": 68.0
+            },
+            {
+              "pick_id": "c43b9031681f6ef5ac49",
+              "player": "Rhamondre Stevenson",
+              "category": "Rushing yards",
+              "observed_stat": 22.0
+            },
+            {
+              "pick_id": "d81c0ae5f2ec13b7f53b",
+              "player": "Hunter Henry",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "7d8a6f5b8985c6e35a7d",
+              "player": "DeMario Douglas",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "2395933e824cf6c21880",
+              "player": "TreVeyon Henderson",
+              "category": "Anytime touchdown",
+              "observed_stat": 0
+            },
+            {
+              "pick_id": "adc2db133026b885b6c0",
+              "player": "Colston Loveland",
+              "category": "Receiving yards",
+              "observed_stat": 69.0
+            },
+            {
+              "pick_id": "c7d4b73dda31491440b2",
+              "player": "Drake Maye",
+              "category": "Anytime touchdown",
+              "observed_stat": 1
+            },
+            {
+              "pick_id": "6cbcf1085ce60c557d48",
+              "player": "Hunter Henry",
+              "category": "Receiving yards",
+              "observed_stat": 68.0
+            },
+            {
+              "pick_id": "ac6b437d807ce193549b",
+              "player": "Rome Odunze",
+              "category": "Receiving yards",
+              "observed_stat": 27.0
+            },
+            {
+              "pick_id": "acfdf2f2dbe30ac6ee2c",
+              "player": "DeMario Douglas",
+              "category": "Receiving yards",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "f3a1b2f08084db89361a",
+              "player": "Luther Burden III",
+              "category": "Receiving yards",
+              "observed_stat": 130.0
+            },
+            {
+              "pick_id": "e7c08f2f5a627de98ff1",
+              "player": "Chicago Bears",
+              "category": "Moneyline",
+              "observed_stat": null
+            }
+          ],
+          "situation_splits": [
+            {
+              "Team": "New England Patriots",
+              "Situation": "Within 7",
+              "Phase": "Regulation",
+              "Classified dropbacks": 14,
+              "Designed runs": 8,
+              "Sacks": 1,
+              "Pass-call %": 63.6
+            },
+            {
+              "Team": "Chicago Bears",
+              "Situation": "Within 7",
+              "Phase": "Regulation",
+              "Classified dropbacks": 34,
+              "Designed runs": 20,
+              "Sacks": 2,
+              "Pass-call %": 63.0
+            },
+            {
+              "Team": "New England Patriots",
+              "Situation": "Trailing by 8+",
+              "Phase": "Regulation",
+              "Classified dropbacks": 14,
+              "Designed runs": 6,
+              "Sacks": 0,
+              "Pass-call %": 70.0
+            }
+          ],
+          "last_play": {
+            "Play ID": "4018730103507",
+            "Team": "New England Patriots",
+            "Period": 4,
+            "Clock": "7:57",
+            "Down": 1,
+            "Distance": 10,
+            "Yard line": 57,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Other",
+            "Text": "Official Timeout at 07:57."
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -1551,7 +2306,7 @@
       "event_id": "401909093",
       "sport": "NBA",
       "game": "Cleveland Cavaliers at Philadelphia 76ers",
-      "updated_utc": "2026-10-23T02:09:42.942356+00:00",
+      "updated_utc": "2026-10-23T02:51:32.976937+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -8249,6 +9004,172 @@
       "observations": [
         {
           "observed_utc": "2026-10-23T02:09:42.942356+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "Philadelphia 76ers",
+              "score": "114"
+            },
+            {
+              "team": "Cleveland Cavaliers",
+              "score": "106"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "d7f46090039fe5f8c851",
+              "player": "James Harden",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "dec48b3b3de5b2c6738a",
+              "player": "Donovan Mitchell",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "12bf30ecf16caba77d4e",
+              "player": "Evan Mobley",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "2234f021753d4a489d92",
+              "player": "VJ Edgecombe",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "be5963012acc56c54596",
+              "player": "Jaylon Tyson",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "35599783e9fbc8123c62",
+              "player": "James Harden",
+              "category": "Points",
+              "observed_stat": 16.0
+            },
+            {
+              "pick_id": "a1d8e8f382ca6f09e730",
+              "player": "VJ Edgecombe",
+              "category": "Points",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "7d615269de2c6164d342",
+              "player": "Jaylon Tyson",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "3c1eedd3d67bad090039",
+              "player": "Sam Merrill",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "5c93b65b967e16f14264",
+              "player": "Tyrese Maxey",
+              "category": "PRA",
+              "observed_stat": 41.0
+            },
+            {
+              "pick_id": "049d3035d7aafdbbf4a5",
+              "player": "James Harden",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "2a745226e021e58da8dc",
+              "player": "VJ Edgecombe",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "9c88539bf887a121b2ba",
+              "player": "Jaylon Tyson",
+              "category": "PRA",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "423f6c3d0a516403d89a",
+              "player": "Tyrese Maxey",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "5d8338b2e788c3b82bef",
+              "player": "Tyrese Maxey",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "aee34dd42ef6ccd209bf",
+              "player": "James Harden",
+              "category": "Three-pointers made",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "71ae997ec03c24a0c04a",
+              "player": "Sam Merrill",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "7e9db16618cdde947cdd",
+              "player": "VJ Edgecombe",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "1159a9d6648b53f83619",
+              "player": "Joel Embiid",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "ebd93680549497c7ae62",
+              "player": "Jaylon Tyson",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "398772b5e9437edff74a",
+              "player": "Cleveland Cavaliers",
+              "category": "Moneyline",
+              "observed_stat": null
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909093748",
+            "Team": null,
+            "Period": 4,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Game",
+            "Text": "End of Game"
+          }
+        },
+        {
+          "observed_utc": "2026-10-23T02:51:32.976937+00:00",
           "status": {
             "type": {
               "id": "3",
