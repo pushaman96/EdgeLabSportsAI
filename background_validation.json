@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T22:04:12.838545+00:00",
+  "generated_utc": "2026-10-23T22:39:13.111408+00:00",
   "paired": {
     "NFL": [
       {
@@ -196,8 +196,8 @@
       {
         "Category": "Assists",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 39,
-        "Distinct games": 5,
+        "Frozen forecasts": 64,
+        "Distinct games": 8,
         "Projection MAE comparisons": 39,
         "Projection MAE games": 5,
         "Base Projection MAE": 1.3624186083537737,
@@ -259,8 +259,8 @@
       {
         "Category": "PRA",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit / joint PRA v1",
-        "Frozen forecasts": 39,
-        "Distinct games": 5,
+        "Frozen forecasts": 64,
+        "Distinct games": 8,
         "Projection MAE comparisons": 39,
         "Projection MAE games": 5,
         "Base Projection MAE": 6.7686021537713,
@@ -280,8 +280,8 @@
       {
         "Category": "Points",
         "Model": "NBA minutes-shot-opportunities v1 / chronological benchmark",
-        "Frozen forecasts": 8,
-        "Distinct games": 1,
+        "Frozen forecasts": 38,
+        "Distinct games": 4,
         "Projection MAE comparisons": 8,
         "Projection MAE games": 1,
         "Base Projection MAE": 5.117557804399875,
@@ -318,6 +318,27 @@
         "Base Brier": 0.23345766992390887,
         "Issued Brier": 0.23164710053946053,
         "Issued minus base Brier": -0.0018105693844483461
+      },
+      {
+        "Category": "Rebounds",
+        "Model": "NBA minutes-shot-opportunities v1 / chronological benchmark",
+        "Frozen forecasts": 30,
+        "Distinct games": 3,
+        "Projection MAE comparisons": 0,
+        "Projection MAE games": 0,
+        "Base Projection MAE": null,
+        "Issued Projection MAE": null,
+        "Issued minus base Projection MAE": null,
+        "Workload MAE comparisons": 0,
+        "Workload MAE games": 0,
+        "Base Workload MAE": null,
+        "Issued Workload MAE": null,
+        "Issued minus base Workload MAE": null,
+        "Brier comparisons": 0,
+        "Brier games": 0,
+        "Base Brier": null,
+        "Issued Brier": null,
+        "Issued minus base Brier": null
       },
       {
         "Category": "Rebounds",
@@ -364,8 +385,8 @@
       {
         "Category": "Three-pointers made",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 41,
-        "Distinct games": 5,
+        "Frozen forecasts": 65,
+        "Distinct games": 8,
         "Projection MAE comparisons": 41,
         "Projection MAE games": 5,
         "Base Projection MAE": 1.2609428348334084,
