@@ -5,7 +5,8 @@ from urllib.request import urlopen
 
 FINAL = ('Win', 'Loss', 'Push')
 FIELDS = ('result', 'actual', 'profit_per_1', 'graded_utc', 'grading_note',
-          'actual_opportunities', 'count_miss', 'yardage_miss', 'opportunity_miss')
+          'actual_opportunities', 'count_miss', 'yardage_miss', 'opportunity_miss',
+          'settlement_source','settlement_checked_utc','settlement_source_status')
 
 
 def merge_grades(records, updates):

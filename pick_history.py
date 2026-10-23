@@ -148,16 +148,34 @@ def grade_record(record,data):
     if r.get('expected_opportunities') is not None and r.get('actual_opportunities') is not None:r['opportunity_miss']=r['actual_opportunities']-float(r['expected_opportunities'])
     return r
 
-def grade_all(records,fetch=None):
+def grade_all(records,fetch=None,fallback=None):
+    custom_fetch=fetch is not None
     fetch=fetch or (lambda eid,sport:json.load(urlopen(SUMMARY.format(sport='basketball/nba' if sport=='NBA' else 'football/nfl')+eid,timeout=20)))
+    if fallback is None and not custom_fetch:
+        from secondary_settlement import resolve
+        fallback=resolve
     cache={};out=[]
     for record in records:
         if record.get('result')!='Pending':out.append(record);continue
-        eid=record['event_id'];cache_key=(record.get('sport','NFL'),eid)
+        eid=record['event_id'];cache_key=(record.get('sport','NFL'),eid);data=None
         try:
             if cache_key not in cache:cache[cache_key]=fetch(eid,record.get('sport','NFL'))
-            out.append(grade_record(record,cache[cache_key]))
-        except (OSError,ValueError,KeyError,TypeError):out.append(dict(record,grading_note='Source unavailable or inconsistent; remains Pending. Refresh to retry.'))
+            data=cache[cache_key]
+            graded=grade_record(record,data)
+            if graded.get('result') in ('Win','Loss','Push'):
+                graded.update(settlement_source='ESPN final box score',settlement_checked_utc=datetime.now(timezone.utc).isoformat(),settlement_source_status='Verified primary')
+        except (OSError,ValueError,KeyError,TypeError):
+            graded=dict(record,grading_note='Primary source unavailable or inconsistent; remains Pending.')
+        if graded.get('result')=='Pending' and fallback:
+            try:
+                competition=(data or {}).get('header',{}).get('competitions') or [{}]
+                state=competition[0].get('status',{}).get('type',{}).get('state')
+                due=datetime.now(timezone.utc)>=utc(record['starts_utc'])
+                if due and state not in ('pre','in'):
+                    graded=fallback(graded,data)
+            except (KeyError,ValueError,TypeError,OSError):
+                graded=dict(graded,grading_note='Final evidence unavailable; automatic retry pending.')
+        out.append(graded)
     return out
 
 def render_history(sport='NFL'):

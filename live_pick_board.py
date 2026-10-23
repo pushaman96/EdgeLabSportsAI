@@ -54,6 +54,9 @@ def build_board(records,summaries,now=None,team_assets=None):
         seen.add(record.get('id'))
         row={'Player / team':record['player'],'Live stat':None,'Pick':record['direction']+(' '+str(record['line']) if record.get('line') is not None else ''),'Category':record['category'],'Live position':'Waiting for kickoff','Final result':'Pending','Game':record['game'],'Period / clock':'—','Score':'—','Difference vs line':None,'Frozen model probability %':round(100*record['probability'],1) if number(record.get('probability')) is not None else None,'Odds':record.get('odds'),'Sportsbook':record.get('sportsbook'),'Strategy':record.get('strategy','Original'),'Kickoff Pacific':utc(record['starts_utc']).astimezone(PACIFIC).strftime('%a %m/%d %I:%M %p'),'Data checked UTC':None,'Model':record.get('model'),'Pick ID':record.get('id')}
         row['Short reason']=short_reason(record)
+        row['Settlement source']=record.get('settlement_source','Not verified yet')
+        row['Settlement status']=record.get('settlement_source_status',record.get('grading_note','Pending final evidence'))
+        row['Settlement checked UTC']=record.get('settlement_checked_utc')
         key=(record.get('sport','NFL'),str(record['event_id']));item=summaries.get(key)
         valid_data=item.get('data') if item and str(item.get('data',{}).get('header',{}).get('id',''))==str(record['event_id']) else None
         emblem=pick_team(record,valid_data,team_assets)
