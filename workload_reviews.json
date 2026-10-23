@@ -56,6 +56,39 @@
       "baseline_workload_mae": 3.24619541920454,
       "candidate_stat_mae": 1.3789166666666666,
       "baseline_stat_mae": 1.3603495523717186
+    },
+    {
+      "sport": "NFL",
+      "category": "Passing yards",
+      "season_stage": "Established season",
+      "forecasts": 1,
+      "distinct_games": 1,
+      "candidate_workload_mae": 0.5799999999999983,
+      "baseline_workload_mae": 0.2235294117647051,
+      "candidate_stat_mae": 59.370000000000005,
+      "baseline_stat_mae": 56.275798284553275
+    },
+    {
+      "sport": "NFL",
+      "category": "Receiving yards",
+      "season_stage": "Established season",
+      "forecasts": 3,
+      "distinct_games": 1,
+      "candidate_workload_mae": 3.55,
+      "baseline_workload_mae": 3.5509803921568626,
+      "candidate_stat_mae": 23.013333333333335,
+      "baseline_stat_mae": 22.77894831220763
+    },
+    {
+      "sport": "NFL",
+      "category": "Rushing yards",
+      "season_stage": "Established season",
+      "forecasts": 3,
+      "distinct_games": 1,
+      "candidate_workload_mae": 6.16,
+      "baseline_workload_mae": 6.159500466853408,
+      "candidate_stat_mae": 22.779999999999998,
+      "baseline_stat_mae": 22.78048360984433
     }
   ],
   "prediction_model_groups": [
@@ -113,9 +146,82 @@
       "Probability comparison games": 1,
       "Candidate minus incumbent Brier": 0.03658225416272178,
       "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NFL",
+      "Category": "Passing yards",
+      "Candidate": "NFL season-prior workload v2 / team-share matchup",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": 5.3172029738001925,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": 0.020878971998105456,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NFL",
+      "Category": "Receiving yards",
+      "Candidate": "NFL season-prior workload v2 / team-share matchup",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": 0.4660892662161705,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": -0.022087121559108813,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
+    },
+    {
+      "sport": "NFL",
+      "Category": "Rushing yards",
+      "Candidate": "NFL season-prior workload v2 / team-share matchup",
+      "Distinct games": 1,
+      "Stat comparison games": 1,
+      "Candidate minus incumbent MAE": -0.3286398171499367,
+      "Probability comparison games": 1,
+      "Candidate minus incumbent Brier": -0.023231667751375206,
+      "Status": "Frozen prospective comparison; negative differences favor candidate, not proof of profitability"
     }
   ],
   "nba_role_groups": [],
-  "nfl_role_groups": [],
+  "nfl_role_groups": [
+    {
+      "sport": "NFL",
+      "category": "Passing yards",
+      "forecasts": 2,
+      "distinct_games": 1,
+      "role_workload_mae": 2.0,
+      "base_workload_mae": 0.8749999999999982,
+      "role_stat_mae": 59.58451543983142,
+      "base_stat_mae": 67.82499999999999,
+      "range_comparisons": 2,
+      "range_coverage_pct": 100,
+      "status": "Prospective research comparison only; no automatic promotion"
+    },
+    {
+      "sport": "NFL",
+      "category": "Receiving yards",
+      "forecasts": 5,
+      "distinct_games": 1,
+      "role_workload_mae": 3.1,
+      "base_workload_mae": 2.974,
+      "role_stat_mae": 34.061876927590816,
+      "base_stat_mae": 31.508,
+      "range_comparisons": 5,
+      "range_coverage_pct": 80.0,
+      "status": "Prospective research comparison only; no automatic promotion"
+    },
+    {
+      "sport": "NFL",
+      "category": "Rushing yards",
+      "forecasts": 3,
+      "distinct_games": 1,
+      "role_workload_mae": 6.5,
+      "base_workload_mae": 6.159999999999999,
+      "role_stat_mae": 23.956692345478814,
+      "base_stat_mae": 22.776666666666667,
+      "range_comparisons": 3,
+      "range_coverage_pct": 100,
+      "status": "Prospective research comparison only; no automatic promotion"
+    }
+  ],
   "status": "Prospective research comparison only. No automatic promotion or causal diagnosis."
 }

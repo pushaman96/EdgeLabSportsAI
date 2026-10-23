@@ -46120,9 +46120,12 @@
       "published_utc": "2026-10-22T13:43:40.897282+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": {
+        "Chicago Bears": "30",
+        "New England Patriots": "24"
+      },
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": null,
       "reason": "Historical Elo exceeds the quoted break-even price by at least five points. Injury warnings do not block this candidate; injury effects, replacement quality and weather are not numerically modeled. Injury verification: Chicago Bears: Key-player availability changes are not modeled: Kyle Monangai: Out / roster Active | New England Patriots: Recent primary QB and major usage players passed availability checks; Elo remains unadjusted for injuries, replacements, offensive line and defense.; checked 2026-10-22T13:43:02.520613+00:00",
@@ -46224,7 +46227,9 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756056+00:00",
+      "grading_note": "Final ESPN score; tied two-way moneyline recorded as Push. Platform rules may differ."
     },
     {
       "id": "84b511bf855bfec0c324",
@@ -46243,9 +46248,9 @@
       "published_utc": "2026-10-22T13:47:54.211565+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 9.0,
+      "profit_per_1": -1,
       "projected_yards": 38.73,
       "expected_opportunities": 9.29,
       "reason": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -46819,7 +46824,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T13:47:10.995070+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 3.0,
+      "graded_utc": "2026-10-23T03:32:31.756108+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": -29.729999999999997,
+      "opportunity_miss": -6.289999999999999
     },
     {
       "id": "590e2340bb7856020497",
@@ -46838,9 +46848,9 @@
       "published_utc": "2026-10-22T13:47:54.211834+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 54.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": null,
       "reason": "Last-season offense and opponent points allowed blended with strictly earlier current-season games. No injury/weather multiplier; overtime stays in final scores. Availability coverage checked; injuries and weather are not numerically adjusted. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -46953,7 +46963,10 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756125+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": 7.917000000000002
     },
     {
       "id": "184277d7622aec1ae677",
@@ -46972,9 +46985,9 @@
       "published_utc": "2026-10-22T13:47:54.211969+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 321.0,
+      "profit_per_1": 1.1,
       "projected_yards": 259.41,
       "expected_opportunities": 30.16,
       "reason": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -47550,7 +47563,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T13:47:10.995070+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-23T03:32:31.756143+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 61.589999999999975,
+      "opportunity_miss": 0.8399999999999999
     },
     {
       "id": "0297970a39a4d5bce93f",
@@ -47569,9 +47587,9 @@
       "published_utc": "2026-10-22T13:47:54.212088+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 78.0,
+      "profit_per_1": -1,
       "projected_yards": 59.92,
       "expected_opportunities": 14.57,
       "reason": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate.",
@@ -48145,7 +48163,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T13:47:10.995070+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-23T03:32:31.756168+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 18.08,
+      "opportunity_miss": 7.43
     },
     {
       "id": "c43b9031681f6ef5ac49",
@@ -48164,9 +48187,9 @@
       "published_utc": "2026-10-22T13:47:54.212234+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 22.0,
+      "profit_per_1": 1.75,
       "projected_yards": 42.52,
       "expected_opportunities": 10.76,
       "reason": "Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change.",
@@ -48740,7 +48763,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T13:47:10.995070+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 6.0,
+      "graded_utc": "2026-10-23T03:32:31.756189+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": -20.520000000000003,
+      "opportunity_miss": -4.76
     },
     {
       "id": "d81c0ae5f2ec13b7f53b",
@@ -48759,9 +48787,9 @@
       "published_utc": "2026-10-22T13:47:54.212359+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 4.447058823529412,
       "reason": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -48875,7 +48903,10 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756401+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -0.397
     },
     {
       "id": "7d8a6f5b8985c6e35a7d",
@@ -48894,9 +48925,9 @@
       "published_utc": "2026-10-22T13:47:54.212473+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 4.475,
       "reason": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -49010,7 +49041,10 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756525+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -0.365
     },
     {
       "id": "2395933e824cf6c21880",
@@ -49029,9 +49063,9 @@
       "published_utc": "2026-10-22T13:47:54.212562+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 11.081699346405228,
       "reason": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -49145,7 +49179,10 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756643+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -0.31
     },
     {
       "id": "adc2db133026b885b6c0",
@@ -49164,9 +49201,9 @@
       "published_utc": "2026-10-22T14:28:53.696767+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 69.0,
+      "profit_per_1": -1,
       "projected_yards": 43.57,
       "expected_opportunities": 5.75,
       "reason": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. One loaded quote retained by estimated return; other sportsbook entries consolidated.",
@@ -49872,7 +49909,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T14:27:32.790961+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 12.0,
+      "graded_utc": "2026-10-23T03:32:31.756674+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 25.43,
+      "opportunity_miss": 6.25
     },
     {
       "id": "c7d4b73dda31491440b2",
@@ -49891,9 +49933,9 @@
       "published_utc": "2026-10-22T14:28:53.697117+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 1,
+      "profit_per_1": 3.5,
       "projected_yards": null,
       "expected_opportunities": 5.897058823529411,
       "reason": "Carries + targets \u00d7 smoothed offensive TDs/opportunity; passing TDs are not scored TDs; return TDs, red-zone roles and lineup redistribution are not modeled Offensive-only probability estimate; return TDs are not modeled. Not verified profitability.",
@@ -50007,7 +50049,10 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756800+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": 0.757
     },
     {
       "id": "6cbcf1085ce60c557d48",
@@ -50026,9 +50071,9 @@
       "published_utc": "2026-10-22T15:16:59.450433+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 71.0,
+      "profit_per_1": 0.43478260869565216,
       "projected_yards": 41.57,
       "expected_opportunities": 4.39,
       "reason": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
@@ -50706,7 +50751,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T15:15:20.169499+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 7.0,
+      "graded_utc": "2026-10-23T03:32:31.756829+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 29.43,
+      "opportunity_miss": 2.6100000000000003
     },
     {
       "id": "ac6b437d807ce193549b",
@@ -50725,9 +50775,9 @@
       "published_utc": "2026-10-22T15:16:59.450517+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 69.0,
+      "profit_per_1": 0.47619047619047616,
       "projected_yards": 54.12,
       "expected_opportunities": 6.84,
       "reason": "Team volume \u00d7 player workload share and bounded opponent-volume candidate passed later historical workload/stat and synthetic-line probability checks. Last-season starting estimate blended with current-season usage; Last-season opponent production allowed blended with current-season games. Season-stage stat baseline passed; probabilities and price profitability are unverified. Teammate injury effects are not numerically included in this candidate. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
@@ -51405,7 +51455,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T15:15:20.169499+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 5.0,
+      "graded_utc": "2026-10-23T03:32:31.756857+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 14.880000000000003,
+      "opportunity_miss": -1.8399999999999999
     },
     {
       "id": "acfdf2f2dbe30ac6ee2c",
@@ -51424,9 +51479,9 @@
       "published_utc": "2026-10-22T15:16:59.450699+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 23.0,
+      "profit_per_1": 0.5882352941176471,
       "projected_yards": 38.8,
       "expected_opportunities": 5.0,
       "reason": "6 recent games; expected 5.0 opportunities; opponent historical receiving yards allowed: 90% of league average (context, not a standalone direction signal). Availability: Active. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather. New teammates with limited team history: Ryan Miller. Target/carry redistribution is not quantified; previous shares may change. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
@@ -52039,7 +52094,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T15:15:20.169499+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 4.0,
+      "graded_utc": "2026-10-23T03:32:31.756886+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": -15.799999999999997,
+      "opportunity_miss": -1.0
     },
     {
       "id": "f3a1b2f08084db89361a",
@@ -52058,9 +52118,9 @@
       "published_utc": "2026-10-22T15:16:59.450824+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 130.0,
+      "profit_per_1": -1,
       "projected_yards": 58.0,
       "expected_opportunities": 7.17,
       "reason": "6 recent games; expected 7.2 opportunities; opponent historical receiving yards allowed: 102% of league average (context, not a standalone direction signal). Availability: Active. Additional absence and score-state effects are separate research scenarios, not automatic forecast boosts. Confirm lineup/weather. One loaded quote retained by highest estimated win probability; payout does not choose the direction.",
@@ -52673,7 +52733,12 @@
         "ESPN scheduled start UTC": "2026-10-23T00:15Z",
         "NFL depth checked UTC": "2026-10-22T15:15:20.169499+00:00"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 4.0,
+      "graded_utc": "2026-10-23T03:32:31.756915+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "yardage_miss": 72.0,
+      "opportunity_miss": -3.17
     },
     {
       "id": "e7c08f2f5a627de98ff1",
@@ -52692,9 +52757,12 @@
       "published_utc": "2026-10-22T15:19:31.066059+00:00",
       "starts_utc": "2026-10-23T00:15:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": {
+        "Chicago Bears": "30",
+        "New England Patriots": "24"
+      },
+      "profit_per_1": 0.6451612903225806,
       "projected_yards": null,
       "expected_opportunities": null,
       "reason": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Chicago Bears: Key-player availability changes are not modeled: Kyle Monangai: Out / roster Active | New England Patriots: Recent primary QB and major usage players passed availability checks; Elo remains unadjusted for injuries, replacements, offensive line and defense.; checked 2026-10-22T15:19:04.010914+00:00",
@@ -52796,7 +52864,9 @@
         "Odds scheduled start UTC": "2026-10-23T00:15:00Z",
         "ESPN scheduled start UTC": "2026-10-23T00:15Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "graded_utc": "2026-10-23T03:32:31.756920+00:00",
+      "grading_note": "Final ESPN score; tied two-way moneyline recorded as Push. Platform rules may differ."
     },
     {
       "id": "d7f46090039fe5f8c851",
