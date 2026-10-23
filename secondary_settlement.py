@@ -24,7 +24,7 @@ def day(record):
 @lru_cache(maxsize=16)
 def download(url,bucket):
     with urlopen(url,timeout=25) as response:raw=response.read().decode('utf-8-sig')
-    return json.loads(raw) if url.endswith('.json') else list(csv.DictReader(io.StringIO(raw)))
+    return json.loads(raw) if raw.lstrip().startswith(('{','[')) else list(csv.DictReader(io.StringIO(raw)))
 _failed_downloads={}
 def load(url):
     bucket=int(time.time()//900)
@@ -104,6 +104,51 @@ def nba_summary(record,game,expected_id):
     output['boxscore']['players']=[{'statistics':[{'labels':labels,'athletes':[{'athlete':{'displayName':record['player']},'stats':values}]}]}]
     return output
 
+NBA_ARCHIVE='https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_player_boxscores/player_box_{}.csv'
+ARCHIVE_FIELDS={'Points':'points','Rebounds':'rebounds','Assists':'assists','Three-pointers made':'three_point_field_goals_made','Steals':'steals','Blocks':'blocks'}
+
+def final_status(record,data):
+    header=data.get('header',{})
+    competitions=header.get('competitions') or [{}]
+    return str(header.get('id'))==str(record['event_id']) and competitions[0].get('status',{}).get('type',{}).get('completed') is True
+
+def archive_summary(record,rows,primary):
+    if not final_status(record,primary or {}):raise ValueError('Final NBA status not verified')
+    away,home=record['game'].split(' at ')
+    selected=[r for r in rows if str(r.get('game_id'))==str(record['event_id']) and r.get('game_date')==day(record).isoformat() and str(r.get('season_type'))=='2']
+    expected={home:away,away:home};scores={}
+    for r in selected:
+        team=r.get('team_display_name')
+        if team not in expected or r.get('opponent_team_display_name')!=expected[team]:raise ValueError('NBA archive team identity mismatch')
+        score=number(r.get('team_score'));opp=number(r.get('opponent_team_score'))
+        if score is None or opp is None or min(score,opp)<0:raise ValueError('NBA archive final scores missing')
+        pair=(score,opp)
+        if team in scores and scores[team]!=pair:raise ValueError('NBA archive scores disagree')
+        scores[team]=pair
+    if set(scores)!={home,away} or scores[home]!=(scores[away][1],scores[away][0]):raise ValueError('NBA archive game incomplete')
+    output=final_summary(record,home,away,scores[home][0],scores[away][0])
+    if record['category'] in ('Moneyline','Game total points'):return output
+    matched=[r for r in selected if key(r.get('athlete_display_name'))==key(record['player'])]
+    if len(matched)!=1:raise ValueError('NBA archive athlete identity ambiguous')
+    row=matched[0]
+    if str(row.get('did_not_play')).lower()!='false' or number(row.get('minutes')) is None or number(row.get('minutes'))<=0:raise ValueError('NBA archive participation unverified')
+    required=['points','rebounds','assists'] if record['category']=='PRA' else [ARCHIVE_FIELDS.get(record['category'])]
+    if None in required or any(number(row.get(f)) is None for f in required):raise ValueError('NBA archive requested statistic missing')
+    pairs=[({'Points':'PTS','Rebounds':'REB','Assists':'AST','Three-pointers made':'3PT','Steals':'STL','Blocks':'BLK'}[cat],number(row.get(field))) for cat,field in ARCHIVE_FIELDS.items() if number(row.get(field)) is not None]
+    pairs.append(('MIN',number(row['minutes'])))
+    output['boxscore']['players']=[{'statistics':[{'labels':[k for k,v in pairs],'athletes':[{'athlete':{'displayName':record['player']},'stats':[str(v) for k,v in pairs]}]}]}]
+    return output
+
+def archive_fallback(record,primary):
+    verified=primary if final_status(record,primary or {}) else None
+    if verified is None:
+        board=load('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates='+day(record).strftime('%Y%m%d'))
+        events=[e for e in board.get('events',[]) if str(e.get('id'))==str(record['event_id']) and e.get('name')==record['game']]
+        if len(events)!=1:raise ValueError('Final NBA scoreboard event unavailable')
+        verified={'header':{'id':str(record['event_id']),'competitions':events[0].get('competitions',[])}}
+    year=day(record).year+int(day(record).month>=7)
+    return archive_summary(record,load(NBA_ARCHIVE.format(year)),verified),'SportsDataverse ESPN-derived archive; final status verified separately'
+
 def secondary(record,primary=None):
     if record.get('sport','NFL')=='NFL':
         schedule=load(NFL_SCHEDULE)
@@ -113,8 +158,11 @@ def secondary(record,primary=None):
             if len(candidates)!=1:raise ValueError('NFL season identity unavailable')
             stats=load('https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_'+str(candidates[0]['season'])+'.csv')
         return nfl_summary(record,schedule,stats),'nflverse final schedule/weekly player statistics'
-    gid=nba_game_id(record,load(NBA_SCHEDULE))
-    return nba_summary(record,load(NBA_BOX.format(gid))['game'],gid),'NBA official final box score'
+    try:
+        gid=nba_game_id(record,load(NBA_SCHEDULE))
+        return nba_summary(record,load(NBA_BOX.format(gid))['game'],gid),'NBA official final box score'
+    except Exception:
+        return archive_fallback(record,primary)
 
 def resolve(record,primary=None,fetch=secondary):
     from pick_history import grade_record
