@@ -1336,10 +1336,10 @@ with score_tab:
             scoreboard = get_scoreboard(SPORTS[sport], selected_date)
         if scoreboard.get('_feed_health',{}).get('stale'):st.warning('ESPN is delayed. Showing last-good scores from '+scoreboard['_feed_health']['retrieved_utc']+'; automatic retry is pending.')
         show_games(scoreboard, SPORTS[sport])
-        if sport == "NFL":
+        if sport in ("NFL", "NBA"):
             with st.expander("Game winner probabilities — selected date"):
-                st.caption("Historical Elo estimates with current injury warnings. Injury issues do not block moneyline candidates; percentages are not numerically injury-adjusted.")
-                if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities"):
+                st.caption("Historical Elo estimates with current injury warnings. Injury issues do not block moneyline candidates; percentages are not numerically injury-adjusted." if sport=="NFL" else "NBA historical Elo win estimates. Opening-season forecasts can use labeled prior-season ratings. Regular-season pregame games only; injuries and lineup changes are not numerically adjusted. Uses free history—no odds credits.")
+                if st.button("Calculate winner probabilities for these games", key="scoreboard_winner_probabilities_"+sport):
                     try:
                         contexts = sportsbook_model_context(sport, scoreboard)
                         forecast_rows = []
@@ -1354,8 +1354,8 @@ with score_tab:
                                 p = context['probability']
                                 forecast_rows.append({'Game':event.get('name'), 'Model lean':(home if p >= .5 else away) if context['eligible'] else 'PASS — history/season not eligible',
                                     'Winner probability %':round(max(p,1-p)*100,1) if context['eligible'] else None, 'Home team':home, 'Historical Elo home %':round(p*100,1), 'Away team':away,
-                                    'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'],
-                                    'Injury verification':context.get('injury_reason'),'Verified UTC':context.get('injury_checked_utc'),'Status':('Injury warning — historical Elo only' if not context.get('injury_verified') else 'Availability checked — historical Elo only') if context['eligible'] else 'History/season not eligible'})
+                                    'Historical Elo away %':round((1-p)*100,1), 'History through':context['cutoff'], 'History basis':context.get('history_basis'),
+                                    'Injury verification':context.get('injury_reason') if sport=='NFL' else 'NBA injury and lineup effects not numerically modeled','Verified UTC':context.get('injury_checked_utc'),'Status':(('Injury warning — historical Elo only' if not context.get('injury_verified') else 'Availability checked — historical Elo only') if sport=='NFL' else 'Experimental NBA historical Elo estimate') if context['eligible'] else 'History/season not eligible'})
                         forecast_rows=highest_probability(forecast_rows,"Winner probability %")
                         if forecast_rows:render_team_table(forecast_rows, hide_index=True, use_container_width=True, sport=sport)
                         else:st.info('No matched upcoming games available for a pregame forecast.')
