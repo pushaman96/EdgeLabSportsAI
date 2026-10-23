@@ -20,7 +20,10 @@ import live_pick_board
 import pick_cards
 import app_view
 import dashboard_history
-for _display_module in (team_emblems,live_pick_board,pick_cards,app_view,dashboard_history,pick_history):
+import forecast_tracking
+import forecast_archive
+import automatic_reports
+for _display_module in (team_emblems,live_pick_board,pick_cards,app_view,dashboard_history,pick_history,forecast_archive,forecast_tracking,automatic_reports):
     if getattr(_display_module,'_BOARD_RELEASE',None)!='admin-layout-v4':
         importlib.reload(_display_module)
         _display_module._BOARD_RELEASE='admin-layout-v4'
