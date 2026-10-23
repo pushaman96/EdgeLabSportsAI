@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-23T22:29:26.082671+00:00",
+  "checked_utc": "2026-10-23T23:01:05.644244+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
@@ -14077,6 +14077,343 @@
             "Classification": "End Game",
             "Text": "End of Game"
           }
+        }
+      ],
+      "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
+    },
+    "NBA:401909845": {
+      "event_id": "401909845",
+      "sport": "NBA",
+      "game": "Minnesota Timberwolves at Orlando Magic",
+      "updated_utc": "2026-10-23T23:01:05.466398+00:00",
+      "completed": false,
+      "latest_situations": {
+        "schema": 1,
+        "sport": "NBA",
+        "event_id": "401909845",
+        "completed": false,
+        "plays": [],
+        "situation_splits": [],
+        "last_play": null,
+        "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
+        "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
+      },
+      "observations": [
+        {
+          "observed_utc": "2026-10-23T23:01:05.466398+00:00",
+          "status": {
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "Fri, October 23rd at 7:00 PM EDT",
+              "shortDetail": "10/23 - 7:00 PM EDT"
+            }
+          },
+          "scores": [
+            {
+              "team": "Orlando Magic",
+              "score": null
+            },
+            {
+              "team": "Minnesota Timberwolves",
+              "score": null
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "399d2a60c97fa688357c",
+              "player": "Jaden McDaniels",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "79b15975ae218b42bbc1",
+              "player": "Desmond Bane",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "2f182fe10aa0d0a07543",
+              "player": "Ayo Dosunmu",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "7b5ec8a2d172b1103332",
+              "player": "Jalen Suggs",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "77bf79476d21d2d85d91",
+              "player": "Franz Wagner",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "d092843a374db3727aad",
+              "player": "Anthony Edwards",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "a65a5c6133d9c9e9e278",
+              "player": "Paolo Banchero",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "6322282f11e8776f14d3",
+              "player": "Jaden McDaniels",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "c177f583653e4394d847",
+              "player": "Rudy Gobert",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "59e9ad4568ee53ca753e",
+              "player": "Tristan da Silva",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "edfdc66769e35afa6ba4",
+              "player": "Terrence Shannon Jr.",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "4721ec978f9c215facd6",
+              "player": "Desmond Bane",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "00adc33856e3e91ecd50",
+              "player": "Franz Wagner",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "0d5ed6ccc82130549c39",
+              "player": "Jalen Suggs",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "ee4714965ac618796c1f",
+              "player": "Wendell Carter Jr",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "072dc3c918dff256a52c",
+              "player": "Ayo Dosunmu",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "21a580dd76a10b7f2c0f",
+              "player": "Anthony Edwards",
+              "category": "Points",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "893d4e2ccf4f0c73a834",
+              "player": "Jaden McDaniels",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "918d04d99a2934c6fe62",
+              "player": "Desmond Bane",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "b3cd490e8c51e0928ab7",
+              "player": "Anthony Edwards",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "e3395bd89d39db715c21",
+              "player": "Franz Wagner",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "9956686e811bb96019fc",
+              "player": "Ayo Dosunmu",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "1e90c8b5f99edc5a8f27",
+              "player": "Jalen Suggs",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "dd106102ca5c5289728a",
+              "player": "Paolo Banchero",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "20bf36c360ddda906f28",
+              "player": "Desmond Bane",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "542f6e379ce214b4650e",
+              "player": "Jaden McDaniels",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "adfd4ffc9fa4c141f9e2",
+              "player": "Wendell Carter Jr",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "7bc56a2bb0212326feca",
+              "player": "Ayo Dosunmu",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "f65fe7c20fd7c79f9f8a",
+              "player": "Rudy Gobert",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "fe6877615fce76eccc78",
+              "player": "Jalen Suggs",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "a7e0117aea47e01e47c2",
+              "player": "Franz Wagner",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "0f2b597a9022ad6d7123",
+              "player": "Anthony Edwards",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "1dc0de011745e3f153e4",
+              "player": "Paolo Banchero",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "0550efc971390f5654c2",
+              "player": "Jaden McDaniels",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "795203838b500c9c3c90",
+              "player": "Desmond Bane",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "db0654fb7af4f3061690",
+              "player": "Ayo Dosunmu",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "69380fc583d0251c7c8b",
+              "player": "Jalen Suggs",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "4306dd1779a6ed073ea8",
+              "player": "Paolo Banchero",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "ce5b944d25d9ec66f667",
+              "player": "Anthony Edwards",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "55bf2a657619b7e5da7c",
+              "player": "Franz Wagner",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "40426c90b47c8a5b1759",
+              "player": "Rudy Gobert",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "aeef6454679703ce4c1b",
+              "player": "Tristan da Silva",
+              "category": "PRA",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "bc7b48e8e886d92ed7fc",
+              "player": "Tristan da Silva",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "13baa6b40b348077aa65",
+              "player": "Tristan da Silva",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "767164250364401c9403",
+              "player": "Terrence Shannon Jr.",
+              "category": "Three-pointers made",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "fe19c7f80e1f764b4714",
+              "player": "Terrence Shannon Jr.",
+              "category": "Rebounds",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "16ceb1f0f601d5937e8f",
+              "player": "Rudy Gobert",
+              "category": "Assists",
+              "observed_stat": null
+            },
+            {
+              "pick_id": "c3e9f0ea8ee46f8efa4f",
+              "player": "Tristan da Silva",
+              "category": "Assists",
+              "observed_stat": null
+            }
+          ],
+          "situation_splits": [],
+          "last_play": null
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
