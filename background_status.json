@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T19:39:08.791985+00:00",
+  "generated_utc": "2026-10-23T20:38:02.451522+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
@@ -11,16 +11,8 @@
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
       "upcoming_games": 19,
-      "prepared_projections": 2485,
+      "prepared_projections": 2490,
       "issues": [
-        "Player history incomplete: Nate Ament",
-        "Player history incomplete: Brayden Burries",
-        "Player history incomplete: Bogoljub Markovic",
-        "Player history incomplete: Tobe Awaka",
-        "Player history incomplete: Nic Claxton",
-        "Player history incomplete: Jaylin Sellers",
-        "Player history incomplete: Dailyn Swain",
-        "Player history incomplete: Caleb Wilson",
         "Player history incomplete: Chris Cenac Jr.",
         "Player history incomplete: Dillon Mitchell",
         "Player history incomplete: Jaden Akins",
@@ -110,10 +102,20 @@
         "Player history incomplete: Dominick Barlow",
         "Player history incomplete: Tacko Fall",
         "Player history incomplete: Labaron Philon Jr.",
+        "Player history incomplete: Nate Ament",
+        "Player history incomplete: Brayden Burries",
+        "Player history incomplete: Bogoljub Markovic",
+        "Player history incomplete: Tobe Awaka",
+        "Player history incomplete: Nic Claxton",
+        "Player history incomplete: Jaylin Sellers",
+        "Player history incomplete: Dailyn Swain",
+        "Player history incomplete: Caleb Wilson",
         "Player history incomplete: Trevon Brazile",
         "Player history incomplete: Alpha Diallo",
         "Player history incomplete: Bryce Hopkins",
-        "Player history incomplete: Spencer Jones"
+        "Player history incomplete: Spencer Jones",
+        "Player history incomplete: Koa Peat",
+        "Player history incomplete: Mark Williams"
       ]
     }
   }
