@@ -56,13 +56,14 @@ jobs:
       - name: Grade finished games and evaluate frozen comparisons
         run: |
           python pick_history.py
+          python forecast_confidence_audit.py
           python background_research.py review
       - name: Save forecasts, grades and measured comparisons
         if: always()
         run: |
           git config user.name "Kamikaze Picks research"
           git config user.email "actions@users.noreply.github.com"
-          for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
+          for file in prediction_research_validation.json game_day_diagnostics.json background_research.json background_status.json background_projection_history.json background_validation.json background_connectivity.json background_odds_budget.json background_pending.json background_quotes.json forecast_confidence_audit.json published_picks.json analyzed_forecasts.json game_usage_history.json pick_learning_state.json online_learning_state.json slate_reviews.json workload_reviews.json; do
             if [ -f "$file" ]; then git add "$file"; fi
           done
           if ! git diff --cached --quiet; then

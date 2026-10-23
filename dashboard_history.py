@@ -68,6 +68,8 @@ def render_admin_panels(records,sport):
             st.write('**Frozen opportunity and matchup candidates versus incumbent**')
             st.dataframe(models,hide_index=True,use_container_width=True)
         st.caption('Same-game/player/category forecasts count once; errors are averaged equally by game. Missing workload is excluded, never assumed zero. Candidates do not automatically become picks.')
+    from forecast_confidence_audit import render as render_confidence_audit
+    render_confidence_audit(records,sport)
     from pick_learning import render_feedback
     render_feedback(records,sport)
     from learning_audit import render as render_learning_audit
