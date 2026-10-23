@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T00:50:10.787710+00:00",
+  "generated_utc": "2026-10-23T01:44:06.105548+00:00",
   "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
   "sports": {
     "NFL": {
@@ -10,19 +10,9 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 13,
-      "prepared_projections": 1685,
+      "upcoming_games": 12,
+      "prepared_projections": 1565,
       "issues": [
-        "Player history incomplete: Josh Dix",
-        "Player history incomplete: Aday Mara",
-        "Player history incomplete: Otega Oweh",
-        "Player history incomplete: Thomas Sorber",
-        "Player history incomplete: Bennett Stirtz",
-        "Player history incomplete: Nikola Topic",
-        "Player history incomplete: Trevon Brazile",
-        "Player history incomplete: Alpha Diallo",
-        "Player history incomplete: Bryce Hopkins",
-        "Player history incomplete: Spencer Jones",
         "Player history incomplete: Nate Ament",
         "Player history incomplete: Brayden Burries",
         "Player history incomplete: Bogoljub Markovic",
