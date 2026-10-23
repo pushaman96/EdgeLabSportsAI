@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-10-23T03:38:38.794161+00:00",
-  "odds_setup": "GitHub Actions odds key is present; authorization is verified when a scheduled provider request succeeds",
+  "generated_utc": "2026-10-23T04:12:38.072798+00:00",
+  "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
       "status": "No upcoming regular-season games in next 30 hours",

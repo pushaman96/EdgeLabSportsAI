@@ -38,7 +38,7 @@
       "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
     },
     "2026-10-22": {
-      "cap": 8,
+      "cap": 0,
       "reserved": 6,
       "requests": [
         {
@@ -71,7 +71,7 @@
           "saved_originals": 21
         }
       ],
-      "setup_status": "Configured; budget is shared across both sports, automatic background requests only"
+      "setup_status": "Automatic odds spending disabled. Load odds only with an explicit app button."
     }
   }
 }
