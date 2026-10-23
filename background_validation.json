@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T22:39:44.842917+00:00",
+  "generated_utc": "2026-10-23T22:44:01.736985+00:00",
   "paired": {
     "NFL": [
       {
@@ -437,12 +437,48 @@
     ],
     "NBA": [
       {
+        "Category": "Assists",
+        "Matched forecasts": 17,
+        "Distinct games": 1,
+        "Projection MAE": 1.1056251000504034,
+        "Simple baseline MAE": 0.9867422152717555,
+        "Projection minus baseline MAE": 0.11888288477864783,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
         "Category": "PRA",
-        "Matched forecasts": 257,
-        "Distinct games": 13,
-        "Projection MAE": 6.488868986599898,
-        "Simple baseline MAE": 6.522335338329758,
-        "Projection minus baseline MAE": -0.03346635172986012,
+        "Matched forecasts": 274,
+        "Distinct games": 14,
+        "Projection MAE": 6.4782035837963825,
+        "Simple baseline MAE": 6.533883482679541,
+        "Projection minus baseline MAE": -0.05567989888315861,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
+        "Category": "Points",
+        "Matched forecasts": 17,
+        "Distinct games": 1,
+        "Projection MAE": 4.697179084568468,
+        "Simple baseline MAE": 4.7561800249904005,
+        "Projection minus baseline MAE": -0.05900094042193249,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
+        "Category": "Rebounds",
+        "Matched forecasts": 17,
+        "Distinct games": 1,
+        "Projection MAE": 2.199641270370846,
+        "Simple baseline MAE": 2.267986888232322,
+        "Projection minus baseline MAE": -0.06834561786147608,
+        "Status": "Descriptive prospective comparison; no automatic promotion"
+      },
+      {
+        "Category": "Three-pointers made",
+        "Matched forecasts": 17,
+        "Distinct games": 1,
+        "Projection MAE": 0.8537107181312155,
+        "Simple baseline MAE": 0.9091807444507942,
+        "Projection minus baseline MAE": -0.05547002631957876,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       }
     ]
