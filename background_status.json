@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T15:42:24.109678+00:00",
+  "generated_utc": "2026-10-23T16:41:19.462426+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
@@ -10,8 +10,8 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 12,
-      "prepared_projections": 1565,
+      "upcoming_games": 13,
+      "prepared_projections": 1695,
       "issues": [
         "Player history incomplete: Nate Ament",
         "Player history incomplete: Brayden Burries",
