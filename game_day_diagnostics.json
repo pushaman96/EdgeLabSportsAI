@@ -1,11 +1,17 @@
 {
   "version": 1,
-  "checked_utc": "2026-10-24T07:04:33.024219+00:00",
+  "checked_utc": "2026-10-24T07:12:28.598147+00:00",
   "pacific_date": "2026-10-24",
-  "source_hash": "ceb58dca3d1759a3e53980220300487c1bafa80a154507a422076c79a53b7902",
-  "tests_run": 396,
+  "source_hash": "74bea9f4bba10c49959f35c87bd82089e2a466136ea4fa7efea869bf518a95ab",
+  "tests_run": 399,
   "tests_skipped": 0,
-  "passed": true,
-  "failed_tests": [],
+  "passed": false,
+  "failed_tests": [
+    "test_multiple_selection_loads_only_chosen_games_and_honors_budget (test_credit_saver_ui.SaverUITests.test_multiple_selection_loads_only_chosen_games_and_honors_budget)",
+    "test_preset_reanalysis_reuses_saved_quotes_even_with_zero_credits (test_credit_saver_ui.SaverUITests.test_preset_reanalysis_reuses_saved_quotes_even_with_zero_credits)",
+    "test_saved_only_and_zero_balance_never_load_new_odds (test_credit_saver_ui.SaverUITests.test_saved_only_and_zero_balance_never_load_new_odds)",
+    "test_saver_requests_only_the_selected_game (test_credit_saver_ui.SaverUITests.test_saver_requests_only_the_selected_game)",
+    "test_started_saved_game_stays_visible_without_odds_request (test_credit_saver_ui.SaverUITests.test_started_saved_game_stays_visible_without_odds_request)"
+  ],
   "scope": "Software regression tests. These are not historical games, a pick win rate or proof of profit."
 }
