@@ -1,5 +1,6 @@
 {
   "schema": 1,
+  "purpose": "Analyzed forecasts, not recommended picks",
   "records": [
     {
       "id": "470d30558ce6c2081091",
@@ -18,9 +19,12 @@
       "published_utc": "2026-10-23T22:21:50.866726+00:00",
       "starts_utc": "2026-10-23T23:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": {
+        "Washington Wizards": "102",
+        "Toronto Raptors": "112"
+      },
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": null,
       "reason": "Selected as the more likely winner from historical team ratings; sportsbook payout does not choose the team. A narrow probability edge is a close game, not high confidence. Injury and replacement effects are not numerically modeled.",
@@ -125,7 +129,12 @@
       },
       "season_type": "Regular season",
       "forecast_decision": "Pass",
-      "record_purpose": "Analyzed forecast only; excluded from official pick results"
+      "record_purpose": "Analyzed forecast only; excluded from official pick results",
+      "graded_utc": "2026-10-24T01:46:05.149656+00:00",
+      "grading_note": "Final ESPN score; tied two-way moneyline recorded as Push. Platform rules may differ.",
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T01:46:05.149674+00:00",
+      "settlement_source_status": "Verified primary"
     }
   ]
 }
