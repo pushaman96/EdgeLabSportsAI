@@ -293,8 +293,10 @@ def render_moneyline_shortlist(sport,filtered,scoreboard,model_loader,selected_d
 def render_sportsbooks(sport,selected_date,scoreboard,model_loader):
     if sport not in SPORT_KEYS:return
     st.divider();st.header(f'{sport} Sportsbook Game Lines & Player Props')
-    from free_game_shortlist import render as render_free_game_shortlist
-    render_free_game_shortlist(sport,scoreboard)
+    import free_game_shortlist
+    from runtime_health import reload_if_changed
+    free_game_shortlist=reload_if_changed(free_game_shortlist)
+    free_game_shortlist.render(sport,scoreboard)
     source=st.selectbox('Sportsbook data source',['ESPN reported lines (free)','Multiple sportsbooks & props — The Odds API'],key='sportsbook_source')
     if source.startswith('ESPN'):
         rows=espn_lines(scoreboard)
