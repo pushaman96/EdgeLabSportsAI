@@ -45,7 +45,11 @@ class SaverUITests(unittest.TestCase):
         node=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.FunctionDef) and n.name=='render_sportsbooks')
         ns=dict(reconcile_prop_selection=reconcile_prop_selection,st=ui,SPORT_KEYS={'NFL':'nfl'},PROP_MARKETS={'NFL':{'Passing yards':'pass','Rushing yards':'rush','Anytime touchdown scorer':'td','Receiving yards':'receiving'}},STANDARD_PRESETS=STANDARD_PRESETS,spending_allowed=spending_allowed,choose_targets=choose_targets,balance_record=balance_record,datetime=datetime,timezone=timezone,estimated_credits=estimated_credits,odds_request=odds,load_all_prop_lines=batch,numeric=lambda x:float(x) if x is not None else None,pacific=lambda value:datetime.fromisoformat(value).astimezone(ZoneInfo('America/Los_Angeles')),render_team_table=lambda *a,**k:None,bookmaker_rows=lambda *a:[],render_changes=lambda *a:None,render_prop_market_board=lambda events,*a:self.displayed.extend(e['id'] for e in events),render_prop_research=lambda *a,**k:None,render_moneyline_shortlist=lambda *a,**k:None,OddsSourceError=RuntimeError,requests=types.SimpleNamespace(exceptions=types.SimpleNamespace(RequestException=RuntimeError)))
         exec(compile(ast.Module(body=[node],type_ignores=[]),'render','exec'),ns)
-        ns['render_sportsbooks']('NFL',datetime.fromisoformat(start).astimezone(ZoneInfo('America/Los_Angeles')).date(),{},lambda *a:{})
+        # This suite checks paid-request boundaries, not the independently tested free research UI.
+        free=types.SimpleNamespace(render=lambda *a,**k:None)
+        health=types.SimpleNamespace(reload_if_changed=lambda module:module)
+        with patch.dict(sys.modules,{'free_game_shortlist':free,'runtime_health':health}):
+            ns['render_sportsbooks']('NFL',datetime.fromisoformat(start).astimezone(ZoneInfo('America/Los_Angeles')).date(),{},lambda *a:{})
         return requests
     def test_saved_only_and_zero_balance_never_load_new_odds(self):
         self.assertEqual(self.run_ui('Saved data only — 0 credits','100'),[])
