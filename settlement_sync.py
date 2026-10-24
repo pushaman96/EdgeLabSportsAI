@@ -26,8 +26,14 @@ def merge_grades(records, updates):
     return output
 
 
-def fetch_grades(with_status=False):
+def fetch_published_records(with_status=False):
+    """Read verified durable records, including Pending picks, through one shared cache."""
     from runtime_health import public_json
     data,meta=public_json('settlement ledger','https://raw.githubusercontent.com/pushaman96/EdgeLabSportsAI/main/published_picks.json',fresh=60,max_stale=300,validate=lambda d:isinstance(d.get('records'),list))
-    rows=[r for r in data['records']if isinstance(r,dict)and r.get('result')in FINAL]
-    return (rows,meta)if with_status else rows
+    rows=[r for r in data['records'] if isinstance(r,dict) and r.get('id')]
+    return (rows,meta) if with_status else rows
+
+def fetch_grades(with_status=False):
+    records,meta=fetch_published_records(with_status=True)
+    rows=[r for r in records if r.get('result') in FINAL]
+    return (rows,meta) if with_status else rows

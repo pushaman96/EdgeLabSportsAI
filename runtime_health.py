@@ -51,7 +51,7 @@ def public_json(key,url,params=None,fresh=30,max_stale=120,validate=None,ttl=Non
             _FEEDS.pop(oldest)
     start=time.monotonic()
     try:
-        response=(client or requests).get(url,params=params,headers={'User-Agent':'KamikazePicks/1.0'},timeout=(2,5))
+        response=(client or requests).get(url,params=params,headers={'User-Agent':'KamikazePicks/1.0'},timeout=(3,20) if parsed.netloc=='raw.githubusercontent.com' else (2,5))
         response.raise_for_status();data=response.json()
         if not isinstance(data,dict)or(validate is not None and not validate(data)):raise ValueError('Invalid public feed identity or schema')
         meta={'retrieved_utc':_utc(),'stale':False}
