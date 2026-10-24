@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-24T04:48:56.029861+00:00",
+  "checked_utc": "2026-10-24T05:28:09.336906+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
@@ -14085,7 +14085,7 @@
       "event_id": "401909845",
       "sport": "NBA",
       "game": "Minnesota Timberwolves at Orlando Magic",
-      "updated_utc": "2026-10-24T04:48:55.695366+00:00",
+      "updated_utc": "2026-10-24T05:28:08.340313+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -25512,6 +25512,334 @@
             "Classification": "Substitution",
             "Text": "Isaiah Evans enters the game for Trey Lyles"
           }
+        },
+        {
+          "observed_utc": "2026-10-24T05:28:08.340313+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "Orlando Magic",
+              "score": "93"
+            },
+            {
+              "team": "Minnesota Timberwolves",
+              "score": "115"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "399d2a60c97fa688357c",
+              "player": "Jaden McDaniels",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "79b15975ae218b42bbc1",
+              "player": "Desmond Bane",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "2f182fe10aa0d0a07543",
+              "player": "Ayo Dosunmu",
+              "category": "Assists",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "7b5ec8a2d172b1103332",
+              "player": "Jalen Suggs",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "77bf79476d21d2d85d91",
+              "player": "Franz Wagner",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "d092843a374db3727aad",
+              "player": "Anthony Edwards",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "a65a5c6133d9c9e9e278",
+              "player": "Paolo Banchero",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "6322282f11e8776f14d3",
+              "player": "Jaden McDaniels",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "c177f583653e4394d847",
+              "player": "Rudy Gobert",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "59e9ad4568ee53ca753e",
+              "player": "Tristan da Silva",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "edfdc66769e35afa6ba4",
+              "player": "Terrence Shannon Jr.",
+              "category": "Points",
+              "observed_stat": 13.0
+            },
+            {
+              "pick_id": "4721ec978f9c215facd6",
+              "player": "Desmond Bane",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "00adc33856e3e91ecd50",
+              "player": "Franz Wagner",
+              "category": "Points",
+              "observed_stat": 18.0
+            },
+            {
+              "pick_id": "0d5ed6ccc82130549c39",
+              "player": "Jalen Suggs",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "ee4714965ac618796c1f",
+              "player": "Wendell Carter Jr",
+              "category": "Points",
+              "observed_stat": 20.0
+            },
+            {
+              "pick_id": "072dc3c918dff256a52c",
+              "player": "Ayo Dosunmu",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "21a580dd76a10b7f2c0f",
+              "player": "Anthony Edwards",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "893d4e2ccf4f0c73a834",
+              "player": "Jaden McDaniels",
+              "category": "PRA",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "918d04d99a2934c6fe62",
+              "player": "Desmond Bane",
+              "category": "PRA",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "b3cd490e8c51e0928ab7",
+              "player": "Anthony Edwards",
+              "category": "PRA",
+              "observed_stat": 23.0
+            },
+            {
+              "pick_id": "e3395bd89d39db715c21",
+              "player": "Franz Wagner",
+              "category": "PRA",
+              "observed_stat": 29.0
+            },
+            {
+              "pick_id": "9956686e811bb96019fc",
+              "player": "Ayo Dosunmu",
+              "category": "PRA",
+              "observed_stat": 30.0
+            },
+            {
+              "pick_id": "1e90c8b5f99edc5a8f27",
+              "player": "Jalen Suggs",
+              "category": "PRA",
+              "observed_stat": 26.0
+            },
+            {
+              "pick_id": "dd106102ca5c5289728a",
+              "player": "Paolo Banchero",
+              "category": "PRA",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "20bf36c360ddda906f28",
+              "player": "Desmond Bane",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "542f6e379ce214b4650e",
+              "player": "Jaden McDaniels",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "adfd4ffc9fa4c141f9e2",
+              "player": "Wendell Carter Jr",
+              "category": "Rebounds",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "7bc56a2bb0212326feca",
+              "player": "Ayo Dosunmu",
+              "category": "Rebounds",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "f65fe7c20fd7c79f9f8a",
+              "player": "Rudy Gobert",
+              "category": "Rebounds",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "fe6877615fce76eccc78",
+              "player": "Jalen Suggs",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "a7e0117aea47e01e47c2",
+              "player": "Franz Wagner",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "0f2b597a9022ad6d7123",
+              "player": "Anthony Edwards",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "1dc0de011745e3f153e4",
+              "player": "Paolo Banchero",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "0550efc971390f5654c2",
+              "player": "Jaden McDaniels",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "795203838b500c9c3c90",
+              "player": "Desmond Bane",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "db0654fb7af4f3061690",
+              "player": "Ayo Dosunmu",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "69380fc583d0251c7c8b",
+              "player": "Jalen Suggs",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "4306dd1779a6ed073ea8",
+              "player": "Paolo Banchero",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "ce5b944d25d9ec66f667",
+              "player": "Anthony Edwards",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "55bf2a657619b7e5da7c",
+              "player": "Franz Wagner",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "40426c90b47c8a5b1759",
+              "player": "Rudy Gobert",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "aeef6454679703ce4c1b",
+              "player": "Tristan da Silva",
+              "category": "PRA",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "bc7b48e8e886d92ed7fc",
+              "player": "Tristan da Silva",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "13baa6b40b348077aa65",
+              "player": "Tristan da Silva",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "767164250364401c9403",
+              "player": "Terrence Shannon Jr.",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "fe19c7f80e1f764b4714",
+              "player": "Terrence Shannon Jr.",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "16ceb1f0f601d5937e8f",
+              "player": "Rudy Gobert",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "c3e9f0ea8ee46f8efa4f",
+              "player": "Tristan da Silva",
+              "category": "Assists",
+              "observed_stat": 1.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909845760",
+            "Team": "Minnesota Timberwolves",
+            "Period": 4,
+            "Clock": "1:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 18.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Isaiah Evans enters the game for Trey Lyles"
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -25520,7 +25848,7 @@
       "event_id": "401909096",
       "sport": "NBA",
       "game": "Houston Rockets at San Antonio Spurs",
-      "updated_utc": "2026-10-24T04:48:55.695366+00:00",
+      "updated_utc": "2026-10-24T05:28:08.340313+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -26420,7 +26748,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 3.0,
+            "Score margin before play": 2.0,
             "Situation": "Within 7",
             "Classification": "Driving Layup Shot",
             "Text": "Luke Kornet blocks Marcus Smart 's 2-foot driving layup"
@@ -26433,7 +26761,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 3.0,
+            "Score margin before play": 2.0,
             "Situation": "Within 7",
             "Classification": "Offensive Rebound",
             "Text": "Steven Adams offensive rebound"
@@ -26446,7 +26774,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 3.0,
+            "Score margin before play": 2.0,
             "Situation": "Within 7",
             "Classification": "Layup Shot Putback",
             "Text": "Steven Adams makes two point shot"
@@ -26459,7 +26787,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -5.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Bad Pass\nTurnover",
             "Text": "De'Aaron Fox bad pass\nturnover (Tari Eason steals)"
@@ -26472,7 +26800,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 5.0,
+            "Score margin before play": 4.0,
             "Situation": "Within 7",
             "Classification": "Running Dunk Shot",
             "Text": "Tari Eason misses running dunk"
@@ -26485,7 +26813,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -5.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Spurs defensive team rebound"
@@ -26498,7 +26826,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 5.0,
+            "Score margin before play": 4.0,
             "Situation": "Within 7",
             "Classification": "Personal Foul",
             "Text": "Steven Adams personal foul"
@@ -26524,7 +26852,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -5.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Julian Champagnie enters the game for Dylan Harper"
@@ -26579,7 +26907,7 @@
             "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Bad Pass\nTurnover",
-            "Text": "Victor Wembanyama bad pass\nturnover (Alperen Sengun steals)"
+            "Text": "Victor Wembanyama bad pass\nturnover (Steven Adams steals)"
           },
           {
             "Play ID": "401909096145",
@@ -26602,7 +26930,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -7.0,
+            "Score margin before play": -6.0,
             "Situation": "Within 7",
             "Classification": "Shooting Foul",
             "Text": "Keldon Johnson shooting foul"
@@ -26615,7 +26943,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 7.0,
+            "Score margin before play": 6.0,
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Tari Eason enters the game for Amen Thompson"
@@ -26641,8 +26969,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -8.0,
-            "Situation": "Trailing by 8+",
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
             "Classification": "Alley Oop Dunk Shot",
             "Text": "Victor Wembanyama misses alley oop dunk"
           },
@@ -26654,8 +26982,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 8.0,
-            "Situation": "Leading by 8+",
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Alperen Sengun defensive rebound"
           },
@@ -26667,8 +26995,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 8.0,
-            "Situation": "Leading by 8+",
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
             "Classification": "Jump Shot",
             "Text": "Tari Eason misses 25-foot three point jumper"
           },
@@ -26680,8 +27008,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -9.0,
-            "Situation": "Trailing by 8+",
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Keldon Johnson defensive rebound"
           },
@@ -26693,8 +27021,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -9.0,
-            "Situation": "Trailing by 8+",
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
             "Classification": "Running Layup Shot",
             "Text": "Stephon Castle misses running layup"
           },
@@ -26706,8 +27034,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -8.0,
-            "Situation": "Trailing by 8+",
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
             "Classification": "Offensive Rebound",
             "Text": "Keldon Johnson offensive rebound"
           },
@@ -26719,8 +27047,8 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -8.0,
-            "Situation": "Trailing by 8+",
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
             "Classification": "Layup Shot Putback",
             "Text": "Keldon Johnson makes two point shot"
           },
@@ -26732,7 +27060,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -5.0,
             "Situation": "Within 7",
             "Classification": "Jump Shot",
             "Text": "Stephon Castle misses 23-foot three point jumper"
@@ -26745,7 +27073,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -5.0,
             "Situation": "Within 7",
             "Classification": "Offensive Rebound",
             "Text": "Keldon Johnson offensive rebound"
@@ -26758,7 +27086,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -5.0,
             "Situation": "Within 7",
             "Classification": "Bad Pass\nTurnover",
             "Text": "Julian Champagnie bad pass\nturnover"
@@ -26771,7 +27099,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 4.0,
+            "Score margin before play": 5.0,
             "Situation": "Within 7",
             "Classification": "Cutting Dunk Shot",
             "Text": "Amen Thompson makes dunk (Alperen Sengun assists)"
@@ -26784,7 +27112,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -7.0,
             "Situation": "Within 7",
             "Classification": "Jump Shot",
             "Text": "Victor Wembanyama makes 28-foot three point jumper (De'Aaron Fox assists)"
@@ -26797,7 +27125,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 6.0,
+            "Score margin before play": 4.0,
             "Situation": "Within 7",
             "Classification": "Turnaround Hook Shot",
             "Text": "Alperen Sengun misses 6-foot two point shot"
@@ -26810,7 +27138,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Stephon Castle defensive rebound"
@@ -26823,7 +27151,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -6.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Fade Away Bank Jump Shot",
             "Text": "Stephon Castle misses 10-foot two point shot"
@@ -26836,7 +27164,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 3.0,
+            "Score margin before play": 4.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Tari Eason defensive rebound"
@@ -26875,7 +27203,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -4.0,
+            "Score margin before play": -3.0,
             "Situation": "Within 7",
             "Classification": "Free Throw - 2 of 2",
             "Text": "Victor Wembanyama misses free throw 2 of 2"
@@ -26888,7 +27216,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 4.0,
+            "Score margin before play": 3.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Steven Adams defensive rebound"
@@ -26901,7 +27229,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -2.0,
+            "Score margin before play": -3.0,
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Harrison Barnes enters the game for Keldon Johnson"
@@ -27044,7 +27372,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 6.0,
+            "Score margin before play": 5.0,
             "Situation": "Within 7",
             "Classification": "Free Throw - 2 of 2",
             "Text": "Marcus Smart makes free throw 2 of 2"
@@ -27057,7 +27385,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 7.0,
+            "Score margin before play": 6.0,
             "Situation": "Within 7",
             "Classification": "Free Throw - 2 of 2",
             "Text": "Alperen Sengun makes free throw 2 of 2"
@@ -27109,7 +27437,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -4.0,
+            "Score margin before play": -3.0,
             "Situation": "Within 7",
             "Classification": "Jump Shot",
             "Text": "Harrison Barnes misses 24-foot three point jumper"
@@ -31873,19 +32201,6 @@
             "Text": "End of Game"
           },
           {
-            "Play ID": "401909096747",
-            "Team": "Houston Rockets",
-            "Period": 1,
-            "Clock": "2:56",
-            "Down": null,
-            "Distance": null,
-            "Yard line": null,
-            "Score margin before play": 4.0,
-            "Situation": "Within 7",
-            "Classification": "Substitution",
-            "Text": "Alperen Sengun enters the game for Steven Adams"
-          },
-          {
             "Play ID": "401909096749",
             "Team": "Houston Rockets",
             "Period": 2,
@@ -31897,21 +32212,34 @@
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Jabari Smith Jr. enters the game for Bogdan Bogdanovic"
+          },
+          {
+            "Play ID": "401909096751",
+            "Team": "Houston Rockets",
+            "Period": 1,
+            "Clock": "2:04",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Alperen Sengun enters the game for Steven Adams"
           }
         ],
         "situation_splits": [],
         "last_play": {
-          "Play ID": "401909096749",
+          "Play ID": "401909096751",
           "Team": "Houston Rockets",
-          "Period": 2,
-          "Clock": "6:50",
+          "Period": 1,
+          "Clock": "2:04",
           "Down": null,
           "Distance": null,
           "Yard line": null,
-          "Score margin before play": 4.0,
+          "Score margin before play": 5.0,
           "Situation": "Within 7",
           "Classification": "Substitution",
-          "Text": "Jabari Smith Jr. enters the game for Bogdan Bogdanovic"
+          "Text": "Alperen Sengun enters the game for Steven Adams"
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -33836,6 +34164,322 @@
             "Classification": "Substitution",
             "Text": "Jabari Smith Jr. enters the game for Bogdan Bogdanovic"
           }
+        },
+        {
+          "observed_utc": "2026-10-24T05:28:08.340313+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "San Antonio Spurs",
+              "score": "110"
+            },
+            {
+              "team": "Houston Rockets",
+              "score": "114"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "94e8afa8d9dc01eca8ee",
+              "player": "Stephon Castle",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "299e37a54276021b001d",
+              "player": "Alperen Sengun",
+              "category": "Assists",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "e20808471ed886dc8b7e",
+              "player": "Dylan Harper",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "6d8d54d22ec7e3e38fe8",
+              "player": "Amen Thompson",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "5cbd1aeac13a05218867",
+              "player": "Kevin Durant",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "2dd92a626a6f535372a6",
+              "player": "Victor Wembanyama",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "434c368f1bd1906defda",
+              "player": "Devin Vassell",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "9f428e8aef661a929e7e",
+              "player": "Jabari Smith Jr",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "1cef1145609db546ba7c",
+              "player": "Julian Champagnie",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "a532be7bde00612019bc",
+              "player": "Victor Wembanyama",
+              "category": "Points",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "5534d91a966f1f00220a",
+              "player": "Kevin Durant",
+              "category": "Points",
+              "observed_stat": 20.0
+            },
+            {
+              "pick_id": "ff26b26248b7938aefa2",
+              "player": "Stephon Castle",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "e5620bd4c3ea3a171225",
+              "player": "Alperen Sengun",
+              "category": "Points",
+              "observed_stat": 29.0
+            },
+            {
+              "pick_id": "f06bf4d912d3f00dfa49",
+              "player": "Dylan Harper",
+              "category": "Points",
+              "observed_stat": 20.0
+            },
+            {
+              "pick_id": "0fb4b6fff13599891c3e",
+              "player": "Amen Thompson",
+              "category": "Points",
+              "observed_stat": 20.0
+            },
+            {
+              "pick_id": "f8393923732cd8c95d2d",
+              "player": "Jabari Smith Jr",
+              "category": "Points",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "6a761bb77e1b13c3626b",
+              "player": "Devin Vassell",
+              "category": "Points",
+              "observed_stat": 10.0
+            },
+            {
+              "pick_id": "05669ebe28157c9c7b5a",
+              "player": "Julian Champagnie",
+              "category": "Points",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "6734dda3bf5566fdf29c",
+              "player": "Tari Eason",
+              "category": "Points",
+              "observed_stat": 12.0
+            },
+            {
+              "pick_id": "aa364ea0734f1ea5e307",
+              "player": "Victor Wembanyama",
+              "category": "PRA",
+              "observed_stat": 40.0
+            },
+            {
+              "pick_id": "7817ad430d9f9194c2f1",
+              "player": "Kevin Durant",
+              "category": "PRA",
+              "observed_stat": 33.0
+            },
+            {
+              "pick_id": "dcea36c4f36488ffe2c2",
+              "player": "Alperen Sengun",
+              "category": "PRA",
+              "observed_stat": 43.0
+            },
+            {
+              "pick_id": "20302f42268bfe08b67b",
+              "player": "Stephon Castle",
+              "category": "PRA",
+              "observed_stat": 27.0
+            },
+            {
+              "pick_id": "f8b6676bb8c4303676aa",
+              "player": "Amen Thompson",
+              "category": "PRA",
+              "observed_stat": 34.0
+            },
+            {
+              "pick_id": "68a95722e6634aedb977",
+              "player": "Dylan Harper",
+              "category": "PRA",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "7456fafca7cdf8898c61",
+              "player": "Jabari Smith Jr",
+              "category": "PRA",
+              "observed_stat": 13.0
+            },
+            {
+              "pick_id": "0ac1d4a2325ca4f3ad8e",
+              "player": "Devin Vassell",
+              "category": "PRA",
+              "observed_stat": 16.0
+            },
+            {
+              "pick_id": "d4f121e3ca768ac66512",
+              "player": "Julian Champagnie",
+              "category": "PRA",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "26b85925fe835592bce6",
+              "player": "Victor Wembanyama",
+              "category": "Rebounds",
+              "observed_stat": 13.0
+            },
+            {
+              "pick_id": "0b18c500540b29f87f73",
+              "player": "Alperen Sengun",
+              "category": "Rebounds",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "b40f3ed47ba421a37e6f",
+              "player": "Amen Thompson",
+              "category": "Rebounds",
+              "observed_stat": 10.0
+            },
+            {
+              "pick_id": "b0be203eb0bf093fac2a",
+              "player": "Jabari Smith Jr",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "3bb6063dfd25685611db",
+              "player": "Stephon Castle",
+              "category": "Rebounds",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "bc78ae0a1c8295fe64c2",
+              "player": "Kevin Durant",
+              "category": "Rebounds",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "5ce8852ae8077daa11e8",
+              "player": "Dylan Harper",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "04df565ee20cadeb0dc5",
+              "player": "Julian Champagnie",
+              "category": "Rebounds",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "60ddd2767243102c9962",
+              "player": "Tari Eason",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "4c12ac577926189395c3",
+              "player": "Devin Vassell",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "25df7784dff749c0d3d8",
+              "player": "Jabari Smith Jr",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "f5f99da412f94362d28f",
+              "player": "Julian Champagnie",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "26ae2c8f01d2968bd40a",
+              "player": "Devin Vassell",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "0fd237b79a40bd8e063d",
+              "player": "Kevin Durant",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "6bc7799476ae446cd7b5",
+              "player": "Victor Wembanyama",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "f351389444c58ff844ca",
+              "player": "Stephon Castle",
+              "category": "Three-pointers made",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "96293341d5fdb09785d4",
+              "player": "Dylan Harper",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "cf642b43cce85ce23bf2",
+              "player": "Tari Eason",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909096751",
+            "Team": "Houston Rockets",
+            "Period": 1,
+            "Clock": "2:04",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Alperen Sengun enters the game for Steven Adams"
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -33844,13 +34488,13 @@
       "event_id": "401909850",
       "sport": "NBA",
       "game": "Memphis Grizzlies at Golden State Warriors",
-      "updated_utc": "2026-10-24T04:48:55.695366+00:00",
-      "completed": false,
+      "updated_utc": "2026-10-24T05:28:08.340313+00:00",
+      "completed": true,
       "latest_situations": {
         "schema": 1,
         "sport": "NBA",
         "event_id": "401909850",
-        "completed": false,
+        "completed": true,
         "plays": [
           {
             "Play ID": "4019098504",
@@ -40727,7 +41371,7 @@
             "Score margin before play": 0.0,
             "Situation": "Within 7",
             "Classification": "Offensive Rebound",
-            "Text": "Stephen Curry offensive rebound"
+            "Text": "Draymond Green offensive rebound"
           },
           {
             "Play ID": "401909850819",
@@ -40739,8 +41383,8 @@
             "Yard line": null,
             "Score margin before play": 0.0,
             "Situation": "Within 7",
-            "Classification": "Jump Shot",
-            "Text": "Stephen Curry misses 24-foot three point jumper"
+            "Classification": "Step Back Jump Shot",
+            "Text": "Stephen Curry misses 24-foot three point step back jumpshot"
           },
           {
             "Play ID": "401909850820",
@@ -40831,7 +41475,7 @@
             "Score margin before play": -3.0,
             "Situation": "Within 7",
             "Classification": "Substitution",
-            "Text": "Gary Payton II enters the game for Al Horford"
+            "Text": "Gary Payton II enters the game for Stephen Curry"
           },
           {
             "Play ID": "401909850830",
@@ -40845,21 +41489,177 @@
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Cam Spencer enters the game for Jaylen Wells"
+          },
+          {
+            "Play ID": "401909850832",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "12.8",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Brandon Williams enters the game for Al Horford"
+          },
+          {
+            "Play ID": "401909850833",
+            "Team": "Memphis Grizzlies",
+            "Period": 4,
+            "Clock": "10.2",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Ty Jerome makes driving layup (Jerami Grant assists)"
+          },
+          {
+            "Play ID": "401909850835",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "2.8",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Fade Away Jump Shot",
+            "Text": "Brandon Williams misses 24-foot fade away jump shot"
+          },
+          {
+            "Play ID": "401909850836",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "2.8",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Yaxel Lendeborg offensive rebound"
+          },
+          {
+            "Play ID": "401909850837",
+            "Team": "Memphis Grizzlies",
+            "Period": 4,
+            "Clock": "0.5",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Zach Edey shooting foul"
+          },
+          {
+            "Play ID": "401909850839",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "0.5",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850840",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "0.5",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850841",
+            "Team": "Memphis Grizzlies",
+            "Period": 4,
+            "Clock": "0.5",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Full Timeout",
+            "Text": "Grizzlies Full timeout"
+          },
+          {
+            "Play ID": "401909850843",
+            "Team": "Golden State Warriors",
+            "Period": 4,
+            "Clock": "0.5",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Al Horford enters the game for Draymond Green"
+          },
+          {
+            "Play ID": "401909850844",
+            "Team": "Memphis Grizzlies",
+            "Period": 4,
+            "Clock": "0.2",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Jerami Grant bad pass\nturnover (Yaxel Lendeborg steals)"
+          },
+          {
+            "Play ID": "401909850846",
+            "Team": null,
+            "Period": 4,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Period",
+            "Text": "End of the 4th Quarter"
+          },
+          {
+            "Play ID": "401909850847",
+            "Team": null,
+            "Period": 4,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Game",
+            "Text": "End of Game"
           }
         ],
         "situation_splits": [],
         "last_play": {
-          "Play ID": "401909850830",
-          "Team": "Memphis Grizzlies",
+          "Play ID": "401909850847",
+          "Team": null,
           "Period": 4,
-          "Clock": "12.8",
+          "Clock": "0.0",
           "Down": null,
           "Distance": null,
           "Yard line": null,
-          "Score margin before play": 3.0,
-          "Situation": "Within 7",
-          "Classification": "Substitution",
-          "Text": "Cam Spencer enters the game for Jaylen Wells"
+          "Score margin before play": null,
+          "Situation": "Unknown",
+          "Classification": "End Game",
+          "Text": "End of Game"
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -42555,6 +43355,286 @@
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Cam Spencer enters the game for Jaylen Wells"
+          }
+        },
+        {
+          "observed_utc": "2026-10-24T05:28:08.340313+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "Golden State Warriors",
+              "score": "108"
+            },
+            {
+              "team": "Memphis Grizzlies",
+              "score": "111"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "79e691516d10037f5b71",
+              "player": "Draymond Green",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "622c7ca23593e39a9278",
+              "player": "Ty Jerome",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "79c896c29e23ec5509e9",
+              "player": "Stephen Curry",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "a1442ecabb8376037899",
+              "player": "Ty Jerome",
+              "category": "Points",
+              "observed_stat": 28.0
+            },
+            {
+              "pick_id": "ca7ca5a9db39f82bdd5a",
+              "player": "Draymond Green",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "70a889797ac450d038ba",
+              "player": "Zach Edey",
+              "category": "Points",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "e7e36a1011bf168fa55b",
+              "player": "Gui Santos",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "d0fbb5448d1f115775b9",
+              "player": "Stephen Curry",
+              "category": "Points",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "37cb57765e79b20ce642",
+              "player": "Jaylen Wells",
+              "category": "Points",
+              "observed_stat": 17.0
+            },
+            {
+              "pick_id": "810ba839529de79bc87b",
+              "player": "Zach Edey",
+              "category": "PRA",
+              "observed_stat": 21.0
+            },
+            {
+              "pick_id": "2592138521f2779c7744",
+              "player": "Stephen Curry",
+              "category": "PRA",
+              "observed_stat": 30.0
+            },
+            {
+              "pick_id": "4cda71c0e33a559df099",
+              "player": "Draymond Green",
+              "category": "PRA",
+              "observed_stat": 16.0
+            },
+            {
+              "pick_id": "4d58b0a13f0267213aa4",
+              "player": "Al Horford",
+              "category": "PRA",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "e1cdd97cbb74bc178871",
+              "player": "Jaylen Wells",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "fc5d2d62142b5be1c65b",
+              "player": "Ty Jerome",
+              "category": "PRA",
+              "observed_stat": 35.0
+            },
+            {
+              "pick_id": "38926e1162895af283da",
+              "player": "Gui Santos",
+              "category": "PRA",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "8be28b96a5daf5c10256",
+              "player": "Draymond Green",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "231f95e158fd38284fc4",
+              "player": "Stephen Curry",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "08311e258d3a6657083b",
+              "player": "Zach Edey",
+              "category": "Rebounds",
+              "observed_stat": 10.0
+            },
+            {
+              "pick_id": "60ed86b0868173753503",
+              "player": "Al Horford",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "d813d6c3cc05bb15f6b8",
+              "player": "Ty Jerome",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "2fc9c7119d0151fcc4d4",
+              "player": "Gui Santos",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "d79541ddc0faa2408f2f",
+              "player": "Stephen Curry",
+              "category": "Three-pointers made",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "1ad3a7b838541a8eab1b",
+              "player": "Al Horford",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "3b18caa33f5b194043ee",
+              "player": "Ty Jerome",
+              "category": "Three-pointers made",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "f1423df637d3a18f3eda",
+              "player": "Jaylen Wells",
+              "category": "Three-pointers made",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "02dc95f1b5e157f81877",
+              "player": "Gui Santos",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "0d8daf9b4fdebe484114",
+              "player": "Gui Santos",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "f1184409591180b71484",
+              "player": "Al Horford",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "c8bbae3633b6ba980f2b",
+              "player": "Jaylen Wells",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "15ccd5687a13cab08a74",
+              "player": "Draymond Green",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "9e075750351d7050d4a2",
+              "player": "Scotty Pippen Jr",
+              "category": "Points",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "cddde2d9ff0a28bfe485",
+              "player": "Jaylen Wells",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "1851c2fac22e05cb84f9",
+              "player": "Zach Edey",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "bfbcc1d40d2e499ce871",
+              "player": "Al Horford",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "7864583c2657e16f5bd9",
+              "player": "G.G. Jackson",
+              "category": "Points",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "7138aef6d3dfb6648f1a",
+              "player": "De'Anthony Melton",
+              "category": "Points",
+              "observed_stat": 10.0
+            },
+            {
+              "pick_id": "9acfe243abf5b7ceaaae",
+              "player": "G.G. Jackson",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "db56fcf5fb6212d8828d",
+              "player": "De'Anthony Melton",
+              "category": "Rebounds",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "48330f36aa40134d7145",
+              "player": "De'Anthony Melton",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909850847",
+            "Team": null,
+            "Period": 4,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Game",
+            "Text": "End of Game"
           }
         }
       ],

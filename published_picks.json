@@ -1391,7 +1391,7 @@
       },
       "season_type": "Regular season",
       "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
-      "settlement_checked_utc": "2026-10-24T04:48:56.321230+00:00",
+      "settlement_checked_utc": "2026-10-24T05:28:09.783001+00:00",
       "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
@@ -158674,9 +158674,9 @@
       "published_utc": "2026-10-23T22:30:19.275508+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 6.0,
+      "profit_per_1": 0.6578947368421053,
       "projected_yards": null,
       "expected_opportunities": 26.61,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -159611,7 +159611,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-24T05:28:11.274494+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.28000000000000025,
+      "opportunity_miss": 4.390000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274521+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "622c7ca23593e39a9278",
@@ -159630,9 +159638,9 @@
       "published_utc": "2026-10-23T22:30:19.275562+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 5.0,
+      "profit_per_1": 0.5263157894736842,
       "projected_yards": null,
       "expected_opportunities": 23.61,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -160538,7 +160546,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-24T05:28:11.274615+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.5700000000000003,
+      "opportunity_miss": 8.39,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274622+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "79c896c29e23ec5509e9",
@@ -160557,9 +160573,9 @@
       "published_utc": "2026-10-23T22:30:19.275613+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 4.0,
+      "profit_per_1": 0.6410256410256411,
       "projected_yards": null,
       "expected_opportunities": 29.66,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -161536,7 +161552,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-24T05:28:11.274708+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.05999999999999961,
+      "opportunity_miss": 0.33999999999999986,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274712+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "a1442ecabb8376037899",
@@ -161555,9 +161579,9 @@
       "published_utc": "2026-10-23T22:30:19.275665+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 28.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 23.72,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -162465,7 +162489,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-24T05:28:11.274795+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 5.890000000000001,
+      "opportunity_miss": 8.280000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274799+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "ca7ca5a9db39f82bdd5a",
@@ -162484,9 +162516,9 @@
       "published_utc": "2026-10-23T22:30:19.275715+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 5.0,
+      "profit_per_1": 0.46511627906976744,
       "projected_yards": null,
       "expected_opportunities": 26.73,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -163423,7 +163455,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-24T05:28:11.274881+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -2.62,
+      "opportunity_miss": 4.27,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274885+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "70a889797ac450d038ba",
@@ -163442,9 +163482,9 @@
       "published_utc": "2026-10-23T22:30:19.275763+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 8.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 25.23,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -164300,7 +164340,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-24T05:28:11.274965+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -4.49,
+      "opportunity_miss": -3.2300000000000004,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.274969+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "e7e36a1011bf168fa55b",
@@ -164319,9 +164367,9 @@
       "published_utc": "2026-10-23T22:30:19.275811+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 5.0,
+      "profit_per_1": 0.43478260869565216,
       "projected_yards": null,
       "expected_opportunities": 21.01,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -165258,7 +165306,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.275048+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -4.41,
+      "opportunity_miss": -1.0100000000000016,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275051+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "d0fbb5448d1f115775b9",
@@ -165277,9 +165333,9 @@
       "published_utc": "2026-10-23T22:30:19.275859+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 24.0,
+      "profit_per_1": 0.4166666666666667,
       "projected_yards": null,
       "expected_opportunities": 29.79,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -166258,7 +166314,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-24T05:28:11.275131+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -1.879999999999999,
+      "opportunity_miss": 0.21000000000000085,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275135+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "37cb57765e79b20ce642",
@@ -166277,9 +166341,9 @@
       "published_utc": "2026-10-23T22:30:19.275908+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 17.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 26.52,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -167121,7 +167185,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-24T05:28:11.275219+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 4.640000000000001,
+      "opportunity_miss": -1.5199999999999996,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275223+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "810ba839529de79bc87b",
@@ -167140,9 +167212,9 @@
       "published_utc": "2026-10-23T22:30:19.275956+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 21.0,
+      "profit_per_1": 0.5,
       "projected_yards": null,
       "expected_opportunities": 25.13,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -167985,7 +168057,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-24T05:28:11.275428+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -2.460000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275434+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "2592138521f2779c7744",
@@ -168004,9 +168083,9 @@
       "published_utc": "2026-10-23T22:30:19.276010+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 30.0,
+      "profit_per_1": 0.625,
       "projected_yards": null,
       "expected_opportunities": 29.67,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -168972,7 +169051,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-24T05:28:11.275596+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -2.5799999999999983,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275600+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "4cda71c0e33a559df099",
@@ -168991,9 +169077,9 @@
       "published_utc": "2026-10-23T22:30:19.276067+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 16.0,
+      "profit_per_1": 0.6666666666666666,
       "projected_yards": null,
       "expected_opportunities": 26.61,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -169917,7 +170003,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-24T05:28:11.275757+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -2.0199999999999996,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275760+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "4d58b0a13f0267213aa4",
@@ -169936,9 +170029,9 @@
       "published_utc": "2026-10-23T22:30:19.276166+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 8.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 20.94,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -170820,7 +170913,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-24T05:28:11.275914+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -5.859999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.275918+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "e1cdd97cbb74bc178871",
@@ -170839,9 +170939,9 @@
       "published_utc": "2026-10-23T22:30:19.276225+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 24.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 26.41,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -171670,7 +171770,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-24T05:28:11.276070+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": 7.41,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276074+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "fc5d2d62142b5be1c65b",
@@ -171689,9 +171796,9 @@
       "published_utc": "2026-10-23T22:30:19.276279+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 35.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 23.62,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -172586,7 +172693,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-24T05:28:11.276224+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": 5.359999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276227+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "38926e1162895af283da",
@@ -172605,9 +172719,9 @@
       "published_utc": "2026-10-23T22:30:19.276331+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 11.0,
+      "profit_per_1": 0.6896551724137931,
       "projected_yards": null,
       "expected_opportunities": 20.92,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -173531,7 +173645,14 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.276433+00:00",
+      "grading_note": "Official final combined statistic/scoring ledger; platform-specific void rules and fees excluded.",
+      "count_miss": -4.0,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276440+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "8be28b96a5daf5c10256",
@@ -173550,9 +173671,9 @@
       "published_utc": "2026-10-23T22:30:19.276382+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 5.0,
+      "profit_per_1": 0.43478260869565216,
       "projected_yards": null,
       "expected_opportunities": 26.78,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -174485,7 +174606,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-24T05:28:11.276524+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.33000000000000007,
+      "opportunity_miss": 4.219999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276528+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "231f95e158fd38284fc4",
@@ -174504,9 +174633,9 @@
       "published_utc": "2026-10-23T22:30:19.276433+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 2.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 29.85,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -175481,7 +175610,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-24T05:28:11.276609+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -1.1600000000000001,
+      "opportunity_miss": 0.14999999999999858,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276612+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "08311e258d3a6657083b",
@@ -175500,9 +175637,9 @@
       "published_utc": "2026-10-23T22:30:19.276492+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 10.0,
+      "profit_per_1": 0.3333333333333333,
       "projected_yards": null,
       "expected_opportunities": 25.28,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -176354,7 +176491,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-24T05:28:11.276693+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -1.0899999999999999,
+      "opportunity_miss": -3.280000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276696+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "60ed86b0868173753503",
@@ -176373,9 +176518,9 @@
       "published_utc": "2026-10-23T22:30:19.276546+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 5.0,
+      "profit_per_1": 0.6024096385542169,
       "projected_yards": null,
       "expected_opportunities": 21.07,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -177266,7 +177411,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-24T05:28:11.276776+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.29000000000000004,
+      "opportunity_miss": -2.0700000000000003,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276779+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "d813d6c3cc05bb15f6b8",
@@ -177285,9 +177438,9 @@
       "published_utc": "2026-10-23T22:30:19.276597+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 2.0,
+      "profit_per_1": 0.4166666666666667,
       "projected_yards": null,
       "expected_opportunities": 23.76,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -178191,7 +178344,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-24T05:28:11.276858+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.27,
+      "opportunity_miss": 8.239999999999998,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276861+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "2fc9c7119d0151fcc4d4",
@@ -178210,9 +178371,9 @@
       "published_utc": "2026-10-23T22:30:19.276647+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 4.0,
+      "profit_per_1": 0.36363636363636365,
       "projected_yards": null,
       "expected_opportunities": 21.05,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -179145,7 +179306,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.276941+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.41000000000000014,
+      "opportunity_miss": -1.0500000000000007,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.276948+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "d79541ddc0faa2408f2f",
@@ -179164,9 +179333,9 @@
       "published_utc": "2026-10-23T22:30:19.276696+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 3.0,
+      "profit_per_1": 0.6097560975609756,
       "projected_yards": null,
       "expected_opportunities": 29.87,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -180143,7 +180312,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 30.0,
+      "graded_utc": "2026-10-24T05:28:11.277033+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.9199999999999999,
+      "opportunity_miss": 0.129999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277037+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "1ad3a7b838541a8eab1b",
@@ -180162,9 +180339,9 @@
       "published_utc": "2026-10-23T22:30:19.276746+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 1.0,
+      "profit_per_1": 0.5617977528089888,
       "projected_yards": null,
       "expected_opportunities": 21.08,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -181057,7 +181234,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-24T05:28:11.277118+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.3600000000000001,
+      "opportunity_miss": -2.0799999999999983,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277122+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "3b18caa33f5b194043ee",
@@ -181076,9 +181261,9 @@
       "published_utc": "2026-10-23T22:30:19.276796+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 3.0,
+      "profit_per_1": 0.43478260869565216,
       "projected_yards": null,
       "expected_opportunities": 23.78,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -181984,7 +182169,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 32.0,
+      "graded_utc": "2026-10-24T05:28:11.277200+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.1200000000000001,
+      "opportunity_miss": 8.219999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277204+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "f1423df637d3a18f3eda",
@@ -182003,9 +182196,9 @@
       "published_utc": "2026-10-23T22:30:19.276846+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 4.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 26.59,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -182845,7 +183038,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-24T05:28:11.277305+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 2.3,
+      "opportunity_miss": -1.5899999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277311+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "02dc95f1b5e157f81877",
@@ -182864,9 +183065,9 @@
       "published_utc": "2026-10-23T22:30:19.276897+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 1.0,
+      "profit_per_1": 0.6329113924050633,
       "projected_yards": null,
       "expected_opportunities": 21.07,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -183801,7 +184002,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.277392+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.09000000000000008,
+      "opportunity_miss": -1.0700000000000003,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277395+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "0d8daf9b4fdebe484114",
@@ -183820,9 +184029,9 @@
       "published_utc": "2026-10-23T22:30:19.276949+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 2.0,
+      "profit_per_1": 0.35714285714285715,
       "projected_yards": null,
       "expected_opportunities": 20.92,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -184757,7 +184966,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.277477+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.06000000000000005,
+      "opportunity_miss": -0.9200000000000017,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277481+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "f1184409591180b71484",
@@ -184776,9 +184993,9 @@
       "published_utc": "2026-10-23T22:30:19.277005+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 3.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 21.03,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -185673,7 +185890,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-24T05:28:11.277560+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -4.25,
+      "opportunity_miss": -2.030000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277563+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "c8bbae3633b6ba980f2b",
@@ -185692,9 +185917,9 @@
       "published_utc": "2026-10-23T22:30:19.277059+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 4.0,
+      "profit_per_1": 0.5555555555555556,
       "projected_yards": null,
       "expected_opportunities": 26.57,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -186532,7 +186757,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-24T05:28:11.277642+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.8500000000000001,
+      "opportunity_miss": -1.5700000000000003,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277645+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "15ccd5687a13cab08a74",
@@ -186551,9 +186784,9 @@
       "published_utc": "2026-10-23T22:30:19.277156+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 1.0,
+      "profit_per_1": 0.4784688995215311,
       "projected_yards": null,
       "expected_opportunities": 26.8,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -187488,7 +187721,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 31.0,
+      "graded_utc": "2026-10-24T05:28:11.277725+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.22999999999999998,
+      "opportunity_miss": 4.199999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277728+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "9e075750351d7050d4a2",
@@ -187507,9 +187748,9 @@
       "published_utc": "2026-10-23T22:30:19.277217+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 8.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 21.03,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -188169,7 +188410,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 17.0,
+      "graded_utc": "2026-10-24T05:28:11.277812+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -3.1400000000000006,
+      "opportunity_miss": -4.030000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277816+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "cddde2d9ff0a28bfe485",
@@ -188188,9 +188437,9 @@
       "published_utc": "2026-10-23T22:30:19.277270+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 3.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 26.4,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -189030,7 +189279,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 25.0,
+      "graded_utc": "2026-10-24T05:28:11.277894+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 1.61,
+      "opportunity_miss": -1.3999999999999986,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277897+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "1851c2fac22e05cb84f9",
@@ -189049,9 +189306,9 @@
       "published_utc": "2026-10-23T22:30:19.277322+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 3.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 25.12,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -189905,7 +190162,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 22.0,
+      "graded_utc": "2026-10-24T05:28:11.277976+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 2.08,
+      "opportunity_miss": -3.120000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.277979+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "bfbcc1d40d2e499ce871",
@@ -189924,9 +190189,9 @@
       "published_utc": "2026-10-23T22:30:19.277372+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 0.0,
+      "profit_per_1": 0.5586592178770949,
       "projected_yards": null,
       "expected_opportunities": 20.94,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -190819,7 +191084,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 19.0,
+      "graded_utc": "2026-10-24T05:28:11.278057+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -2.43,
+      "opportunity_miss": -1.9400000000000013,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278061+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "7864583c2657e16f5bd9",
@@ -190838,9 +191111,9 @@
       "published_utc": "2026-10-23T22:30:19.277421+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 2.0,
+      "profit_per_1": 0.6993006993006993,
       "projected_yards": null,
       "expected_opportunities": 21.46,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -191486,7 +191759,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 15.0,
+      "graded_utc": "2026-10-24T05:28:11.278146+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -10.24,
+      "opportunity_miss": -6.460000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278149+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "7138aef6d3dfb6648f1a",
@@ -191505,9 +191786,9 @@
       "published_utc": "2026-10-23T22:30:19.277481+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 10.0,
+      "profit_per_1": 0.6896551724137931,
       "projected_yards": null,
       "expected_opportunities": 22.73,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -192248,7 +192529,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.278234+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.7200000000000006,
+      "opportunity_miss": -2.7300000000000004,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278237+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "9acfe243abf5b7ceaaae",
@@ -192267,9 +192556,9 @@
       "published_utc": "2026-10-23T22:30:19.277536+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Win",
+      "actual": 4.0,
+      "profit_per_1": 0.7299270072992701,
       "projected_yards": null,
       "expected_opportunities": 21.5,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -192911,7 +193200,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 15.0,
+      "graded_utc": "2026-10-24T05:28:11.278336+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -0.2599999999999998,
+      "opportunity_miss": -6.5,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278340+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "db56fcf5fb6212d8828d",
@@ -192930,9 +193227,9 @@
       "published_utc": "2026-10-23T22:30:19.277588+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 1.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 22.78,
       "reason": "Selected opportunity/matchup candidate beat the incumbent and simple baseline on later historical statistics and synthetic-line probability tests. Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -193669,7 +193966,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.278429+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": -1.77,
+      "opportunity_miss": -2.780000000000001,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278432+00:00",
+      "settlement_source_status": "Verified primary"
     },
     {
       "id": "48330f36aa40134d7145",
@@ -193688,9 +193993,9 @@
       "published_utc": "2026-10-23T22:30:19.277636+00:00",
       "starts_utc": "2026-10-24T02:00:00+00:00",
       "evidence": "Personal paper record",
-      "result": "Pending",
-      "actual": null,
-      "profit_per_1": null,
+      "result": "Loss",
+      "actual": 2.0,
+      "profit_per_1": -1,
       "projected_yards": null,
       "expected_opportunities": 22.79,
       "reason": "Last-season minutes \u00d7 production blended with current-season appearances; season-stage stat validation passed. Fresh availability checked; absence-related extra minutes remain a separate research scenario. Insufficient current-role minutes evidence. Unavailable; missing appearances are not assigned zero minutes. Starting lineup unconfirmed. Probability and actual-price profitability remain unverified.",
@@ -194429,7 +194734,15 @@
         "Odds scheduled start UTC": "2026-10-24T02:10:00Z",
         "ESPN scheduled start UTC": "2026-10-24T02:00Z"
       },
-      "season_type": "Regular season"
+      "season_type": "Regular season",
+      "actual_opportunities": 20.0,
+      "graded_utc": "2026-10-24T05:28:11.278517+00:00",
+      "grading_note": "Final ESPN statistic; platform-specific void rules and fees are not modeled.",
+      "count_miss": 0.77,
+      "opportunity_miss": -2.789999999999999,
+      "settlement_source": "ESPN final box score",
+      "settlement_checked_utc": "2026-10-24T05:28:11.278521+00:00",
+      "settlement_source_status": "Verified primary"
     }
   ]
 }
