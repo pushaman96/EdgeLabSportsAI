@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checked_utc": "2026-10-24T02:49:53.824911+00:00",
+  "checked_utc": "2026-10-24T03:29:49.851052+00:00",
   "games": {
     "NFL:401873010": {
       "event_id": "401873010",
@@ -14085,7 +14085,7 @@
       "event_id": "401909845",
       "sport": "NBA",
       "game": "Minnesota Timberwolves at Orlando Magic",
-      "updated_utc": "2026-10-24T02:49:53.348235+00:00",
+      "updated_utc": "2026-10-24T03:29:48.526500+00:00",
       "completed": true,
       "latest_situations": {
         "schema": 1,
@@ -24200,6 +24200,334 @@
             "Classification": "Substitution",
             "Text": "Isaiah Evans enters the game for Trey Lyles"
           }
+        },
+        {
+          "observed_utc": "2026-10-24T03:29:48.526500+00:00",
+          "status": {
+            "type": {
+              "id": "3",
+              "name": "STATUS_FINAL",
+              "state": "post",
+              "completed": true,
+              "description": "Final",
+              "detail": "Final",
+              "shortDetail": "Final"
+            }
+          },
+          "scores": [
+            {
+              "team": "Orlando Magic",
+              "score": "93"
+            },
+            {
+              "team": "Minnesota Timberwolves",
+              "score": "115"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "399d2a60c97fa688357c",
+              "player": "Jaden McDaniels",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "79b15975ae218b42bbc1",
+              "player": "Desmond Bane",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "2f182fe10aa0d0a07543",
+              "player": "Ayo Dosunmu",
+              "category": "Assists",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "7b5ec8a2d172b1103332",
+              "player": "Jalen Suggs",
+              "category": "Assists",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "77bf79476d21d2d85d91",
+              "player": "Franz Wagner",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "d092843a374db3727aad",
+              "player": "Anthony Edwards",
+              "category": "Assists",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "a65a5c6133d9c9e9e278",
+              "player": "Paolo Banchero",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "6322282f11e8776f14d3",
+              "player": "Jaden McDaniels",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "c177f583653e4394d847",
+              "player": "Rudy Gobert",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "59e9ad4568ee53ca753e",
+              "player": "Tristan da Silva",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "edfdc66769e35afa6ba4",
+              "player": "Terrence Shannon Jr.",
+              "category": "Points",
+              "observed_stat": 13.0
+            },
+            {
+              "pick_id": "4721ec978f9c215facd6",
+              "player": "Desmond Bane",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "00adc33856e3e91ecd50",
+              "player": "Franz Wagner",
+              "category": "Points",
+              "observed_stat": 18.0
+            },
+            {
+              "pick_id": "0d5ed6ccc82130549c39",
+              "player": "Jalen Suggs",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "ee4714965ac618796c1f",
+              "player": "Wendell Carter Jr",
+              "category": "Points",
+              "observed_stat": 20.0
+            },
+            {
+              "pick_id": "072dc3c918dff256a52c",
+              "player": "Ayo Dosunmu",
+              "category": "Points",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "21a580dd76a10b7f2c0f",
+              "player": "Anthony Edwards",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "893d4e2ccf4f0c73a834",
+              "player": "Jaden McDaniels",
+              "category": "PRA",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "918d04d99a2934c6fe62",
+              "player": "Desmond Bane",
+              "category": "PRA",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "b3cd490e8c51e0928ab7",
+              "player": "Anthony Edwards",
+              "category": "PRA",
+              "observed_stat": 23.0
+            },
+            {
+              "pick_id": "e3395bd89d39db715c21",
+              "player": "Franz Wagner",
+              "category": "PRA",
+              "observed_stat": 29.0
+            },
+            {
+              "pick_id": "9956686e811bb96019fc",
+              "player": "Ayo Dosunmu",
+              "category": "PRA",
+              "observed_stat": 30.0
+            },
+            {
+              "pick_id": "1e90c8b5f99edc5a8f27",
+              "player": "Jalen Suggs",
+              "category": "PRA",
+              "observed_stat": 26.0
+            },
+            {
+              "pick_id": "dd106102ca5c5289728a",
+              "player": "Paolo Banchero",
+              "category": "PRA",
+              "observed_stat": 25.0
+            },
+            {
+              "pick_id": "20bf36c360ddda906f28",
+              "player": "Desmond Bane",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "542f6e379ce214b4650e",
+              "player": "Jaden McDaniels",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "adfd4ffc9fa4c141f9e2",
+              "player": "Wendell Carter Jr",
+              "category": "Rebounds",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "7bc56a2bb0212326feca",
+              "player": "Ayo Dosunmu",
+              "category": "Rebounds",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "f65fe7c20fd7c79f9f8a",
+              "player": "Rudy Gobert",
+              "category": "Rebounds",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "fe6877615fce76eccc78",
+              "player": "Jalen Suggs",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "a7e0117aea47e01e47c2",
+              "player": "Franz Wagner",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "0f2b597a9022ad6d7123",
+              "player": "Anthony Edwards",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "1dc0de011745e3f153e4",
+              "player": "Paolo Banchero",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "0550efc971390f5654c2",
+              "player": "Jaden McDaniels",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "795203838b500c9c3c90",
+              "player": "Desmond Bane",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "db0654fb7af4f3061690",
+              "player": "Ayo Dosunmu",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "69380fc583d0251c7c8b",
+              "player": "Jalen Suggs",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "4306dd1779a6ed073ea8",
+              "player": "Paolo Banchero",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "ce5b944d25d9ec66f667",
+              "player": "Anthony Edwards",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "55bf2a657619b7e5da7c",
+              "player": "Franz Wagner",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "40426c90b47c8a5b1759",
+              "player": "Rudy Gobert",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "aeef6454679703ce4c1b",
+              "player": "Tristan da Silva",
+              "category": "PRA",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "bc7b48e8e886d92ed7fc",
+              "player": "Tristan da Silva",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "13baa6b40b348077aa65",
+              "player": "Tristan da Silva",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "767164250364401c9403",
+              "player": "Terrence Shannon Jr.",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "fe19c7f80e1f764b4714",
+              "player": "Terrence Shannon Jr.",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "16ceb1f0f601d5937e8f",
+              "player": "Rudy Gobert",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "c3e9f0ea8ee46f8efa4f",
+              "player": "Tristan da Silva",
+              "category": "Assists",
+              "observed_stat": 1.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909845760",
+            "Team": "Minnesota Timberwolves",
+            "Period": 4,
+            "Clock": "1:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 18.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Isaiah Evans enters the game for Trey Lyles"
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -24208,7 +24536,7 @@
       "event_id": "401909096",
       "sport": "NBA",
       "game": "Houston Rockets at San Antonio Spurs",
-      "updated_utc": "2026-10-24T02:49:53.348235+00:00",
+      "updated_utc": "2026-10-24T03:29:48.526500+00:00",
       "completed": false,
       "latest_situations": {
         "schema": 1,
@@ -24701,7 +25029,7 @@
             "Play ID": "40190909659",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:44",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24714,7 +25042,7 @@
             "Play ID": "40190909661",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:31",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24727,7 +25055,7 @@
             "Play ID": "40190909662",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:31",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24740,7 +25068,7 @@
             "Play ID": "40190909663",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:23",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24753,7 +25081,7 @@
             "Play ID": "40190909664",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:23",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24766,7 +25094,7 @@
             "Play ID": "40190909665",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:12",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24779,7 +25107,7 @@
             "Play ID": "40190909667",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:12",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24857,20 +25185,20 @@
             "Play ID": "40190909680",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "6:06",
             "Down": null,
             "Distance": null,
             "Yard line": null,
             "Score margin before play": -1.0,
             "Situation": "Within 7",
             "Classification": "Pullup Jump Shot",
-            "Text": "Fred VanVleet makes 25-foot three pointer"
+            "Text": "Fred VanVleet makes 25-foot three pointer (Kevin Durant assists)"
           },
           {
             "Play ID": "40190909681",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "5:41",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24896,7 +25224,7 @@
             "Play ID": "40190909686",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "5:14",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24909,7 +25237,7 @@
             "Play ID": "40190909688",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:54",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24922,7 +25250,7 @@
             "Play ID": "40190909690",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:54",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24935,7 +25263,7 @@
             "Play ID": "40190909691",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:54",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -24987,7 +25315,7 @@
             "Play ID": "40190909698",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:54",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25000,7 +25328,7 @@
             "Play ID": "40190909699",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:43",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25013,7 +25341,7 @@
             "Play ID": "401909096100",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:43",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25026,7 +25354,7 @@
             "Play ID": "401909096101",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:36",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25039,7 +25367,7 @@
             "Play ID": "401909096103",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:24",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25052,7 +25380,7 @@
             "Play ID": "401909096105",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:24",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25065,7 +25393,7 @@
             "Play ID": "401909096106",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:24",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25078,7 +25406,7 @@
             "Play ID": "401909096107",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "4:05",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25091,7 +25419,7 @@
             "Play ID": "401909096109",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "3:52",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25104,7 +25432,7 @@
             "Play ID": "401909096110",
             "Team": "San Antonio Spurs",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "3:46",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25117,7 +25445,7 @@
             "Play ID": "401909096112",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "3:46",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25130,7 +25458,7 @@
             "Play ID": "401909096113",
             "Team": "Houston Rockets",
             "Period": 1,
-            "Clock": "0.0",
+            "Clock": "3:46",
             "Down": null,
             "Distance": null,
             "Yard line": null,
@@ -25160,7 +25488,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 1.0,
+            "Score margin before play": -0.0,
             "Situation": "Within 7",
             "Classification": "Substitution",
             "Text": "Tari Eason enters the game for Alperen Sengun"
@@ -25173,7 +25501,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -1.0,
+            "Score margin before play": 0.0,
             "Situation": "Within 7",
             "Classification": "Lost Ball Turnover",
             "Text": "Keldon Johnson lost ball turnover (Amen Thompson steals)"
@@ -25277,7 +25605,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": 5.0,
+            "Score margin before play": 4.0,
             "Situation": "Within 7",
             "Classification": "Full Timeout",
             "Text": "Rockets Full timeout"
@@ -25355,7 +25683,7 @@
             "Down": null,
             "Distance": null,
             "Yard line": null,
-            "Score margin before play": -5.0,
+            "Score margin before play": -4.0,
             "Situation": "Within 7",
             "Classification": "Bad Pass\nTurnover",
             "Text": "Victor Wembanyama bad pass\nturnover (Tari Eason steals)"
@@ -25632,32 +25960,6 @@
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
             "Text": "Tari Eason defensive rebound"
-          },
-          {
-            "Play ID": "401909096174",
-            "Team": "Houston Rockets",
-            "Period": 1,
-            "Clock": "0.0",
-            "Down": null,
-            "Distance": null,
-            "Yard line": null,
-            "Score margin before play": 3.0,
-            "Situation": "Within 7",
-            "Classification": "Jump Shot",
-            "Text": "Marcus Smart misses 25-foot three point jumper"
-          },
-          {
-            "Play ID": "401909096175",
-            "Team": "Houston Rockets",
-            "Period": 1,
-            "Clock": "0.0",
-            "Down": null,
-            "Distance": null,
-            "Yard line": null,
-            "Score margin before play": 4.0,
-            "Situation": "Within 7",
-            "Classification": "Offensive Rebound",
-            "Text": "Rockets offensive team rebound"
           },
           {
             "Play ID": "401909096176",
@@ -26657,8 +26959,8 @@
             "Yard line": null,
             "Score margin before play": -5.0,
             "Situation": "Within 7",
-            "Classification": "Driving Layup Shot",
-            "Text": "Dylan Harper makes driving layup"
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Dylan Harper makes 6-foot driving floating jump shot"
           },
           {
             "Play ID": "401909096285",
@@ -26671,7 +26973,7 @@
             "Score margin before play": 3.0,
             "Situation": "Within 7",
             "Classification": "Layup Shot",
-            "Text": "Alperen Sengun makes layup"
+            "Text": "Alperen Sengun makes layup (Fred VanVleet assists)"
           },
           {
             "Play ID": "401909096286",
@@ -26839,8 +27141,8 @@
             "Yard line": null,
             "Score margin before play": 3.0,
             "Situation": "Within 7",
-            "Classification": "Pullup Jump Shot",
-            "Text": "Amen Thompson makes 7-foot pullup jump shot (Fred VanVleet assists)"
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Amen Thompson makes 7-foot driving floating jump shot (Fred VanVleet assists)"
           },
           {
             "Play ID": "401909096309",
@@ -27048,7 +27350,7 @@
             "Score margin before play": 5.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
-            "Text": "Rockets defensive team rebound"
+            "Text": "Alperen Sengun defensive rebound"
           },
           {
             "Play ID": "401909096332",
@@ -27138,8 +27440,8 @@
             "Yard line": null,
             "Score margin before play": -6.0,
             "Situation": "Within 7",
-            "Classification": "Layup Shot",
-            "Text": "Dylan Harper makes layup (De'Aaron Fox assists)"
+            "Classification": "Driving Layup Shot",
+            "Text": "Dylan Harper makes driving layup (De'Aaron Fox assists)"
           },
           {
             "Play ID": "401909096342",
@@ -27151,8 +27453,8 @@
             "Yard line": null,
             "Score margin before play": 4.0,
             "Situation": "Within 7",
-            "Classification": "Lost Ball Turnover",
-            "Text": "Marcus Smart lost ball turnover (De'Aaron Fox steals)"
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Marcus Smart bad pass\nturnover (De'Aaron Fox steals)"
           },
           {
             "Play ID": "401909096344",
@@ -27177,8 +27479,8 @@
             "Yard line": null,
             "Score margin before play": 4.0,
             "Situation": "Within 7",
-            "Classification": "Jump Shot",
-            "Text": "Tari Eason misses 23-foot three point jumper"
+            "Classification": "Running Jump Shot",
+            "Text": "Tari Eason misses 23-foot running jump shot"
           },
           {
             "Play ID": "401909096347",
@@ -27413,21 +27715,1230 @@
             "Situation": "Unknown",
             "Classification": "End Period",
             "Text": "End of the 2nd Quarter"
+          },
+          {
+            "Play ID": "401909096374",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "12:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Devin Vassell enters the game for Julian Champagnie"
+          },
+          {
+            "Play ID": "401909096376",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "12:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Jabari Smith Jr. enters the game for Marcus Smart"
+          },
+          {
+            "Play ID": "401909096378",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "11:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Pullup Jump Shot",
+            "Text": "Fred VanVleet misses 25-foot three point pullup jump shot"
+          },
+          {
+            "Play ID": "401909096379",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Devin Vassell defensive rebound"
+          },
+          {
+            "Play ID": "401909096380",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:36",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Devin Vassell bad pass\nturnover (Jabari Smith Jr. steals)"
+          },
+          {
+            "Play ID": "401909096382",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "11:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Lost Ball Turnover",
+            "Text": "Alperen Sengun lost ball turnover (Stephon Castle steals)"
+          },
+          {
+            "Play ID": "401909096385",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "11:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Amen Thompson shooting foul"
+          },
+          {
+            "Play ID": "401909096387",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Victor Wembanyama misses free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909096388",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Spurs offensive team rebound"
+          },
+          {
+            "Play ID": "401909096389",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Victor Wembanyama makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909096390",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "11:05",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Hook Shot",
+            "Text": "Alperen Sengun misses 3-foot hook shot"
+          },
+          {
+            "Play ID": "401909096391",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "11:05",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Victor Wembanyama defensive rebound"
+          },
+          {
+            "Play ID": "401909096392",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Lost Ball Turnover",
+            "Text": "Victor Wembanyama lost ball turnover (Amen Thompson steals)"
+          },
+          {
+            "Play ID": "401909096394",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "10:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Alperen Sengun bad pass\nturnover (Devin Vassell steals)"
+          },
+          {
+            "Play ID": "401909096396",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:46",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Running Alley Oop Dunk Shot",
+            "Text": "Victor Wembanyama makes dunk (De'Aaron Fox assists)"
+          },
+          {
+            "Play ID": "401909096398",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:43",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Devin Vassell shooting foul"
+          },
+          {
+            "Play ID": "401909096400",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "10:43",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Kevin Durant makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909096401",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "10:43",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -0.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Kevin Durant makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909096402",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Stephon Castle misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096403",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Victor Wembanyama offensive rebound"
+          },
+          {
+            "Play ID": "401909096404",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "10:20",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Layup Shot Putback",
+            "Text": "Victor Wembanyama misses two point shot"
+          },
+          {
+            "Play ID": "401909096405",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "10:20",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Kevin Durant defensive rebound"
+          },
+          {
+            "Play ID": "401909096406",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "10:08",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Running Jump Shot",
+            "Text": "Kevin Durant makes 24-foot running jump shot (Amen Thompson assists)"
+          },
+          {
+            "Play ID": "401909096408",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "9:44",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Dylan Harper misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096409",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "9:44",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Amen Thompson defensive rebound"
+          },
+          {
+            "Play ID": "401909096410",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "9:29",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Alperen Sengun makes 16-foot jumper (Kevin Durant assists)"
+          },
+          {
+            "Play ID": "401909096412",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "9:16",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Stephon Castle misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096413",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "9:16",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Spurs offensive team rebound"
+          },
+          {
+            "Play ID": "401909096416",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "9:08",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Step Back Jump Shot",
+            "Text": "Victor Wembanyama misses 19-foot step back jumpshot"
+          },
+          {
+            "Play ID": "401909096417",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "9:08",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Jabari Smith Jr. defensive rebound"
+          },
+          {
+            "Play ID": "401909096418",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "8:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Turnaround Fade Away Jump Shot",
+            "Text": "Jabari Smith Jr. misses 15-foot two point shot"
+          },
+          {
+            "Play ID": "401909096419",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "De'Aaron Fox defensive rebound"
+          },
+          {
+            "Play ID": "401909096420",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Charge",
+            "Text": "De'Aaron Fox offensive charge"
+          },
+          {
+            "Play ID": "401909096422",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul Turnover",
+            "Text": "De'Aaron Fox offensive foul turnover"
+          },
+          {
+            "Play ID": "401909096426",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Luke Kornet enters the game for Victor Wembanyama"
+          },
+          {
+            "Play ID": "401909096427",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Julian Champagnie enters the game for De'Aaron Fox"
+          },
+          {
+            "Play ID": "401909096428",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Keldon Johnson enters the game for Devin Vassell"
+          },
+          {
+            "Play ID": "401909096429",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "8:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Pullup Jump Shot",
+            "Text": "Kevin Durant misses 15-foot pullup jump shot"
+          },
+          {
+            "Play ID": "401909096430",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Luke Kornet defensive rebound"
+          },
+          {
+            "Play ID": "401909096431",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Running Finger Roll Layup",
+            "Text": "Dylan Harper makes two point shot"
+          },
+          {
+            "Play ID": "401909096432",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "8:19",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Jabari Smith Jr. bad pass\nturnover (Keldon Johnson steals)"
+          },
+          {
+            "Play ID": "401909096434",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Turnaround Jump Shot",
+            "Text": "Dylan Harper misses 11-foot turnaround jump shot"
+          },
+          {
+            "Play ID": "401909096435",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Keldon Johnson offensive rebound"
+          },
+          {
+            "Play ID": "401909096436",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "8:07",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Tip Shot",
+            "Text": "Keldon Johnson makes tip shot"
+          },
+          {
+            "Play ID": "401909096437",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "7:46",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Turnaround Jump Shot",
+            "Text": "Amen Thompson misses 10-foot turnaround jump shot"
+          },
+          {
+            "Play ID": "401909096438",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "7:46",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Luke Kornet defensive rebound"
+          },
+          {
+            "Play ID": "401909096439",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "7:27",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Jabari Smith Jr. blocks Keldon Johnson's driving floating jump shot"
+          },
+          {
+            "Play ID": "401909096440",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "7:27",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Rockets defensive team rebound"
+          },
+          {
+            "Play ID": "401909096442",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "7:27",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Loose Ball Foul",
+            "Text": "Keldon Johnson loose ball foul"
+          },
+          {
+            "Play ID": "401909096446",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "7:27",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "De'Aaron Fox enters the game for Dylan Harper"
+          },
+          {
+            "Play ID": "401909096447",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "7:27",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Carter Bryant enters the game for Stephon Castle"
+          },
+          {
+            "Play ID": "401909096448",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "7:06",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Alperen Sengun makes driving layup"
+          },
+          {
+            "Play ID": "401909096449",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "6:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Turnaround Fade Away Jump Shot",
+            "Text": "De'Aaron Fox makes 11-foot two point shot"
+          },
+          {
+            "Play ID": "401909096450",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "6:39",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Personal Foul",
+            "Text": "Keldon Johnson personal foul"
+          },
+          {
+            "Play ID": "401909096452",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "6:39",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Full Timeout",
+            "Text": "Spurs Full timeout"
+          },
+          {
+            "Play ID": "401909096454",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "6:39",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Tari Eason enters the game for Amen Thompson"
+          },
+          {
+            "Play ID": "401909096455",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "6:31",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 2.0,
+            "Situation": "Within 7",
+            "Classification": "Cutting Dunk Shot",
+            "Text": "Kevin Durant makes 1-foot dunk (Alperen Sengun assists)"
+          },
+          {
+            "Play ID": "401909096457",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "6:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Lost Ball Turnover",
+            "Text": "De'Aaron Fox lost ball turnover (Fred VanVleet steals)"
+          },
+          {
+            "Play ID": "401909096459",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "6:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Fred VanVleet makes 27-foot three point jumper (Kevin Durant assists)"
+          },
+          {
+            "Play ID": "401909096461",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Keldon Johnson misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096462",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Rockets defensive team rebound"
+          },
+          {
+            "Play ID": "401909096463",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:50",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Loose Ball Foul",
+            "Text": "Carter Bryant loose ball foul"
+          },
+          {
+            "Play ID": "401909096466",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:50",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Stephon Castle enters the game for Carter Bryant"
+          },
+          {
+            "Play ID": "401909096468",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:50",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Marcus Smart enters the game for Jabari Smith Jr."
+          },
+          {
+            "Play ID": "401909096469",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Marcus Smart misses 22-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096470",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Stephon Castle defensive rebound"
+          },
+          {
+            "Play ID": "401909096471",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "De'Aaron Fox misses 24-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096472",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:28",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Alperen Sengun defensive rebound"
+          },
+          {
+            "Play ID": "401909096473",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Stephon Castle shooting foul"
+          },
+          {
+            "Play ID": "401909096475",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Fred VanVleet misses free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909096476",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Challenge",
+            "Text": "Spurs Coach's Challenge"
+          },
+          {
+            "Play ID": "401909096477",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Coach's Challenge (Stands)",
+            "Text": "(05:15) [Spurs] COACH'S CHALLENGE (CALL STANDS) [Spurs] charged with a timeout"
+          },
+          {
+            "Play ID": "401909096479",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -7.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Victor Wembanyama enters the game for Luke Kornet"
+          },
+          {
+            "Play ID": "401909096481",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Steven Adams enters the game for Alperen Sengun"
+          },
+          {
+            "Play ID": "401909096482",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Rockets offensive team rebound"
+          },
+          {
+            "Play ID": "401909096483",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "5:15",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 7.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Fred VanVleet makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909096484",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "5:01",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Lost Ball Turnover",
+            "Text": "De'Aaron Fox lost ball turnover (Marcus Smart steals)"
+          },
+          {
+            "Play ID": "401909096486",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:56",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Running Layup Shot",
+            "Text": "Marcus Smart makes running layup"
+          },
+          {
+            "Play ID": "401909096488",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Steven Adams shooting foul"
+          },
+          {
+            "Play ID": "401909096490",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Victor Wembanyama makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909096491",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Victor Wembanyama misses free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909096494",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Dylan Harper enters the game for Keldon Johnson"
+          },
+          {
+            "Play ID": "401909096495",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Devin Vassell enters the game for Stephon Castle"
+          },
+          {
+            "Play ID": "401909096496",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:41",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 9.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Kevin Durant defensive rebound"
+          },
+          {
+            "Play ID": "401909096497",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:22",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 9.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Marcus Smart misses 24-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096498",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:22",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "De'Aaron Fox defensive rebound"
+          },
+          {
+            "Play ID": "401909096499",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Julian Champagnie misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096500",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 9.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Marcus Smart defensive rebound"
+          },
+          {
+            "Play ID": "401909096501",
+            "Team": "Houston Rockets",
+            "Period": 3,
+            "Clock": "4:06",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 9.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Marcus Smart bad pass\nturnover (Julian Champagnie steals)"
+          },
+          {
+            "Play ID": "401909096503",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "De'Aaron Fox misses 27-foot three point jumper"
+          },
+          {
+            "Play ID": "401909096504",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "4:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Devin Vassell offensive rebound"
+          },
+          {
+            "Play ID": "401909096505",
+            "Team": "San Antonio Spurs",
+            "Period": 3,
+            "Clock": "3:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Full Timeout",
+            "Text": "Spurs Full timeout"
+          },
+          {
+            "Play ID": "401909096507",
+            "Team": "San Antonio Spurs",
+            "Period": 1,
+            "Clock": "7:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Julian Champagnie enters the game for De'Aaron Fox"
           }
         ],
         "situation_splits": [],
         "last_play": {
-          "Play ID": "401909096372",
-          "Team": null,
-          "Period": 2,
-          "Clock": "0.0",
+          "Play ID": "401909096507",
+          "Team": "San Antonio Spurs",
+          "Period": 1,
+          "Clock": "7:52",
           "Down": null,
           "Distance": null,
           "Yard line": null,
-          "Score margin before play": null,
-          "Situation": "Unknown",
-          "Classification": "End Period",
-          "Text": "End of the 2nd Quarter"
+          "Score margin before play": -9.0,
+          "Situation": "Trailing by 8+",
+          "Classification": "Substitution",
+          "Text": "Julian Champagnie enters the game for De'Aaron Fox"
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -28073,6 +29584,327 @@
             "Classification": "End Period",
             "Text": "End of the 2nd Quarter"
           }
+        },
+        {
+          "observed_utc": "2026-10-24T03:29:48.526500+00:00",
+          "status": {
+            "displayClock": "3:54",
+            "period": 3,
+            "type": {
+              "id": "2",
+              "name": "STATUS_IN_PROGRESS",
+              "state": "in",
+              "completed": false,
+              "description": "In Progress",
+              "detail": "3:54 - 3rd Quarter",
+              "shortDetail": "3:54 - 3rd",
+              "statusPrimary": "3:54",
+              "statusSecondary": "3rd"
+            },
+            "displayPeriod": "3rd"
+          },
+          "scores": [
+            {
+              "team": "San Antonio Spurs",
+              "score": "69"
+            },
+            {
+              "team": "Houston Rockets",
+              "score": "78"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "94e8afa8d9dc01eca8ee",
+              "player": "Stephon Castle",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "299e37a54276021b001d",
+              "player": "Alperen Sengun",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "e20808471ed886dc8b7e",
+              "player": "Dylan Harper",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "6d8d54d22ec7e3e38fe8",
+              "player": "Amen Thompson",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "5cbd1aeac13a05218867",
+              "player": "Kevin Durant",
+              "category": "Assists",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "2dd92a626a6f535372a6",
+              "player": "Victor Wembanyama",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "434c368f1bd1906defda",
+              "player": "Devin Vassell",
+              "category": "Assists",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "9f428e8aef661a929e7e",
+              "player": "Jabari Smith Jr",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "1cef1145609db546ba7c",
+              "player": "Julian Champagnie",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "a532be7bde00612019bc",
+              "player": "Victor Wembanyama",
+              "category": "Points",
+              "observed_stat": 21.0
+            },
+            {
+              "pick_id": "5534d91a966f1f00220a",
+              "player": "Kevin Durant",
+              "category": "Points",
+              "observed_stat": 17.0
+            },
+            {
+              "pick_id": "ff26b26248b7938aefa2",
+              "player": "Stephon Castle",
+              "category": "Points",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "e5620bd4c3ea3a171225",
+              "player": "Alperen Sengun",
+              "category": "Points",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "f06bf4d912d3f00dfa49",
+              "player": "Dylan Harper",
+              "category": "Points",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "0fb4b6fff13599891c3e",
+              "player": "Amen Thompson",
+              "category": "Points",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "f8393923732cd8c95d2d",
+              "player": "Jabari Smith Jr",
+              "category": "Points",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "6a761bb77e1b13c3626b",
+              "player": "Devin Vassell",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "05669ebe28157c9c7b5a",
+              "player": "Julian Champagnie",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "6734dda3bf5566fdf29c",
+              "player": "Tari Eason",
+              "category": "Points",
+              "observed_stat": 7.0
+            },
+            {
+              "pick_id": "aa364ea0734f1ea5e307",
+              "player": "Victor Wembanyama",
+              "category": "PRA",
+              "observed_stat": 30.0
+            },
+            {
+              "pick_id": "7817ad430d9f9194c2f1",
+              "player": "Kevin Durant",
+              "category": "PRA",
+              "observed_stat": 28.0
+            },
+            {
+              "pick_id": "dcea36c4f36488ffe2c2",
+              "player": "Alperen Sengun",
+              "category": "PRA",
+              "observed_stat": 24.0
+            },
+            {
+              "pick_id": "20302f42268bfe08b67b",
+              "player": "Stephon Castle",
+              "category": "PRA",
+              "observed_stat": 18.0
+            },
+            {
+              "pick_id": "f8b6676bb8c4303676aa",
+              "player": "Amen Thompson",
+              "category": "PRA",
+              "observed_stat": 19.0
+            },
+            {
+              "pick_id": "68a95722e6634aedb977",
+              "player": "Dylan Harper",
+              "category": "PRA",
+              "observed_stat": 13.0
+            },
+            {
+              "pick_id": "7456fafca7cdf8898c61",
+              "player": "Jabari Smith Jr",
+              "category": "PRA",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "0ac1d4a2325ca4f3ad8e",
+              "player": "Devin Vassell",
+              "category": "PRA",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "d4f121e3ca768ac66512",
+              "player": "Julian Champagnie",
+              "category": "PRA",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "26b85925fe835592bce6",
+              "player": "Victor Wembanyama",
+              "category": "Rebounds",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "0b18c500540b29f87f73",
+              "player": "Alperen Sengun",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "b40f3ed47ba421a37e6f",
+              "player": "Amen Thompson",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "b0be203eb0bf093fac2a",
+              "player": "Jabari Smith Jr",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "3bb6063dfd25685611db",
+              "player": "Stephon Castle",
+              "category": "Rebounds",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "bc78ae0a1c8295fe64c2",
+              "player": "Kevin Durant",
+              "category": "Rebounds",
+              "observed_stat": 6.0
+            },
+            {
+              "pick_id": "5ce8852ae8077daa11e8",
+              "player": "Dylan Harper",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "04df565ee20cadeb0dc5",
+              "player": "Julian Champagnie",
+              "category": "Rebounds",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "60ddd2767243102c9962",
+              "player": "Tari Eason",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "4c12ac577926189395c3",
+              "player": "Devin Vassell",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "25df7784dff749c0d3d8",
+              "player": "Jabari Smith Jr",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "f5f99da412f94362d28f",
+              "player": "Julian Champagnie",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "26ae2c8f01d2968bd40a",
+              "player": "Devin Vassell",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "0fd237b79a40bd8e063d",
+              "player": "Kevin Durant",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "6bc7799476ae446cd7b5",
+              "player": "Victor Wembanyama",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "f351389444c58ff844ca",
+              "player": "Stephon Castle",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "96293341d5fdb09785d4",
+              "player": "Dylan Harper",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "cf642b43cce85ce23bf2",
+              "player": "Tari Eason",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909096507",
+            "Team": "San Antonio Spurs",
+            "Period": 1,
+            "Clock": "7:52",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Julian Champagnie enters the game for De'Aaron Fox"
+          }
         }
       ],
       "scope": "Descriptive observations only. Missing statistics remain unknown. No picks or model weights changed; candidate corrections require chronological validation."
@@ -28081,7 +29913,7 @@
       "event_id": "401909850",
       "sport": "NBA",
       "game": "Memphis Grizzlies at Golden State Warriors",
-      "updated_utc": "2026-10-24T02:49:53.348235+00:00",
+      "updated_utc": "2026-10-24T03:29:48.526500+00:00",
       "completed": false,
       "latest_situations": {
         "schema": 1,
@@ -29218,7 +31050,7 @@
             "Score margin before play": -3.0,
             "Situation": "Within 7",
             "Classification": "Defensive Rebound",
-            "Text": "Quinten Post defensive rebound"
+            "Text": "Scotty Pippen Jr. defensive rebound"
           },
           {
             "Play ID": "401909850149",
@@ -29373,8 +31205,8 @@
             "Yard line": null,
             "Score margin before play": -3.0,
             "Situation": "Within 7",
-            "Classification": "Driving Layup Shot",
-            "Text": "De'Anthony Melton blocks Scotty Pippen Jr. 's 7-foot driving layup"
+            "Classification": "Running Layup Shot",
+            "Text": "De'Anthony Melton blocks Scotty Pippen Jr. 's 7-foot running layup"
           },
           {
             "Play ID": "401909850164",
@@ -29516,8 +31348,8 @@
             "Yard line": null,
             "Score margin before play": -2.0,
             "Situation": "Within 7",
-            "Classification": "Layup Shot",
-            "Text": "De'Anthony Melton misses layup"
+            "Classification": "Driving Layup Shot",
+            "Text": "De'Anthony Melton misses driving layup"
           },
           {
             "Play ID": "401909850185",
@@ -29776,23 +31608,1921 @@
             "Yard line": null,
             "Score margin before play": -1.0,
             "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Stephen Curry shooting foul"
+          },
+          {
+            "Play ID": "401909850223",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "11:04",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 1",
+            "Text": "Zach Edey misses free throw 1 of 1"
+          },
+          {
+            "Play ID": "401909850224",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "11:04",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Draymond Green defensive rebound"
+          },
+          {
+            "Play ID": "401909850225",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "10:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Gary Payton II misses 23-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850226",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Cameron Boozer defensive rebound"
+          },
+          {
+            "Play ID": "401909850227",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Cameron Boozer misses driving layup"
+          },
+          {
+            "Play ID": "401909850228",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Grizzlies offensive team rebound"
+          },
+          {
+            "Play ID": "401909850230",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:36",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Cameron Boozer misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850231",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "10:36",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Al Horford defensive rebound"
+          },
+          {
+            "Play ID": "401909850232",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "GG Jackson shooting foul"
+          },
+          {
+            "Play ID": "401909850234",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "10:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Brandin Podziemski makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850235",
+            "Team": null,
+            "Period": 1,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "Ref-Initiated Review (Supported)",
+            "Text": "(00:00) [Grizzlies] REF-INITIATED REVIEW (REPLAY SUPPORTS CALL)"
+          },
+          {
+            "Play ID": "401909850236",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "10:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Brandin Podziemski makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850237",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Ty Jerome misses driving floating jump shot"
+          },
+          {
+            "Play ID": "401909850238",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "10:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Warriors defensive team rebound"
+          },
+          {
+            "Play ID": "401909850239",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "10:11",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Loose Ball Foul",
+            "Text": "Cameron Boozer loose ball foul"
+          },
+          {
+            "Play ID": "401909850241",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Gary Payton II misses driving layup"
+          },
+          {
+            "Play ID": "401909850242",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Cameron Boozer defensive rebound"
+          },
+          {
+            "Play ID": "401909850243",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Charge",
+            "Text": "GG Jackson offensive charge"
+          },
+          {
+            "Play ID": "401909850245",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Full Timeout",
+            "Text": "Warriors Full timeout"
+          },
+          {
+            "Play ID": "401909850247",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Coach's Challenge (Overturned)",
+            "Text": "(09:51) [Warriors] COACH'S CHALLENGE (CALL OVERTURNED) [Warriors] retain their timeout"
+          },
+          {
+            "Play ID": "401909850248",
+            "Team": null,
+            "Period": 1,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "Ref-Initiated Review (Supported)",
+            "Text": "(00:00) [Grizzlies] REF-INITIATED REVIEW (REPLAY SUPPORTS CALL)"
+          },
+          {
+            "Play ID": "401909850249",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul Turnover",
+            "Text": "GG Jackson offensive foul turnover"
+          },
+          {
+            "Play ID": "401909850250",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:34",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Fade Away Jump Shot",
+            "Text": "Stephen Curry misses 15-foot fade away jump shot"
+          },
+          {
+            "Play ID": "401909850251",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:34",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Jaylen Wells defensive rebound"
+          },
+          {
+            "Play ID": "401909850252",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "GG Jackson makes 11-foot driving floating jump shot (Cameron Boozer assists)"
+          },
+          {
+            "Play ID": "401909850254",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Stephen Curry shooting foul"
+          },
+          {
+            "Play ID": "401909850256",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 1",
+            "Text": "GG Jackson misses free throw 1 of 1"
+          },
+          {
+            "Play ID": "401909850258",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "De'Anthony Melton enters the game for Stephen Curry"
+          },
+          {
+            "Play ID": "401909850259",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Grizzlies offensive team rebound"
+          },
+          {
+            "Play ID": "401909850263",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:19",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Georges Niang enters the game for Gary Payton II"
+          },
+          {
+            "Play ID": "401909850264",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "9:19",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Yaxel Lendeborg enters the game for Draymond Green"
+          },
+          {
+            "Play ID": "401909850265",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "9:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Traveling",
+            "Text": "Ty Jerome traveling turnover"
+          },
+          {
+            "Play ID": "401909850266",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:57",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Pullup Jump Shot",
+            "Text": "Yaxel Lendeborg misses 25-foot three point pullup jump shot"
+          },
+          {
+            "Play ID": "401909850267",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:57",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "GG Jackson defensive rebound"
+          },
+          {
+            "Play ID": "401909850272",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Lost Ball Turnover",
+            "Text": "Cameron Boozer lost ball turnover (Brandin Podziemski steals)"
+          },
+          {
+            "Play ID": "401909850275",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul",
+            "Text": "Brandin Podziemski offensive foul"
+          },
+          {
+            "Play ID": "401909850277",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:37",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul Turnover",
+            "Text": "Brandin Podziemski offensive foul turnover"
+          },
+          {
+            "Play ID": "401909850278",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:25",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "GG Jackson misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850279",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:25",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Ty Jerome offensive rebound"
+          },
+          {
+            "Play ID": "401909850280",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Step Back Jump Shot",
+            "Text": "Ty Jerome misses 17-foot step back jumpshot"
+          },
+          {
+            "Play ID": "401909850281",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Jaylen Wells offensive rebound"
+          },
+          {
+            "Play ID": "401909850282",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "8:18",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Tip Shot",
+            "Text": "Jaylen Wells makes tip shot"
+          },
+          {
+            "Play ID": "401909850283",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Zach Edey blocks Yaxel Lendeborg 's 4-foot driving layup"
+          },
+          {
+            "Play ID": "401909850284",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Warriors offensive team rebound"
+          },
+          {
+            "Play ID": "401909850287",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Al Horford misses 27-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850288",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "8:00",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Georges Niang offensive rebound"
+          },
+          {
+            "Play ID": "401909850289",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "7:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "De'Anthony Melton misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850290",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Zach Edey defensive rebound"
+          },
+          {
+            "Play ID": "401909850291",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:45",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Running Pullup Jump Shot",
+            "Text": "Ty Jerome makes 11-foot running pullup jump shot"
+          },
+          {
+            "Play ID": "401909850292",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:30",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
             "Classification": "Personal Foul",
-            "Text": "personal foul"
+            "Text": "GG Jackson personal foul"
+          },
+          {
+            "Play ID": "401909850298",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:30",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Scotty Pippen Jr. enters the game for Jaylen Wells"
+          },
+          {
+            "Play ID": "401909850299",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:30",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Jerami Grant enters the game for Ty Jerome"
+          },
+          {
+            "Play ID": "401909850300",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:30",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Quinten Post enters the game for GG Jackson"
+          },
+          {
+            "Play ID": "401909850301",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "7:30",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Cam Spencer enters the game for Zach Edey"
+          },
+          {
+            "Play ID": "401909850302",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "7:25",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Georges Niang misses 23-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850303",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "7:25",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Yaxel Lendeborg offensive rebound"
+          },
+          {
+            "Play ID": "401909850304",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "7:16",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Layup Driving Reverse",
+            "Text": "De'Anthony Melton makes two point shot (Yaxel Lendeborg assists)"
+          },
+          {
+            "Play ID": "401909850306",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "6:55",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Scotty Pippen Jr. makes 10-foot driving floating jump shot"
+          },
+          {
+            "Play ID": "401909850307",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:42",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Al Horford misses 26-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850308",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:42",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Rebound",
+            "Text": "Yaxel Lendeborg offensive rebound"
+          },
+          {
+            "Play ID": "401909850309",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Charge",
+            "Text": "Brandin Podziemski offensive charge"
+          },
+          {
+            "Play ID": "401909850311",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul Turnover",
+            "Text": "Brandin Podziemski offensive foul turnover"
+          },
+          {
+            "Play ID": "401909850313",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:33",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Gui Santos enters the game for Brandin Podziemski"
+          },
+          {
+            "Play ID": "401909850314",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "6:24",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 5.0,
+            "Situation": "Within 7",
+            "Classification": "Pullup Jump Shot",
+            "Text": "Cameron Boozer makes 25-foot three pointer (Cam Spencer assists)"
+          },
+          {
+            "Play ID": "401909850316",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Driving Layup Shot",
+            "Text": "Quinten Post blocks Yaxel Lendeborg 's 7-foot driving layup"
+          },
+          {
+            "Play ID": "401909850317",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "6:09",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Scotty Pippen Jr. defensive rebound"
+          },
+          {
+            "Play ID": "401909850319",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "6:07",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Out of Bounds - Lost Ball Turnover",
+            "Text": "Jerami Grant out of bounds lost ball turnover"
+          },
+          {
+            "Play ID": "401909850321",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "6:07",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Isaiah Stewart enters the game for Cameron Boozer"
+          },
+          {
+            "Play ID": "401909850323",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:07",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Graham Ike enters the game for Al Horford"
+          },
+          {
+            "Play ID": "401909850324",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "6:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Traveling",
+            "Text": "Georges Niang traveling turnover"
+          },
+          {
+            "Play ID": "401909850325",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "5:50",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Jerami Grant misses 23-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850326",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "5:50",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Warriors defensive team rebound"
+          },
+          {
+            "Play ID": "401909850328",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "5:38",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Georges Niang misses 25-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850329",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "5:38",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Isaiah Stewart defensive rebound"
+          },
+          {
+            "Play ID": "401909850330",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "5:29",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Lost Ball Turnover",
+            "Text": "Scotty Pippen Jr. lost ball turnover (Yaxel Lendeborg steals)"
+          },
+          {
+            "Play ID": "401909850332",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "5:21",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Out of Bounds - Bad Pass Turnover",
+            "Text": "Yaxel Lendeborg out of bounds bad pass turnover"
+          },
+          {
+            "Play ID": "401909850333",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "5:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Jerami Grant misses 22-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850334",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "5:10",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Scotty Pippen Jr. offensive rebound"
+          },
+          {
+            "Play ID": "401909850335",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "4:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Fade Away Jump Shot",
+            "Text": "Cam Spencer makes 18-foot fade away jump shot"
+          },
+          {
+            "Play ID": "401909850336",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Alley Oop Layup Shot",
+            "Text": "Gui Santos misses alley oop layup"
+          },
+          {
+            "Play ID": "401909850337",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "4:48",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Cam Spencer defensive rebound"
+          },
+          {
+            "Play ID": "401909850338",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "4:42",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Running Jump Shot",
+            "Text": "Cam Spencer makes 27-foot running jump shot (Scotty Pippen Jr. assists)"
+          },
+          {
+            "Play ID": "401909850340",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Full Timeout",
+            "Text": "Warriors Full timeout"
+          },
+          {
+            "Play ID": "401909850344",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Stephen Curry enters the game for De'Anthony Melton"
+          },
+          {
+            "Play ID": "401909850345",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Draymond Green enters the game for Georges Niang"
+          },
+          {
+            "Play ID": "401909850346",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:40",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Substitution",
+            "Text": "Brandin Podziemski enters the game for Graham Ike"
+          },
+          {
+            "Play ID": "401909850347",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Draymond Green bad pass\nturnover (Jerami Grant steals)"
+          },
+          {
+            "Play ID": "401909850349",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "4:20",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Out of Bounds - Bad Pass Turnover",
+            "Text": "Jerami Grant out of bounds bad pass turnover"
+          },
+          {
+            "Play ID": "401909850350",
+            "Team": null,
+            "Period": 2,
+            "Clock": "4:20",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "Coach's Challenge (replaycenter)",
+            "Text": "(04:20) [Grizzlies] COACH'S CHALLENGE (CALL REPLAYCENTER)"
+          },
+          {
+            "Play ID": "401909850351",
+            "Team": null,
+            "Period": 2,
+            "Clock": "4:20",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "Delay of Game",
+            "Text": "delay of game violation"
+          },
+          {
+            "Play ID": "401909850352",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Layup Driving Reverse",
+            "Text": "Quinten Post blocks Gui Santos 's 3-foot two point shot"
+          },
+          {
+            "Play ID": "401909850353",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "4:03",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Gui Santos offensive rebound"
+          },
+          {
+            "Play ID": "401909850356",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Brandin Podziemski misses 26-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850357",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Gui Santos offensive rebound"
+          },
+          {
+            "Play ID": "401909850358",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 13.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Jerami Grant shooting foul"
+          },
+          {
+            "Play ID": "401909850360",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -13.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850361",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Yaxel Lendeborg misses free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850364",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Ty Jerome enters the game for Scotty Pippen Jr."
+          },
+          {
+            "Play ID": "401909850365",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Jaylen Wells enters the game for Cam Spencer"
+          },
+          {
+            "Play ID": "401909850366",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Double Technical Foul",
+            "Text": "Double technical foul: Draymond Green and Isaiah Stewart"
+          },
+          {
+            "Play ID": "401909850370",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:51",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Isaiah Stewart defensive rebound"
+          },
+          {
+            "Play ID": "401909850371",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:38",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Driving Floating Jump Shot",
+            "Text": "Ty Jerome misses driving floating jump shot"
+          },
+          {
+            "Play ID": "401909850372",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:38",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Yaxel Lendeborg defensive rebound"
+          },
+          {
+            "Play ID": "401909850373",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Driving Layup Shot",
+            "Text": "Yaxel Lendeborg misses driving layup"
+          },
+          {
+            "Play ID": "401909850374",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Yaxel Lendeborg offensive rebound"
+          },
+          {
+            "Play ID": "401909850375",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 12.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Isaiah Stewart shooting foul"
+          },
+          {
+            "Play ID": "401909850377",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -12.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850378",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -11.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850380",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:23",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Substitution",
+            "Text": "Cameron Boozer enters the game for Isaiah Stewart"
+          },
+          {
+            "Play ID": "401909850381",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "3:07",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Bad Pass\nTurnover",
+            "Text": "Ty Jerome bad pass\nturnover (Gui Santos steals)"
+          },
+          {
+            "Play ID": "401909850383",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:54",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Driving Layup Shot",
+            "Text": "Yaxel Lendeborg makes driving layup (Brandin Podziemski assists)"
+          },
+          {
+            "Play ID": "401909850385",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "2:44",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Jaylen Wells makes 24-foot three point jumper (Cameron Boozer assists)"
+          },
+          {
+            "Play ID": "401909850387",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "2:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 11.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Personal Foul",
+            "Text": "Jerami Grant personal foul"
+          },
+          {
+            "Play ID": "401909850389",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -11.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Yaxel Lendeborg misses free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850390",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -11.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Offensive Rebound",
+            "Text": "Warriors offensive team rebound"
+          },
+          {
+            "Play ID": "401909850391",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:32",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -11.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Yaxel Lendeborg makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850392",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "2:25",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Out of Bounds - Bad Pass Turnover",
+            "Text": "Ty Jerome out of bounds bad pass turnover"
+          },
+          {
+            "Play ID": "401909850393",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "2:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 10.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Shooting Foul",
+            "Text": "Quinten Post shooting foul"
+          },
+          {
+            "Play ID": "401909850395",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -10.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Stephen Curry makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850396",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "2:12",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -9.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Stephen Curry makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850397",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 8.0,
+            "Situation": "Leading by 8+",
+            "Classification": "Jump Shot",
+            "Text": "Jaylen Wells misses 26-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850398",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:59",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Defensive Rebound",
+            "Text": "Draymond Green defensive rebound"
+          },
+          {
+            "Play ID": "401909850399",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:49",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -8.0,
+            "Situation": "Trailing by 8+",
+            "Classification": "Dunk Shot",
+            "Text": "Yaxel Lendeborg makes 2-foot dunk (Draymond Green assists)"
+          },
+          {
+            "Play ID": "401909850401",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:39",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul",
+            "Text": "Jaylen Wells offensive foul"
+          },
+          {
+            "Play ID": "401909850403",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:39",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Offensive Foul Turnover",
+            "Text": "Jaylen Wells offensive foul turnover"
+          },
+          {
+            "Play ID": "401909850404",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:35",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 6.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Jaylen Wells shooting foul"
+          },
+          {
+            "Play ID": "401909850406",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:35",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -6.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 3",
+            "Text": "Stephen Curry makes free throw 1 of 3"
+          },
+          {
+            "Play ID": "401909850407",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:35",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -5.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 3",
+            "Text": "Stephen Curry makes free throw 2 of 3"
+          },
+          {
+            "Play ID": "401909850408",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:35",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 3 of 3",
+            "Text": "Stephen Curry makes free throw 3 of 3"
+          },
+          {
+            "Play ID": "401909850410",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:35",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Scotty Pippen Jr. enters the game for Jaylen Wells"
+          },
+          {
+            "Play ID": "401909850411",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:17",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Personal Foul",
+            "Text": "Gui Santos personal foul"
+          },
+          {
+            "Play ID": "401909850413",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1:05",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Jump Shot",
+            "Text": "Jerami Grant misses 24-foot three point jumper"
+          },
+          {
+            "Play ID": "401909850414",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1:05",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Yaxel Lendeborg defensive rebound"
+          },
+          {
+            "Play ID": "401909850415",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "45.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Personal Foul",
+            "Text": "Quinten Post personal foul"
+          },
+          {
+            "Play ID": "401909850417",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "45.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 2",
+            "Text": "Gui Santos makes free throw 1 of 2"
+          },
+          {
+            "Play ID": "401909850418",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "45.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -2.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 2 of 2",
+            "Text": "Gui Santos makes free throw 2 of 2"
+          },
+          {
+            "Play ID": "401909850420",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "45.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -1.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "De'Anthony Melton enters the game for Stephen Curry"
+          },
+          {
+            "Play ID": "401909850421",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "29.7",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 1.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Jerami Grant makes driving layup"
+          },
+          {
+            "Play ID": "401909850422",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "29.7",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -3.0,
+            "Situation": "Within 7",
+            "Classification": "Shooting Foul",
+            "Text": "Gui Santos shooting foul"
+          },
+          {
+            "Play ID": "401909850424",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "29.7",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 3.0,
+            "Situation": "Within 7",
+            "Classification": "Free Throw - 1 of 1",
+            "Text": "Jerami Grant makes free throw 1 of 1"
+          },
+          {
+            "Play ID": "401909850426",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "29.7",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Substitution",
+            "Text": "Stephen Curry enters the game for Gui Santos"
+          },
+          {
+            "Play ID": "401909850427",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "13.3",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Finger Roll Layup",
+            "Text": "Brandin Podziemski misses two point shot"
+          },
+          {
+            "Play ID": "401909850428",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "13.3",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Cameron Boozer defensive rebound"
+          },
+          {
+            "Play ID": "401909850429",
+            "Team": "Memphis Grizzlies",
+            "Period": 2,
+            "Clock": "1.8",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": 4.0,
+            "Situation": "Within 7",
+            "Classification": "Driving Layup Shot",
+            "Text": "Cameron Boozer misses driving layup"
+          },
+          {
+            "Play ID": "401909850430",
+            "Team": "Golden State Warriors",
+            "Period": 2,
+            "Clock": "1.8",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": -4.0,
+            "Situation": "Within 7",
+            "Classification": "Defensive Rebound",
+            "Text": "Stephen Curry defensive rebound"
+          },
+          {
+            "Play ID": "401909850432",
+            "Team": null,
+            "Period": 2,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Period",
+            "Text": "End of the 2nd Quarter"
           }
         ],
         "situation_splits": [],
         "last_play": {
-          "Play ID": "401909850221",
-          "Team": "Golden State Warriors",
+          "Play ID": "401909850432",
+          "Team": null,
           "Period": 2,
-          "Clock": "11:04",
+          "Clock": "0.0",
           "Down": null,
           "Distance": null,
           "Yard line": null,
-          "Score margin before play": -1.0,
-          "Situation": "Within 7",
-          "Classification": "Personal Foul",
-          "Text": "personal foul"
+          "Score margin before play": null,
+          "Situation": "Unknown",
+          "Classification": "End Period",
+          "Text": "End of the 2nd Quarter"
         },
         "coverage": "Available ESPN plays only; first pre-play score is unknown, missing fields stay unknown. Play classification is descriptive. No injury or substitution is inferred.",
         "training_status": "Postgame review only. Must join strictly prior games and validate before model use."
@@ -30349,6 +34079,290 @@
             "Situation": "Within 7",
             "Classification": "Personal Foul",
             "Text": "personal foul"
+          }
+        },
+        {
+          "observed_utc": "2026-10-24T03:29:48.526500+00:00",
+          "status": {
+            "displayClock": "0.0",
+            "period": 2,
+            "type": {
+              "id": "23",
+              "name": "STATUS_HALFTIME",
+              "state": "in",
+              "completed": false,
+              "description": "Halftime",
+              "detail": "Halftime",
+              "shortDetail": "Halftime",
+              "statusPrimary": "Halftime"
+            },
+            "displayPeriod": "2nd"
+          },
+          "scores": [
+            {
+              "team": "Golden State Warriors",
+              "score": "56"
+            },
+            {
+              "team": "Memphis Grizzlies",
+              "score": "60"
+            }
+          ],
+          "pick_stats": [
+            {
+              "pick_id": "79e691516d10037f5b71",
+              "player": "Draymond Green",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "622c7ca23593e39a9278",
+              "player": "Ty Jerome",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "79c896c29e23ec5509e9",
+              "player": "Stephen Curry",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "a1442ecabb8376037899",
+              "player": "Ty Jerome",
+              "category": "Points",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "ca7ca5a9db39f82bdd5a",
+              "player": "Draymond Green",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "70a889797ac450d038ba",
+              "player": "Zach Edey",
+              "category": "Points",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "e7e36a1011bf168fa55b",
+              "player": "Gui Santos",
+              "category": "Points",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "d0fbb5448d1f115775b9",
+              "player": "Stephen Curry",
+              "category": "Points",
+              "observed_stat": 10.0
+            },
+            {
+              "pick_id": "37cb57765e79b20ce642",
+              "player": "Jaylen Wells",
+              "category": "Points",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "810ba839529de79bc87b",
+              "player": "Zach Edey",
+              "category": "PRA",
+              "observed_stat": 9.0
+            },
+            {
+              "pick_id": "2592138521f2779c7744",
+              "player": "Stephen Curry",
+              "category": "PRA",
+              "observed_stat": 14.0
+            },
+            {
+              "pick_id": "4cda71c0e33a559df099",
+              "player": "Draymond Green",
+              "category": "PRA",
+              "observed_stat": 11.0
+            },
+            {
+              "pick_id": "4d58b0a13f0267213aa4",
+              "player": "Al Horford",
+              "category": "PRA",
+              "observed_stat": 5.0
+            },
+            {
+              "pick_id": "e1cdd97cbb74bc178871",
+              "player": "Jaylen Wells",
+              "category": "PRA",
+              "observed_stat": 15.0
+            },
+            {
+              "pick_id": "fc5d2d62142b5be1c65b",
+              "player": "Ty Jerome",
+              "category": "PRA",
+              "observed_stat": 12.0
+            },
+            {
+              "pick_id": "38926e1162895af283da",
+              "player": "Gui Santos",
+              "category": "PRA",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "8be28b96a5daf5c10256",
+              "player": "Draymond Green",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "231f95e158fd38284fc4",
+              "player": "Stephen Curry",
+              "category": "Rebounds",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "08311e258d3a6657083b",
+              "player": "Zach Edey",
+              "category": "Rebounds",
+              "observed_stat": 4.0
+            },
+            {
+              "pick_id": "60ed86b0868173753503",
+              "player": "Al Horford",
+              "category": "Rebounds",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "d813d6c3cc05bb15f6b8",
+              "player": "Ty Jerome",
+              "category": "Rebounds",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "2fc9c7119d0151fcc4d4",
+              "player": "Gui Santos",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "d79541ddc0faa2408f2f",
+              "player": "Stephen Curry",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "1ad3a7b838541a8eab1b",
+              "player": "Al Horford",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "3b18caa33f5b194043ee",
+              "player": "Ty Jerome",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "f1423df637d3a18f3eda",
+              "player": "Jaylen Wells",
+              "category": "Three-pointers made",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "02dc95f1b5e157f81877",
+              "player": "Gui Santos",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "0d8daf9b4fdebe484114",
+              "player": "Gui Santos",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "f1184409591180b71484",
+              "player": "Al Horford",
+              "category": "Points",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "c8bbae3633b6ba980f2b",
+              "player": "Jaylen Wells",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "15ccd5687a13cab08a74",
+              "player": "Draymond Green",
+              "category": "Three-pointers made",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "9e075750351d7050d4a2",
+              "player": "Scotty Pippen Jr",
+              "category": "Points",
+              "observed_stat": 8.0
+            },
+            {
+              "pick_id": "cddde2d9ff0a28bfe485",
+              "player": "Jaylen Wells",
+              "category": "Assists",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "1851c2fac22e05cb84f9",
+              "player": "Zach Edey",
+              "category": "Assists",
+              "observed_stat": 1.0
+            },
+            {
+              "pick_id": "bfbcc1d40d2e499ce871",
+              "player": "Al Horford",
+              "category": "Assists",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "7864583c2657e16f5bd9",
+              "player": "G.G. Jackson",
+              "category": "Points",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "7138aef6d3dfb6648f1a",
+              "player": "De'Anthony Melton",
+              "category": "Points",
+              "observed_stat": 2.0
+            },
+            {
+              "pick_id": "9acfe243abf5b7ceaaae",
+              "player": "G.G. Jackson",
+              "category": "Rebounds",
+              "observed_stat": 3.0
+            },
+            {
+              "pick_id": "db56fcf5fb6212d8828d",
+              "player": "De'Anthony Melton",
+              "category": "Rebounds",
+              "observed_stat": 0.0
+            },
+            {
+              "pick_id": "48330f36aa40134d7145",
+              "player": "De'Anthony Melton",
+              "category": "Three-pointers made",
+              "observed_stat": 0.0
+            }
+          ],
+          "situation_splits": [],
+          "last_play": {
+            "Play ID": "401909850432",
+            "Team": null,
+            "Period": 2,
+            "Clock": "0.0",
+            "Down": null,
+            "Distance": null,
+            "Yard line": null,
+            "Score margin before play": null,
+            "Situation": "Unknown",
+            "Classification": "End Period",
+            "Text": "End of the 2nd Quarter"
           }
         }
       ],
