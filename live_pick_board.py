@@ -274,6 +274,14 @@ def render_live_board(records,sport='NFL'):
         from pick_presentation import pick_status,result_indicator
         original={r['id']:r for r in current}
         rows=[{'Result':result_indicator(row),'Status':pick_status(original[row['Pick ID']],row),**row} for row in rows]
+        wins=sum(row.get('Final result')=='Win' for row in rows)
+        losses=sum(row.get('Final result')=='Loss' for row in rows)
+        pushes=sum(row.get('Final result')=='Push' for row in rows)
+        pending=len(rows)-wins-losses-pushes
+        totals=st.columns(4)
+        for column,label,value in zip(totals,('✅ Wins','❌ Losses','➖ Pushes','⏳ Pending'),(wins,losses,pushes,pending)):
+            column.metric(label,value)
+        st.caption('Counts follow the selected date, matchup and strategy filters. Pending includes upcoming games, live games and final games awaiting verified stats.')
         tracking_tab,cards_tab=st.tabs(['Live tracking table','Pick cards'])
         with tracking_tab:
             st.caption('✅ Win · ❌ Loss · ➖ Push · ⏳ Pending or review needed. Win/loss marks appear only after final grading.')
@@ -284,8 +292,7 @@ def render_live_board(records,sport='NFL'):
                     if not values:continue
                     st.write('**'+group+' — '+str(len(values))+' picks**')
                     st.dataframe(values,hide_index=True,use_container_width=True,column_config={"Team logo":st.column_config.ImageColumn("Team / total away",width="small"),"Opponent logo":st.column_config.ImageColumn("Total home",width="small")},height=min(1000,max(200,35*(len(values)+1))))
-                wins=sum(r['Final result']=='Win' for r in rows);losses=sum(r['Final result']=='Loss' for r in rows)
-                st.caption(f'Final only: {wins} wins, {losses} losses. Other picks remain pending or unresolved. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
+                st.caption(f'Final only: {wins} wins, {losses} losses, {pushes} pushes · {pending} pending. Display refreshed {datetime.now(PACIFIC).strftime("%I:%M:%S %p Pacific")}. Final results are saved by the existing scheduled grading job.')
             else:st.info('No saved picks match the selected date and strategies.')
         with cards_tab:
             from pick_cards import render_pick_cards
