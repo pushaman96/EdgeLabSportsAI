@@ -73,6 +73,21 @@ def build(report, sport, scoreboard, now=None):
     for r in rows:r.pop('_rank',None)
     return {'shortlist':ready,'all_games':rows,'fresh':fresh,'issues':item.get('issues',[])}
 
+def research_board(report,sport,scoreboard,now=None):
+    now=now or datetime.now(timezone.utc)
+    def upcoming_regular(board):
+        for event in board.get('events',[]):
+            try:
+                status=event.get('status',{}).get('type') or (event.get('competitions') or [{}])[0].get('status',{}).get('type',{})
+                if utc(event['date'])>now and status.get('state')=='pre' and not status.get('completed') and event.get('season',board.get('season',{})).get('type')==2:
+                    return True
+            except (KeyError,ValueError,TypeError):continue
+        return False
+    if upcoming_regular(scoreboard):return scoreboard,False
+    prepared=report.get('sports',{}).get(sport,{}).get('scoreboard',{})
+    if upcoming_regular(prepared):return prepared,True
+    return scoreboard,False
+
 def render(sport,scoreboard):
     import streamlit as st
     from pathlib import Path
@@ -82,9 +97,10 @@ def render(sport,scoreboard):
     try:
         from runtime_health import snapshot
         def compact(data):
-            return {'generated_utc':data.get('generated_utc'),'sports':{league:{'projections':part.get('projections',[]),'issues':part.get('issues',[])} for league,part in data.get('sports',{}).items()}}
-        report=snapshot('background_research.json','free-shortlist-source-v2',compact,{})
-        ids={str(e.get('id')) for e in scoreboard.get('events',[])}
+            return {'generated_utc':data.get('generated_utc'),'sports':{league:{'projections':part.get('projections',[]),'issues':part.get('issues',[]),'scoreboard':part.get('scoreboard',{})} for league,part in data.get('sports',{}).items()}}
+        report=snapshot('background_research.json','free-shortlist-source-v3',compact,{})
+        research_scoreboard,using_upcoming=research_board(report,sport,scoreboard)
+        ids={str(e.get('id')) for e in research_scoreboard.get('events',[])}
         existing=report.get('sports',{}).get(sport,{}).get('projections',[])
         covered={str(p.get('event_id')) for p in existing}
         if ids-covered:
@@ -95,7 +111,10 @@ def render(sport,scoreboard):
     except (OSError,ValueError):
         report={}
     st.caption('Latest free preparation (UTC): '+str(report.get('generated_utc','Not available'))+'. Selected-game research is matched by game ID and scheduled start; older saved research is labeled separately.')
-    result=build(report,sport,scoreboard)
+    research_scoreboard,using_upcoming=research_board(report,sport,scoreboard)
+    if using_upcoming:
+        st.info('No upcoming regular-season '+sport+' games on the selected score date. Showing prepared upcoming games within '+('72' if sport=='NFL' else '30')+' hours instead. Change the score date to that game date before loading its sportsbook props.')
+    result=build(report,sport,research_scoreboard)
     if result['shortlist']:
         from team_emblems import render_team_table
         render_team_table(result['shortlist'],sport=sport,hide_index=True,use_container_width=True)

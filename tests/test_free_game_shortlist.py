@@ -58,3 +58,26 @@ class FreeResearchHorizonTests(unittest.TestCase):
         self.assertTrue(all(url.startswith('https://site.api.espn.com/') for url in urls))
         self.assertFalse(bg.upcoming(event,now))
         self.assertTrue(bg.upcoming(event,now,hours=72))
+
+class UpcomingResearchDisplayTests(unittest.TestCase):
+    def test_empty_selected_score_date_uses_prepared_games(self):
+        from free_game_shortlist import research_board
+        board,report=fixtures()
+        report['sports']['NBA']['scoreboard']=board
+        chosen,fallback=research_board(report,'NBA',{'events':[]},NOW)
+        self.assertTrue(fallback)
+        self.assertEqual(chosen,board)
+        self.assertEqual(len(build(report,'NBA',chosen,NOW)['shortlist']),1)
+    def test_nfl_prepared_games_visible_without_selected_date_games(self):
+        from free_game_shortlist import research_board
+        board,report=fixtures()
+        report['sports']['NFL']={'scoreboard':board,'projections':[dict(p,category='Passing yards' if p['category']=='Points' else 'Receiving yards') for p in report['sports']['NBA']['projections']]}
+        chosen,fallback=research_board(report,'NFL',{'events':[]},NOW)
+        self.assertTrue(fallback)
+        self.assertEqual(len(build(report,'NFL',chosen,NOW)['shortlist']),1)
+    def test_selected_upcoming_games_are_preserved(self):
+        from free_game_shortlist import research_board
+        board,report=fixtures()
+        chosen,fallback=research_board(report,'NBA',board,NOW)
+        self.assertFalse(fallback)
+        self.assertIs(chosen,board)
