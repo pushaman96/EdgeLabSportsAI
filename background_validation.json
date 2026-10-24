@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-24T04:07:16.783907+00:00",
+  "generated_utc": "2026-10-24T04:35:47.591529+00:00",
   "paired": {
     "NFL": [
       {
@@ -438,47 +438,47 @@
     "NBA": [
       {
         "Category": "Assists",
-        "Matched forecasts": 172,
-        "Distinct games": 8,
-        "Projection MAE": 1.2777597298501655,
-        "Simple baseline MAE": 1.3005800021562706,
-        "Projection minus baseline MAE": -0.02282027230610506,
+        "Matched forecasts": 190,
+        "Distinct games": 9,
+        "Projection MAE": 1.2831204344342917,
+        "Simple baseline MAE": 1.314814001535172,
+        "Projection minus baseline MAE": -0.03169356710088023,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       },
       {
         "Category": "PRA",
-        "Matched forecasts": 429,
-        "Distinct games": 21,
-        "Projection MAE": 6.666381181278475,
-        "Simple baseline MAE": 6.751837938242775,
-        "Projection minus baseline MAE": -0.08545675696429988,
+        "Matched forecasts": 447,
+        "Distinct games": 22,
+        "Projection MAE": 6.629336413839235,
+        "Simple baseline MAE": 6.722955947837877,
+        "Projection minus baseline MAE": -0.09361953399864209,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       },
       {
         "Category": "Points",
-        "Matched forecasts": 172,
-        "Distinct games": 8,
-        "Projection MAE": 5.0280974040850905,
-        "Simple baseline MAE": 5.087048571687097,
-        "Projection minus baseline MAE": -0.05895116760200647,
+        "Matched forecasts": 190,
+        "Distinct games": 9,
+        "Projection MAE": 4.950278780749802,
+        "Simple baseline MAE": 4.995152416944358,
+        "Projection minus baseline MAE": -0.04487363619455653,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       },
       {
         "Category": "Rebounds",
-        "Matched forecasts": 172,
-        "Distinct games": 8,
-        "Projection MAE": 2.0464835494149036,
-        "Simple baseline MAE": 2.082668801708537,
-        "Projection minus baseline MAE": -0.03618525229363323,
+        "Matched forecasts": 190,
+        "Distinct games": 9,
+        "Projection MAE": 2.0196188881476758,
+        "Simple baseline MAE": 2.0690118955186776,
+        "Projection minus baseline MAE": -0.04939300737100183,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       },
       {
         "Category": "Three-pointers made",
-        "Matched forecasts": 172,
-        "Distinct games": 8,
-        "Projection MAE": 0.7981444400793598,
-        "Simple baseline MAE": 0.8152601904278381,
-        "Projection minus baseline MAE": -0.017115750348478342,
+        "Matched forecasts": 190,
+        "Distinct games": 9,
+        "Projection MAE": 0.7913881958172025,
+        "Simple baseline MAE": 0.8114561063179624,
+        "Projection minus baseline MAE": -0.020067910500759845,
         "Status": "Descriptive prospective comparison; no automatic promotion"
       }
     ]

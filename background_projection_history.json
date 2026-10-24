@@ -52159,8 +52159,13 @@
       "simple_baseline": 9.948717948717949,
       "workload": 23.928774928774928,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 5.0,
+      "absolute_error": 9.089798237062796,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 9.948717948717949
     },
     {
       "id": "NBA|401909096|6578|Assists|NBA season-prior preparation v1",
@@ -52176,8 +52181,13 @@
       "simple_baseline": 1.9230769230769231,
       "workload": 23.928774928774928,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 5.0,
+      "absolute_error": 1.5857372384874038,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.9230769230769231
     },
     {
       "id": "NBA|401909096|6578|Rebounds|NBA season-prior preparation v1",
@@ -52193,8 +52203,13 @@
       "simple_baseline": 2.769230769230769,
       "workload": 23.928774928774928,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 5.0,
+      "absolute_error": 2.2834616234218617,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.769230769230769
     },
     {
       "id": "NBA|401909096|6578|Three-pointers made|NBA season-prior preparation v1",
@@ -52210,8 +52225,13 @@
       "simple_baseline": 1.7820512820512822,
       "workload": 23.928774928774928,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 5.0,
+      "absolute_error": 1.764866815427648,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.7820512820512822
     },
     {
       "id": "NBA|401909096|6578|PRA|NBA season-prior preparation v1",
@@ -52227,8 +52247,13 @@
       "simple_baseline": 14.64102564102564,
       "workload": 23.928774928774928,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 5.0,
+      "absolute_error": 12.95899709897206,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 14.64102564102564
     },
     {
       "id": "NBA|401909096|5061568|Points|NBA season-prior preparation v1",
@@ -52244,8 +52269,13 @@
       "simple_baseline": 4.197183098591549,
       "workload": 10.895148669796555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 4.0,
+      "absolute_error": 3.5324404227927357,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.197183098591549
     },
     {
       "id": "NBA|401909096|5061568|Assists|NBA season-prior preparation v1",
@@ -52261,8 +52291,13 @@
       "simple_baseline": 0.6619718309859155,
       "workload": 10.895148669796555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 4.0,
+      "absolute_error": 0.7588918777434337,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.6619718309859155
     },
     {
       "id": "NBA|401909096|5061568|Rebounds|NBA season-prior preparation v1",
@@ -52278,8 +52313,13 @@
       "simple_baseline": 2.507042253521127,
       "workload": 10.895148669796555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 4.0,
+      "absolute_error": 2.1099811921379428,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.507042253521127
     },
     {
       "id": "NBA|401909096|5061568|Three-pointers made|NBA season-prior preparation v1",
@@ -52295,8 +52335,13 @@
       "simple_baseline": 0.7323943661971831,
       "workload": 10.895148669796555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 4.0,
+      "absolute_error": 0.6163989999504103,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.7323943661971831
     },
     {
       "id": "NBA|401909096|5061568|PRA|NBA season-prior preparation v1",
@@ -52312,8 +52357,13 @@
       "simple_baseline": 7.366197183098592,
       "workload": 10.895148669796555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 4.0,
+      "absolute_error": 6.401313492674111,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 7.366197183098592
     },
     {
       "id": "NBA|401909096|4845367|Points|NBA season-prior preparation v1",
@@ -52329,8 +52379,13 @@
       "simple_baseline": 16.63768115942029,
       "workload": 29.803542673107888,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 15.0,
+      "actual_workload": 33.0,
+      "absolute_error": 2.516453651719349,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.6376811594202891
     },
     {
       "id": "NBA|401909096|4845367|Assists|NBA season-prior preparation v1",
@@ -52346,8 +52401,13 @@
       "simple_baseline": 7.449275362318841,
       "workload": 29.803542673107888,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 5.0,
+      "actual_workload": 33.0,
+      "absolute_error": 1.690134579023466,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.449275362318841
     },
     {
       "id": "NBA|401909096|4845367|Rebounds|NBA season-prior preparation v1",
@@ -52363,8 +52423,13 @@
       "simple_baseline": 5.3478260869565215,
       "workload": 29.803542673107888,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 33.0,
+      "absolute_error": 1.454188488004914,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.6521739130434785
     },
     {
       "id": "NBA|401909096|4845367|Three-pointers made|NBA season-prior preparation v1",
@@ -52380,8 +52445,13 @@
       "simple_baseline": 1.1884057971014492,
       "workload": 29.803542673107888,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 3.0,
+      "actual_workload": 33.0,
+      "absolute_error": 1.360229795012404,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.8115942028985508
     },
     {
       "id": "NBA|401909096|4845367|PRA|NBA season-prior preparation v1",
@@ -52397,8 +52467,13 @@
       "simple_baseline": 29.434782608695652,
       "workload": 29.803542673107888,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 27.0,
+      "actual_workload": 33.0,
+      "absolute_error": 2.7523997427379,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.4347826086956523
     },
     {
       "id": "NBA|401909096|4592479|Points|NBA season-prior preparation v1",
@@ -52414,8 +52489,13 @@
       "simple_baseline": 11.012048192771084,
       "workload": 27.87951807228915,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 6.0,
+      "actual_workload": 25.0,
+      "absolute_error": 4.708502888809452,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 5.0120481927710845
     },
     {
       "id": "NBA|401909096|4592479|Assists|NBA season-prior preparation v1",
@@ -52431,8 +52511,13 @@
       "simple_baseline": 1.5421686746987953,
       "workload": 27.87951807228915,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 25.0,
+      "absolute_error": 1.487231999551434,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.5421686746987953
     },
     {
       "id": "NBA|401909096|4592479|Rebounds|NBA season-prior preparation v1",
@@ -52448,8 +52533,13 @@
       "simple_baseline": 5.72289156626506,
       "workload": 27.87951807228915,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 25.0,
+      "absolute_error": 5.445615387670517,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 5.72289156626506
     },
     {
       "id": "NBA|401909096|4592479|Three-pointers made|NBA season-prior preparation v1",
@@ -52465,8 +52555,13 @@
       "simple_baseline": 2.36144578313253,
       "workload": 27.87951807228915,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 25.0,
+      "absolute_error": 0.32572594041085745,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.3614457831325302
     },
     {
       "id": "NBA|401909096|4592479|PRA|NBA season-prior preparation v1",
@@ -52482,8 +52577,13 @@
       "simple_baseline": 18.27710843373494,
       "workload": 27.87951807228915,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 6.0,
+      "actual_workload": 25.0,
+      "absolute_error": 11.641350276031403,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 12.277108433734941
     },
     {
       "id": "NBA|401909096|4066259|Points|NBA season-prior preparation v1",
@@ -52499,8 +52599,13 @@
       "simple_baseline": 17.88157894736842,
       "workload": 30.198830409356724,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 19.0,
+      "actual_workload": 34.0,
+      "absolute_error": 1.5178717409398423,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.1184210526315788
     },
     {
       "id": "NBA|401909096|4066259|Assists|NBA season-prior preparation v1",
@@ -52516,8 +52621,13 @@
       "simple_baseline": 6.0131578947368425,
       "workload": 30.198830409356724,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 9.0,
+      "actual_workload": 34.0,
+      "absolute_error": 2.880822424399047,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.9868421052631575
     },
     {
       "id": "NBA|401909096|4066259|Rebounds|NBA season-prior preparation v1",
@@ -52533,8 +52643,13 @@
       "simple_baseline": 3.5921052631578947,
       "workload": 30.198830409356724,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 4.0,
+      "actual_workload": 34.0,
+      "absolute_error": 0.04903422629998788,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.4078947368421053
     },
     {
       "id": "NBA|401909096|4066259|Three-pointers made|NBA season-prior preparation v1",
@@ -52550,8 +52665,13 @@
       "simple_baseline": 1.763157894736842,
       "workload": 30.198830409356724,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 34.0,
+      "absolute_error": 0.42097618774605383,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.23684210526315796
     },
     {
       "id": "NBA|401909096|4066259|PRA|NBA season-prior preparation v1",
@@ -52567,8 +52687,13 @@
       "simple_baseline": 27.486842105263158,
       "workload": 30.198830409356724,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 32.0,
+      "actual_workload": 34.0,
+      "absolute_error": 4.447728391638872,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.5131578947368425
     },
     {
       "id": "NBA|401909096|5037871|Points|NBA season-prior preparation v1",
@@ -52584,8 +52709,13 @@
       "simple_baseline": 11.914285714285715,
       "workload": 23.70793650793651,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 20.0,
+      "actual_workload": 36.0,
+      "absolute_error": 7.443595116405451,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 8.085714285714285
     },
     {
       "id": "NBA|401909096|5037871|Assists|NBA season-prior preparation v1",
@@ -52601,8 +52731,13 @@
       "simple_baseline": 3.8,
       "workload": 23.70793650793651,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.9438014611665104,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.7999999999999998
     },
     {
       "id": "NBA|401909096|5037871|Rebounds|NBA season-prior preparation v1",
@@ -52618,8 +52753,13 @@
       "simple_baseline": 3.442857142857143,
       "workload": 23.70793650793651,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 3.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.776465722931801,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.44285714285714306
     },
     {
       "id": "NBA|401909096|5037871|Three-pointers made|NBA season-prior preparation v1",
@@ -52635,8 +52775,13 @@
       "simple_baseline": 0.9428571428571428,
       "workload": 23.70793650793651,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.12358814841486543,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.05714285714285716
     },
     {
       "id": "NBA|401909096|5037871|PRA|NBA season-prior preparation v1",
@@ -52652,8 +52797,13 @@
       "simple_baseline": 19.15714285714286,
       "workload": 23.70793650793651,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 25.0,
+      "actual_workload": 36.0,
+      "absolute_error": 4.723327932307139,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 5.842857142857142
     },
     {
       "id": "NBA|401909096|4395723|Points|NBA season-prior preparation v1",
@@ -52669,8 +52819,13 @@
       "simple_baseline": 13.060240963855422,
       "workload": 22.848728246318608,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 8.0,
+      "actual_workload": 19.0,
+      "absolute_error": 4.700328640433817,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 5.060240963855422
     },
     {
       "id": "NBA|401909096|4395723|Assists|NBA season-prior preparation v1",
@@ -52686,8 +52841,13 @@
       "simple_baseline": 1.3373493975903614,
       "workload": 22.848728246318608,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 19.0,
+      "absolute_error": 0.2974502834228341,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.3373493975903614
     },
     {
       "id": "NBA|401909096|4395723|Rebounds|NBA season-prior preparation v1",
@@ -52703,8 +52863,13 @@
       "simple_baseline": 5.349397590361446,
       "workload": 22.848728246318608,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 6.0,
+      "actual_workload": 19.0,
+      "absolute_error": 0.8101988663086637,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.6506024096385543
     },
     {
       "id": "NBA|401909096|4395723|Three-pointers made|NBA season-prior preparation v1",
@@ -52720,8 +52885,13 @@
       "simple_baseline": 1.2048192771084338,
       "workload": 22.848728246318608,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 19.0,
+      "absolute_error": 1.181453509125151,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.2048192771084338
     },
     {
       "id": "NBA|401909096|4395723|PRA|NBA season-prior preparation v1",
@@ -52737,8 +52907,13 @@
       "simple_baseline": 19.746987951807228,
       "workload": 22.848728246318608,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 15.0,
+      "actual_workload": 19.0,
+      "absolute_error": 4.1875800575479865,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.7469879518072275
     },
     {
       "id": "NBA|401909096|4713010|Points|NBA season-prior preparation v1",
@@ -52839,8 +53014,13 @@
       "simple_baseline": 6.63768115942029,
       "workload": 20.13687600644122,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 16.0,
+      "absolute_error": 0.6617004112684279,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.36231884057971
     },
     {
       "id": "NBA|401909096|3064560|Assists|NBA season-prior preparation v1",
@@ -52856,8 +53036,13 @@
       "simple_baseline": 1.8405797101449275,
       "workload": 20.13687600644122,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 16.0,
+      "absolute_error": 1.5666640648245866,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.8405797101449275
     },
     {
       "id": "NBA|401909096|3064560|Rebounds|NBA season-prior preparation v1",
@@ -52873,8 +53058,13 @@
       "simple_baseline": 6.086956521739131,
       "workload": 20.13687600644122,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 3.0,
+      "actual_workload": 16.0,
+      "absolute_error": 2.3532038090247154,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 3.086956521739131
     },
     {
       "id": "NBA|401909096|3064560|Three-pointers made|NBA season-prior preparation v1",
@@ -52890,8 +53080,13 @@
       "simple_baseline": 0.0,
       "workload": 20.13687600644122,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 16.0,
+      "absolute_error": 0.0,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.0
     },
     {
       "id": "NBA|401909096|3064560|PRA|NBA season-prior preparation v1",
@@ -52907,8 +53102,13 @@
       "simple_baseline": 14.565217391304348,
       "workload": 20.13687600644122,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 10.0,
+      "actual_workload": 16.0,
+      "absolute_error": 3.258167462580875,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.565217391304348
     },
     {
       "id": "NBA|401909096|3134916|Points|NBA season-prior preparation v1",
@@ -53009,8 +53209,13 @@
       "simple_baseline": 13.882352941176471,
       "workload": 30.6078431372549,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 10.0,
+      "actual_workload": 36.0,
+      "absolute_error": 3.127602462430321,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 3.882352941176471
     },
     {
       "id": "NBA|401909096|4395630|Assists|NBA season-prior preparation v1",
@@ -53026,8 +53231,13 @@
       "simple_baseline": 2.5,
       "workload": 30.6078431372549,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.33549243431939724,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.5
     },
     {
       "id": "NBA|401909096|4395630|Rebounds|NBA season-prior preparation v1",
@@ -53043,8 +53253,13 @@
       "simple_baseline": 4.029411764705882,
       "workload": 30.6078431372549,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 4.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.08343863347306035,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.02941176470588225
     },
     {
       "id": "NBA|401909096|4395630|Three-pointers made|NBA season-prior preparation v1",
@@ -53060,8 +53275,13 @@
       "simple_baseline": 2.4705882352941178,
       "workload": 30.6078431372549,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.309306706044556,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.47058823529411775
     },
     {
       "id": "NBA|401909096|4395630|PRA|NBA season-prior preparation v1",
@@ -53077,8 +53297,13 @@
       "simple_baseline": 20.41176470588235,
       "workload": 30.6078431372549,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 16.0,
+      "actual_workload": 36.0,
+      "absolute_error": 3.3796562632766616,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.4117647058823515
     },
     {
       "id": "NBA|401909096|5104157|Points|NBA season-prior preparation v1",
@@ -53094,8 +53319,13 @@
       "simple_baseline": 24.64179104477612,
       "workload": 29.157545605306797,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 25.0,
+      "actual_workload": 32.0,
+      "absolute_error": 1.488392223517529,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.35820895522387985
     },
     {
       "id": "NBA|401909096|5104157|Assists|NBA season-prior preparation v1",
@@ -53111,8 +53341,13 @@
       "simple_baseline": 2.985074626865672,
       "workload": 29.157545605306797,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 32.0,
+      "absolute_error": 0.9955099698955974,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.9850746268656718
     },
     {
       "id": "NBA|401909096|5104157|Rebounds|NBA season-prior preparation v1",
@@ -53128,8 +53363,13 @@
       "simple_baseline": 11.194029850746269,
       "workload": 29.157545605306797,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 13.0,
+      "actual_workload": 32.0,
+      "absolute_error": 1.600086943580111,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.8059701492537314
     },
     {
       "id": "NBA|401909096|5104157|Three-pointers made|NBA season-prior preparation v1",
@@ -53145,8 +53385,13 @@
       "simple_baseline": 1.9104477611940298,
       "workload": 29.157545605306797,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 32.0,
+      "absolute_error": 0.265822925025605,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.08955223880597019
     },
     {
       "id": "NBA|401909096|5104157|PRA|NBA season-prior preparation v1",
@@ -53162,8 +53407,13 @@
       "simple_baseline": 38.82089552238806,
       "workload": 29.157545605306797,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 40.0,
+      "actual_workload": 32.0,
+      "absolute_error": 2.092969197202045,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.1791044776119435
     },
     {
       "id": "NBA|401909096|2991235|Points|NBA season-prior preparation v1",
@@ -53179,8 +53429,13 @@
       "simple_baseline": 5.84375,
       "workload": 22.8125,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 4.0,
+      "actual_workload": 9.0,
+      "absolute_error": 1.84375,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.84375
     },
     {
       "id": "NBA|401909096|2991235|Assists|NBA season-prior preparation v1",
@@ -53196,8 +53451,13 @@
       "simple_baseline": 1.5,
       "workload": 22.8125,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 9.0,
+      "absolute_error": 0.4999999999999998,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.5
     },
     {
       "id": "NBA|401909096|2991235|Rebounds|NBA season-prior preparation v1",
@@ -53213,8 +53473,13 @@
       "simple_baseline": 8.625,
       "workload": 22.8125,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 9.0,
+      "absolute_error": 6.625,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 6.625
     },
     {
       "id": "NBA|401909096|2991235|Three-pointers made|NBA season-prior preparation v1",
@@ -53230,8 +53495,13 @@
       "simple_baseline": 0.0,
       "workload": 22.8125,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 9.0,
+      "absolute_error": 0.0,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.0
     },
     {
       "id": "NBA|401909096|2991235|PRA|NBA season-prior preparation v1",
@@ -53247,8 +53517,13 @@
       "simple_baseline": 15.96875,
       "workload": 22.8125,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 9.0,
+      "absolute_error": 8.968749999999998,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 8.96875
     },
     {
       "id": "NBA|401909096|3037789|Points|NBA season-prior preparation v1",
@@ -53264,8 +53539,13 @@
       "simple_baseline": 7.434782608695652,
       "workload": 18.951690821256037,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 3.0,
+      "actual_workload": 12.0,
+      "absolute_error": 4.168967552977534,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.434782608695652
     },
     {
       "id": "NBA|401909096|3037789|Assists|NBA season-prior preparation v1",
@@ -53281,8 +53561,13 @@
       "simple_baseline": 2.217391304347826,
       "workload": 18.951690821256037,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 12.0,
+      "absolute_error": 2.220524141053942,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.217391304347826
     },
     {
       "id": "NBA|401909096|3037789|Rebounds|NBA season-prior preparation v1",
@@ -53298,8 +53583,13 @@
       "simple_baseline": 2.5652173913043477,
       "workload": 18.951690821256037,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 12.0,
+      "absolute_error": 1.356044052400068,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.5652173913043477
     },
     {
       "id": "NBA|401909096|3037789|Three-pointers made|NBA season-prior preparation v1",
@@ -53315,8 +53605,13 @@
       "simple_baseline": 1.434782608695652,
       "workload": 18.951690821256037,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 12.0,
+      "absolute_error": 0.38916848437915696,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.4347826086956521
     },
     {
       "id": "NBA|401909096|3037789|PRA|NBA season-prior preparation v1",
@@ -53332,8 +53627,13 @@
       "simple_baseline": 12.217391304347826,
       "workload": 18.951690821256037,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 4.0,
+      "actual_workload": 12.0,
+      "absolute_error": 7.745535746431543,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 8.217391304347826
     },
     {
       "id": "NBA|401909096|3102529|Points|NBA season-prior preparation v1",
@@ -53519,8 +53819,13 @@
       "simple_baseline": 25.160493827160494,
       "workload": 35.59533607681756,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 20.0,
+      "actual_workload": 37.0,
+      "absolute_error": 5.682537756089715,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 5.160493827160494
     },
     {
       "id": "NBA|401909096|3202|Assists|NBA season-prior preparation v1",
@@ -53536,8 +53841,13 @@
       "simple_baseline": 4.617283950617284,
       "workload": 35.59533607681756,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 6.0,
+      "actual_workload": 37.0,
+      "absolute_error": 1.5547232739942665,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.382716049382716
     },
     {
       "id": "NBA|401909096|3202|Rebounds|NBA season-prior preparation v1",
@@ -53553,8 +53863,13 @@
       "simple_baseline": 5.296296296296297,
       "workload": 35.59533607681756,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 37.0,
+      "absolute_error": 1.6274860378626048,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.7037037037037033
     },
     {
       "id": "NBA|401909096|3202|Three-pointers made|NBA season-prior preparation v1",
@@ -53570,8 +53885,13 @@
       "simple_baseline": 2.3209876543209877,
       "workload": 35.59533607681756,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 37.0,
+      "absolute_error": 0.28711315052751196,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.32098765432098775
     },
     {
       "id": "NBA|401909096|3202|PRA|NBA season-prior preparation v1",
@@ -53587,8 +53907,13 @@
       "simple_baseline": 35.074074074074076,
       "workload": 35.59533607681756,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 33.0,
+      "actual_workload": 37.0,
+      "absolute_error": 2.5003284442328493,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.074074074074076
     },
     {
       "id": "NBA|401909096|4433192|Points|NBA season-prior preparation v1",
@@ -53604,8 +53929,13 @@
       "simple_baseline": 10.45,
       "workload": 23.35555555555555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 12.0,
+      "actual_workload": 27.0,
+      "absolute_error": 1.8936206047317174,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.5500000000000007
     },
     {
       "id": "NBA|401909096|4433192|Assists|NBA season-prior preparation v1",
@@ -53621,8 +53951,13 @@
       "simple_baseline": 1.5,
       "workload": 23.35555555555555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 27.0,
+      "absolute_error": 1.202345202345202,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.5
     },
     {
       "id": "NBA|401909096|4433192|Rebounds|NBA season-prior preparation v1",
@@ -53638,8 +53973,13 @@
       "simple_baseline": 6.266666666666667,
       "workload": 23.35555555555555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 6.0,
+      "actual_workload": 27.0,
+      "absolute_error": 0.11184835629280165,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.2666666666666666
     },
     {
       "id": "NBA|401909096|4433192|Three-pointers made|NBA season-prior preparation v1",
@@ -53655,8 +53995,13 @@
       "simple_baseline": 1.55,
       "workload": 23.35555555555555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 27.0,
+      "absolute_error": 1.2424233757567087,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.55
     },
     {
       "id": "NBA|401909096|4433192|PRA|NBA season-prior preparation v1",
@@ -53672,8 +54017,13 @@
       "simple_baseline": 18.216666666666665,
       "workload": 23.35555555555555,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 18.0,
+      "actual_workload": 27.0,
+      "absolute_error": 0.8031237586793196,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.216666666666665
     },
     {
       "id": "NBA|401909096|5105553|Points|NBA season-prior preparation v1",
@@ -53774,8 +54124,13 @@
       "simple_baseline": 19.824324324324323,
       "workload": 32.28228228228228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 29.0,
+      "actual_workload": 36.0,
+      "absolute_error": 8.782768014672122,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 9.175675675675677
     },
     {
       "id": "NBA|401909096|4871144|Assists|NBA season-prior preparation v1",
@@ -53791,8 +54146,13 @@
       "simple_baseline": 6.0675675675675675,
       "workload": 32.28228228228228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.056031596372768,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.9324324324324325
     },
     {
       "id": "NBA|401909096|4871144|Rebounds|NBA season-prior preparation v1",
@@ -53808,8 +54168,13 @@
       "simple_baseline": 8.716216216216216,
       "workload": 32.28228228228228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.8755191337026282,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.7162162162162158
     },
     {
       "id": "NBA|401909096|4871144|Three-pointers made|NBA season-prior preparation v1",
@@ -53825,8 +54190,13 @@
       "simple_baseline": 0.5405405405405406,
       "workload": 32.28228228228228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 2.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.2846004141532035,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.4594594594594594
     },
     {
       "id": "NBA|401909096|4871144|PRA|NBA season-prior preparation v1",
@@ -53842,8 +54212,13 @@
       "simple_baseline": 34.608108108108105,
       "workload": 32.28228228228228,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 43.0,
+      "actual_workload": 36.0,
+      "absolute_error": 7.963280477342266,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 8.391891891891895
     },
     {
       "id": "NBA|401909096|4711272|Points|NBA season-prior preparation v1",
@@ -53944,8 +54319,13 @@
       "simple_baseline": 9.338709677419354,
       "workload": 28.250896057347667,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 5.0,
+      "actual_workload": 21.0,
+      "absolute_error": 4.426520041824235,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 4.338709677419354
     },
     {
       "id": "NBA|401909096|2990992|Assists|NBA season-prior preparation v1",
@@ -53961,8 +54341,13 @@
       "simple_baseline": 2.9838709677419355,
       "workload": 28.250896057347667,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 21.0,
+      "absolute_error": 1.8676352725660696,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.9838709677419355
     },
     {
       "id": "NBA|401909096|2990992|Rebounds|NBA season-prior preparation v1",
@@ -53978,8 +54363,13 @@
       "simple_baseline": 2.774193548387097,
       "workload": 28.250896057347667,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 3.0,
+      "actual_workload": 21.0,
+      "absolute_error": 0.3169067279341604,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.22580645161290303
     },
     {
       "id": "NBA|401909096|2990992|Three-pointers made|NBA season-prior preparation v1",
@@ -53995,8 +54385,13 @@
       "simple_baseline": 1.564516129032258,
       "workload": 28.250896057347667,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 0.0,
+      "actual_workload": 21.0,
+      "absolute_error": 1.6184278845645146,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.564516129032258
     },
     {
       "id": "NBA|401909096|2990992|PRA|NBA season-prior preparation v1",
@@ -54012,8 +54407,13 @@
       "simple_baseline": 15.096774193548388,
       "workload": 28.250896057347667,
       "role_uncertain": true,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 9.0,
+      "actual_workload": 21.0,
+      "absolute_error": 5.9772485864561435,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 6.096774193548388
     },
     {
       "id": "NBA|401909096|4432639|Points|NBA season-prior preparation v1",
@@ -54029,8 +54429,13 @@
       "simple_baseline": 15.779220779220779,
       "workload": 35.23809523809524,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 7.0,
+      "actual_workload": 31.0,
+      "absolute_error": 10.326771391812041,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 8.779220779220779
     },
     {
       "id": "NBA|401909096|4432639|Assists|NBA season-prior preparation v1",
@@ -54046,8 +54451,13 @@
       "simple_baseline": 1.8571428571428572,
       "workload": 35.23809523809524,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 31.0,
+      "absolute_error": 0.7640268995282546,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.8571428571428572
     },
     {
       "id": "NBA|401909096|4432639|Rebounds|NBA season-prior preparation v1",
@@ -54063,8 +54473,13 @@
       "simple_baseline": 6.87012987012987,
       "workload": 35.23809523809524,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 5.0,
+      "actual_workload": 31.0,
+      "absolute_error": 1.6671294178069251,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.8701298701298699
     },
     {
       "id": "NBA|401909096|4432639|Three-pointers made|NBA season-prior preparation v1",
@@ -54080,8 +54495,13 @@
       "simple_baseline": 2.2987012987012987,
       "workload": 35.23809523809524,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 31.0,
+      "absolute_error": 1.4838656274970643,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.2987012987012987
     },
     {
       "id": "NBA|401909096|4432639|PRA|NBA season-prior preparation v1",
@@ -54097,8 +54517,13 @@
       "simple_baseline": 24.506493506493506,
       "workload": 35.23809523809524,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 13.0,
+      "actual_workload": 31.0,
+      "absolute_error": 12.757927709147221,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 11.506493506493506
     },
     {
       "id": "NBA|401909096|3136777|Points|NBA season-prior preparation v1",
@@ -54199,8 +54624,13 @@
       "simple_baseline": 18.265822784810126,
       "workload": 36.90436005625878,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 20.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.987515135727726,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.7341772151898738
     },
     {
       "id": "NBA|401909096|4684740|Assists|NBA season-prior preparation v1",
@@ -54216,8 +54646,13 @@
       "simple_baseline": 5.3164556962025316,
       "workload": 36.90436005625878,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 4.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.1610865612372052,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 1.3164556962025316
     },
     {
       "id": "NBA|401909096|4684740|Rebounds|NBA season-prior preparation v1",
@@ -54233,8 +54668,13 @@
       "simple_baseline": 7.772151898734177,
       "workload": 36.90436005625878,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 10.0,
+      "actual_workload": 36.0,
+      "absolute_error": 1.9390201453245997,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.227848101265823
     },
     {
       "id": "NBA|401909096|4684740|Three-pointers made|NBA season-prior preparation v1",
@@ -54250,8 +54690,13 @@
       "simple_baseline": 0.31645569620253167,
       "workload": 36.90436005625878,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 1.0,
+      "actual_workload": 36.0,
+      "absolute_error": 0.5981203869232881,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 0.6835443037974683
     },
     {
       "id": "NBA|401909096|4684740|PRA|NBA season-prior preparation v1",
@@ -54267,8 +54712,13 @@
       "simple_baseline": 31.354430379746834,
       "workload": 36.90436005625878,
       "role_uncertain": false,
-      "result": "Pending",
-      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required."
+      "result": "Measured",
+      "status": "Research projection only; no line, selection or win probability. Availability/validation gates still required.",
+      "actual": 34.0,
+      "actual_workload": 36.0,
+      "absolute_error": 2.7654487198151187,
+      "graded_utc": "2026-10-24T04:35:47.591529+00:00",
+      "baseline_absolute_error": 2.645569620253166
     },
     {
       "id": "NBA|401909096|4432827|Points|NBA season-prior preparation v1",
