@@ -924417,7 +924417,7 @@
       "forecast_decision": "Pass",
       "record_purpose": "Analyzed forecast only; excluded from official pick results",
       "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
-      "settlement_checked_utc": "2026-10-24T04:07:12.500443+00:00",
+      "settlement_checked_utc": "2026-10-24T04:08:32.937859+00:00",
       "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
@@ -931665,7 +931665,7 @@
       "forecast_decision": "Pass",
       "record_purpose": "Analyzed forecast only; excluded from official pick results",
       "grading_note": "Final statistic not verified by primary or secondary source; automatic retry pending.",
-      "settlement_checked_utc": "2026-10-24T04:07:12.504998+00:00",
+      "settlement_checked_utc": "2026-10-24T04:08:32.941853+00:00",
       "settlement_source_status": "Unavailable or unmatched (ValueError)"
     },
     {
