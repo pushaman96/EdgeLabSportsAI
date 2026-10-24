@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-24T01:45:52.281750+00:00",
+  "generated_utc": "2026-10-24T02:35:46.020967+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
@@ -10,36 +10,9 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 11,
-      "prepared_projections": 1425,
+      "upcoming_games": 8,
+      "prepared_projections": 1050,
       "issues": [
-        "Player history incomplete: Jimmy Butler III",
-        "Player history incomplete: Graham Ike",
-        "Player history incomplete: Yaxel Lendeborg",
-        "Player history incomplete: Moses Moody",
-        "Player history incomplete: Georges Niang",
-        "Player history incomplete: Kristaps Porzingis",
-        "Player history incomplete: Cameron Boozer",
-        "Player history incomplete: Carson Cooper",
-        "Player history incomplete: Karim Lopez",
-        "Player history incomplete: Cameron Carr",
-        "Player history incomplete: Arthur Kaluma",
-        "Player history incomplete: AK Okereke",
-        "Player history incomplete: Collin Sexton",
-        "Player history incomplete: Bradley Beal",
-        "Player history incomplete: Brandon Ingram",
-        "Player history incomplete: Nick Martinelli",
-        "Player history incomplete: Baba Miller",
-        "Player history incomplete: Jordan Miller",
-        "Player history incomplete: Yanic Konan Niederhauser",
-        "Player history incomplete: Keaton Wagler",
-        "Player history incomplete: Darius Acuff Jr.",
-        "Player history incomplete: Alex Karaban",
-        "Player history incomplete: Malik Monk",
-        "Player history incomplete: Emanuel Sharp",
-        "Player history incomplete: Ben Simmons",
-        "Player history incomplete: Damian Lillard",
-        "Player history incomplete: Shaedon Sharpe",
         "Player history incomplete: Christian Anderson",
         "Player history incomplete: Kylan Boswell",
         "Player history incomplete: Kon Knueppel",
@@ -95,7 +68,13 @@
         "Player history incomplete: Malik Dia",
         "Player history incomplete: Jaron Pierre Jr.",
         "Player history incomplete: Koa Peat",
-        "Player history incomplete: Mark Williams"
+        "Player history incomplete: Mark Williams",
+        "Player history incomplete: Jimmy Butler III",
+        "Player history incomplete: Graham Ike",
+        "Player history incomplete: Yaxel Lendeborg",
+        "Player history incomplete: Moses Moody",
+        "Player history incomplete: Georges Niang",
+        "Player history incomplete: Kristaps Porzingis"
       ]
     }
   }
