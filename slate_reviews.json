@@ -6673,6 +6673,149 @@
         }
       ]
     },
+    "NBA:2026-10-24": {
+      "sport": "NBA",
+      "date": "2026-10-24",
+      "stage": "Partial slate \u2014 games remain unfinished or unavailable",
+      "all_games_final": false,
+      "metrics": {
+        "picks": 8,
+        "settled": 0,
+        "wins": 0,
+        "losses": 0,
+        "pending": 8,
+        "pushes": 0,
+        "distinct_games": 8,
+        "accuracy": null,
+        "brier": null,
+        "mean_estimated_probability": null,
+        "profit_per_1_each": null
+      },
+      "categories": [
+        {
+          "category": "Moneyline",
+          "picks": 8,
+          "settled": 0,
+          "wins": 0,
+          "losses": 0,
+          "pending": 8,
+          "pushes": 0,
+          "distinct_games": 8,
+          "accuracy": null,
+          "brier": null,
+          "mean_estimated_probability": null,
+          "profit_per_1_each": null
+        }
+      ],
+      "calibration": [],
+      "game_flow_context": [],
+      "reconciled_team_games": 0,
+      "observations": [
+        "Moneylines use historical team ratings. Injury effects, replacements and offensive-line changes are not numerically modeled; review availability warnings separately.",
+        "Review run/pass situations and overtime alongside workload errors. Score-state associations do not establish why a forecast missed. Test opportunity and uncertainty changes on older games, then validate later games before promotion."
+      ],
+      "active_corrections": 0,
+      "learning_status": "Every eligible graded game updates experimental bounded forecast, workload and probability adjustments for future picks. Original predictions remain frozen for later comparison. Large-sample validation is retained separately. Full model retraining and causal diagnosis are not automatic.",
+      "pick_error_diagnostics": [
+        {
+          "Pick ID": "4613fbcfe3b9fb352558",
+          "Game": "Brooklyn Nets at Cleveland Cavaliers",
+          "Player": "Cleveland Cavaliers",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "0038e6961ef4400da53d",
+          "Game": "New Orleans Pelicans at Denver Nuggets",
+          "Player": "Denver Nuggets",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "55e5b53613c2000a99b5",
+          "Game": "San Antonio Spurs at Dallas Mavericks",
+          "Player": "San Antonio Spurs",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "18c801e70094cbde2aa6",
+          "Game": "Milwaukee Bucks at Philadelphia 76ers",
+          "Player": "Philadelphia 76ers",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "43946942e4190eacd7ea",
+          "Game": "Washington Wizards at Chicago Bulls",
+          "Player": "Chicago Bulls",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "45e72c01192c5dad47b3",
+          "Game": "Golden State Warriors at Phoenix Suns",
+          "Player": "Phoenix Suns",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "61f51cbd1d85b7725227",
+          "Game": "Miami Heat at Charlotte Hornets",
+          "Player": "Charlotte Hornets",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        },
+        {
+          "Pick ID": "b7357e6a245efc0005bb",
+          "Game": "Houston Rockets at Atlanta Hawks",
+          "Player": "Atlanta Hawks",
+          "Category": "Moneyline",
+          "Selection": "Win",
+          "Book line": null,
+          "Result": "Pending",
+          "Saved reasoning": "Higher estimated chance of winning this game; payout does not drive the selection. A narrow edge is not high confidence. Injury effects, replacement quality and weather are not numerically modeled. Injury verification: Injury verification unavailable; checked None",
+          "Learning version used": "dd94d8636793",
+          "Interpretation": "Pending final evidence; no error assigned"
+        }
+      ],
+      "nba_forecast_quality": []
+    },
     "NFL:2026-10-15": {
       "sport": "NFL",
       "date": "2026-10-15",
@@ -8304,5 +8447,5 @@
       ]
     }
   },
-  "updated_utc": "2026-10-24T05:28:14.491651+00:00"
+  "updated_utc": "2026-10-24T05:36:30.451294+00:00"
 }
