@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-23T23:49:13.257331+00:00",
+  "generated_utc": "2026-10-24T00:52:55.198155+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
@@ -10,14 +10,9 @@
     },
     "NBA": {
       "status": "Prepared; review availability and category validation before any pick",
-      "upcoming_games": 14,
-      "prepared_projections": 1855,
+      "upcoming_games": 13,
+      "prepared_projections": 1710,
       "issues": [
-        "Player history incomplete: Ryan Conwell",
-        "Player history incomplete: Tre Donaldson",
-        "Player history incomplete: Dru Smith",
-        "Player history incomplete: Ebuka Okorie",
-        "Player history incomplete: Ugonna Onyenso",
         "Player history incomplete: Maliq Brown",
         "Player history incomplete: Ja'Kobi Gillespie",
         "Player history incomplete: Tobias Harris",
@@ -62,6 +57,9 @@
         "Player history incomplete: Hannes Steinbach",
         "Player history incomplete: Coby White",
         "Player history incomplete: Grant Williams",
+        "Player history incomplete: Ryan Conwell",
+        "Player history incomplete: Tre Donaldson",
+        "Player history incomplete: Dru Smith",
         "Player history incomplete: Mario Hezonja",
         "Player history incomplete: Meleek Thomas",
         "Player history incomplete: Tyler Bilodeau",
