@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-10-24T05:36:30.751184+00:00",
+  "generated_utc": "2026-10-24T06:42:09.310044+00:00",
   "paired": {
     "NFL": [
       {
@@ -196,8 +196,8 @@
       {
         "Category": "Assists",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 64,
-        "Distinct games": 8,
+        "Frozen forecasts": 67,
+        "Distinct games": 9,
         "Projection MAE comparisons": 64,
         "Projection MAE games": 8,
         "Base Projection MAE": 1.3478774676354133,
@@ -259,8 +259,8 @@
       {
         "Category": "PRA",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit / joint PRA v1",
-        "Frozen forecasts": 64,
-        "Distinct games": 8,
+        "Frozen forecasts": 68,
+        "Distinct games": 9,
         "Projection MAE comparisons": 64,
         "Projection MAE games": 8,
         "Base Projection MAE": 6.491515521099291,
@@ -301,8 +301,8 @@
       {
         "Category": "Points",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 46,
-        "Distinct games": 5,
+        "Frozen forecasts": 51,
+        "Distinct games": 6,
         "Projection MAE comparisons": 46,
         "Projection MAE games": 5,
         "Base Projection MAE": 5.509509994904232,
@@ -343,8 +343,8 @@
       {
         "Category": "Rebounds",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 52,
-        "Distinct games": 5,
+        "Frozen forecasts": 56,
+        "Distinct games": 6,
         "Projection MAE comparisons": 52,
         "Projection MAE games": 5,
         "Base Projection MAE": 1.9350339926856417,
@@ -385,8 +385,8 @@
       {
         "Category": "Three-pointers made",
         "Model": "NBA season-prior minutes-rate v5 / verified context and calibration audit",
-        "Frozen forecasts": 65,
-        "Distinct games": 8,
+        "Frozen forecasts": 69,
+        "Distinct games": 9,
         "Projection MAE comparisons": 65,
         "Projection MAE games": 8,
         "Base Projection MAE": 1.087095825642669,
