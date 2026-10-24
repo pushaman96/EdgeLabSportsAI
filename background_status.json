@@ -1,11 +1,11 @@
 {
-  "generated_utc": "2026-10-24T06:42:03.323146+00:00",
+  "generated_utc": "2026-10-24T07:08:25.338148+00:00",
   "odds_setup": "Automatic odds spending disabled; use an explicit app load button for prices",
   "sports": {
     "NFL": {
-      "status": "No upcoming regular-season games in next 30 hours",
-      "upcoming_games": 0,
-      "prepared_projections": 0,
+      "status": "Prepared; review availability and category validation before any pick",
+      "upcoming_games": 13,
+      "prepared_projections": 373,
       "issues": []
     },
     "NBA": {

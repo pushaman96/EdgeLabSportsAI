@@ -78,6 +78,12 @@
       "reserved": 0,
       "requests": [],
       "setup_status": "Automatic odds spending disabled. Load odds only with an explicit app button."
+    },
+    "2026-10-24": {
+      "cap": 0,
+      "reserved": 0,
+      "requests": [],
+      "setup_status": "Automatic odds spending disabled. Load odds only with an explicit app button."
     }
   }
 }
