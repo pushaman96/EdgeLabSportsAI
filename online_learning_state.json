@@ -1,25 +1,25 @@
 {
   "schema": 1,
   "method": "per-game-feedback-v1",
-  "generated_utc": "2026-10-24T04:02:22.461067+00:00",
+  "generated_utc": "2026-10-24T04:07:15.895915+00:00",
   "groups": {
     "[\"NBA\",\"Adjusted NBA Elo moneyline\",\"Moneyline\",\"Regular season\"]": {
-      "games": 7,
+      "games": 8,
       "forecast_games": 0,
-      "probability_games": 7,
+      "probability_games": 8,
       "bias": 0.0,
       "workload_bias": 0.0,
-      "temperature": 1.0358964119174765,
-      "issued_comparisons": 12,
-      "base_brier_sum": 2.306115480245677,
-      "issued_brier_sum": 2.3110970717545305,
-      "comparison_games": 6,
-      "candidate_loss_delta": 0.00041513262573777965,
-      "comparison_lower_bound": -0.0004249456257091387,
+      "temperature": 1.0240211939914359,
+      "issued_comparisons": 14,
+      "base_brier_sum": 2.9183367498945163,
+      "issued_brier_sum": 2.9217578725728792,
+      "comparison_games": 7,
+      "candidate_loss_delta": 0.0002443659055973514,
+      "comparison_lower_bound": -0.0005405671178787195,
       "application_weight": 1.0,
       "guard_status": "Experimental learning active",
-      "trained_through": "2026-10-24T02:49:56.791339+00:00",
-      "version": "e6ee75a9f9ba"
+      "trained_through": "2026-10-24T04:07:14.462907+00:00",
+      "version": "e3a6c9ce3aff"
     },
     "[\"NBA\",\"NBA minutes-shot-opportunities v1 / chronological benchmark\",\"Assists\",\"Regular season\"]": {
       "games": 1,
