@@ -27,3 +27,34 @@ class FreeShortlistTests(unittest.TestCase):
         board['events'][0]['status']['type']['state']='pre'
         for p in report['sports']['NBA']['projections']:p['event_id']='wrong'
         self.assertFalse(build(report,'NBA',board,NOW)['shortlist'])
+
+    def test_existing_uncertain_research_is_not_labeled_missing(self):
+        board,report=fixtures()
+        for p in report['sports']['NBA']['projections']:p['role_uncertain']=True
+        result=build(report,'NBA',board,NOW)
+        self.assertEqual(result['all_games'][0]['Research priority'],'Research available — role caution')
+        self.assertEqual(result['all_games'][0]['Prepared forecasts'],4)
+    def test_recent_report_does_not_refresh_old_game_forecasts(self):
+        board,report=fixtures()
+        for p in report['sports']['NBA']['projections']:p['published_utc']='2026-10-22T10:00:00Z'
+        result=build(report,'NBA',board,NOW)
+        self.assertFalse(result['shortlist'])
+        self.assertEqual(result['all_games'][0]['Research priority'],'Research available — refresh needed')
+
+class FreeResearchHorizonTests(unittest.TestCase):
+    def test_nfl_can_prepare_sunday_from_friday_without_odds(self):
+        from unittest.mock import patch
+        import background_research as bg
+        now=datetime(2026,10,23,12,tzinfo=timezone.utc)
+        event={'id':'sunday','date':'2026-10-25T17:00:00Z','season':{'type':2},'status':{'type':{'state':'pre','completed':False}}}
+        urls=[]
+        def free_get(url):
+            urls.append(url)
+            return {'events':[event]}
+        with patch.object(bg,'get',side_effect=free_get):
+            result=bg.boards('NFL',now)
+        self.assertEqual([e['id'] for e in result['events']],['sunday'])
+        self.assertEqual(len(urls),4)
+        self.assertTrue(all(url.startswith('https://site.api.espn.com/') for url in urls))
+        self.assertFalse(bg.upcoming(event,now))
+        self.assertTrue(bg.upcoming(event,now,hours=72))

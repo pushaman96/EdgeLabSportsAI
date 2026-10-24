@@ -47,17 +47,25 @@ def build(report, sport, scoreboard, now=None):
         players=sorted({p['player'] for p in reliable})
         categories=sorted({p['category'] for p in reliable})
         ratio=len(reliable)/len(checked) if checked else 0
-        ready=fresh and len(players)>=2 and len(categories)>=2
+        latest=max((p.get('published_utc','') for p in checked),default='')
+        try:game_fresh=fresh and timedelta(0)<=now-utc(latest)<=timedelta(hours=6)
+        except (ValueError,TypeError):game_fresh=False
+        ready=game_fresh and len(players)>=2 and len(categories)>=2
+        if not checked:reason='No prepared forecasts for this exact selected-date game. The latest job may cover different games; see research timestamps.'
+        elif not game_fresh:reason=f'{len(checked)} forecasts exist, but their research is older than six hours; refresh of free preparation is needed.'
+        elif not reliable:reason=f'{len(checked)} forecasts exist, but all workload roles are flagged uncertain.'
+        elif not ready:reason=f'Research exists, but only {len(players)} clear-role players across {len(categories)} categories qualify for prioritization.'
+        else:reason=f'{len(players)} players across {len(categories)} categories have prepared projections without a flagged role uncertainty.'
         rows.append({
             'Game':event.get('name') or event.get('shortName') or str(event.get('id')),
-            'Research priority':'Research first' if ready else 'Needs more research',
-            'Categories to inspect':', '.join(categories) if ready else 'No supported shortlist yet',
+            'Research priority':'Research first' if ready else 'Research available — refresh needed' if checked and not game_fresh else 'Research available — role caution' if checked else 'Not prepared for selected game',
+            'Categories to inspect':', '.join(categories or sorted({p['category'] for p in checked})) if checked else 'No prepared categories',
             'Players with clearer workload evidence':', '.join(players[:6]) if ready else 'Not enough fresh evidence',
-            'Reason':(f'{len(players)} players across {len(categories)} categories have prepared projections without a flagged role uncertainty.' if ready else 'Research is missing, older than six hours, or has insufficient clear-role coverage.'),
+            'Reason':reason,
             'Role-uncertain forecasts':len(checked)-len(reliable),
             'Prepared forecasts':len(checked),
             'Kickoff UTC':start.isoformat(),
-            'Research updated UTC':report.get('generated_utc'),
+            'Research updated UTC':latest or report.get('generated_utc'),
             '_rank':(int(ready),ratio,len(categories),min(len(players),10)),
         })
     rows.sort(key=lambda r:r['_rank'],reverse=True)
@@ -72,15 +80,27 @@ def render(sport,scoreboard):
     st.subheader('Games to research for props — 0 odds credits')
     st.caption('Research priority, not a best-bet ranking or hit probability. Uses saved free player/workload research for upcoming regular-season games. It does not load odds, select bets or spend credits.')
     try:
-        report=json.loads(Path('background_research.json').read_text())
+        from runtime_health import snapshot
+        def compact(data):
+            return {'generated_utc':data.get('generated_utc'),'sports':{league:{'projections':part.get('projections',[]),'issues':part.get('issues',[])} for league,part in data.get('sports',{}).items()}}
+        report=snapshot('background_research.json','free-shortlist-source-v2',compact,{})
+        ids={str(e.get('id')) for e in scoreboard.get('events',[])}
+        existing=report.get('sports',{}).get(sport,{}).get('projections',[])
+        covered={str(p.get('event_id')) for p in existing}
+        if ids-covered:
+            def matching_history(data):
+                return [p for p in data.get('records',[]) if p.get('sport')==sport and str(p.get('event_id')) in ids-covered]
+            prior=snapshot('background_projection_history.json','free-shortlist-history-'+sport+'-'+','.join(sorted(ids-covered)),matching_history,[])
+            report.setdefault('sports',{}).setdefault(sport,{}).setdefault('projections',[]).extend(prior)
     except (OSError,ValueError):
         report={}
+    st.caption('Latest free preparation (UTC): '+str(report.get('generated_utc','Not available'))+'. Selected-game research is matched by game ID and scheduled start; older saved research is labeled separately.')
     result=build(report,sport,scoreboard)
     if result['shortlist']:
         from team_emblems import render_team_table
         render_team_table(result['shortlist'],sport=sport,hide_index=True,use_container_width=True)
     else:
-        st.info('No game has enough fresh prepared research for a shortlist yet. Free background research updates automatically; no odds request was made.')
+        st.info('No game currently qualifies for the research-first shortlist. The coverage table below distinguishes existing research, stale research, role cautions and games not yet prepared. No odds request was made.')
     with st.expander('All upcoming games — research coverage and cautions'):
         if result['all_games']:st.dataframe(result['all_games'],hide_index=True,use_container_width=True)
         if result['issues']:st.write(result['issues'])

@@ -44,20 +44,20 @@ def cached(name,ttl,loader):
     value=loader()
     with target.open('wb')as f:pickle.dump(value,f)
     return value
-def upcoming(event,now):
+def upcoming(event,now,hours=30):
     try:
         status=event.get('status',{}).get('type',{})
-        return status.get('state')=='pre' and not status.get('completed') and now<utc(event['date'])<=now+timedelta(hours=30) and event.get('season',{}).get('type')==2
+        return status.get('state')=='pre' and not status.get('completed') and now<utc(event['date'])<=now+timedelta(hours=hours) and event.get('season',{}).get('type')==2
     except (ValueError,KeyError,TypeError):return False
 def participants(event):
     return {c['homeAway']:c['team']for c in event.get('competitions',[{}])[0].get('competitors',[])if c.get('homeAway')in ('home','away')}
 def boards(sport,now):
     all_events={}
-    for date in (day(now),day(now)+timedelta(days=1)):
+    for date in (day(now)+timedelta(days=i) for i in range(4 if sport=='NFL' else 2)):
         data=get('https://site.api.espn.com/apis/site/v2/sports/'+SPORTS[sport][0]+'/scoreboard?dates='+date.strftime('%Y%m%d'))
         for raw in data.get('events',[]):
             e=dict(raw);e.setdefault('season',data.get('season',{}))
-            if upcoming(e,now):all_events[e['id']]=e
+            if upcoming(e,now,hours=72 if sport=='NFL' else 30):all_events[e['id']]=e
     return {'events':list(all_events.values())}
 def roster(sport,team):
     url='https://site.api.espn.com/apis/site/v2/sports/'+SPORTS[sport][0]+'/teams/'+str(team['id'])+'/roster'
@@ -165,7 +165,7 @@ def prepare(now=None):
                                 item['projections'].append(row)
                                 if identity not in known and now<start:history['records'].append(row);known.add(identity)
                 item['status']='Prepared; review availability and category validation before any pick'
-            if not years:item['status']='No upcoming regular-season games in next 30 hours'
+            if not years:item['status']='No upcoming regular-season games in next '+('72' if sport=='NFL' else '30')+' hours'
         except Exception:
             item['status']='Research source/model unavailable; no substitute forecasts invented'
             item['issues'].append('Preparation incomplete; retry on next scheduled run')
